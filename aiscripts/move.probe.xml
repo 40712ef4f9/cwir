@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<aiscript name="move.probe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="aiscripts.xsd">
+<aiscript name="move.probe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="aiscripts.xsd" version="6">
 <!-- Conquer_mod v019s -->
 <!-- CWIR -->
 <!-- Move and Jump Probe script-->
@@ -26,21 +26,25 @@
 					<get_safe_pos object="this.ship" zone="this.ship.zone" radius="500m" result="$position" directionobject="this.ship" direction="quadrant.front" />
 				</do_if>
 		
-				<move_to object="this.ship" destination="this.ship.zone" usehighways="false" abortpath="true" forcesteering="false" forceposition="false" finishonapproach="true" >
+				<move_to object="this.ship" destination="this.ship.zone" usehighways="false" abortpath="true" forcesteering="false" forceposition="false" finishonapproach="true" sinceversion="5">
 					<safepos value="$position" ignored="this.ship"/>
 				</move_to>
+				<move_to object="this.ship" destination="null" chance="0" sinceversion="5"/>
 			</do_if>
 			<do_elseif value="this.ship.zone != $destination">
-				<run_script name="'move.generic'">
+				<run_script name="'move.generic'" sinceversion="6">
 				  <param name="destination" value="$destination" />
 				  <param name="position" value="$position" />
 				  <param name="endintargetzone" value="if $position then false else true" />
 				</run_script>
 			</do_elseif>
 			<do_else>
-				<wait exact="10s" />
+				<wait exact="10s" sinceversion="6"/>
 			</do_else>
 		</do_if>
+
+		<move_to object="this.ship" destination="null" chance="0" sinceversion="5"/>
+		<move_to object="this.ship" destination="null" chance="0" sinceversion="5"/>
 	
 		<do_if value="$jumpto and $jumpto.isclass.zone">
 			<set_command_action commandaction="commandaction.jumping" />
