@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diff>
+	
+		
+	<add sel="/mdscript[@name='NPC_Shiptrader_Small']/cues/cue[@name='Base']/cues/cue[@name='SectionHandler']/actions/do_elseif[@value=&quot;event.param == 'cSmallshiptrader_sellshipconfirmed'&quot;]" pos="before">
+		<do_elseif value="(event.param == 'cSmallshiptrader_sellshipconfirmed') and ($actor.owner == faction.player)">
+			<add_conversation_view view="facenormal" />
+			<set_value name="$playsoldship" exact="$soldshipprice * 460/4Cr" />
+			<reward_player money="$playsoldship"/>
+              <do_if value="typeof $soldship == datatype.list">
+                <do_all exact="$soldship.count" counter="$i">
+                  <set_value name="$soldship2" exact="$soldship.{$i}"/>
+                  <include_actions ref="SellShipActions" />
+                </do_all>
+              </do_if>
+              <do_else>
+                <set_value name="$soldship2" exact="$soldship"/>
+                <include_actions ref="SellShipActions" />
+              </do_else>
+		</do_elseif>
+     </add>
+	 
+	 <add sel="/mdscript[@name='NPC_Shiptrader_Small']/cues/cue[@name='Base']/cues/cue[@name='SectionHandler']/actions/do_if[@value=&quot;event.param == 'cSmallshiptrader_buyship'&quot;]" pos="before">
+	 <find_station groupname="$PlayShipsmall" space="player.galaxy" multiple="true" owner="faction.player" productsize="ship"/>
+	 </add>
+	 <add sel="/mdscript[@name='NPC_Shiptrader_Small']/cues/cue[@name='Base']/cues/cue[@name='SectionHandler']/actions/do_elseif[@value=&quot;event.param == 'cSmallshiptrader_spawnships'&quot;]" pos="before">
+			
+			<do_elseif value="event.param == 'cSmallshiptrader_spawnships' and $PlayShipsmall">
+              <add_npc_line line="4150" comment="Excellent choice." view="facecopilot" chance="(not player.hudmode) * 100" />
+              <set_value name="$macro" exact="ware.{event.param2.{3}}.objectmacro" />
+              <set_value name="$amount" exact="event.param2.{4}" />
+              <set_value name="$droneplan" exact="@event.param2.{5}" />
+              <find_dock_location container="$actor.container" name="$rawdocks" size="$macro.docksize" multiple="true" />
+              <do_if value="@$rawdocks.count">
+                <create_list name="$docks" />
+                <do_all exact="$rawdocks.count">
+                  <set_value name="$rnd" min="1" max="$rawdocks.count" />
+                  <append_to_list name="$docks" exact="$rawdocks.{$rnd}" />
+                  <remove_value name="$rawdocks.{$rnd}" />
+                </do_all>
+                <set_value name="$shipscreated" exact="0" />
+                <do_all exact="$amount" counter="$i">
+                  <create_ship dock="$docks.{($i % $docks.count) + 1}" macro="$macro" name="$ship">
+                    <owner exact="faction.player" />
+                    <pilot group="argon.pilot">
+                      <owner exact="faction.player" />
+					  <skills> 
+						<skill type="combat" min="3" max="5"/> 
+						<skill type="engineering" min="1" max="5"/> 
+						<skill type="leadership" min="3" max="5"/> 
+						<skill type="management" min="1" max="5"/> 
+						<skill type="morale" min="3" max="5"/> 
+						<skill type="navigation" min="3" max="5"/> 
+						<skill type="science" min="1" max="5"/> 
+					 </skills> 
+                    </pilot>
+                  </create_ship>
+                  <do_if value="$ship.exists">
+                    <set_value name="$shipscreated" operation="add" exact="1" />
+                    <do_if value="$droneplan">
+                      <do_all exact="$droneplan.count" counter="$i">
+                        <add_ammo object="$ship" macro="macro.{$droneplan.{$i}.{1}}" amount="$droneplan.{$i}.{2}" />
+                      </do_all>
+                    </do_if>
+                    <set_object_commander object="$ship" commander="player.primaryship" />
+                    <start_script object="$ship.pilot" name="'player.default'"/>
+                  </do_if>
+                </do_all>
+                <remove_value name="$ship" />
+                <remove_cargo object="$actor.container" ware="ware.{event.param2.{3}}" exact="$shipscreated" />
+                <set_value name="stat.ships_bought" operation="add" exact="$shipscreated" />
+                <remove_value name="$shipscreated" />
+              </do_if>
+              <do_else>
+                <debug_text text="'ERROR - no dock was found to spawn ships [Florian]'" />
+              </do_else>
+            </do_elseif>
+	 </add>
+	 <replace sel="/mdscript[@name='NPC_Shiptrader_Small']/cues/cue[@name='Base']/cues/library[@name='SellShipActions']">
+	 <library name="SellShipActions">
+          <actions>
+            <remove_object_commander object="$soldship2" />
+            <set_owner object="$soldship2" faction="$actor.owner" />
+
+            <!-- Block all dockslots to prevent the player from docking at this ship -->
+            <find_dock_location name="$ship_docks" container="$soldship2" size="tag.dock_p" multiple="true"/>
+            <do_all exact="$ship_docks.count" counter="$Count">
+              <set_room_locked room="$ship_docks.{$Count}.component" locked="true"/>
+            </do_all>
+            <remove_value name="$ship_docks" />
+
+            <do_if value="$soldship2.pilot">
+              <remove_actor_account actor="$soldship2.pilot" transfer="true" />
+              <set_owner object="$soldship2.pilot" faction="$actor.owner" />
+              <do_if value="$actor.owner == faction.player">					
+					<remove_actor_account actor="$soldship2.pilot" transfer="true" />
+					<find_station name="$stations" space="$soldship2.cluster" multiple="true">
+						<match owner="faction.player" negate="true"/>
+						<match_relation faction="faction.player" comparison="ge" relation="neutral"/>
+					</find_station>
+						<set_value name="$factions" exact="[]"/>
+						<do_all exact="$stations.count" counter="$i">
+							<do_if value="not $factions.indexof.{$stations.{$i}.owner}">
+								<append_to_list name="$factions" exact="$stations.{$i}.owner"/>
+							</do_if>
+						</do_all>
+						<set_owner object="$soldship2.pilot" faction="$factions.random"/>
+						<remove_value name="$stations"/>
+						<remove_value name="$factions"/>
+						<do_if value="$soldship2.primarypurpose == objectpurpose.build">
+						<start_script object="$soldship2.pilot" name="'move.die'" >
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+					   </do_if> 
+					   <do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/> 
+							</start_script>					
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>	
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade and $soldship2.isclass.[class.ship_m, class.ship_s]">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+										
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight">
+					<find_ship name="$factionships" space="$soldship2.cluster" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>							
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 3
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight and $soldship2.isclass.[class.ship_m, class.ship_s]">
+					<find_ship name="$factionships" space="$soldship2.sector" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>
+							<match class="class.ship_m"/>
+							<match class="class.ship_s"/>
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 6
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_else>
+					<start_script object="$soldship2.pilot" name="'move.die'">
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+				</do_else>
+				</do_if>
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.build">
+						<start_script object="$soldship2.pilot" name="'move.die'" >
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+					</do_elseif>                  
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/> 
+							</start_script>					
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>	
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade and $soldship2.isclass.[class.ship_m, class.ship_s]">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+										
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight">
+					<find_ship name="$factionships" space="$soldship2.cluster" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>							
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 3
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight and $soldship2.isclass.[class.ship_m, class.ship_s]">
+					<find_ship name="$factionships" space="$soldship2.sector" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>
+							<match class="class.ship_m"/>
+							<match class="class.ship_s"/>
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 6
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_else>
+					<start_script object="$soldship2.pilot" name="'move.die'">
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+				</do_else>
+              </do_if>
+              <do_else>
+                <!-- no pilot, create one -->
+              <do_if value="$soldship2.isclass.ship_l or $soldship2.isclass.ship_xl">
+                <set_value name="$entitytype" exact="entitytype.commander" />
+              </do_if>
+              <do_else>
+                <set_value name="$entitytype" exact="entitytype.pilot" />
+              </do_else>
+
+              <do_if value="$dock? and $soldship2.owner != faction.xenon">
+                <create_platform_actor name="$pilot" dockingbay="$dock" type="$entitytype">
+                  <select faction="$actor.owner" tags="tag.{$entitytype}"/>
+                  <owner exact="$actor.owner" />
+                </create_platform_actor>
+              </do_if>
+              <do_else>
+                <create_cue_actor name="$pilot" cue="this">
+                  <select faction="$actor.owner" tags="tag.{$entitytype}"/>
+                  <owner exact="$actor.owner" />
+                </create_cue_actor>
+                <set_entity_type entity="$pilot" type="$entitytype" />
+              </do_else>
+                <do_if value="$pilot?">
+					<assign_pilot object="$soldship2" actor="$pilot" />
+					<do_if value="$pilot.container">
+						<do_if value="$actor.owner == faction.player">					
+					<remove_actor_account actor="$soldship2.pilot" transfer="true" />
+					<find_station name="$stations" space="$soldship2.cluster" multiple="true">
+						<match owner="faction.player" negate="true"/>
+						<match_relation faction="faction.player" comparison="ge" relation="neutral"/>
+					</find_station>
+						<set_value name="$factions" exact="[]"/>
+						<do_all exact="$stations.count" counter="$i">
+							<do_if value="not $factions.indexof.{$stations.{$i}.owner}">
+								<append_to_list name="$factions" exact="$stations.{$i}.owner"/>
+							</do_if>
+						</do_all>
+						<set_owner object="$soldship2.pilot" faction="$factions.random"/>
+						<remove_value name="$stations"/>
+						<remove_value name="$factions"/>
+						<do_if value="$soldship2.primarypurpose == objectpurpose.build">
+						<start_script object="$soldship2.pilot" name="'move.die'" >
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+					   </do_if> 
+					   <do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/> 
+							</start_script>					
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>	
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade and $soldship2.isclass.[class.ship_m, class.ship_s]">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+										
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight">
+					<find_ship name="$factionships" space="$soldship2.cluster" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>							
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 3
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight and $soldship2.isclass.[class.ship_m, class.ship_s]">
+					<find_ship name="$factionships" space="$soldship2.sector" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>
+							<match class="class.ship_m"/>
+							<match class="class.ship_s"/>
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 6
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_else>
+					<start_script object="$soldship2.pilot" name="'move.die'">
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+				</do_else>
+				</do_if>				
+					<do_elseif value="$soldship2.primarypurpose == objectpurpose.build">
+						<start_script object="$soldship2.pilot" name="'move.die'" >
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+					</do_elseif>                  
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/> 
+							</start_script>					
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.mine and $soldship2.isclass.[class.ship_m, class.ship_s] and $soldship2.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$soldship2.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>	
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+							</start_script>
+						</do_elseif>
+						<do_elseif value="$soldship2.primarypurpose == objectpurpose.trade and $soldship2.isclass.[class.ship_m, class.ship_s]">
+							<start_script object="$soldship2.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+								<param name="range" value="'cluster'"/>
+							</start_script>
+						</do_elseif>
+										
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight">
+					<find_ship name="$factionships" space="$soldship2.cluster" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>
+							
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 3
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					<do_else>
+						<start_script object="$soldship2.pilot" name="'BR.move.patrol'">
+							<param name="range" value="'cluster'"/>
+						</start_script>	
+					</do_else>
+				</do_elseif>
+				<do_elseif value="$soldship2.primarypurpose == objectpurpose.fight and $soldship2.isclass.[class.ship_m, class.ship_s]">
+					<find_ship name="$factionships" space="$soldship2.sector" owner="$soldship2.owner" primarypurpose="$soldship2.primarypurpose" multiple="true">
+						<match_any> 
+							<match class="class.ship_xl"/>
+							<match class="class.ship_l"/>
+							<match class="class.ship_m"/>
+							<match class="class.ship_s"/>
+						</match_any>
+					</find_ship>
+					<do_all exact="$factionships.count" counter="$i">
+						<do_if value="$factionships.{$i}.isoperational
+								and $soldship2 != $factionships.{$i}
+								and $soldship2 != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 3
+								and (not $newcommander?
+									or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+							<do_if value="$soldship2 != $factionships.{$i}
+									and $soldship2 != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($soldship2.distanceto.{$factionships.{$i}} lt $soldship2.distanceto.{@$newcommander}))">
+								<set_value name="$newcommander" exact="$factionships.{$i}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+					<remove_value name="$factionships"/>
+					<do_if value="@$newcommander">
+						<set_object_commander object="$soldship2" commander="$newcommander" />
+						<start_script object="$soldship2.pilot" name="'BR.move.escort'">
+							<param name="target" value="$newcommander"/>
+						</start_script>	
+							<remove_value name="$newcommander"/>
+					</do_if>
+					
+				</do_elseif>
+				<do_else>
+					<start_script object="$soldship2.pilot" name="'move.die'">
+							<param name="bysale" value="$actor.container" />
+						</start_script>
+				</do_else>
+					
+				
+              </do_if>
+				  <remove_cue_actor actor="$pilot" cue="this" />
+                  <remove_value name="$pilot" />
+                </do_if>
+                  
+                <do_else>
+                <!-- should not happen, but to prevent exploits -->
+                <destroy_object object="$soldship2" />
+              </do_else>
+              <remove_value name="$entitytype" />
+            </do_else>
+
+            <do_if value="$soldship2.engineer">
+              <set_owner object="$soldship2.engineer" faction="$actor.owner" />
+            </do_if>
+            <do_else>
+              <!-- no engineer, create one -->
+              <do_if value="$soldship2.isclass.ship_l or $soldship2.isclass.ship_xl">
+                <do_if value="$dock? and $soldship2.owner != faction.xenon and $soldship2.owner != faction.player">
+                  <create_platform_actor name="$engineer" dockingbay="$dock" type="entitytype.engineer">
+                    <select faction="$actor.owner" tags="tag.{entitytype.engineer}"/>
+                    <owner exact="$actor.owner" />
+                  </create_platform_actor>
+                </do_if>
+                <do_else>
+                  <create_cue_actor name="$engineer" cue="this">
+                    <select faction="$actor.owner" tags="tag.{entitytype.engineer}"/>
+                    <owner exact="$actor.owner" />
+                  </create_cue_actor>
+                  <set_entity_type entity="$engineer" type="entitytype.engineer" />
+                </do_else>
+                <do_if value="$engineer?">
+                  <assign_engineer object="$soldship2" actor="$engineer" />
+                  <do_if value="$engineer.container">
+                    <start_script object="$engineer" name="'engineer.ai'" />
+                  </do_if>
+
+                  <remove_cue_actor actor="$engineer" cue="this" />
+                  <remove_value name="$engineer" />
+                </do_if>
+              </do_if>
+            </do_else>
+
+            <do_if value="$soldship2.defencenpc">
+              <set_owner object="$soldship2.defencenpc" faction="$actor.owner" />
+            </do_if>
+			<do_else>
+                <!-- no defencenpc, create one -->
+                <do_if value="$soldship2.isclass.ship_l or $soldship2.isclass.ship_xl">
+                  <do_if value="$dock? and $soldship2.owner != faction.xenon and $soldship2.owner != faction.player">
+                    <create_platform_actor name="$defencecontrol" dockingbay="$dock" type="entitytype.defencecontrol">
+                      <select faction="$actor.owner" tags="tag.{entitytype.defencecontrol}"/>
+                      <owner exact="$actor.owner" />
+                    </create_platform_actor>
+                  </do_if>
+                  <do_else>
+                    <create_cue_actor name="$defencecontrol" cue="this">
+                      <select faction="$actor.owner" tags="tag.{entitytype.defencecontrol}"/>
+                      <owner exact="$actor.owner" />
+                    </create_cue_actor>
+                    <set_entity_type entity="$defencecontrol" type="entitytype.defencecontrol" />
+                  </do_else>
+                  <do_if value="$defencecontrol?">
+                    <assign_defence_manager object="$soldship2" actor="$defencecontrol" />
+                    <do_if value="$defencecontrol.container">
+                      <start_script object="$defencecontrol" name="'fight.defend.capital'" />
+                    </do_if>
+
+                    <remove_cue_actor actor="$defencecontrol" cue="this" />
+                    <remove_value name="$defencecontrol" />
+                  </do_if>
+                </do_if>
+              </do_else>
+
+            <do_if value="$soldship2.architect">
+              <remove_actor_account actor="$soldship2.architect" transfer="true" />
+              <set_owner object="$soldship2.architect" faction="$actor.owner" />
+            </do_if>
+          </actions>
+        </library>
+	 
+	 
+	 </replace>
+</diff>      

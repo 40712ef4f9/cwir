@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Exported by: Matthias (192.168.3.141) at 19.11.2014_12-43-52-->
+<macros>
+  <macro name="shieldgenerator_size_l_mk22_macro" class="shieldgenerator">
+    <component ref="props_surf_ar_shieldgen_large_mk1" />
+    <properties>
+      <identification name="{20104,2201}" description="{20104,2202}" unique="0" />
+      <boost duration="600" />
+      <recharge max="4000000" rate="3000" delay="8" />
+      <hull max="30000" threshold="0.25" />
+      <effects>
+        <sefx_damage_low ref="sefx_damage_m_low" />
+        <sefx_damage_medium ref="sefx_damage_l_medium" />
+        <sefx_damage_high ref="sefx_damage_m_high" />
+        <sefx_shield ref="sefx_shield_m_02" />
+      </effects>
+      <efficiency>
+        <threshold threshold="0.75" value="1" />
+        <threshold threshold="0.25" value="0.25" />
+      </efficiency>
+    </properties>
+  </macro>
+</macros>

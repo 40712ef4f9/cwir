@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="Warstarter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+ <cues>
+	 <cue name="InitializeFactions" instantiate="false" namespace="this"> 
+      <conditions> 
+        <check_any> 
+          <event_player_created /> 
+          <event_cue_signalled cue="md.Setup.GameStart" /> 		  
+        </check_any> 
+      </conditions> 
+      <actions> 		
+				
+		
+		
+		<!-- Reiver Space in Barren Heart --> 
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname=={20005,42}">  
+              <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if>
+			<do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname=={20005,40}">  
+              <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if>
+		<do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname=={20005,44}">  
+              <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if>
+		  <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname=={20005,37}">  
+              <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if>
+        </do_all>-->
+		
+		<!-- Cantera in Barrent Heart -->
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname=={20005,41}">  
+              <set_owner object="$allzones.{$i}" faction="faction.canteran"/> 
+            </do_if> 
+          </do_if> 
+        </do_all>-->
+		
+		<!-- Reiver Space in Fell Affliction --> 
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?">
+            <do_if value="$allzones.{$i}.knownname!={20005,40}">  
+              <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if> 
+        </do_all>-->
+		
+		<!-- Reiver Space in Unmet Promise -->
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname!={20005,44}">   
+              <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if> 
+        </do_all>-->
+		
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.sector.knownname=={20004,21}"> --> <!-- Barren Heart --> 
+             <!-- <set_owner object="$allzones.{$i}" faction="faction.reivers"/> 
+            </do_if> 
+          </do_if> 
+        </do_all> -->
+		
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.sector.knownname=={20004,27}">  
+              <set_owner object="$allzones.{$i}" faction="faction.familyryak"/> 
+            </do_if> 
+          </do_if> 
+        </do_all> -->
+		
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.sector.knownname=={20004,29}">  
+              <set_owner object="$allzones.{$i}" faction="faction.xenon"/> 
+            </do_if> 
+          </do_if> 
+        </do_all> -->
+		
+		
+		
+		<!--<do_all exact="$allzones.count" counter="$i"> 
+          <do_if value="$allzones.{$i}.sector.knownname?"> 
+            <do_if value="$allzones.{$i}.knownname=={20005,10}">  
+              <set_owner object="$allzones.{$i}" faction="faction.sovereignsyndicate"/> 
+            </do_if> 
+          </do_if> 
+        </do_all> -->
+        
+        
+        <reset_cue cue="this" />
+      </actions> 
+    </cue> 
+	
+	<cue name="set_all_rel_cue" version="1">
+  	<conditions>
+        <check_any>
+          <event_game_loaded />
+          <event_cue_signalled cue="md.Setup.GameStart"/>
+        </check_any>
+      </conditions>
+  	<actions>
+		
+		<set_faction_relation faction="faction.plutarch" otherfaction="faction.reivers" value="faction.plutarch.relation.kill.max"/>
+		<set_faction_relation faction="faction.reivers" otherfaction="faction.plutarch" value="faction.reivers.relation.kill.max"/>
+		<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="false"/> 
+		<set_faction_relation_locked faction="faction.hereticvanguards" locked="false"/>
+
+		<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="0"/> 
+		<set_faction_relation_locked faction="faction.hereticvanguards" locked="0"/> 
+		
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.leddaindustrial" value="0"/>
+		<set_faction_relation faction="faction.leddaindustrial" otherfaction="faction.hereticvanguards" value="0"/>
+		
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.albionenergy" value="0"/>
+		<set_faction_relation faction="faction.albionenergy" otherfaction="faction.hereticvanguards" value="0"/>
+		
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.wholesomefoods" value="0"/>
+		<set_faction_relation faction="faction.wholesomefoods" otherfaction="faction.hereticvanguards" value="0"/>
+		
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.beryll" value="0"/>
+		<set_faction_relation faction="faction.beryll" otherfaction="faction.hereticvanguards" value="0"/>
+		
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.nolimits" value="0"/>
+		<set_faction_relation faction="faction.nolimits" otherfaction="faction.hereticvanguards" value="0"/>
+		
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.terracorp" value="0"/>
+		<set_faction_relation faction="faction.terracorp" otherfaction="faction.hereticvanguards" value="0"/>
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.aquarius" value="0"/>
+		<set_faction_relation faction="faction.aquarius" otherfaction="faction.hereticvanguards" value="0"/>
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.sonraenergy" value="0"/>
+		<set_faction_relation faction="faction.sonraenergy" otherfaction="faction.hereticvanguards" value="0"/>
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.chow" value="0"/>
+		<set_faction_relation faction="faction.chow" otherfaction="faction.hereticvanguards" value="0"/>
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.frantonpharma" value="0"/>
+		<set_faction_relation faction="faction.frantonpharma" otherfaction="faction.hereticvanguards" value="0"/>
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.jonferson" value="0"/>
+		<set_faction_relation faction="faction.jonferson" otherfaction="faction.hereticvanguards" value="0"/>
+		<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.heartofalbion" value="0"/>
+		<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.hereticvanguards" value="0"/>
+	</actions>
+	</cue>
+	
+	
+	<cue name="Open_Jumpgates_Lib">
+      <conditions>
+        <check_any> 
+          <event_player_created /> 
+          <event_cue_signalled cue="md.Setup.GameStart" /> 		  
+        </check_any> 
+      </conditions>
+      <actions>
+        <find_cluster name="$Maelstrom" macro="macro.cluster_a_macro"/>
+        <find_cluster name="$Albion" macro="macro.cluster_b_macro"/>
+        <find_cluster name="$Omicron_Lyrae" macro="macro.cluster_c_macro"/>
+        <find_cluster name="$DeVries" macro="macro.cluster_d_macro"/>
+		<find_cluster name="$Toride" macro="macro.cluster_n_macro"/>
+
+        <find_object groupname="$Gates" class="class.gate" space="$Albion" destination="$DeVries"/>
+        <find_object groupname="$Gates" class="class.gate" space="$DeVries" destination="$Omicron_Lyrae"/>
+        <find_object groupname="$Gates" class="class.gate" space="$Maelstrom" destination="$Omicron_Lyrae"/>
+		<find_object groupname="$Gates" class="class.gate" space="$Maelstrom" destination="$Toride"/>
+
+        <do_all exact="$Gates.count" counter="$Counter">
+          <set_value name="$Gate" exact="$Gates.{$Counter}"/>
+          <do_if value="not $Gate.isactive and $Gate.exit.exists">
+            <debug_text text="player.module + ': Activating Jumpgate between ' + $Gate.cluster.knownname + ' and ' + $Gate.exit.cluster.knownname"/>
+            <set_object_active object="$Gate" activate="true"/>
+          </do_if>
+        </do_all>
+        <remove_value name="$Maelstrom"/>
+        <remove_value name="$Albion"/>
+        <remove_value name="$Omicron_Lyrae"/>
+        <remove_value name="$DeVries"/>
+		<remove_value name="$Toride"/>
+        <remove_value name="$Gates"/>
+      </actions>
+    </cue>
+		
+ </cues>
+</mdscript>

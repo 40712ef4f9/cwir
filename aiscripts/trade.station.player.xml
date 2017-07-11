@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<diff>
+  <add sel="/aiscript/attention[@min='unknown']/actions/label[@name='init']" pos="after">
+    <do_if value="this.station.canbuildships">
+<!-- Add drones to tradeware -->
+      <add_tradeware ware="ware.drp_assault" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_cargolifter" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_construction" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_interceptor_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_interceptor_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_intrepid_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_intrepid_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_overrun_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_overrun_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_scoopcollector_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_scoopcollector_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_surfaceminer_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_surfaceminer_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.dumbfiremissile" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.swarmmissile" object="this.station" allowbuy="true" />	  
+    </do_if>
+	<do_if value="this.station.canproduceships">
+	  <add_tradeware ware="ware.drp_scoopcollector_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_scoopcollector_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_surfaceminer_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_surfaceminer_mk2" object="this.station" allowbuy="true" />
+	  <!-- CHEAT FOR GIVING WARES AUTOMATICALLY -->
+      <!--<add_default_production_wares object="this.station" lowerlimit="20" upperlimit="80" /> -->
+	</do_if>
+	</add>
+	
+	<add sel="/aiscript/attention[@min='unknown']/actions/label[@name='init']" pos="after">
+    <do_if value="this.station.canbuildships">
+<!-- Add drones to tradeware -->
+      <set_value name="$tradewares" exact="[
+                  ware.drp_assault,
+                  ware.drp_cargolifter,
+                  ware.drp_construction,
+                  ware.drp_interceptor_mk1,
+                  ware.drp_interceptor_mk2,
+                  ware.drp_intrepid_mk1,
+                  ware.drp_intrepid_mk2,
+                  ware.drp_overrun_mk1,
+                  ware.drp_overrun_mk2,
+                  ware.drp_scoopcollector_mk1,
+                  ware.drp_scoopcollector_mk2,
+                  ware.drp_surfaceminer_mk1,
+                  ware.drp_surfaceminer_mk2,
+                  ware.dumbfiremissile,
+                  ware.swarmmissile
+      ]" />
+
+      <set_value name="$resources" exact="this.station.resources.list" />
+      <set_value name="$products" exact="this.station.products.list" />
+      <do_all exact="$tradewares.count" counter="$i">
+        <set_value name="$tradeware" exact="$tradewares.{$i}" />
+        <do_if value="$resources.indexof.{$tradeware} + $products.indexof.{$tradeware}" exact="0">
+          <add_tradeware ware="$tradeware" object="this.station" allowbuy="true" />
+        </do_if>
+      </do_all>
+      <remove_value name="$resources" />
+      <remove_value name="$products" />
+      <remove_value name="$tradeware" />
+      <remove_value name="$tradewares" />	  
+	  
+	  <wait min="5s" max="10min" />
+    </do_if>
+	
+	
+	<!--<do_if value="this.station.canproduceships">
+	  <add_tradeware ware="ware.drp_scoopcollector_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_scoopcollector_mk2" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_surfaceminer_mk1" object="this.station" allowbuy="true" />
+      <add_tradeware ware="ware.drp_surfaceminer_mk2" object="this.station" allowbuy="true" />-->
+	  <!-- CHEAT FOR GIVING WARES AUTOMATICALLY -->
+      <!--<add_default_production_wares object="this.station" lowerlimit="20" upperlimit="80" /> -->
+	<!--</do_if>-->
+	
+	</add>
+</diff>

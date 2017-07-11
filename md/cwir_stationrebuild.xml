@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<mdscript name="CWIR_StationRebuild" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="E:\Rebirth\current\libraries\md.xsd">
+	<!-- BlackRain  This script is for rebuilding lost stations which originally populate the game in Vanilla and also Heretic Vanguard Also with some new stations -->
+	<cues>
+		<cue name="CWIR_zonelist" instantiate="true" checktime="player.age + 33min" checkinterval="40min">
+			<!--<cue name="CWIR_zonelist" instantiate="true" checktime="30s" checkinterval="20min">-->
+			<actions>
+
+				<set_value name="$checkup" exact="
+					[	
+						[macro.tzoneCluster_A_Sector01_Zone94_macro, [faction.argongovernment], [ 
+																									[macro.struct_econ_agri_ar_unique_megafarmlands_macro, 1, faction.argongovernment]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone95_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_water_destillery1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_crystal_refinement1_macro, 1, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone96_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_solar_power_plant1_macro, 2, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone97_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_bofu_plant1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_farm_complex1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_soy_farm1_macro, 1, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone98_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_construction_material1_macro, 2, faction.hereticvanguards],
+																									[macro.struct_bt_ol_hightec_construction1_macro, 1, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone99_macro, [faction.hereticvanguards], [ 
+																									[macro.struct_bt_ol_metalworks1_macro, 2, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone101_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_sy_heretic_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_fuelstation_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_small_ships_complex1_macro, 1, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone102_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_weaponryproduction1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_drone_complex1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_tech_complex1_macro, 1, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector01_Zone103_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_laboratory1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_high_energy_construction1_macro, 1, faction.hereticvanguards],
+																									[macro.struct_bt_ol_medical_supplies1_macro, 1, faction.hereticvanguards]
+																								]
+						],
+
+
+						[macro.tzoneCluster_A_Sector02_Zone108_macro, [faction.familyryak], [ 
+																									[macro.struct_bt_ol_metalworks1_macro, 1, faction.familyryak]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector03_Zone110_macro, [faction.xenon], [ 
+																									[macro.landmarks_unique_aqueduct_macro, 1, faction.xenon]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector03_Zone111_macro, [faction.xenon], [ 
+																									[macro.struct_at_xen_xenon_portal_macro, 1, faction.xenon],
+																									[macro.xenon_asteroid_shipyard_macro, 1, faction.xenon]
+																								]
+						],
+						[macro.tzoneCluster_A_Sector03_Zone114_macro, [faction.xenon], [
+																									[macro.struct_econ_cw_ar_water_macro, 1, faction.xenon],
+																									[macro.struct_econ_cw_generic_ar_water_XL_macro, 1, faction.xenon],
+																									[macro.struct_econ_cw_generic_ar_water_M_macro, 1, faction.xenon],
+																									[macro.struct_econ_cw_generic_ar_water_L_macro, 1, faction.xenon]
+																								]
+						],
+
+
+						[macro.tzoneCluster_C_Sector08_Zone87_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_high_energy_construction_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_weaponryproduction_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector08_Zone88_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_solar_power_plant_macro, 1, faction.sonraenergy],
+																									[macro.struct_bt_ol_fuelstation_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector08_Zone89_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_solar_power_plant_macro, 1, faction.sonraenergy],
+																									[macro.struct_bt_ol_laboratory_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector08_Zone90_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_water_destillery_macro, 1, faction.aquarius],
+																									[macro.struct_bt_ol_solar_power_plant_macro, 1, faction.sonraenergy]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector08_Zone91_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_water_destillery_macro, 1, faction.aquarius],
+																									[macro.struct_bt_ol_solar_power_plant_macro, 1, faction.sonraenergy]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector08_Zone92_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_shipyard_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_small_ships_complex_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector08_Zone93_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_weaponrycomplex_macro, 1, 'owner'],
+																									[macro.struct_bt_ol_solar_power_plant_macro, 2, faction.sonraenergy]
+																								]
+						],
+
+
+						[macro.tzoneCluster_C_Sector09_Zone59_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_drone_complex_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_soy_farm_macro, 1, faction.chow]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector09_Zone60_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_bofu_plant_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_fuelstation_macro, 1, 'owner'],
+																									[macro.struct_bt_ol_tech_complex_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector09_Zone61_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_farm_complex_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_metalworks_macro, 2, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector09_Zone62_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_farm_complex_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_hightec_construction_macro, 2, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector09_Zone63_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_drone_factory_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_soy_farm_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_solar_power_plant_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector09_Zone64_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_plankton_tank_macro, 2, faction.chow]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector09_Zone65_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_spice_farm_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_crystal_refinement_macro, 1, 'owner']
+																								]
+						],
+
+
+						[macro.tzoneCluster_C_Sector10_Zone66_macro, [faction.argongovernment], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_fuelstation_macro, 1, 'owner'],
+																									[macro.struct_bt_ol_shipyard_macro, 1, faction.argongovernment]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone66_macro, [faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_fuelstation_macro, 1, 'owner'],
+																									[macro.struct_bt_sy_heretic_macro, 1, faction.hereticvanguards]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone67_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_high_energy_construction_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_metalworks_macro, 1, faction.aquarius]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone68_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_medical_supplies_macro, 1, faction.frantonpharma],
+																									[macro.struct_bt_ol_water_destillery_macro, 1, faction.aquarius],
+																									[macro.struct_bt_ol_spacefuel_production_macro, 1, faction.frantonpharma]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone69_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_spacefuel_production_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_construction_material_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone70_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_laboratory_macro, 1, faction.frantonpharma],
+																									[macro.struct_bt_ol_water_destillery_macro, 1, faction.aquarius]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone71_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_medical_supplies_macro, 1, faction.frantonpharma],
+																									[macro.struct_bt_ol_drone_factory_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone72_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.aquarius],
+																									[macro.struct_bt_ol_spice_farm_macro, 1, faction.frantonpharma]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone73_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.aquarius]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector10_Zone74_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_metalworks_macro, 1, faction.aquarius],
+																									[macro.struct_bt_ol_weaponrycomplex_macro, 1, faction.jonferson]
+																								]
+						],
+
+
+						[macro.tzoneCluster_C_Sector11_Zone75_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.sonraenergy],
+																									[macro.struct_econ_ref_ar_pmc_orbital_l_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone76_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_metalworks_macro, 2, faction.jonferson],
+																									[macro.struct_bt_ol_laboratory_macro, 1, faction.frantonpharma]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone77_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_bofu_plant_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_small_ships_yard_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone78_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_spacefuel_production_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_fuelstation_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone79_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_bofu_plant_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_crystal_refinement_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone80_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone81_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_bofu_plant_macro, 1, faction.chow],
+																									[macro.struct_bt_ol_weaponrycomplex_macro, 1, faction.jonferson]
+																								]
+						],
+						[macro.tzoneCluster_C_Sector11_Zone82_macro, [faction.argongovernment,faction.hereticvanguards], [
+																									[macro.struct_bt_ol_cell_refinery_macro, 1, faction.jonferson],
+																									[macro.struct_bt_ol_tech_complex_macro, 1, 'owner']
+																								]
+						],
+
+
+						[macro.tzoneCluster_D_Sector17_Zone34_macro, [faction.canteran,faction.plutarch], [ 
+																									[macro.struct_econ_weapon_ar_defence_pl_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_D_Sector17_Zone37_macro, [faction.reivers], [ 
+																									[macro.struct_bt_dv_reivers_outpost_03_macro, 1, faction.reivers]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone45_macro, [faction.canteran], [ 
+																									[macro.struct_bt_alb_fuelstation_macro, 1, faction.canteran],
+																									[macro.struct_econ_unique_ar_spp_xl_macro, 1, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone46_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_home_station_macro, 1, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone47_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_water_destillery_macro, 1, faction.canteran],
+																									[macro.struct_bt_dv_canteran_outpost_02_macro, 1, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone48_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_canteran_outpost_01_macro, 1, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone49_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_canteran_outpost_02_macro, 1, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone50_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_shipyard_macro, 1, faction.canteran],
+																									[macro.struct_bt_alb_constructionmaterial_production_macro, 1, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone51_macro, [faction.canteran], [
+																									[macro.struct_bt_dv_solar_power_plant_macro, 2, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone52_macro, [faction.canteran], [
+																									[macro.struct_bt_dv_wheat_farm_macro, 3, faction.canteran]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector18_Zone53_macro, [faction.canteran], [
+																									[macro.struct_bt_alb_metal_works_macro, 2, faction.canteran],
+																									[macro.struct_bt_alb_crystal_refinement_macro, 1, faction.canteran]
+																								]
+						],
+
+
+						[macro.tzoneCluster_D_Sector19_Zone40_macro, [faction.reivers], [ 
+																									[macro.struct_bt_dv_reivers_outpost1_02_macro, 1, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost_01_macro, 1, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost1_03_macro, 1, faction.reivers]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector19_Zone41_macro, [faction.canteran, faction.reivers], [ 
+																									[macro.struct_bt_dv_canteran_outpost_03_macro, 1, faction.canteran, faction.canteran],
+																									[macro.struct_bt_dv_reivers_outpost_01_macro, 1, faction.reivers, faction.reivers]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector19_Zone42_macro, [faction.reivers], [ 
+																									[macro.struct_bt_dv_reivers_outpost_01_macro, 1, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost1_02_macro, 1, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost1_03_macro, 1, faction.reivers]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector19_Zone43_macro, [faction.canteran, faction.reivers], [ 
+																									[macro.struct_bt_dv_canteran_outpost_02_macro, 1, faction.canteran, faction.canteran],
+																									[macro.struct_bt_dv_reivers_outpost_01_macro, 1, faction.reivers, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost_02_macro, 1, faction.reivers, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost_03_macro, 1, faction.reivers, faction.reivers]
+																								]
+						],
+						[macro.tzoneCluster_D_Sector19_Zone44_macro, [faction.reivers], [ 
+																									[macro.struct_bt_dv_reivers_outpost1_03_macro, 1, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost1_02_macro, 1, faction.reivers],
+																									[macro.struct_bt_dv_reivers_outpost_01_macro, 1, faction.reivers]
+																								]
+						],
+
+
+						[macro.tzoneCluster_D_Sector20_Zone57_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_canteran_outpost_01_macro, 1, faction.canteran]
+																								]
+						],
+
+						[macro.tzoneCluster_D_Sector20_Zone56_macro, [faction.canteran], [ 
+																									[macro.struct_bt_dv_shipyard_macro, 1, faction.canteran]
+																								]
+						],
+
+
+						[macro.tzoneCluster_B_Sector04_Zone27_macro, [faction.plutarch], [ 
+																									[macro.struct_econ_ref_ar_pmc_north_macro, 1, faction.plutarch]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector04_Zone28_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_solar_power_plant_macro, 4, faction.albionenergy]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector04_Zone29_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.landmarks_unique_ar_lonely_giant_macro, 1, faction.heartofalbion, faction.heartofalbion],					
+																									[macro.struct_bt_alb_cattle_ranch_macro, 1, faction.wholesomefoods],					
+																									[macro.struct_bt_alb_farm_complex_macro, 1, faction.wholesomefoods, faction.heartofalbion],				
+																									[macro.struct_bt_alb_farm_complex_macro, 2, faction.wholesomefoods, faction.plutarch],					
+																									[macro.struct_bt_alb_wheat_farm_macro, 1, faction.heartofalbion]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector04_Zone30_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],					
+																									[macro.struct_bt_alb_solar_power_plant_macro, 2, faction.albionenergy]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector04_Zone31_macro, [faction.plutarch,faction.heartofalbion], [ 					
+																									[macro.struct_bt_alb_cell_refinery_macro, 2, faction.albionenergy]						
+																								]
+						],
+
+
+						[macro.tzoneCluster_B_Sector04_Zone32_macro, [faction.heartofalbion, faction.plutarch], [ 
+																									[macro.struct_bt_alb_fuelstation_macro, 1, 'owner'],					
+																									[macro.struct_bt_alb_food_production_plant_macro, 2, faction.wholesomefoods],			
+																									[macro.struct_bt_hoa_shipyard_macro, 1, faction.heartofalbion, faction.heartofalbion],
+																									[macro.struct_bt_alb_shipyard_2_macro, 1, faction.plutarch, faction.plutarch]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector04_Zone33_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_food_production_complex_macro, 2, faction.wholesomefoods]
+																								]
+						],
+
+						[macro.tzoneCluster_B_Sector05_Zone19_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_drone_complex_macro, 1, 'owner'],
+																									[macro.struct_bt_hoa_shipyard_macro, 1, faction.heartofalbion, faction.heartofalbion],
+																									[macro.struct_bt_alb_shipyard_2_macro, 1, faction.plutarch, faction.plutarch]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone20_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_small_ships_complex_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_drone_factory_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone21_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_high_energy_construction_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_hightec_construction_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_laboratory_macro, 1, faction.beryll]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone22_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_laboratory_macro, 1, faction.beryll],
+																									[macro.struct_bt_alb_fuelstation_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone23_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_hightec_construction_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_metal_works_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_spice_farm_macro, 2, faction.nolimits]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone24_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_laboratory_macro, 1, faction.beryll]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone25_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_metal_works_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_tech_complex_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector05_Zone26_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_constructionmaterial_production_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_high_energy_construction_macro, 1, faction.leddaindustrial]
+																								]
+						],
+
+
+						[macro.tzoneCluster_B_Sector06_Zone11_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_weaponry_complex_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_fuelstation_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone12_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_constructionmaterial_production_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_water_destillery_macro, 1, faction.leddaindustrial]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone13_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_small_ships_yard_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_water_destillery_macro, 1, faction.leddaindustrial]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone14_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_weaponry_production_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_water_destillery_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_metal_works_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone15_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_crystal_refinement_macro, 2, 'owner'],
+																									[macro.struct_bt_alb_metal_works_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone16_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 2, faction.albionenergy]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone17_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_weaponry_production_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_medical_supplies_macro, 1, faction.nolimits]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector06_Zone18_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_medical_supplies_macro, 1, faction.nolimits],
+																									[macro.struct_bt_alb_tech_complex_macro, 1, 'owner']
+																								]
+						],
+
+
+						[macro.tzoneCluster_B_Sector07_Zone01_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_fuelstation_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_metal_works_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone02_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_metal_works_macro, 1, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone03_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_medical_supplies_macro, 2, faction.nolimits]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone04_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_weaponry_complex_macro, 1, faction.leddaindustrial],
+																									[macro.struct_bt_alb_tech_complex_macro, 1, 'owner'],
+																									[macro.struct_bt_alb_drone_factory_macro, 1, faction.leddaindustrial]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone05_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 1, faction.albionenergy],
+																									[macro.struct_bt_alb_solar_power_plant_macro, 1, faction.albionenergy]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone06_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_metal_works_macro, 2, 'owner']
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone07_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cell_refinery_macro, 2, faction.albionenergy]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone08_macro, [faction.plutarch], [ 
+																									[macro.landmarks_unique_ar_badlands_colony_macro, 1, faction.plutarch]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone09_macro, [faction.plutarch,faction.heartofalbion], [ 
+																									[macro.struct_bt_alb_cattle_ranch_macro, 1, faction.wholesomefoods],
+																									[macro.struct_bt_alb_food_production_plant_macro, 2, faction.wholesomefoods],
+																									[macro.struct_bt_alb_wheat_farm_macro, 1, faction.wholesomefoods]
+																								]
+						],
+						[macro.tzoneCluster_B_Sector07_Zone10_macro, [faction.sovereignsyndicate], [ 
+																									[macro.struct_bt_alb_warehouse_macro, 1, faction.sovereignsyndicate],
+																									[macro.struct_bt_dv_reivers_outpost_01_macro, 1, faction.sovereignsyndicate],
+																									[macro.struct_bt_dv_reivers_outpost1_03_macro, 1, faction.sovereignsyndicate]
+																								]
+						]
+					]
+				" />
+
+				<do_if value="md.$LostSectors?" chance="@md.CM_Config.Settings.$CWIR_includes_LS">
+					<include_actions ref="md.CWIR_includes_LS.CWIR_StationRebuild_LostSectors" />
+				</do_if>
+
+				<do_all exact="$checkup.count" counter="$i">
+					<find_zone name="$zone" macro="$checkup.{$i}.{1}"/>
+					<do_if value="$zone.owner" list="$checkup.{$i}.{2}">
+						<!--find_station name="$station_counter" space="$zone" multiple="true"/>
+						<set_value name="$buildlocations" exact="[($zone.buildlocations.count + $zone.npcbuildlocations.count) - $station_counter.count, $zone.freebuildlocations.count + $zone.freenpcbuildlocations.count].min" /-->
+						<set_value name="$buildlocations" exact="$zone.freebuildlocations.count + $zone.freenpcbuildlocations.count" />
+						<do_if value="$buildlocations lt 1">
+							<continue />
+						</do_if>
+						<do_all exact="$checkup.{$i}.{3}.count" counter="$j">
+							<do_if value="$checkup.{$i}.{3}.{$j}.{4}? and $zone.owner != $checkup.{$i}.{3}.{$j}.{4}">
+								<continue />
+							</do_if>
+							<find_station name="$station" space="$zone" macro="$checkup.{$i}.{3}.{$j}.{1}" multiple="true"/>
+							<do_all exact="$checkup.{$i}.{3}.{$j}.{2} - $station.count">
+								<do_if value="$buildlocations lt 1">
+									<continue />
+								</do_if>
+								<do_if value="$checkup.{$i}.{3}.{$j}.{3} == 'owner'">
+									<signal_cue_instantly cue="md.CWIR_StationConstruction.CWIR_ConstructNPCStation" param="[$zone, $checkup.{$i}.{3}.{$j}.{1}, $zone.owner, 100, 100]"/>
+								</do_if>
+								<do_else>
+									<signal_cue_instantly cue="md.CWIR_StationConstruction.CWIR_ConstructNPCStation" param="[$zone, $checkup.{$i}.{3}.{$j}.{1}, $checkup.{$i}.{3}.{$j}.{3}, 100, 100]"/>
+								</do_else>
+								<set_value name="$buildlocations" operation="subtract" />
+							</do_all>
+							<remove_value name="$station"/>								
+							<!--remove_value name="$station_counter"/-->								
+						</do_all>
+						<remove_value name="$buildlocations"/>								
+					</do_if>
+					<remove_value name="$zone"/>								
+				</do_all>
+				<remove_value name="$checkup"/>								
+			</actions>
+		</cue>
+		<cue name="CWIR_IdleCV_Cleaner" instantiate="true" namespace="this"> 
+			<conditions> 
+			   <event_game_loaded/> 
+			</conditions> 
+			<actions> 
+		
+			   <!-- Idle CVs --> 
+			   <find_ship groupname="$Builders" primarypurpose="objectpurpose.build" space="player.galaxy" multiple="true"/> 
+			   <set_value name="$count" exact="0" /> 
+			   <do_all exact="$Builders.count" counter="$Counter"> 
+				  <do_if value="($Builders.{$Counter}.pilot.command.value == null) and not (@$Builders.{$Counter}.buildmodule.buildanchor.exists) and not (@$Builders.{$Counter}.container.exists) and not (@$Builders.{$Counter}.isplayerowned)"> 
+					 <destroy_object object="$Builders.{$Counter}"/> 
+					 <set_value name="$count" operation="add" /> 
+				  </do_if> 
+			   </do_all> 
+			   <remove_value name="$Builders"/>    
+		
+			   <!-- Docked CVs --> 
+			   <find_station name="$shipyards" space="player.galaxy" functional="true" multiple="true"> 
+				  <match_content class="class.buildmodule" /> 
+			   </find_station> 
+			   <do_all exact="$shipyards.count" counter="$Counter"> 
+				  <find_dock_location container="$shipyards.{$Counter}" size="tag.dock_xl" name="$docks" multiple="true"/> 
+		
+				  <do_all exact="$docks.count" counter="$i"> 
+					 <do_all exact="$docks.{$i}.component.docked.count" counter="$Count"> 
+						<do_if value="$docks.{$i}.component.docked.{$Count}.primarypurpose == objectpurpose.build and $docks.{$i}.component.docked.{$Count}.docklink"> 
+						   <do_if value="$docks.{$i}.component.docked.{$Count}.isplayerowned"> 
+							  <start_script object="$docks.{$i}.component.docked.{$Count}.pilot" name="'player.default'"/> 
+						   </do_if> 
+						   <do_else> 
+							  <start_script object="$docks.{$i}.component.docked.{$Count}.pilot" name="'move.die'"> 
+								 <param name="byjump" value="true"/> 
+							  </start_script> 
+							  <set_value name="$count" operation="add" /> 
+						   </do_else> 
+						</do_if> 
+					 </do_all> 
+				  </do_all> 
+				  <remove_value name="$docks"/>    
+			   </do_all> 
+			   <remove_value name="$shipyards"/>    
+			   <!--<write_to_logbook category="general" text="'Destroyed idle CVs: ' + $count" chance="if $count then 100 else 0" /> -->
+			   <remove_value name="$count"/>    
+			</actions> 
+		 </cue> 
+    </cues>
+</mdscript>

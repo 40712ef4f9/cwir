@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<mdscript name="Fill_CV_Required_Resources" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="E:\Rebirth\current\libraries\md.xsd">
+  <cues>
+    <cue name="Fill_CV_Resources" instantiate="false" namespace="this">
+      <conditions>
+        <event_cue_signalled/>
+      </conditions>
+      <actions>
+        <set_value name="$CV" exact="event.param.{1}"/>
+        <set_value name="$FillPercent" exact="event.param.{2}"/>
+
+        <set_value name="$BuildModule" exact="$CV.buildmodule" />
+        <do_if value="$BuildModule">
+          <set_value name="$NeededWares" exact="$BuildModule.neededslotresources.list"/>
+
+          <set_value name="$TotalBuildCost" exact="0"/>
+          <set_value name="$ResourceCost" exact="0"/>
+
+          <do_if value="$NeededWares">
+            <do_all counter="$i" exact="$NeededWares.count">
+              <set_value name="$NeededCount" exact="$BuildModule.neededslotresources.{$NeededWares.{$i}}.count" />
+              <set_value name="$NeededWare" exact="$NeededWares.{$i}" />
+
+              <set_value name="$ResourceCost" exact="$NeededWare.averageprice * $NeededCount"/>
+              <set_value name="$TotalBuildCost" exact="$TotalBuildCost + $ResourceCost"/>
+
+              <!-- since the amount will to add will allways be a % needed if < 100 passed, don't allow small quantities to prevent completion -->
+              <set_value name="$Amount" exact="$NeededCount * ($FillPercent / 100)"/>
+              <do_if value="$Amount lt 10">
+                <set_value name="$Amount" exact="$NeededCount"/>
+              </do_if>
+              
+              <add_cargo exact="$Amount" object="$CV" ware="$NeededWare" />
+            </do_all>
+          </do_if>
+        </do_if>
+        
+        <reset_cue cue="this"/>
+      </actions>
+    </cue>
+  </cues>
+</mdscript>

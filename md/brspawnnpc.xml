@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="BRSpawnNPC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+    <cue name="BR_SpawnNPCs">
+      <conditions>
+        <event_object_changed_zone object="player.entity"/>
+		<check_value value="md.CM_Config.Settings.$Check == 1" />
+		<check_value value="md.CM_Config.Settings.$brspawnnpc == 1"/>
+      </conditions>
+      <actions>
+        <!-- set up some Config Values -->
+        <set_value name="$rRace" exact="race.argon"/>
+        <set_value name="$fFaction" exact="faction.friend"/>
+        <!-- first aquire a List of all Playerdocks in the Zone and add Specialists on them to the Group -->
+        <create_list name="$Playerdocks"/>
+        <create_group groupname="$Specialists"/>
+        <find_station name="$PlayerStations" owner="[faction.player, faction.xenon]" space="player.zone" freemissionactorslot="true" multiple="true"/>
+		
+        <do_all exact="$PlayerStations.count" counter="$i">
+          <find_object_component name="$npcs" object="$PlayerStations.{$i}" class="class.npc" owner="$fFaction" multiple="true"/>
+          <do_all exact="$npcs.count" counter="$j">
+            <do_if value="$npcs.{$j}.isspecialist">
+              <add_to_group groupname="$Specialists" object="$npcs.{$j}"/>
+            </do_if>
+          </do_all>
+          <find_dock_location name="$PlayerDocksAdd" container="$PlayerStations.{$i}" freemissionactorslot="true" multiple="true"/>
+          <do_all exact="$PlayerDocksAdd.count" counter="$j">
+            <do_if value="$PlayerDocksAdd.{$j}.numfreeactorslots gt 1">
+              <append_to_list name="$Playerdocks" exact="$PlayerDocksAdd.{$j}"/>
+            </do_if>
+          </do_all>
+        </do_all>
+        <!-- Remove excess Specialists-->
+        <do_if value="$Specialists.count gt 4">
+          <do_all exact="$Specialists.count - 4">
+            <destroy_object object="$Specialists.random"/>
+          </do_all>
+        </do_if>
+        <!-- then add Specialists until we got a total of 10, each to a random Platform -->
+        <do_all exact="4 - $Specialists.count">
+          <!-- no Playerdocks with free actorslots remaining - aborting -->
+          <do_if value="not $Playerdocks.count">
+            <break/>
+          </do_if>
+          <!-- pick a random Dock -->
+          <set_value name="$DockingBay" exact="$Playerdocks.random"/>
+          <!-- Add random Actor to it -->
+          <do_any>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistagriculture" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistaquatics" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistchemical" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistfood" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistgeophysics" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistmetals" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistpharmaceuticals" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistpowerstorage" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistprecision" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistsurfacesystems" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistweapons" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+            <create_platform_actor dockingbay="$DockingBay.component" type="entitytype.specialistpowersupply" group="br.specialengineer" name="$brActor">
+              <select race="$rRace"/>
+              <owner exact="$fFaction"/>
+            </create_platform_actor>
+          </do_any>
+          <set_remote_commable actor="$brActor" remote="true"/>
+          <set_skills_visible entity="$brActor" visible="true"/>
+          <set_skill entity="$brActor" type="boarding" min="1" max="5"/>
+          <set_skill entity="$brActor" type="combat" min="3" max="5"/>
+          <set_skill entity="$brActor" type="engineering" min="3" max="5"/>
+          <set_skill entity="$brActor" type="leadership" min="3" max="5"/>
+          <set_skill entity="$brActor" type="management" min="3" max="5"/>
+          <set_skill entity="$brActor" type="morale" min="1" max="5"/>
+          <set_skill entity="$brActor" type="navigation" min="3" max="5"/>
+          <set_skill entity="$brActor" type="science" min="3" max="5"/>
+          <!-- check if current Dock is now full and remove it from List -->
+          <do_if value="$DockingBay.numfreeactorslots lt 1">
+            <remove_value name="$Playerdocks.{$Playerdocks.indexof.{$DockingBay}}"/>
+          </do_if>
+        </do_all>
+        <!-- fill the remaining Slots with random Actors -->
+        <do_all exact="$Playerdocks.count" counter="$i">
+          <do_all exact="$Playerdocks.{$i}.numfreeactorslots">
+            <do_any>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.architect" group="br.architect" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.armsdealer" group="br.armstrader" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.commander" group="br.commander" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.defencecontrol" group="br.defence" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.dronetrader" group="br.dronetrader" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.engineer" group="br.engineer" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.manager" group="br.manager" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.marine" group="br.marine" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.pilot" group="br.pilot" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.recruitment" group="br.recruitmentofficer" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.junkdealer" group="br.junkdealer" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+			  <create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.upgradetrader" group="br.junkdealer" name="$brActor">
+                <select race="$rRace"/>
+                <owner exact="$fFaction"/>
+              </create_platform_actor>
+              <!--<create_platform_actor dockingbay="$Playerdocks.{$i}.component" type="entitytype.diplomat" group="br.diplomat" name="$brActor" >							               
+												<select race="$rRace" />
+												<owner exact="$fFaction" />									
+										</create_platform_actor>-->
+            </do_any>
+            <set_remote_commable actor="$brActor" remote="true"/>
+            <set_skills_visible entity="$brActor" visible="true"/>
+            <set_skill entity="$brActor" type="boarding" min="3" max="5"/>
+            <set_skill entity="$brActor" type="combat" min="3" max="5"/>
+            <set_skill entity="$brActor" type="engineering" min="3" max="5"/>
+            <set_skill entity="$brActor" type="leadership" min="3" max="5"/>
+            <set_skill entity="$brActor" type="management" min="3" max="5"/>
+            <set_skill entity="$brActor" type="morale" min="3" max="5"/>
+            <set_skill entity="$brActor" type="navigation" min="3" max="5"/>
+            <set_skill entity="$brActor" type="science" min="3" max="5"/>
+          </do_all>
+        </do_all>
+        <reset_cue cue="this"/>
+      </actions>
+    </cue>
+  </cues>
+</mdscript>

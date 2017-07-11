@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<aiscript name="interrupt.patrol.attacked" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="aiscripts.xsd" priority="100">
+  <params>
+    <param name="attacker"/>
+  </params>
+
+  <interrupts>
+    <library>
+      <handler name="PatrolAttackedHandler">
+        <conditions>
+          <event_object_attacked object="this.defensible"/>
+        </conditions>
+        <actions>
+          <do_if value="not global.$last_npc_notification?">
+            <set_value name="global.$last_npc_notification" exact="0"/>
+          </do_if>
+
+          <run_interrupt_script name="'interrupt.patrol.attacked'">
+            <param name="attacker" value="event.param"/>
+          </run_interrupt_script>
+
+        </actions>
+      </handler>
+    </library>
+  </interrupts>
+
+  <attention min="visible">
+    <actions>
+      <do_if value="this.hasrelation.enemy.{$attacker}">
+        <set_value name="$target" exact="$attacker" />
+        <do_if value="$target.isoperational">
+          <set_command_action commandaction="commandaction.attacking" />
+          
+          <!-- Setting shooting and flight values  -->
+          <set_value name="$ToleranceWeapon1" exact="7.0deg" />
+          <set_value name="$ToleranceWeapon2" exact="5.0deg" />
+          <select_flight_behaviour entity="this" evasive="false" result="$Behaviour" />
+          <set_value name="$MinGainDistance"  exact="700m" />
+          <set_value name="$MaxGainDistance"  exact="1400m" />
+          <!-- set an initial delay for fire missiles based on combat skill. [10, 20] with combat skill 5. [60, 120] combat skill 0-->
+          <set_value name="$delaymissiles" min="player.age + 10s * (6 - this.skill.combat)" max="player.age + 20s * (6 - this.skill.combat)" />
+          <!-- Evasion flag -->
+          <set_value name="$doevade" exact="false" />
+
+          <!-- repeat until: target dead, we are dead, target not enemy, target docked or escort far away) -->
+          <do_while value="$target.isoperational">
+
+            <!-- abort if the target no longer is an enemy or is docked-->
+            <do_if value="not this.hasrelation.enemy.{$target} or @$target.dockslot">
+              <debug_text text="this.ship.knownname + ' is not enemy to ' + $target.knownname" chance="$debugoutputchance"/>
+              <break />
+            </do_if>
+
+            <!-- not pursue target -->
+            <do_if value="not @$pursuetargets and @$pursuedistance">
+              <!-- escort distance check -->
+              <do_if value="@$escort.isoperational">
+                <do_if value="$escort.distanceto.{$target} gt $pursuedistance">
+                  <debug_text text="'target (%1) is further than %2 to escort object (%3), finish attack move'.[$target.knownname, $pursuedistance, $escort.knownname]" chance="$debugoutputchance" />
+                  <resume label="finish" />
+                </do_if>
+              </do_if>
+              <!-- pursue distance check-->
+              <do_if value="this.ship.distanceto.{$target} gt $pursuedistance">
+                <debug_text text="'this ship (%1) is further than %2 to target (%3), finish attack move'.[this.ship.knownname, $pursuedistance, $target.knownname]" chance="$debugoutputchance" />
+                <resume label="finish" />
+              </do_if>
+            </do_if>
+
+            <!-- Select flight behaviour -->
+            <select_flight_behaviour entity="this" evasive="false" result="$Behaviour" comment="selected based on combined NPC skills" />
+
+            <!-- Decide weapons to Fire -->
+            <!-- Use missile based on Combat skill. Between [10-15]s best skill, [60-90]s worst skill -->
+            <do_if value="this.ship.dps.secondary gt 0 and player.age gt $delaymissiles" >
+              <set_value name="$delaymissiles" min="player.age + 10s * (6 - this.skill.combat)" max="player.age + 15s * (6 - this.skill.combat)" />
+              <stop_shooting object="this.ship" slot="tag.primary_slot" />
+              <shoot_at object="this.ship" target="$target" additional_targets="$additionaltargets" slot="tag.secondary_slot" tolerance="$ToleranceWeapon2" locktarget="true" weapontype="combat" />
+              <!-- set special Flight behaviour for missiles -->
+              <set_value name="$Behaviour" exact="flightbehaviour.bigfight" />
+            </do_if>
+            <do_else>
+              <shoot_at object="this.ship" target="$target" additional_targets="$additionaltargets" slot="tag.primary_slot" tolerance="$ToleranceWeapon1" locktarget="true" weapontype="combat" />
+              <stop_shooting object="this.ship" slot="tag.secondary_slot" />
+            </do_else>
+
+            <!-- do a simple attack run -->
+            <debug_text text="'start attack run. D=' + this.ship.distanceto.{$target} + ' .Behaviour: '+ $Behaviour " chance="$debugoutputchance" />
+            <move_to object="this.ship" destination="$target" flightbehaviour="$Behaviour" forcesteering="true" >
+              <interrupt_after_time time="40s" comment="some flight behaviors do not finish" />
+              <interrupt>
+                <conditions>
+                  <event_object_destroyed object="$target" />
+                </conditions>
+              </interrupt>
+            </move_to>
+
+            <!-- Gain distance time based on speed and wanted distance (max 30s) -->
+            <set_value name="$gaindistancetimeout" exact="player.age + 5s + ($MaxGainDistance / (this.ship.speed + 1))s" />
+            <do_if value="$gaindistancetimeout" min="player.age + 30s">
+              <set_value name="$gaindistancetimeout" exact="player.age + 30s" />
+            </do_if>
+            <!-- try to gain distance for a new attack run -->
+            <do_while value="$target.isoperational and $gaindistancetimeout gt player.age">
+
+              <move_to object="this.ship" destination="$target" flightbehaviour="flightbehaviour.gaindistance" forcesteering="true" >
+                <interrupt_after_time time="500ms" />
+                <interrupt>
+                  <conditions>
+                    <event_object_attacked object="this.ship" />
+                    <check_value value="event.param" exact="this.ship" negate="true" />
+                  </conditions>
+                  <actions>
+                    <set_value name="$doevade" exact="true" />
+                  </actions>
+                </interrupt>
+              </move_to>
+
+              <do_if value="not $target.isoperational or $doevade">
+                <break />
+              </do_if>
+
+              <is_in_quadrant object="$target" target="this.ship" front="true" result="$beingfollowed" />
+              <do_if value="not $beingfollowed">
+                <do_if value="this.ship.distanceto.{$target} gt $MinGainDistance">
+                  <debug_text text="'target is not facing us. D=' + this.ship.distanceto.{$target}" chance="$debugoutputchance" />
+                  <break />
+                </do_if>
+              </do_if>
+              <do_elseif value="this.ship.distanceto.{$target} gt $MaxGainDistance">
+                <break />
+              </do_elseif>
+            </do_while>
+
+            <!-- After tring to gain distance, if I'm still followed: evade -->
+            <do_if value="@$beingfollowed and $target.isoperational">
+              <do_if value="this.ship.distanceto.{$target} le $MaxGainDistance">
+                <debug_text text="'target is facing us. Distance %1. Evade'.[this.ship.distanceto.{$target}]" chance="$debugoutputchance" />
+                <set_value name="$doevade" exact="true" />
+              </do_if>
+            </do_if>
+
+            <do_if value="$doevade and $target.isoperational">
+              <!-- evasive maneuver -->
+              <debug_text text="'evasive maneuver!'" chance="$debugoutputchance" />
+
+              <set_value name="$maxevadedelay" exact="player.age + 20s" />
+              <!-- try different moves -->
+              <do_while value="$doevade and player.age le $maxevadedelay">
+                <set_value name="$doevade" exact="false" />
+                <set_value name="$minevadedelay" exact="player.age + 3s" />
+
+                <select_flight_behaviour entity="this" evasive="true" result="$fb" />
+                <debug_text text="this.knownname + ': EVADE using '+ $fb + ' behaviour!.' + 'time: ' + player.age" chance="$debugoutputchance" />
+
+                <move_to object="this.ship" destination="this.ship.zone" flightbehaviour="$fb" forcesteering="true">
+                  <position object="this.ship" min="500m" max="1km"/>
+                  <interrupt_after_time time="10s"/>
+                  <interrupt>
+                    <conditions>
+                      <check_all>
+                        <event_object_attacked object="this.ship" />
+                        <check_age min="$minevadedelay"/>
+                      </check_all>
+                    </conditions>
+                    <actions>
+                      <set_value name="$doevade" exact="true" />
+                    </actions>
+                  </interrupt>
+                </move_to>
+
+              </do_while>
+            </do_if>
+
+          </do_while>
+
+          <!-- END FIGHT MOVEMENT -->
+
+          <debug_text text="'No more targets to be found'" chance="$debugoutputchance" />
+          <set_flight_behaviour object="this.ship" flightbehaviour="flightbehaviour.default" />
+          <stop_shooting object="this.ship" slot="tag.primary_slot" />
+          <stop_shooting object="this.ship" slot="tag.secondary_slot" />
+          <set_to_default_flight_control_model object="this.ship" />
+        
+        </do_if>
+      </do_if>
+      
+    </actions>
+  </attention>
+</aiscript>

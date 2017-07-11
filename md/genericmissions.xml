@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- Conquer_mod v018s -->
+	<add sel="//do_if[@value='typeof $OfferLocation == datatype.componentslot']" pos="before"> 
+		<do_if value="$Station.macro.ismacro.[macro.struct_bt_alb_outpost_macro, macro.struct_at_xen_xenon_outpost_macro] or $Station.owner == faction.neutral"> 
+            <set_value name="$OfferLocation" exact="null" /> 
+        </do_if> 
+    </add>
+</diff>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diff>
+	<replace sel="//library[@name='Start_Default_Script']/actions/do_if/do_if/do_else/do_if/do_if[@value='$tradeships.count']/do_else/start_script[@name=&quot;'move.escort'&quot;]/@name">'BR.move.escort'</replace>
+	<replace sel="//library[@name='Start_Default_Script']/actions/do_else/do_if[@value='($subordinate.dps.all) gt 50.0f or $subordinate.primarypurpose == objectpurpose.fight']/start_script[@name=&quot;'move.escort'&quot;]/@name">'BR.move.escort'</replace>
+</diff>

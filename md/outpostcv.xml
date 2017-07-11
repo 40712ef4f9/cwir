@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="OutpostCV" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\MODS_JSGME\libraries\md.xsd">
+<!-- Conquer_mod v020 -->
+<!-- CWIR -->
+<!-- todo: weapons on build sequences -->
+ <cues>
+	 <cue name="OutpostCV_T" instantiate="true" >
+		 <conditions>
+			 <event_cue_signalled cue="md.Guidance.NewTarget"/>
+		 </conditions>
+		 <actions>
+			<do_if value="(event.param.{1}.isclass.space) and (event.param.count == 2) and (event.param.{2} == 0)">
+				<start_conversation actor="player.copilot" conversation="OutpostCVMenu" convparam="event.param.{1}"/>
+			</do_if>
+			<do_else>
+				<cancel_cue cue="OutpostCV_T"/>
+			</do_else>
+		 </actions>	 										
+	 </cue>												 
+   
+	 <cue name="OutpostCV_M" instantiate="true" namespace="this">
+		<conditions>
+		  <event_conversation_started conversation="OutpostCVMenu" /> 
+		</conditions>
+		<actions>
+<!-- CWIR only -->	
+		<!--<!{1}**<show_help position="12" log="true" force="true" duration="12s" custom="' Reserve: \n %1 Probe(s) \n %2 Cr.'.[player.entity.inventory.{ware.inv_probe}.count, player.money/1Cr]" />**{1}>
+		<show_help position="12" log="true" force="true" duration="12s" custom="{40002,43}.[player.entity.inventory.{ware.inv_probe}.count, player.money/1Cr]" />
+				<!{1}**<add_player_choice_sub text="'Build Outpost at my zone'" position="left" section="gCreateCV" choiceparam="[player.ship.zone, faction.player]" selectable="player.money ge 10000000Cr"/>**{1}>
+				<add_player_choice_sub text="{40002,36}" position="left" section="gCreateCV" choiceparam="[player.ship.zone, faction.player]" selectable="player.money ge 10000000Cr"/>
+				<!{1}**<add_player_choice_sub text="'Build Outpost at chosen zone'" position="bottom_left" section="gCreateCV" choiceparam="[event.param2, faction.player]" selectable="player.money ge 10000000Cr"/>**{1}>
+				<add_player_choice_sub text="{40002,37}" position="bottom_left" section="gCreateCV" choiceparam="[event.param2, faction.player]" selectable="player.money ge 10000000Cr"/>
+<!{1}** CWIR only **{1}>
+
+<!{1}** For CM must go to HyperDrive menu at the botton **{1}>	
+				<!{1}**<add_player_choice_sub text="'Drop Probe at my zone'" section="gSendProbe" position="right" choiceparam="player.ship.zone" selectable="player.entity.inventory.{ware.inv_probe}.count gt 0" />**{1}>
+				<add_player_choice_sub text="{40002,38}" section="gSendProbe" position="right" choiceparam="player.ship.zone" selectable="player.entity.inventory.{ware.inv_probe}.count gt 0" />
+				<!{1}**<add_player_choice_sub text="'Send Probe at chosen zone'" section="gSendProbe" position="bottom_right" choiceparam="event.param2" selectable="player.entity.inventory.{ware.inv_probe}.count gt 0" />**{1}>
+				<add_player_choice_sub text="{40002,39}" section="gSendProbe" position="bottom_right" choiceparam="event.param2" selectable="player.entity.inventory.{ware.inv_probe}.count gt 0" />-->
+<!-- For CM must go to HyperDrive menu at the botton -->		
+
+<!-- opcv destroy test only -->	
+				<!--<add_player_choice_sub text="'Destroy OPCV only at chosen zone'" position="top_left" section="gCreateDestroyCV" choiceparam="[event.param2, faction.player, 0]" />
+				<add_player_choice_sub text="'Destroy OPCV and OP at chosen zone'" position="top_right" section="gCreateDestroyCV" choiceparam="[event.param2, faction.player, 1]"/>-->
+<!-- opcv destroy test only -->					
+
+		</actions>										
+	  </cue>
+	  
+	<cue name="OutpostCV_DestroyTest" instantiate="true" namespace="this">
+		<conditions>
+		<check_any>
+			<event_conversation_next_section sectionprefix="gCreateDestroyCV"/>
+			<event_cue_signalled/>
+		</check_any>	
+		</conditions>
+		<actions>
+			<signal_cue cue="md.Guidance.EndGuidance"/>
+			<set_value name="$BuildZone" exact="event.param2.{1}" />		
+			<set_value name="$Faction" exact="event.param2.{2}" />
+			<set_value name="$FlagOP" exact="event.param2.{3}" />
+			
+			<do_if value="$FlagOP">
+				<find_station name="$OP" space="$BuildZone" functional="true" owner="faction.player" macro="macro.struct_bt_alb_outpost_macro" multiple="true"/>
+				<do_if value="@$OP.count gt 0" >
+					<do_all exact="$OP.count" counter="$k">				
+						<destroy_object object="$OP.{$k}" explosion="true"/>
+					</do_all>
+				</do_if>
+			</do_if>
+			
+		</actions>
+		<cues>
+			<cue name="OPCV_DestroyTest" >
+			 <delay exact="5s" />
+             <actions>
+				<find_ship name="$OPCV" space="player.galaxy" macro="macro.units_size_xl_builder_outpost_macro" multiple="true"/>
+				<do_all exact="$OPCV.count" counter="$i">				
+					<do_if value="@$OPCV.{$i}.pilot.command.param == $BuildZone or @$OPCV.{$i}.zone == $BuildZone" >
+						<destroy_object object="$OPCV.{$i}" explosion="true"/>
+					</do_if>	
+				</do_all>		
+			 </actions>
+			</cue>
+		 </cues>
+        </cue>
+			 		
+	<cue name="OutpostCV_C1" instantiate="true" namespace="this">
+		<conditions>
+		<check_any>
+			<event_conversation_next_section sectionprefix="gCreateCV"/>
+			<event_cue_signalled/>
+		</check_any>	
+		</conditions>
+		<actions>
+		
+
+
+		
+		<do_if value="@event.param2.{2}">
+			<signal_cue cue="md.Guidance.EndGuidance"/>
+			<set_value name="$BuildZone" exact="event.param2.{1}" />		
+			<set_value name="$Faction" exact="event.param2.{2}" />
+			
+			<set_value name="$Flag" exact="0"/>
+			<!--<set_value name="$Flag" exact="1"/>-->
+			<!-- check if player meet the right conditions to build an Outpost -->
+			<!-- conditions: unique owner of military l or xl in a zone, no enemy stations or stronghold present, zone ownership must be enemy, own or null -->		
+			<create_list name="$Owners"/>
+			<do_if value="not $BuildZone.istemporaryzone and $BuildZone.name != {20005,200} and $BuildZone.name != {20006,301}" >	  
+				<find_ship name="$zoneShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$BuildZone" multiple="true">
+					<match_any>
+						<match primarypurpose="objectpurpose.fight"/>
+						<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+						<!-- CWIR only -->
+						<match macro="macro.units_size_l_pir_container_03_macro"/>
+						<!-- CWIR only -->
+					</match_any>				
+				</find_ship>
+				<do_if value="@$zoneShips.count" >
+					<do_all exact="$zoneShips.count" counter="$j">				
+						<set_value name="$zs_owner" exact="$zoneShips.{$j}.owner" />
+						<do_if value="not $Owners.indexof.{$zs_owner}">
+							<append_to_list name="$Owners" exact="$zs_owner" />
+						</do_if>
+					</do_all>
+					<do_if value="$Owners.count == 1 and $Owners.{1} == faction.player" >
+					
+						<find_station name="$Stations" space="$BuildZone" functional="true" multiple="true">
+							<match owner="faction.ownerless" negate="true"/>		
+						</find_station>
+						
+						
+						<set_value name="$Flag1" exact="1" /> 
+						<do_if value="@$Stations.count gt 0" >
+							<do_all exact="$Stations.count" counter="$k">										
+								<do_if value="$Stations.{$k}.owner.hasrelation.enemy.{$Owners.{1}} or $Stations.{$k}.macro == macro.struct_bt_alb_outpost_macro or $Stations.{$k}.macro == macro.struct_at_xen_xenon_outpost_macro or $Stations.{$k}.owner == $Owners.{1}">
+									<set_value name="$Flag1" exact="0" />
+								</do_if>
+							</do_all>
+						</do_if>		
+						<do_if value="$Flag1 and (@$BuildZone.owner.hasrelation.enemy.{$Owners.{1}} or $BuildZone.owner == $Owners.{1} or $BuildZone.owner == null) and player.money ge 10000000Cr" >
+							<set_value name="$Flag" exact="1" />
+						</do_if>
+					</do_if>
+				</do_if>	
+			</do_if>			
+		</do_if>			
+		<do_else>
+			<set_value name="$BuildZone" exact="event.param.{1}" />		
+			<set_value name="$Faction" exact="event.param.{2}" />
+			<set_value name="$Flag" exact="1"/> 
+		</do_else>
+		
+		<set_value name="$CVtype" exact="if $Faction == faction.xenon then macro.units_size_l_xenon_outk_macro else macro.units_size_xl_builder_outpost_macro"/>
+		<!--<set_value name="$CVtype" exact="if $Faction == faction.xenon then macro.units_size_xl_builder_outpost_macro else macro.units_size_xl_builder_outpost_macro"/>-->
+			
+		<find_ship name="$OPCV" space="player.galaxy" macro="$CVtype" multiple="true"/>
+		
+		<do_all exact="$OPCV.count" counter="$i">
+				
+	<!-- just for debug, to be commented  -->				
+			<!--<show_help position="12" duration="15s" custom="' opcv destination %1  \n opcv faction %2 \n opcv actual zone %3.'.[@$OPCV.{$i}.pilot.command.param.name, @$OPCV.{$i}.owner, @$OPCV.{$i}.zone.name]" />-->
+	<!-- just for debug, to be commented  -->	
+	
+			<do_if value="@$OPCV.{$i}.pilot.command.param == $BuildZone or (@$OPCV.{$i}.zone == $BuildZone and @$OPCV.{$i}.pilot.command.value == null)" >
+				<set_value name="$Flag" exact="0"/>
+			</do_if>
+		</do_all>
+		
+
+		
+		<set_value name="$BuildLocation" exact="null"/>		
+		<do_if value="$Flag == 1">	
+
+			<set_value name="$BuildMacro" exact="if $Faction == faction.xenon then macro.struct_at_xen_xenon_outpost_macro else macro.struct_bt_alb_outpost_macro" />
+			<create_list name="$BuildPlanList"/>
+			<!--<append_to_list name="$BuildPlanList" exact="['a',1]"/>-->
+			<!--<append_to_list name="$BuildPlanList" exact="['f',3]"/>-->
+			<!--<append_to_list name="$BuildPlanList" exact="['f',1]"/>-->
+			
+			<do_if value="$BuildZone.freebuildlocations.count gt 0" >
+				<set_value name="$BuildLocation" exact="$BuildZone.freebuildlocations.random"/>
+			</do_if>
+			<do_if value="$BuildZone.freenpcbuildlocations.count gt 0 and $Faction != faction.player">
+				<set_value name="$BuildLocation" exact="$BuildZone.freenpcbuildlocations.random"/>
+			</do_if>
+
+			<set_value name="$FactionCrew" exact="$Faction" />				  
+			<do_if value="$Faction == faction.player">
+				<set_value name="$FactionCrew" exact="faction.canteran" />
+			</do_if>
+
+			<set_value name="$RefShipyard" exact="null" />
+			<set_value name="$CreateCVZone" exact="null" />
+			<create_list name="$Shipyards"/>
+	 		<create_list name="$ShipyardDist"/>
+			<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+				<match_content class="class.buildmodule" />
+				<match owner="$Faction"/>
+			</find_station>
+			
+			<do_if value="@$shipyard.count gt 0" >
+				<do_all exact="$shipyard.count" counter="$k">		
+					<append_to_list name="$Shipyards" exact="$shipyard.{$k}" />
+					<append_to_list name="$ShipyardDist" exact="$shipyard.{$k}.distanceto.{$BuildZone}"/>
+				</do_all>
+				<set_value name="$RefShipyard" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}" />
+				<set_value name="$CreateCVZone" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}.zone" />
+			</do_if>
+			
+			<clear_list list="$Shipyards"/>
+			<clear_list list="$ShipyardDist"/>
+			<do_if value="not $CreateCVZone">
+				<find_zone name="$CVZone" space="player.galaxy" tempzone="false" multiple="true">
+					<match class="class.highway" negate="true"/>
+					<match macro="$BuildZone.macro" negate="true" />
+					<match owner="$Faction"/>
+				</find_zone>			
+				<do_all exact="$CVZone.count" counter="$k">		
+					<do_if value="$CVZone.{$k}.cluster == $BuildZone.cluster">
+						<set_value name="$CreateCVZone" exact="$CVZone.{$k}" />
+						<break />
+					</do_if>
+					<do_else>
+						<set_value name="$CreateCVZone" exact="$CVZone.{$k}" />
+					</do_else>	
+				</do_all>
+			</do_if>
+			<do_if value="not $CreateCVZone">
+				<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+					<match_content class="class.buildmodule" />
+					<match_relation faction="$Faction" relation="neutral" comparison="ge"/>
+				</find_station>
+				
+				<do_if value="@$shipyard.count gt 0" >
+					<do_all exact="$shipyard.count" counter="$k">		
+						<append_to_list name="$Shipyards" exact="$shipyard.{$k}" />
+						<append_to_list name="$ShipyardDist" exact="$shipyard.{$k}.distanceto.{$BuildZone}"/>
+					</do_all>				
+					<set_value name="$RefShipyard" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}" />
+					<set_value name="$CreateCVZone" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}.zone" />
+				</do_if>
+				
+			</do_if>
+			<do_if value="not $CreateCVZone or @$BuildLocation.child != null" >
+				<set_value name="$BuildLocation" exact="null"/>
+				
+				
+				
+			</do_if>
+		</do_if>
+		
+		
+
+	<do_if value="$BuildLocation and $Flag">
+          <debug_text text="'Constructing ' + $BuildMacro.name + ' in ' + $BuildLocation.component.knownname + ' (' + $BuildLocation.offset + ')' "/>
+		  
+		  
+		<do_if value="@event.param2.{2} == faction.player">
+			<set_value name="$PreviousPlayerMoney" exact="player.money "/>
+			<set_value name="$money" exact="10000000Cr"/>
+			<do_if value="(player.money - $money) lt 0">							
+				<set_value name="$money" exact="player.money"/>
+				<reward_player money="player.money*-1" />
+			</do_if>
+			<do_else>
+				<reward_player money="$money*-1" />
+			</do_else>
+			
+			<set_value name="$Loc" exact="$BuildZone.name + ', ' + $BuildZone.sector.knownname + ', ' + $BuildZone.cluster.knownname"/>
+			<!--<write_to_logbook category="general" text="'=== Account Update === \n An Outpost CV was purchased for 10 million Cr and was sent to %1. \n Final account: %2'.[$Loc, player.money.formatted.{'%s %Cr'}]"/>-->
+			<write_to_logbook category="general" text="{40002,40}.[$Loc, player.money/1Cr]"/>
+			
+			
+          <substitute_text text="$message" source="{1015,7}">
+            <replace string="'$MONEY$'" with="$money.formatted.{'%s'}" />
+            <replace string="'$MONEY2$'" with="player.money.formatted.{'%s'}" />
+          </substitute_text>
+          <show_notification caption="{1015,6}"
+                             details="[$message]"
+                             icon="achievement_money_down"
+                             queued="true"
+                             sound="ui_mon_eve_money_down"
+		 />
+		 </do_if> 
+		<get_safe_pos result="$safepos" zone="$CreateCVZone" radius="1km"/>  
+		<do_if value="@$RefShipyard">
+		 <get_safe_pos result="$safepos" zone="$CreateCVZone" radius="1km" object="$RefShipyard"/>
+		</do_if>
+		
+		<!--<do_if value="$Faction.hasrelation.member.{faction.player}">-->
+			<set_value name="$Loc" exact="$CreateCVZone.name + ', ' + $CreateCVZone.sector.knownname + ', ' + $CreateCVZone.cluster.knownname"/>
+			<!--<show_notification caption="'=== Spy Net Report ==='" details="' \n\n A %1 OPCV from %2 is going to build an Outpost at %3 .'.[$Faction.name, $Loc, $BuildZone.name]" timeout="20s" queued="true" priority="8" sound="notification_generic" >-->
+			<!--<show_notification caption="{40002,21}" details="{40002,41}.[$Faction.name, $Loc, $BuildZone.name]" timeout="20s" queued="true" priority="8" sound="notification_generic" >-->
+			<!--<interaction text="''" param="$CreateCVZone" param2="'GiveMeTheMap'" />-->
+			<!--</show_notification>-->						
+			<!--<write_to_logbook category="general" text="'=== Spy Net Report === \n\n A %1 OPCV from %2 is going to build an Outpost at %3 .'.[$Faction.name, $Loc, $BuildZone.name]"/>-->
+			<write_to_logbook category="tips" text="{40002,42}.[$Faction.name, $Loc, $BuildZone.name]"/>
+	<!-- Map / Probe intervention start -->
+			 <!--<find_object name="$Object" class="[class.ship, class.station]" functional="true" space="$CreateCVZone" owner="faction.player" multiple="true"/>
+			 <do_if value="@$Object.count le 0" chance="100" >
+				<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="$CreateCVZone">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot>
+						<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+					</pilot>
+					<safepos radius="5km"/>
+				</create_ship>
+				<start_script object="$Probe.pilot" name="'move.idle'">
+					<param name="MaxDistance" value="20km" />
+                </start_script>
+			 </do_if>-->
+	<!-- Map / Probe intervention end -->
+		<!--</do_if>-->
+
+		<!-- Create buildership, necessary for constructing a station -->
+		  <create_ship name="$Ship" macro="$CVtype" zone="$CreateCVZone">
+            <owner exact="$Faction" overridenpc="true"/>
+            <pilot>
+				<select faction="faction.xenon" tags="tag.commander"/>
+            </pilot>
+            <defence>
+               <select faction="faction.xenon" tags="tag.defencecontrol"/>
+            </defence>
+            <engineer>
+                <select faction="faction.xenon" tags="tag.engineer"/>
+            </engineer>						  
+            <units>
+				<unit category="unitcategory.welder" mk="1" exact="100" />
+				<unit category="unitcategory.defence" mk="1" exact="15"/>
+            </units>
+            <cargo>
+                <wares list="[ware.fuelcells]">
+					<fillpercent min="25" max="30"/>
+                </wares>
+            </cargo>
+				<drop ref="ship_large_civilian"/>
+				<position value="$safepos"/>
+            </create_ship>
+			<!--<add_cargo object="$Ship" ware="ware.energycells" exact="3962"/>-->
+			
+          <!-- Prepare Buildership for build - by adding architect and finding the BuildModule -->
+          <find_dock_location name="$dock" container="$Ship" size="tag.dock_p"/>
+          <do_if value="$dock"> 
+		  
+			<create_cue_actor name="$architect" cue="this">
+              	<select faction="faction.xenon" tags="tag.architect"/>
+              	<owner exact="$Faction" />
+            </create_cue_actor>
+		  
+            <set_entity_type entity="$architect" type="entitytype.architect"/>
+            <add_actor_to_platform actor="$architect" dockingbay="$dock.component"/>
+            <assign_architect actor="$architect" object="$Ship"/>
+          </do_if>
+		  
+		  
+          <find_object_component name="$BuildModule" object="$Ship" class="class.buildmodule"/>
+		  
+		  <set_buildmodule_macro object="$Ship" macro="$BuildMacro" />
+		  
+		  <signal_cue_instantly cue="MoveBuilderShip_cue" param="[$Ship, $BuildModule, $architect, $BuildLocation, $BuildMacro, $BuildPlanList]"/>
+		  
+		  <remove_cue_actor actor="$architect" cue="this" />	
+		  
+	<!-- just for debug, to be commented or deleted -->		
+		  <!--<write_to_logbook category="general" text="'=== MoveBuilderShip cue signalled  === \n Ship %1 \n ship owner %2 \n Zone %3 .'.[$Ship.name, $Ship.owner, $BuildLocation.component.knownname]"/>-->
+	<!-- just for debug, to be commented or deleted -->		
+		
+		</do_if>
+        <do_else>
+		
+<!-- just for debug, to be commented or deleted -->			
+		<!--<write_to_logbook category="general" text="'=== Outpost fail by Buildlocation or flag === \n %1 \n %2 \n %3 .'.[$BuildLocation, $Flag, @$RefShipyard.zone.name]"/>-->
+<!-- just for debug, to be commented or deleted -->
+	
+			<do_if value="@event.param2.{2}">
+				<!--<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />-->
+			</do_if>
+          <assert value="false" text="'No buildlocation for ' + $BuildMacro.name "/>
+          <!--<reset_cue cue="OutpostCV_C1"/>-->
+		  <!--<cancel_cue cue="OutpostCV_C1"/>-->
+        </do_else>
+      </actions>
+	</cue>	
+	
+	 <!-- param = [ ship, buildmodule, architect, buildloc, buildmacro, buildplanlist ] -->
+	<cue name="MoveBuilderShip_cue" instantiate="true" namespace="this" version="2">
+          <conditions>
+            <event_cue_signalled />
+          </conditions>		  
+          <actions>            
+			<set_value name="$Ship" exact="event.param.{1}" />
+			<set_value name="$BuildModule" exact="event.param.{2}" />
+			<set_value name="$actor" exact="event.param.{3}" />
+			<set_value name="$BuildLocation" exact="event.param.{4}" />
+			<set_value name="$BuildMacro" exact="event.param.{5}" />
+			<set_value name="$BuildPlanList" exact="event.param.{6}" />
+			<set_value name="$ShipDestroyFlag1" exact="0"/>
+			
+	<!-- just for debug, to be commented or deleted -->			
+		<!--<write_to_logbook category="general" text="'=== MoveBuilderShip_cue started === \n %1 \n %2 \n %3 \n %4 \n %5 \n %6 \n %7 \n %8.'.[$Ship.name, $Ship.owner, $actor.name,  $BuildLocation.component.knownname, $BuildMacro, $BuildPlanList, $Ship.pilot.name, $BuildLocation.child ]"/>-->
+	<!-- just for debug, to be commented or deleted -->		
+			
+		<!--<claim_build_location buildlocation="$BuildLocation" object="$Ship" />-->
+            <set_buildmodule_macro object="$Ship" macro="$BuildMacro" />
+            <start_script object="$Ship.pilot" name="'move.buildership'">
+              <param name="destination" value="$BuildLocation"/>
+              <param name="macro" value="$BuildMacro"/>
+            </start_script>
+			<claim_build_location buildlocation="$BuildLocation" object="$actor.ship" />
+			
+          </actions>
+          <patch sinceversion="2" state="complete">
+            <set_value name="$CheckWaypoints" exact="true"/>
+          </patch>
+          <cues>
+            
+			<cue name="BuilderShipDestroyed1" >
+              <conditions>
+                <event_object_destroyed object="$Ship"/>
+				<check_value value="$ShipDestroyFlag1 == 0" />
+              </conditions>
+              <actions>
+			  
+		<!-- just for debug, to be commented or deleted -->			  
+			  <!--<write_to_logbook category="general" text="'== MoveBuilderShip OPCV Destroyed1 ==\n Ship %1 \n ship owner %2 \n ship zone %3 \n Buildlocation %4.'.[$Ship.name, $Ship.owner, $Ship.zone.name, $BuildLocation.component.knownname]"/>-->
+		<!-- just for debug, to be commented or deleted -->		
+	  		  
+				<remove_build_location_claim buildlocation="$BuildLocation" />
+				<disconnect_from_build_location object="$Ship" />
+				<reset_cue cue="MoveBuilderShip_cue"/>            
+				<destroy_object object="$actor" />				
+              </actions>
+            </cue>
+            
+            <cue name="BuilderShipFailed">
+              <conditions>
+                <event_object_signalled object="$Ship" param="'move.buildership'" param2="false"/>
+              </conditions>
+			  <delay exact="1s" />
+              <actions>
+			  
+		<!-- just for debug, to be commented or deleted -->					  
+			 <!-- <write_to_logbook category="general" text="'=== MoveBuildShip Failed to arrive  === \n Ship %1 \n ship owner %2 \n Buildmodule %3 \n actor %4 \n CHILD %5 .'.[$Ship.name, $Ship.owner, $BuildModule, $actor, $BuildLocation.child]"/>-->
+		<!-- just for debug, to be commented or deleted -->		
+	  			  
+                <!--Do not abort anything as it could have been given a new command-->
+                <reset_cue cue="MoveBuilderShip_cue"/>
+				<remove_build_location_claim buildlocation="$BuildLocation" />
+              </actions>
+            </cue>
+            
+            <cue name="BuilderShipArrived">
+              <conditions>
+                <check_any>
+                  <event_object_signalled object="$Ship" param="'move.buildership'" param2="true"/>                 
+                  <!--Below conditions are for savegame compatibility. See $CheckWaypoints-->
+                  <check_all>
+                    <event_object_arrived_at_waypoint object="$Ship" lastwaypoint="true" />
+                    <check_value value="$CheckWaypoints?"/>
+                    <check_value value="$BuildLocation.child == null" comment="Build location still free" />
+					<check_value value="$BuildLocation.component == $Ship.zone" />
+                    <check_value value="$Ship.distanceto.{$Position} lt 2km" />
+                  </check_all>
+                </check_any>
+              </conditions>
+			   <delay exact="1s" />
+              <actions>
+                <set_value name="$checkdelay" exact="0s" />
+                <set_value name="$obstructioncheck" exact="true" />
+                <add_blocked_area blocker="$actor" zone="$actor.zone">
+                  <position value="$BuildLocation.offset" space="$actor.zone" />
+                  <rotation value="$BuildLocation.rotation" />
+                  <boundingbox max="$BuildMacro.boundingbox.max" center="$BuildMacro.boundingbox.center" />
+                </add_blocked_area>
+				
+		<!-- just for debug, to be commented or deleted -->				
+				<!--<write_to_logbook category="general" text="'=== MoveBuildShip Arrived === \n Ship %1 \n ship owner %2 \n ship zone %3 \n Buildlocation %4.'.[$Ship.name, $Ship.owner, $Ship.zone.name, $BuildLocation.component.knownname]"/>-->
+		<!-- just for debug, to be commented or deleted -->		
+					
+              </actions>
+              <cues>
+                <cue name="CheckBuildLocationObstructed_Build">
+                  <delay exact="3s" />
+                  <actions>
+                    <do_if value="$BuildLocation.child != null">
+                      <!-- TODO: abort cleanly -->
+                    </do_if>
+                    <do_else>
+                      <check_is_area_obstructed name="$obstructed" zone="$actor.zone" excluded="$Ship" macro="$BuildMacro">
+                        <position value="$BuildLocation.offset" space="$actor.zone" />
+                        <rotation value="$BuildLocation.rotation" />
+                        <boundingbox max="$BuildMacro.boundingbox.max" center="$BuildMacro.boundingbox.center" />
+                      </check_is_area_obstructed>
+                      <do_if value="$obstructed">
+                        <debug_text text="'Build area obstructed, waiting 10 seconds'" />
+
+                        <do_if value="player.primaryship.distanceto.{$Ship}" max="5km">
+                          <show_help log="true" line="2001" comment="Bounding box is reserved for station."/>
+                          <show_help log="true" line="2002" comment="Construction will start when all ships leave the area."/>
+                        </do_if>
+
+                        <set_value name="$checkdelay" exact="10s" />
+                        <reset_cue cue="this" />
+                      </do_if>
+                      <do_else>
+                        <debug_text text="'Build area free, building'" />
+                        <debug_text text="'Connecting %1 (actor %2) to build location %3'.[$Ship.name, $actor.name, $BuildLocation]" />
+                        <remove_value name="$obstructioncheck" />
+                        <remove_blocked_area blocker="$actor" zone="$actor.zone" />
+                        <remove_from_player_squad object="$actor.container" />
+                        <connect_to_build_location object="$actor.container" buildlocation="$BuildLocation"/>
+						<!--<connect_to_build_location object="$Ship" buildlocation="$BuildLocation"/>-->
+						
+						 <!--<debug_text text="'Build area free 2, building'" />-->
+						 
+
+						<!--<!{1}** Cheat resources **{1}>
+						<!{1}**<do_if value="$CheatResourcesPercent" min="1">**{1}>
+						<!{1}**<find_object_component name="$BuildModule" object="$Ship" class="class.buildmodule"/>**{1}>
+				<set_value name="$CheatResourcesPercent" exact="100"/>
+				<set_value name="$NeededWares" exact="$BuildModule.neededslotresources.list"/>
+				<do_all exact="$NeededWares.count" counter="$Counter">
+					<add_cargo object="$Ship" ware="$NeededWares.{$Counter}" exact="$BuildModule.neededslotresources.{$NeededWares.{$Counter}}.count * $CheatResourcesPercent / 100"/>
+				</do_all>
+						<!{1}**</do_if>**{1}>-->
+						
+						<create_build_plan buildplan="$Buildplan" macro="$BuildMacro" buildplanlist="$BuildPlanList" />
+						
+						<construct_station object="$actor.container" macro="$BuildMacro" buildlocation="$BuildLocation" buildplan="$Buildplan" updatebuild="true"/>
+		<!-- <signal_cue_instantly cue="md.Fill_CV_Required_Resources.Fill_CV_Resources" param="[$Ship, 100]"/>	-->			
+						
+						<set_value name="$ShipDestroyFlag1" exact="1"/>
+						<signal_cue_instantly cue="InitBuiltStation_cue" param="[$Ship, $actor, $BuildLocation]"/>
+						<reset_cue cue="MoveBuilderShip_cue"/>
+						
+                      </do_else>
+                    </do_else>
+                  </actions>
+                </cue>
+              </cues> 
+            </cue>
+          </cues>
+        </cue>
+		
+    <cue name="InitBuiltStation_cue" instantiate="true" namespace="this">
+      <conditions>
+        <event_cue_signalled/>
+      </conditions>
+      <actions>
+        <set_value name="$Ship" exact="event.param.{1}"/>
+		<set_value name="$Station" exact="$Ship.buildanchor" />
+		<set_value name="$architect" exact="event.param.{2}" />
+		<set_value name="$BuildLocation" exact="event.param.{3}" />
+		<set_value name="$BuildFinished" exact="0"/>
+        <do_if value="not $Ship.exists">
+          <cancel_cue cue="InitBuiltStation_cue"/>
+        </do_if>
+        <debug_text text="'waiting for plot station ' + $Station.knownname + ' to be complete. Buildership: ' + $Ship + $Ship.knownname"/>
+      </actions>
+      <cues>  
+        <cue name="InitBuiltStation_Finished">
+          <conditions>
+            <event_build_finished object="$Ship"/>
+          </conditions>
+          <actions>
+            <set_value name="$BuildFinished" exact="1"/>
+			
+				<create_cue_actor name="$defencemanager" cue="this">
+              		<select faction="faction.xenon" tags="tag.defencecontrol"/>
+              		<owner exact="$Ship.owner" />
+            	</create_cue_actor>
+				<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+            	<assign_defence_manager object="$Station" actor="$defencemanager"/>
+				<start_script object="$defencemanager" name="'fight.attack.object.station'" />				
+				<create_cue_actor name="$engineer" cue="this">
+              		<select faction="faction.xenon" tags="tag.engineer"/>
+              		<owner exact="$Ship.owner" />
+            	</create_cue_actor>
+				<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+				<assign_engineer object="$Station" actor="$engineer" />            
+				<start_script object="$engineer" name="'engineer.ai'" />
+				<create_ai_unit object="$Station" />
+						
+	<!-- CWIR intervention to avoid lot of mines -->
+				<find_object name="$residual_mines" space="$Ship.zone" macro="macro.props_wps_mine_02_macro" multiple="true"/>
+                <do_if value="@$residual_mines.count" >
+					<do_all exact="$residual_mines.count" counter="$h">		
+						<destroy_object object="$residual_mines.{$h}" explosion="false" />
+					</do_all>
+				</do_if>
+				
+	<!-- create minefield in a Safe position around the Stronghold -->
+				<do_all min="md.CM_Config.Settings.$MineMin" max="md.CM_Config.Settings.$MineMax">
+					<set_value name="$Yw" min="1deg" max="360deg"/>
+					<set_value name="$Pt" min="1deg" max="360deg"/>
+					<set_value name="$Rl" min="1deg" max="360deg"/>		
+          			<create_object groupname="$Mines" zone="$Ship.zone" macro="macro.props_wps_mine_02_macro" owner="$Ship.owner">
+						<safepos object="$Station" min="3000m" max="6500m" radius="600m"/>
+						<rotation yaw="$Yw" pitch="$Pt" roll="$Rl"/>
+          			</create_object>
+        		</do_all>				
+				<do_if value="$Ship.owner.hasrelation.member.{faction.player}" > 
+					<set_known object="$Station" known="true" />
+				</do_if>
+				<signal_cue_instantly cue="Timeout_cue" param="[$Ship, $Station, $architect, $BuildLocation]"/>
+				<reset_cue cue="InitBuiltStation_cue"/>
+          </actions>		  
+        </cue>
+		
+		<cue name="BuilderShipDestroyed2" >
+              <conditions>
+            <event_object_destroyed object="$Ship"/>
+			<check_value value="$BuildFinished == 0" />
+          </conditions>
+			  <actions>
+
+			<!-- just for debug, to be commented or deleted -->				  
+				<!--<write_to_logbook category="general" text="'== InitBuilt OPCV Destroyed2 ==\n Ship %1 \n ship owner %2 \n ship zone %3 \n Buildlocation %4.'.[$Ship.name, $Ship.owner, $Ship.zone.name, $BuildLocation.component.knownname]"/>-->
+			<!-- just for debug, to be commented or deleted -->		
+					
+				<destroy_object object="$Station" explosion="true"/>
+				<remove_build_location_claim buildlocation="$BuildLocation" />
+				<disconnect_from_build_location object="$Ship" />
+				<reset_cue cue="InitBuiltStation_cue"/>
+				<destroy_object object="$architect" />				
+				
+			  </actions>
+            </cue>		
+      </cues>
+    </cue>
+	 	
+		
+   <cue name="Timeout_cue" instantiate="true" namespace="this">
+	<conditions>
+		<event_cue_signalled />
+	</conditions>
+	<actions>
+		<set_value name="$Ship" exact="event.param.{1}" />
+		<set_value name="$Station" exact="event.param.{2}"/>
+		<set_value name="$Actor" exact="event.param.{3}" />
+		<set_value name="$BuildLocation" exact="event.param.{4}" />
+		<set_value name="$ShipDestroyFlag3" exact="0"/>
+	</actions>
+	<cues>
+
+		<cue name="Timer" >
+			<delay exact="1min" />
+			<actions>
+				<do_if value="$Ship.exists">
+					<disconnect_from_build_location object="$Ship" />
+					<signal_objects object="$Ship" param="'stop order'" />
+					<destroy_object object="$Actor" />
+	<!-- just for debug, to be commented or deleted -->						
+					<!--<set_value name="$Loc" exact="$Station.zone.name + ', ' + $Station.zone.sector.knownname + ', ' + $Station.zone.cluster.knownname"/>			
+					<show_help position="12" duration="15s" custom="' %1 Outpost destroyed/move die at %2 by timeout.'.[$Station.owner, $Loc]" />
+					<write_to_logbook category="general" text="'=== OPCV Destroyed/Move Die === \n\n A %1 OPCV destroyed at %2 by timeout. .'.[$Station.owner, $Loc]"/>-->
+	<!-- just for debug, to be commented or deleted -->		
+				
+					<do_if value="$Ship.owner == faction.player" >
+						<set_owner object="$Ship.pilot" faction="faction.neutral" />					
+						<set_owner object="$Ship" faction="faction.neutral" />					
+					</do_if>
+					<do_if value="$Ship.owner != faction.xenon" >			
+						<!--<destroy_object object="$Actor" />	-->
+						<start_script object="$Ship.pilot" name="'move.die'">
+							<param name="byjump" value="true"/>
+						</start_script>
+					</do_if>
+					<do_else>
+						<start_script object="$Ship.pilot" name="'move.patrol'"/>
+					</do_else>				
+				</do_if>
+				<reset_cue cue="Timeout_cue"/>
+			</actions>
+		</cue>			
+	
+		<cue name="BuilderShipDestroyed3" >
+			<conditions>
+				<event_object_destroyed object="$Ship"/>
+				<check_value value="$ShipDestroyFlag3 == 0" />
+			</conditions>
+            <actions>
+			
+		<!-- just for debug, to be commented or deleted -->		
+				<!--<write_to_logbook category="general" text="'== Timeout OPCV Destroyed3 ==\n Ship %1 \n ship owner %2 \n ship zone %3 \n Buildlocation %4.'.[$Ship.name, $Ship.owner, $Ship.zone.name, $BuildLocation.component.knownname]"/>-->
+		<!-- just for debug, to be commented or deleted -->
+		
+				<remove_build_location_claim buildlocation="$BuildLocation" />
+				<disconnect_from_build_location object="$Ship" />
+				<destroy_object object="$Actor" />				
+				<reset_cue cue="Timeout_cue"/>
+				
+			<!-- future code to destruct all unfinished modules and childs start-->
+				<!--<find_station name="$OP" space="$Ship.zone" functional="true" owner="faction.player" macro="macro.struct_bt_alb_outpost_macro"/>
+				<do_if value="$OP">					
+					<!{1}**<find_object_component object="$OP" name="$Component" multiple="true" hullinvulnerable="false" surfaceelement="false" class="class.destructible" indestructible="false"/>**{1}>
+					<find_object_component object="$OP" name="$Component" surfaceelement="false" multiple="true" />
+					<do_all exact="$Component.count" counter="$k">
+					
+					<write_to_logbook category="general" text="'=== Timeout OPCV Destroyed3 COMPONENT === \n Station %1 \n Station zone: %2 \n Station faction: %3 \n comp count: %4 \n this comp hull: %5 \n this comp name %6 \n this comp macro %7 \n isconstruction %8 .'.[$OP.name, $OP.zone.name, $OP.owner, $Component.count, $Component.{$k}.hull, $Component.{$k}.name, $Component.{$k}.macro, $Component.{$k}.isconstruction]"/>
+					
+						<do_if value="$Component.{$k}.isconstruction">
+							<destroy_object object="$Component.{$k}" explosion="true"/>			
+						</do_if>
+					</do_all>
+				</do_if>	-->
+			<!-- future code to destruct all unfinished modules and childs end -->
+			
+			</actions>
+        </cue>		
+	</cues>	
+   </cue>					
+ </cues>
+</mdscript>

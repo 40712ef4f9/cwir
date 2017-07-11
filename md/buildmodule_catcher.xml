@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="BuildModuleCatcher" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+<!-- Conquer_mod v020 -->
+<!-- BuildModuleCatcher : a cooperzinc code adapted by Rubini. All credits to him-->
+
+ <cues>
+
+   <cue name="BuildModulecheck" instantiate="false">
+		<conditions>
+	  <check_any>
+		<event_player_created />
+		<event_cue_signalled cue="md.Setup.GameStart" />
+	  </check_any>
+         </conditions>
+	<actions>
+ 		<!--<show_notification caption="'=== Automated Build Routine Started ==='" details="' \n \n  Main Trade Computer .... online! \n  Argon MK5 Builder ... online! \n  Drones Interface .... online! \n \n  We are ready, Sir!'.[]" timeout="15s" queued="false" priority="5" sound="notification_generic"/>-->
+ 		<write_to_logbook category="general" text="'=== Automated Build Routine Started === \n \n Main Trade Computer .... online! \n Argon MK5 Builder ... online! \n Drones Interface .... online! \n \n We are ready, Sir!'.[]"/>
+	</actions>
+   </cue>
+
+   <!--<cue name="BuildModuleCatcher" instantiate="true" namespace="this" checktime="player.age + 1min" checkinterval="150s">-->
+    <cue name="BuildModuleCatcher" instantiate="true" namespace="this" checktime="player.age + 1min" checkinterval="240s">
+   <conditions>
+		<cue_is_complete cue="md.Setup.Start"/>		
+		<check_value value="md.CM_Config.Settings.$Check == 1" />
+		<check_value value="md.CM_Config.Settings.$Builder == 1"/>		
+  	</conditions>
+	<delay min="30s" max="210s"/>
+	<actions>
+		<set_value name="$ships" exact="null" />
+		<find_ship name="$ships" multiple="true" owner="faction.player" functional="true" space="player.galaxy">
+			<match primarypurpose="objectpurpose.build"/>
+			<match class="class.ship_xs" negate="true"/>
+		</find_ship>
+		<do_all exact="$ships.count" counter="$i">
+	       <set_value name="$CurShip" exact="$ships.{$i}"/>
+			  <do_if value="@$CurShip and $CurShip.buildmodule.exists">
+				<set_value name="$BuildModule" exact="$CurShip.buildmodule" />
+				<set_value name="$NeededWares" exact="$BuildModule.neededslotresources.list"/>							
+				<set_value name="$actor" exact="$CurShip.architect"/>
+				<set_value name="$Expenses" exact="0"/> 
+				<set_value name="$TradeFactor" exact="0"/> 
+				<set_value name="$Factor" exact="0"/> 
+				<set_value name="$PriceFactor" exact="0"/> 
+				<set_value name="$TimerFactor" exact="0"/> 
+			   <!-- the line below is just a trigger, make it gt -500000000 for full use of the mod -->
+			   <do_if value="$actor and ($actor.money gt md.CM_Config.Settings.$BuilderMoney)">
+				<!-- calc necessary funds for start building -->
+				<do_all counter="$Counter" exact="$NeededWares.count">
+					<set_value name="$NeededCount" exact="$BuildModule.neededslotresources.{$NeededWares.{$Counter}}.count" />
+					<set_value name="$NeededWare" exact="$NeededWares.{$Counter}" />
+					<do_if value="$NeededCount gt 0">
+						<set_value name="$Expenses" exact="$Expenses + ($NeededCount * $NeededWares.{$Counter}.maxprice)" />
+					</do_if>
+				</do_all>
+
+				<!-- if it is necessary to buy something and have enough money, then try to buy, add and pay for needed wares per individual type -->
+				<set_value name="$Loc" exact="$CurShip.zone.name + ', ' + $CurShip.zone.sector.knownname + ', ' + $CurShip.zone.cluster.knownname"/>
+				<do_if value="$Expenses gt 0 and ($actor.money - $Expenses) ge 0">
+				
+					<create_cue_actor cue="this" name="$MoneyActor">
+						<select faction="faction.canteran"/>
+					</create_cue_actor>
+					<set_actor_account actor="$MoneyActor" />
+								
+					<do_all counter="$Counter" exact="$NeededWares.count">
+						<set_value name="$NeededCount" exact="$BuildModule.neededslotresources.{$NeededWares.{$Counter}}.count" />
+						<set_value name="$NeededWare" exact="$NeededWares.{$Counter}" />
+
+						<!-- initialize trade simulator -->
+						<!-- use Architect skills to define TradeFactor, Pricefactor and TimerFactor -->
+						<!-- lower skills tend to acquire wares more slowly and with high prices -->
+						<!-- high skills tend to acquire wares more quickly and with lower prices -->
+						<!--<set_value name="$ArchSkill" exact="(($actor.skill.engineering + $actor.skill.navigation + ($actor.skill.management * 2)) / 4.0f)i" />-->
+						<set_value name="$ArchSkill" exact="(($actor.skill.engineering + $actor.skill.navigation + $actor.skill.management) / 3.0f)i" />
+
+						<!--define TradeFactor and its threshold, arch influence only for "by all" situation-->
+						<set_value name="$TradeFactor" min="0" max="4" />
+						<!--<set_value name="$TradeFactordebug" exact="$TradeFactor" />-->
+
+						<do_if value="$TradeFactor == 0">
+   							<set_value name="$Factor" min="2" max="(9 - $ArchSkill)" />
+							<do_if value="$Factor ge 3">
+   								<set_value name="$TradeFactor" min="1" max="3" />
+							</do_if>
+						</do_if>
+
+						<set_value name="$Threshold" min="9" max="21" />
+						<do_if value="($NeededCount gt $Threshold) and ($TradeFactor gt 0)">
+							<set_value name="$TradeFactor" exact="($NeededCount / $TradeFactor)i" />
+						</do_if>
+						<do_else>
+							<set_value name="$TradeFactor" exact="0" />
+						</do_else>
+
+						<!-- PriceFactor threshold between 7 - 11 interval -->
+						<set_value name="$PriceFactor" min="(11 - $ArchSkill)" max="(15 - $ArchSkill)" />
+						<do_if value="$PriceFactor lt 7">
+   							<set_value name="$PriceFactor" exact="7" />
+						</do_if>
+						<do_elseif value="$PriceFactor gt 11">
+   							<set_value name="$PriceFactor" exact="11" />
+						</do_elseif>
+
+						<!-- limit ArchSkill to three levels for TimerFactor chance 40% 60% 80% --> 		
+ 						<set_value name="$TimerFactor" min="(6 - $ArchSkill)" max="(10 - $ArchSkill)" />
+						<do_if value="$ArchSkill lt 3">
+   							<set_value name="$TimerFactor" exact="$TimerFactor - ($ArchSkill - 3)" />
+ 						</do_if>
+
+						<!-- uncomment these two lines below to deactivate the trade simulator -->
+						<!--<set_value name="$TradeFactor" exact="0" />-->
+						<!--<set_value name="$PriceFactor" exact="10" />-->
+									
+						<!-- uncomment the line below to deactivate the TimeFactor -->
+						<!--<set_value name="$TimerFactor" exact="1" />-->
+
+						<!-- check if a ware really needs to be added this cycle and apply the TimeFactor -->
+						<!-- small correction into the calc was made to provide a more precise result on screen as an workaround for rounding values issue -->
+						<do_if value="$NeededCount gt 0 and $TimerFactor le 4">
+							<set_value name="$Expenses" exact="$actor.money + 50 - ((($NeededCount - $TradeFactor) * $NeededWares.{$Counter}.maxprice * $PriceFactor*10) / 1Cr)" />
+							<do_if value="($NeededCount - $TradeFactor) gt 0 and $Expenses ge 0">
+								<add_cargo exact="($NeededCount - $TradeFactor)" object="$CurShip" ware="$NeededWare" />
+								
+								<!--<show_notification caption="'  === Automated Build Report ==='" details="' \n  Ship: %1 \n  Loc: %9 \n  Architect initial account: %3 \n\n  Buy: %4  %5  for %6/unit.\n  Payable: %7 \n\n  Architect final account: %8'.[$CurShip.name, $actor.name, $actor.money.formatted.{'%s %Cr'}, ($NeededCount - $TradeFactor), $NeededWare, (($NeededWares.{$Counter}.maxprice * $PriceFactor) / 10 + 50).formatted.{'%s %Cr'}, ((($NeededCount - $TradeFactor) * $NeededWares.{$Counter}.maxprice * $PriceFactor) / 10 + 50).formatted.{'%s %Cr'}, $Expenses.formatted.{'%s %Cr'}, $Loc]"  timeout="15s" queued="true" priority="8" sound="notification_generic"/>-->
+							<!--	<write_to_logbook category="upkeep" text="'   === Automated Build Report ===   \n  Ship: %1 \n  Loc: %9 \n  Architect: %2 \n  Architect initial account: %3 \n \n  Buy: %4  %5  for %6/unit.\n  Payable: %7 \n \n  Architect final account: %8'.[$CurShip.name, $actor.name, $actor.money.formatted.{'%s %Cr'}, ($NeededCount - $TradeFactor), $NeededWare, (($NeededWares.{$Counter}.maxprice * $PriceFactor) / 10 + 50).formatted.{'%s %Cr'}, ((($NeededCount - $TradeFactor) * $NeededWares.{$Counter}.maxprice * $PriceFactor) / 10 + 50).formatted.{'%s %Cr'}, $Expenses.formatted.{'%s %Cr'}, $Loc]"/>	-->								
+								
+									<transfer_money from="$actor" to="$MoneyActor" amount="45 + (($NeededCount - $TradeFactor) * $NeededWares.{$Counter}.maxprice * $PriceFactor*10) / 1Cr" />
+						
+							</do_if>
+						</do_if>
+					</do_all>
+					
+					<remove_actor_account actor="$MoneyActor" transfer="false" />
+					<remove_cue_actor actor="$MoneyActor" cue="this" />
+					<destroy_object object="$MoneyActor" />
+					
+				</do_if>
+				<do_elseif value="$Expenses gt 0">
+
+				<!--<show_notification caption="'   === Automated Build Report ==='" details="'\n  Build operations HALTED! \n \n  Ship: %1 \n  Loc: %5 \n  Architect: %2 \n  Architect actual account: %3 \n\n  Transfer at least MORE %4 for your Architect.'.[$CurShip.name, $actor.name, $actor.money.formatted.{'%s %Cr'}, ($Expenses - $actor.money).formatted.{'%s %Cr'}, $Loc]"  timeout="20s" queued="false" priority="7" sound="notification_generic"/>-->
+				<write_to_logbook category="upkeep" text="'   === Automated Build Report === \n  Build operations HALTED! \n \n  Ship: %1 \n  Loc: %5 \n  Architect: %2 \n  Architect actual account: %3 \n \n  Transfer at least MORE %4 for your Architect.'.[$CurShip.name, $actor.name, $actor.money.formatted.{'%s %Cr'}, ($Expenses - $actor.money).formatted.{'%s %Cr'}, $Loc]"/>
+
+				</do_elseif>
+			  </do_if>
+			 </do_if>
+		</do_all>
+	</actions>
+   </cue>
+ </cues>
+</mdscript>

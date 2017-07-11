@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="new_ship_station" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+ <cues>
+	 <cue name="init_new_shipyards" version="1">
+	<conditions>
+        <check_any>
+          <event_game_loaded />
+          <event_cue_signalled cue="md.Setup.GameStart"/>
+        </check_any>
+      </conditions>
+  	<actions>
+	<find_station name="$hoashipyard" space="player.galaxy" owner="faction.heartofalbion" >
+						<match_any>							
+							<match macro="macro.struct_bt_hoa_shipyard_macro" />							
+						</match_any>
+					</find_station>
+				
+				<add_default_production_wares object="$hoashipyard" lowerlimit="50" upperlimit="74"/>
+				<signal_objects param2="$hoashipyard" param="'init station'" object="player.galaxy"/>
+				
+				
+	</actions>
+	</cue>
+	
+
+	 <cue name="init_new2_shipyards" version="1">
+	<conditions>
+        <check_any>
+          <event_game_loaded />
+          <event_cue_signalled cue="md.Setup.GameStart"/>
+        </check_any>
+      </conditions>
+  	<actions>	
+				
+				<find_station name="$pmcshipyard" space="player.galaxy" owner="faction.plutarch" >
+						<match_any>							
+							<match macro="macro.struct_bt_alb_shipyard_2_macro" />							
+						</match_any>
+					</find_station>
+					
+				
+				<add_default_production_wares object="$pmcshipyard" lowerlimit="50" upperlimit="74"/>
+				<signal_objects param2="$pmcshipyard" param="'init station'" object="player.galaxy"/>
+				
+				<!--<find_station name="$om1shipyard" space="player.galaxy" owner="faction.argongovernment" >
+						<match_any>							
+							<match macro="macro.struct_bt_ol_shipyard_2_macro" />							
+						</match_any>
+					</find_station>
+					
+				
+				<add_default_production_wares object="$om_shipyard" lowerlimit="50" upperlimit="74"/>
+				<signal_objects param2="$om_shipyard" param="'init station'" object="player.galaxy"/>-->
+	</actions>
+	</cue>
+	
+	<cue name="set_hv_stations" version="1">
+  	<conditions>
+        <check_any>
+          <event_game_loaded />
+          <event_cue_signalled cue="md.Setup.GameStart"/>
+        </check_any>
+      </conditions>
+  	<actions>
+			<find_station name="$hevstations" space="player.galaxy" owner="faction.hereticvanguards" />
+			<add_default_production_wares object="$hevstations" lowerlimit="25" upperlimit="74"/>
+				<signal_objects param2="$hevstations" param="'init station'" object="player.galaxy"/>
+		
+	</actions>
+    </cue>
+	
+	<cue name="destroy_wrecks" version="1">
+  	<conditions>
+        <check_any>
+          <event_game_loaded />
+          <event_cue_signalled cue="md.Setup.GameStart"/>
+        </check_any>
+      </conditions>
+  	<actions>
+			<find_object name="$wrecks" multiple="true" checkoperational="false" space="player.galaxy"/>
+			<set_value name="$count" exact="0" /> 					
+					<do_all exact="$wrecks.count" counter="$i">      
+						<do_if value="$wrecks.{$i}.iswreck">
+						<destroy_object object="$wrecks.{$i}" explosion="false" />
+						<set_value name="$count" operation="add" /> 
+						</do_if>
+					</do_all>
+          <remove_value name="$wrecks"/>    
+		  <write_to_logbook category="general" text="'Destroyed wrecks: ' + $count" chance="if $count then 100 else 0" />
+		  <remove_value name="$count"/>
+             
+		
+	</actions>
+    </cue>
+	
+		
+ </cues>
+</mdscript>

@@ -1,0 +1,2864 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="job_suppression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+	<cues>
+
+		<!-- This script will calc a faction strength - an index based on its total number of stations and zone owned -->
+		<!-- and will apply this index as a probability to enable jobs in jobs.xml-->
+
+		<cue name="Faction_strength" instantiate="true" namespace="this" checkinterval="160min">
+			<delay min="240s"/>
+			<actions>
+				<set_value name="$text" exact="'=== Spy Net Report! === \n Faction Strenght! \n'" />
+				<set_value name="$Main_Factions" exact="[faction.albionenergy, faction.beryll, faction.heartofalbion, faction.leddaindustrial, faction.nolimits, faction.plutarch, faction.sovereignsyndicate, faction.wholesomefoods, faction.canteran, faction.argongovernment, faction.xenon, faction.familyryak, faction.reivers, faction.hereticvanguards]"/>
+
+				<do_all exact="$Main_Factions.count" counter="$i">
+					<set_value name="$ThisFaction" exact="$Main_Factions.{$i}" />	
+
+					<!-- Omicron Lyrae THIS IS STILL ALL A WORK IN PROGRESS -->
+					<do_if value="$ThisFaction == faction.aquarius">
+						<set_job_active job="'aqu_universe_water_large'" activate="true"/>					
+					</do_if>
+
+					<do_elseif value="$ThisFaction == faction.chow">
+						<set_job_active job="'BlackRain_cho_trader_food_large'" activate="true"/>
+						<set_job_active job="'BlackRain_cho_agricultural_large'" activate="true"/>
+						<set_job_active job="'BlackRain_cho_water_large'" activate="true"/>
+					</do_elseif>
+
+					<!--<do_elseif value="$ThisFaction == faction.fijiargnu">
+            		<set_job_active job="'can_fighter_wing17'" activate="true"/>
+					<set_job_active job="'can_fighter_wing18'" activate="true"/>
+					<set_job_active job="'can_lightfleet_glaring'" activate="true"/>
+				</do_if>-->
+
+					<!-- NONE YET FOR THIS FACTION -->
+					<!--<do_elseif value="$ThisFaction == faction.frantonpharma">
+            		<set_job_active job="'can_fighter_wing17'" activate="true"/>
+					<set_job_active job="'can_fighter_wing18'" activate="true"/>
+					<set_job_active job="'can_lightfleet_glaring'" activate="true"/>
+				</do_elseif>-->
+
+					<do_elseif value="$ThisFaction == faction.jonferson">
+						<!-- Civilian Ships -->
+						<set_job_active job="'jss_special_construction_trader1'" activate="true"/>
+						<set_job_active job="'jonferson_trader_guest_arg_large'" activate="true"/>
+						<set_job_active job="'BlackRain_jss_trader_hightech_large'" activate="true"/>					
+						<set_job_active job="'BlackRain_jss_trader_shiptech_large'" activate="true"/>
+						<set_job_active job="'BlackRain_jss_trader_weapontech_large'" activate="true"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'jss_mercfleet_defense'" activate="true"/>
+						<set_job_active job="'JSS_fighter_patrol'" activate="true"/>					
+					</do_elseif>				
+
+					<do_elseif value="$ThisFaction == faction.sonraenergy">
+						<set_job_active job="'BlackRain_se_trader_energy_large'" activate="true"/>					
+					</do_elseif>  
+
+
+					<!-- check this faction stations amount -->
+					<find_station name="$ThisFactionStations" space="player.galaxy" functional="true" multiple="true">
+						<match owner="$ThisFaction"/>
+						<match macro="macro.struct_bt_alb_warehouse_macro" negate="true" comment="this is to avoid outposts used on CM"/>
+						<match macro="macro.struct_bt_alb_outpost_macro" negate="true" comment="this is to avoid outposts used on CM"/>
+						<match macro="macro.struct_at_xen_xenon_outpost_macro" negate="true" comment="this is to avoid outposts used on CM"/>
+					</find_station>
+
+					<!-- check this faction zones owned amount  -->
+					<find_zone name="$ThisFactionZones" space="player.galaxy" tempzone="false" multiple="true" >
+						<match class="class.highway" negate="true"/>
+						<match owner="$ThisFaction"/>
+					</find_zone>
+
+					<!-- calc this faction strength, max 20, an arbitrary number to try to equalize all factions -->				
+					<set_value name="$ThisFactionStrength" exact="@$ThisFactionStations.count + @$ThisFactionZones.count" />
+					<do_if value="$ThisFactionStrength gt 20" >
+						<set_value name="$ThisFactionStrength" exact="20" comment=" this is an arbitrary max number to equalize all factions"/>
+					</do_if>
+
+					<!-- setting some layers -->
+					<set_value name="$P05" exact="1"/>
+					<set_value name="$P10" exact="1"/>
+					<set_value name="$P15" exact="1"/>
+					<set_value name="$P20" exact="1"/>
+					<set_value name="$P40" exact="1"/>
+					<set_value name="$P60" exact="1"/>
+					<set_value name="$P80" exact="1"/>
+					<do_if value="$ThisFactionStrength le 1" >
+						<set_value name="$P05" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 2" >
+						<set_value name="$P10" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 3" >
+						<set_value name="$P15" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 4" >
+						<set_value name="$P20" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 8" >
+						<set_value name="$P40" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 12" >
+						<set_value name="$P60" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 14" >
+						<set_value name="$P70" exact="0"/>
+					</do_if>
+					<do_if value="$ThisFactionStrength le 16" >
+						<set_value name="$P80" exact="0"/>
+					</do_if>
+
+					<!-- Albion Factions -->
+					<do_if value="$ThisFaction == faction.albionenergy">
+						<!-- Civilian Ships -->
+						<set_job_active job="'aes_collector_hydrogen_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_collector_hydrogen_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_collector_ions_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_collector_ions_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_collector_plasma_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_collector_plasma_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_trader_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_trader_energy_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_universe_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'aes_universe_energycells_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'aes_squadron_woodland'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_concealed'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_steady'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>					
+						<set_job_active job="'aes_squadron_crossroads'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_distress'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_cuspid'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_water'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_auspicious'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_distant'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_azure'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'aes_squadron_shady'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<!-- TURN OFF -->
+						<!-- Civilian Ships -->
+						<set_job_active job="'aes_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_universe_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_universe_energycells_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'aes_squadron_woodland'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_concealed'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_steady'" activate="false" chance="$ThisFactionStrength * 0"/>					
+						<set_job_active job="'aes_squadron_crossroads'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_distress'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_cuspid'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_water'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_auspicious'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_distant'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_azure'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'aes_squadron_shady'" activate="false" chance="$ThisFactionStrength * 0"/>
+					</do_if>
+					<do_elseif value="$ThisFaction == faction.beryll">
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'ber_squadron_buried'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'ber_squadron_third'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'ber_squadron_forlorn'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<!-- Civilian Ships -->
+						<set_job_active job="'beryll_collector_hydrogen_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_collector_hydrogen_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_collector_ions_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_collector_ions_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_collector_plasma_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_collector_plasma_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_trader_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_trader_energy_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_trader_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_trader_hightech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_trader_refined_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'beryll_trader_refined_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<!-- TURN OFF -->
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'ber_squadron_buried'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ber_squadron_third'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ber_squadron_forlorn'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- Civilian Ships -->
+						<set_job_active job="'beryll_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'beryll_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+					</do_elseif>			
+					<do_elseif value="$ThisFaction == faction.heartofalbion">
+						<!-- Civilian Ships -->
+						<set_job_active job="'hoa_trader_gas_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_drones_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_energy_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_hightech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_shiptech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_shiptech_extended_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_trader_weapontech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_universe_gases'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_universe_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_universe_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'hoa_universe_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>            		
+						<!-- Far Out -->
+						<set_value name="$GM" exact="0" />
+						<set_value name="$GM1" exact="100" />
+						<set_value name="$TBE" exact="0" comment="set variable to zero"/>
+						<set_value name="$TBE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$EXH" exact="0" comment="set variable to zero"/>
+						<set_value name="$EXH1" exact="100" comment="set variable to 100"/>
+						<!-- Ascendancy -->
+						<set_value name="$BT" exact="0" comment="set variable to zero"/>
+						<set_value name="$BT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SV" exact="0" comment="set variable to zero"/>
+						<set_value name="$SV1" exact="100" comment="set variable to 100"/>
+						<set_value name="$LIM" exact="0" comment="set variable to zero"/>
+						<set_value name="$LIM1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FWM" exact="0" comment="set variable to zero"/>
+						<set_value name="$FWM1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FIW" exact="0" comment="set variable to zero"/>
+						<set_value name="$FIW1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FOA" exact="0" comment="set variable to zero"/>
+						<set_value name="$FOA1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SED" exact="0" comment="set variable to zero"/>
+						<set_value name="$SED1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TTD" exact="0" comment="set variable to zero"/>
+						<set_value name="$TTD1" exact="100" comment="set variable to 100"/>
+						<!-- Inner World -->
+						<set_value name="$CUSP" exact="0" comment="set variable to zero"/>
+						<set_value name="$CUSP1" exact="100" comment="set variable to 100"/>
+						<set_value name="$CROSS" exact="0" comment="set variable to zero"/>
+						<set_value name="$CROSS1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SINI" exact="0" comment="set variable to zero"/>
+						<set_value name="$SINI1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FROZ" exact="0" comment="set variable to zero"/>
+						<set_value name="$FROZ1" exact="100" comment="set variable to 100"/>
+						<set_value name="$WATE" exact="0" comment="set variable to zero"/>
+						<set_value name="$WATE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$PERIO" exact="0" comment="set variable to zero"/>
+						<set_value name="$PERIO1" exact="100" comment="set variable to 100"/>
+						<set_value name="$COLD" exact="0" comment="set variable to zero"/>
+						<set_value name="$COLD1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DISTR" exact="0" comment="set variable to zero"/>
+						<set_value name="$DISTR1" exact="100" comment="set variable to 100"/>
+						<!-- Lookout Alpha -->
+						<set_value name="$WRECK" exact="0" comment="set variable to zero"/>
+						<set_value name="$WRECK1" exact="100" comment="set variable to 100"/>
+						<set_value name="$AZB" exact="0" comment="set variable to zero"/>
+						<set_value name="$AZB1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SMOKE" exact="0" comment="set variable to zero"/>
+						<set_value name="$SMOKE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$STRAIN" exact="0" comment="set variable to zero"/>
+						<set_value name="$STRAIN1" exact="100" comment="set variable to 100"/>
+						<set_value name="$AE" exact="0" comment="set variable to zero"/>
+						<set_value name="$AE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DWARF" exact="0" comment="set variable to zero"/>
+						<set_value name="$DWARF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FUME" exact="0" comment="set variable to zero"/>
+						<set_value name="$FUME1" exact="100" comment="set variable to 100"/>
+						<set_value name="$BEAR" exact="0" comment="set variable to zero"/>
+						<set_value name="$BEAR1" exact="100" comment="set variable to 100"/>
+						<set_value name="$EVEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$EVEN1" exact="100" comment="set variable to 100"/>
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+							<!-- Far Out -->
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone27_macro">
+								<set_value name="$TBE" exact="100" />
+								<set_value name="$TBE1" exact="0" />							
+							</do_if>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone32_macro">
+								<set_value name="$GM" exact="100" />
+								<set_value name="$GM1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone29_macro">
+								<set_value name="$EXH" exact="100" />
+								<set_value name="$EXH1" exact="0" />							
+							</do_elseif>
+							<!-- Ascendancy -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone19_macro">
+								<set_value name="$SV" exact="100" />
+								<set_value name="$SV1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone20_macro">
+								<set_value name="$FIW" exact="100" />
+								<set_value name="$FIW1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone21_macro">
+								<set_value name="$BT" exact="100" />
+								<set_value name="$BT1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone22_macro">
+								<set_value name="$FOA" exact="100" />
+								<set_value name="$FOA1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone23_macro">
+								<set_value name="$SED" exact="100" />
+								<set_value name="$SED1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone24_macro">
+								<set_value name="$TTD" exact="100" />
+								<set_value name="$TTD1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone25_macro">
+								<set_value name="$LIM" exact="100" />
+								<set_value name="$LIM1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone26_macro">
+								<set_value name="$FWM" exact="100" />
+								<set_value name="$FWM1" exact="0" />							
+							</do_elseif>
+							<!-- Inner World -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone11_macro">
+								<set_value name="$WATE" exact="100" />
+								<set_value name="$WATE1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone12_macro">
+								<set_value name="$FROZ" exact="100" />
+								<set_value name="$FROZ1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone13_macro">
+								<set_value name="$CUSP" exact="100" />
+								<set_value name="$CUSP1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone14_macro">
+								<set_value name="$DISTR" exact="100" />
+								<set_value name="$DISTR1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone15_macro">
+								<set_value name="$COLD" exact="100" />
+								<set_value name="$COLD1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone16_macro">
+								<set_value name="$CROSS" exact="100" />
+								<set_value name="$CROSS1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone17_macro">
+								<set_value name="$SINI" exact="100" />
+								<set_value name="$SINI1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone18_macro">
+								<set_value name="$PERIO" exact="100" />
+								<set_value name="$PERIO1" exact="0" />							
+							</do_elseif>
+							<!-- Lookout Alpha -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone01_macro">
+								<set_value name="$WRECK" exact="100" />
+								<set_value name="$WRECK1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone02_macro">
+								<set_value name="$AZB" exact="100" />
+								<set_value name="$AZB1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone03_macro">
+								<set_value name="$SMOKE" exact="100" />
+								<set_value name="$SMOKE1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone04_macro">
+								<set_value name="$STRAIN" exact="100" />
+								<set_value name="$STRAIN1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone05_macro">
+								<set_value name="$AE" exact="100" />
+								<set_value name="$AE1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone06_macro">
+								<set_value name="$DWARF" exact="100" />
+								<set_value name="$DWARF1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone07_macro">
+								<set_value name="$FUME" exact="100" />
+								<set_value name="$FUME1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone08_macro">
+								<set_value name="$BEAR" exact="100" />
+								<set_value name="$BEAR1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone09_macro">
+								<set_value name="$EVEN" exact="100" />
+								<set_value name="$EVEN1" exact="0" />							
+							</do_elseif>
+						</do_all>
+						<!-- Military Ships in FAR OUT-->
+						<set_job_active job="'hoa_battlestar_defalbion'" activate="true" chance="$GM"/>										
+						<set_job_active job="'hoa_lightfleet_defalbion'" activate="true" chance="$GM" />
+						<set_job_active job="'hoa_lightfleet_defalbion_2'" activate="true" chance="$GM" />
+						<set_job_active job="'hoa_lightfleet_defGM'" activate="true" chance="$GM" />
+						<set_job_active job="'hoa_carrierfleet_defGM'" activate="true" chance="$GM" />
+						<set_job_active job="'hoa_carrierfleet_defalbion'" activate="true" chance="$GM" />
+						<set_job_active job="'hoa_carrierfleet_defalbion_2'" activate="true" chance="$GM" />
+						<set_job_active job="'hoa_squadron_defend04'" activate="true" chance="$GM" />
+
+						<do_if value="$GM and $TBE1">
+							<set_job_active job="'hoa_carrierfleet_attTBE'" activate="true" />						
+						</do_if>
+						<do_if value="$GM and $EXH">
+							<set_job_active job="'hoa_battlestar_defexhaust'" activate="true" />
+							<set_job_active job="'hoa_lightfleet_defEXH'" activate="true" />
+						</do_if>
+						<!-- Military Ships in Ascendancy -->
+						<do_if value="$P40 and $TBE and $BT1">
+							<set_job_active job="'hoa_carrierfleet_attascendJB'" activate="true" />						
+						</do_if>					
+						<do_if value="$P40 and $TBE and $BT">
+							<set_job_active job="'hoa_carrierfleet_attascend'" activate="true" />
+							<set_job_active job="'hoa_squadron_att05'" activate="true" />
+							<set_job_active job="'hoa_lightfleet_att05'" activate="true" />
+						</do_if>
+						<do_if value="$TBE and $BT and $SV and $FIW and $LIM and $FIW and $FOA and $SED and $TTD">
+							<set_job_active job="'hoa_battlestar_defSV'" activate="true" />
+							<set_job_active job="'hoa_battlestar_defBT'" activate="true" />						
+							<set_job_active job="'hoa_carrierfleet_attinnerJB'" activate="true" />						
+						</do_if>					
+						<!-- Military ships in Inner World -->
+						<do_if value="$TBE and $BT and $SV and $FIW and $LIM and $FIW and $FOA and $SED and $TTD and $CUSP">
+							<set_job_active job="'hoa_squadron_att06'" activate="true" />
+							<set_job_active job="'hoa_lightfleet_att06'" activate="true" />						
+							<set_job_active job="'hoa_carrierfleet_attinner'" activate="true" />						
+						</do_if>
+						<do_if value="$WATE and $FROZ and $DISTR and $CUSP and $COLD and $CROSS and $SINI and $PERIO">
+							<set_job_active job="'hoa_battlestar_defCUSP'" activate="true" />
+							<set_job_active job="'hoa_carrierfleet_attlookoutJB'" activate="true" />											
+						</do_if>	
+						<!-- Military ships in Lookout Alpha -->
+						<do_if value="$WATE and $FROZ and $DISTR and $CUSP and $COLD and $CROSS and $SINI and $PERIO and $WRECK">
+							<set_job_active job="'hoa_squadron_att07'" activate="true" />
+							<set_job_active job="'hoa_lightfleet_att07'" activate="true" />
+							<set_job_active job="'hoa_carrierfleet_attlookout'" activate="true" />
+						</do_if>					
+						<do_if value="$AE and $FUME and $SMOKE and $BEAR and $DWARF and $EVEN and $STRAIN and $AZB and $WRECK">
+							<set_job_active job="'hoa_battlestar_defWRECK'" activate="true" />
+							<set_job_active job="'hoa_battlestar_defAUSP'" activate="true" />						
+						</do_if>
+						<!-- Military Ships in Devries -->
+						<set_job_active job="'hoa_squadron_attack17'" activate="true" chance="$ThisFactionStrength * 5 * $P80"/>
+						<set_job_active job="'hoa_squadron_defend18'" activate="true" chance="$ThisFactionStrength * 5 * $P80"/>
+						<set_job_active job="'hoa_squadron_attack19'" activate="true" chance="$ThisFactionStrength * 5 * $P80"/>
+						<set_job_active job="'hoa_lightfleet_defend18'" activate="true" chance="$ThisFactionStrength * 5 * $P80"/>
+						<set_job_active job="'hoa_lightfleet_attack19'" activate="true" chance="$ThisFactionStrength * 5 * $P80"/>
+						<set_job_active job="'hoa_carrierfleet_attack17'" activate="true" chance="$ThisFactionStrength * 5 * $P80"/>
+						
+						<!-- Heart of Albion Scout Ships -->
+						<set_job_active job="'hoa_pl_scout_al'" activate="true" chance="faction.player.hasrelation.enemy.{faction.heartofalbion} and $GM" />
+						<set_job_active job="'hoa_pl_scout_al'" activate="false" chance="faction.player.hasrelation.neutral.{faction.heartofalbion} or $GM1" />
+						
+						<!-- TURN OFF CIVILIAN SHIPS -->
+						<set_job_active job="'hoa_trader_gas_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_drones_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_shiptech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_universe_gases'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hoa_universe_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/> 
+						<!-- TURN OFF ALBION FAR OUT-->
+						<set_job_active job="'hoa_battlestar_defalbion'" activate="false" chance="$GM1"/>										
+						<set_job_active job="'hoa_lightfleet_defalbion'" activate="false" chance="$GM1" />
+						<set_job_active job="'hoa_lightfleet_defalbion_2'" activate="false" chance="$GM1" />
+						<set_job_active job="'hoa_carrierfleet_defalbion'" activate="false" chance="$GM1" />
+						<set_job_active job="'hoa_carrierfleet_defalbion_2'" activate="false" chance="$GM1" />
+						<set_job_active job="'hoa_lightfleet_defGM'" activate="false" chance="$GM1" />
+						<set_job_active job="'hoa_carrierfleet_defGM'" activate="false" chance="$GM1" />
+
+						<do_if value="$P20 or $GM1">
+							<set_job_active job="'hoa_squadron_defend04'" activate="false" />
+							<set_job_active job="'hoa_lightfleet_defalbion'" activate="false" />
+							<set_job_active job="'hoa_lightfleet_defalbion_2'" activate="false" />
+						</do_if>					
+						<do_if value="$GM1">
+							<set_job_active job="'hoa_carrierfleet_attTBE'" activate="false" />						
+						</do_if>	
+
+						<do_if value="$GM1 or $EXH1">
+							<set_job_active job="'hoa_battlestar_defexhaust'" activate="false" />
+							<set_job_active job="'hoa_lightfleet_defEXH'" activate="false" />
+						</do_if>
+						<!-- TURN OFF ALBION ASCENDANCY -->
+						<do_if value="$TBE1">
+							<set_job_active job="'hoa_carrierfleet_attascendJB'" activate="false" />
+						</do_if>
+						<do_if value="$BT1 or $TBE1">						
+							<set_job_active job="'hoa_carrierfleet_attascend'" activate="false" />
+							<set_job_active job="'hoa_squadron_att05'" activate="false" />
+							<set_job_active job="'hoa_lightfleet_att05'" activate="false" />
+						</do_if>
+						<do_if value="$TBE1 or $BT1 or $SV1 or $FIW1 or $LIM1 or $FIW1 or $FOA1 or $SED1 or $TTD1">
+							<set_job_active job="'hoa_battlestar_defSV'" activate="false" />
+							<set_job_active job="'hoa_battlestar_defBT'" activate="false" />						
+							<set_job_active job="'hoa_carrierfleet_attinnerJB'" activate="false" />						
+						</do_if>
+						<!-- TURN OFF ALBION INNER WORLD -->
+						<do_if value="$TBE1 or $BT1 or $SV1 or $FIW1 or $LIM1 or $FIW1 or $FOA1 or $SED1 or $TTD1 or $CUSP1">
+							<set_job_active job="'hoa_squadron_att06'" activate="false" />
+							<set_job_active job="'hoa_lightfleet_att06'" activate="false" />						
+							<set_job_active job="'hoa_carrierfleet_attinner'" activate="false" />						
+						</do_if>
+						<do_if value="$WATE1 or $FROZ1 or $DISTR1 or $CUSP1 or $COLD1 or $CROSS1 or $SINI1 or $PERIO1">
+							<set_job_active job="'hoa_battlestar_defCUSP'" activate="false" />
+							<set_job_active job="'hoa_carrierfleet_attlookoutJB'" activate="false" />											
+						</do_if>
+						<!-- TURN OFF ALBION LOOK OUT ALPHA -->
+						<do_if value="$WATE1 or $FROZ1 or $DISTR1 or $CUSP1 or $COLD1 or $CROSS1 or $SINI1 or $PERIO1 or $WRECK1">
+							<set_job_active job="'hoa_squadron_att07'" activate="false" />
+							<set_job_active job="'hoa_lightfleet_att07'" activate="false" />
+							<set_job_active job="'hoa_carrierfleet_attlookout'" activate="false" />
+						</do_if>					
+						<do_if value="$AE1 or $FUME1 or $SMOKE1 or $BEAR1 or $DWARF1 or $EVEN1 or $STRAIN1 or $AZB1 or $WRECK1">
+							<set_job_active job="'hoa_battlestar_defWRECK'" activate="false" />
+							<set_job_active job="'hoa_battlestar_defAUSP'" activate="false" />						
+						</do_if>
+						<!-- TURN OFF DEVRIES -->
+						<set_job_active job="'hoa_squadron_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P70"/>
+						<set_job_active job="'hoa_squadron_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P70"/>
+						<set_job_active job="'hoa_squadron_attack19'" activate="false" chance="$ThisFactionStrength * 5 * $P70"/>
+						<set_job_active job="'hoa_lightfleet_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P70"/>
+						<set_job_active job="'hoa_lightfleet_attack19'" activate="false" chance="$ThisFactionStrength * 5 * $P70"/>
+						<set_job_active job="'hoa_carrierfleet_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P70"/>
+					</do_elseif>					
+					<do_elseif value="$ThisFaction == faction.leddaindustrial">
+						<!-- Civilian Ships -->
+						<set_job_active job="'ledda_collector_hydrogen_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_collector_hydrogen_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_collector_ions_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_collector_ions_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_collector_plasma_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_collector_plasma_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_miner_ice_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_miner_ice_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_miner_mineral_large_01'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_miner_mineral_large_02'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_miner_mineral_large_03'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_energy_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_hightech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_missile_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_refined_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_refined_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_shiptech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_shiptech_extended_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'ledda_trader_weapontech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'led_universe_construction_trader'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'led_universe_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'led_universe_refined_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'led_universe_minerals_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'led_universe_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'led_universe_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'led_squadron_buried'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_forge'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_serpentine'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_sinister'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_cuspid'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_frozen'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_distress'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'led_squadron_straining'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<!-- TURN OFF -->
+						<!-- Civilian Ships -->
+						<set_job_active job="'ledda_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_miner_ice_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_miner_ice_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_miner_mineral_large_01'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_miner_mineral_large_02'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_miner_mineral_large_03'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_missile_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_shiptech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'ledda_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_universe_construction_trader'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_universe_refined_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_universe_minerals_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_universe_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'led_squadron_buried'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_forge'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_serpentine'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_sinister'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_cuspid'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_frozen'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_distress'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'led_squadron_straining'" activate="false" chance="$ThisFactionStrength * 0"/>
+					</do_elseif>
+
+					<do_elseif value="$ThisFaction == faction.nolimits">
+						<!-- Civilian Ships -->
+						<set_job_active job="'nolimits_trader_agricultural_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'nolimits_trader_agricultural_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'nolimits_trader_water_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'nolimits_trader_water_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'nolimits_trader_pharmaceutical_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'nolimits_trader_pharmaceutical_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'nol_squadron_smoke'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'nol_squadron_periodic'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'nol_squadron_sinister'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'nol_squadron_serpentine'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<!-- TURN OFF -->
+						<!-- Civilian Ships -->
+						<set_job_active job="'nolimits_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nolimits_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nolimits_trader_water_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nolimits_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nolimits_trader_pharmaceutical_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nolimits_trader_pharmaceutical_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'nol_squadron_smoke'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nol_squadron_periodic'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nol_squadron_sinister'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'nol_squadron_serpentine'" activate="false" chance="$ThisFactionStrength * 0"/>
+					</do_elseif>			
+
+					<do_elseif value="$ThisFaction == faction.plutarch">            		
+						<!-- Civilian Ships -->
+						<set_job_active job="'pmc_collector_hydrogen_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_collector_hydrogen_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_collector_ions_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_collector_ions_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_collector_plasma_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_collector_plasma_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_miner_mineral_large_01'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_miner_mineral_large_02'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_miner_mineral_large_03'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_miner_mineral_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_miner_mineral_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_miner_mineral_medium3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_mineral_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_mineral_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_drones_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_drones_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_energy_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_energy_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_energy_medium3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_hightech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_missile_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_missile_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_refined_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_refined_large2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_refined_large3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_refined_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_refined_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_refined_medium3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_large2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_large3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_extended_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_extended_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_shiptech_medium3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_weapontech_large2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_weapontech_large3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_weapontech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_weapontech_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_trader_weapontech_medium3'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_universe_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						
+						<set_job_active job="'pmc_universe_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'pmc_universe_minerals_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<!-- Experimental builders -->
+						<set_job_active job="'pmc_builder_albion'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'pmc_builder_albion2'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<!--<set_job_active job="'pmc_builder_albion3'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>-->
+
+						<!-- do the below for each zone owned that will trigger a special spawn value -->
+						<!-- in the examples below I set it for 2 zones for pmc-->
+						<!-- each of these zones will activate or deactivate a specific job -->
+						<!-- for example you can use this to activate a job if pmc has Twilight Sentinel and deactivate another one -->
+						<!-- or you can deactivate a job if pmc do not have Twilight Sentinel and activate another one -->
+
+						<!-- Far Out -->
+						<set_value name="$TBE" exact="0" comment="set variable to zero"/>
+						<set_value name="$TBE1" exact="100" comment="set variable to 100"/>
+						<!-- Ascendancy -->
+						<set_value name="$SV" exact="0" comment="set variable to zero"/>
+						<set_value name="$SV1" exact="100" comment="set variable to 100"/>
+						<set_value name="$BT" exact="0" comment="set variable to zero"/>
+						<set_value name="$BT1" exact="100" comment="set variable to 100"/>
+						<!-- Inner World -->
+						<set_value name="$CUSP" exact="0" comment="set variable to zero"/>
+						<set_value name="$CUSP1" exact="100" comment="set variable to 100"/>
+						<set_value name="$COLD" exact="0" comment="set variable to zero"/>
+						<set_value name="$COLD1" exact="100" comment="set variable to 100"/>
+						<!-- Lookout Alpha -->
+						<set_value name="$AE" exact="0" comment="set variable to zero"/>
+						<set_value name="$AE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$WRECK" exact="0" comment="set variable to zero"/>
+						<set_value name="$WRECK1" exact="100" comment="set variable to 100"/>
+						<!-- Bleak Pebble -->
+						<set_value name="$PD" exact="0" comment="set variable to zero"/>
+						<set_value name="$PD1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SW" exact="0" comment="set variable to zero"/>
+						<set_value name="$SW1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TS" exact="0" comment="set variable to zero"/>
+						<set_value name="$TS1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FF" exact="0" comment="set variable to zero"/>
+						<set_value name="$FF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DF" exact="0" comment="set variable to zero"/>
+						<set_value name="$DF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$CR" exact="0" comment="set variable to zero"/>
+						<set_value name="$CR1" exact="100" comment="set variable to 100"/>
+						<!-- Glaring Truth -->
+						<set_value name="$FC" exact="0" comment="set variable to zero"/>
+						<set_value name="$FC1" exact="100" comment="set variable to 100"/>
+						<!-- Molten Archon -->
+						<set_value name="$LF" exact="0" comment="set variable to zero"/>
+						<set_value name="$LF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$VS" exact="0" comment="set variable to zero"/>
+						<set_value name="$VS1" exact="100" comment="set variable to 100"/>					
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+							<!-- ALBION -->
+							<!-- Far Out -->					
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone27_macro">
+								<set_value name="$TBE" exact="100" comment="if PMC have The Big Empty set variable to 100"/>
+								<set_value name="$TBE1" exact="0" comment="if PMC have The Big Empty set variable to 0"/>
+							</do_if>
+							<!-- Ascendancy -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone19_macro">
+								<set_value name="$SV" exact="100" />
+								<set_value name="$SV1" exact="0" />						
+								<!--<show_notification caption="'=== CWIR ==='" details="'TBE set to fire \n TBE: %1 \n\n NODE 1'.[$TBE]" queued="false" priority="9"/>
+							<write_to_logbook category="tips" text="'TBE set to fire \n TBE: %1 \n\n NODE 1'.[$TBE]"/>-->
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone21_macro">
+								<set_value name="$BT" exact="100" />
+								<set_value name="$BT1" exact="0" />							
+							</do_elseif>
+							<!-- Inner World -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone13_macro">
+								<set_value name="$CUSP" exact="100" />
+								<set_value name="$CUSP1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector06_zone15_macro">
+								<set_value name="$COLD" exact="100" />
+								<set_value name="$COLD1" exact="0" />							
+							</do_elseif>
+							<!-- Lookout Alpha -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone05_macro">
+								<set_value name="$AE" exact="100" />
+								<set_value name="$AE1" exact="0" />							
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone01_macro">
+								<set_value name="$WRECK" exact="100" />
+								<set_value name="$WRECK1" exact="0" />							
+							</do_elseif>
+							<!-- DEVRIES -->
+							<!-- Glaring Truth -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone45_macro">
+								<set_value name="$FC" exact="100" />
+								<set_value name="$FC1" exact="0" />
+							</do_elseif>
+							<!-- Molten Archon -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone54_macro">
+								<set_value name="$VS" exact="100" comment="if PMC have Vapour Stream set variable to 100"/>
+								<set_value name="$VS1" exact="0" comment="if PMC have Vapour Stream set variable to 0"/>
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone55_macro">
+								<set_value name="$LF" exact="100" />
+								<set_value name="$LF1" exact="0" />
+							</do_elseif>
+							<!-- Bleak Pebble -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone34_macro">
+								<set_value name="$TS" exact="100" comment="if PMC have Twilight Sentinel set variable to 100"/>
+								<set_value name="$TS1" exact="0" comment="if PMC have Twilight Sentinel set variable to 0"/>
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone35_macro">
+								<set_value name="$FF" exact="100" />
+								<set_value name="$FF1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone36_macro">
+								<set_value name="$DF" exact="100" />
+								<set_value name="$DF1" exact="0" />					
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone37_macro">
+								<set_value name="$PD" exact="100" />
+								<set_value name="$PD1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone38_macro">
+								<set_value name="$SW" exact="100" />
+								<set_value name="$SW1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone39_macro">
+								<set_value name="$CR" exact="100" />
+								<set_value name="$CR1" exact="0" />
+							</do_elseif>					
+						</do_all>											
+						<!-- Albion Lookout Alpha -->
+						<do_if value="$WRECK">
+							<set_job_active job="'pmc_squadron_defense07'" activate="true" />				    
+							<set_job_active job="'pmc_lightfleet_defend07'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_defend07'" activate="true"  />
+							<set_job_active job="'pmc_heavyfleet_defendWRECK'" activate="true"  />
+							<set_job_active job="'pmc_heavyfleet_defendAUSP'" activate="true"  />
+						</do_if>
+						<do_if value="$P40 and $AE1">
+							<set_job_active job="'pmc_heavyfleet_attAE'" activate="true" comment="if PMC strength is greater than 40 percent and pmc do not have Auspicious Excavation"/>						
+						</do_if>
+						<!-- Albion Inner World -->
+						<do_if value="$CUSP">
+							<set_job_active job="'pmc_squadron_defense06'" activate="true" />				    
+							<set_job_active job="'pmc_lightfleet_defend06'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_defend06'" activate="true"  />
+							<set_job_active job="'pmc_heavyfleet_defendCUS'" activate="true"  />
+						</do_if>
+						
+						<do_if value="$SV and $CUSP1">
+							<set_job_active job="'pmc_heavyfleet_attCUS'" activate="true" />
+						</do_if>
+						
+						<do_if value="$SV and $COLD1 and $P40">
+							<set_job_active job="'pmc_heavyfleet_acold'" activate="true" />							
+						</do_if>
+						
+						<do_if value="$COLD and $P40">
+							<set_job_active job="'pmc_heavyfleet_defendCold'" activate="true" />							
+						</do_if>
+						
+						
+						<!-- Albion Ascendancy -->
+						<do_if value="$SV">
+							<set_job_active job="'pmc_squadron_defense05'" activate="true" />				    
+							<set_job_active job="'pmc_lightfleet_defend05'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_defend05'" activate="true"  />
+							<set_job_active job="'pmc_heavyfleet_defendBT'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_defendSV'" activate="true"  />	
+						</do_if>
+						<set_job_active job="'pmc_heavyfleet_attBT'" activate="true" chance="$BT1" />
+						<set_job_active job="'pmc_heavyfleet_attSV'" activate="true" chance="$SV1" />					
+						<!-- Albion Far out -->	
+						<set_job_active job="'pmc_heavyfleet_defendTBE'" activate="true" chance="$TBE" />
+
+						<do_if value="$P40 and $TBE and $SV">
+							<set_job_active job="'pmc_squadron_attack04'" activate="true" />				    
+							<set_job_active job="'pmc_lightfleet_attack04'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_attack04'" activate="true"  />
+						</do_if>					
+						<do_if value="$P60 and $SV">
+							<set_job_active job="'pmc_wreckingcrew_attack04'" activate="true" />					    
+						</do_if>					
+						<do_if value="$P60 and $TBE1">
+							<set_job_active job="'pmc_heavyfleet_attTBE'" activate="true" comment="if PMC strength is greater than 60 percent and pmc do not have The Big Empty"/>
+							<!--<show_notification caption="'=== CWIR patrol ON ==='"/>
+							<write_to_logbook category="tips" text="'Patrol turned on'" />-->
+						</do_if>					
+						<!-- Devries -->
+						<do_if value="$P60 and $AE and $TS1">
+							<set_job_active job="'pmc_heavyfleet_attaTS'" activate="true" comment="if PMC strength is greater than 60 percent and pmc have Auspicious Excavation but do not have Twilight Sentinel"/>						
+						</do_if>
+						<!-- Forward operation command established, send out raiders into Devries space and defense for bleak pebble-->
+						<do_if value="$P60 and $SV and $AE and $TS">
+							<set_job_active job="'pmc_squadron_attack17'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_attack17'" activate="true" />	
+							<set_job_active job="'pmc_heavyfleet_attack17_2'" activate="true" />
+							<set_job_active job="'pmc_heavyfleet_DEFTS'" activate="true" />
+						</do_if>
+						<!-- Forward operation command established in Devries, conquer other jump beacons and set up forward operation bases -->
+						<do_if value="$P60 and $SV and $AE and $TS and $PD and $DF and $CR and $SW and $FF and $FC1 and $LF1">						
+							<set_job_active job="'pmc_heavyfleet_attJB'" activate="true" />						
+						</do_if>
+						<!-- PMC has set up forward operation base in bleak pebble and glaring truth, acquire lava flow -->
+						<do_if value="$P60 and $SV and $AE and $TS and $PD and $DF and $CR and $SW and $FF and $FC and $LF1">						
+							<set_job_active job="'pmc_heavyfleet_attLFbea'" activate="true" />						
+						</do_if>
+						<!-- PMC has set up forward operation base in bleak pebble and molten archon, acquire fervid corona -->
+						<do_if value="$P60 and $SV and $AE and $TS and $PD and $DF and $CR and $SW and $FF and $FC1 and $LF">						
+							<set_job_active job="'pmc_heavyfleet_attFCbea'" activate="true" />						
+						</do_if>
+						<!-- Operation command established in molten archon, INVADE -->
+						<do_if value="$P60 and $SV and $AE and $TS and $LF">						
+							<set_job_active job="'pmc_heavyfleet_attmolten'" activate="true" />
+							<set_job_active job="'pmc_squadron_attack20'" activate="true" />
+						</do_if>
+						<!-- Operation command established in glaring truth, INVADE -->
+						<do_if value="$P60 and $SV and $AE and $TS and $FC">						
+							<set_job_active job="'pmc_heavyfleet_attglaring'" activate="true" />						
+						</do_if>
+						<!-- you can also attached it to the factionstrength layer as in the examples below, note that it uses another syntax too, no chance on it -->
+						<!--<do_if value="$P80 and $VS">-->
+						<!--<set_job_active job="'pmc_fleet_devries4'" activate="false" comment="if PMC strength is major than 80 percent and pmc have Vapour Stream spawn this job "/>
+						<set_job_active job="'pmc_fleet_devries41'" activate="false"  comment="if PMC strength is major than 80 percent and pmc have Vapour Stream do not spawn this job "/>-->
+						<!--</do_if>	-->	
+						<!-- Plutarch Scout Ships -->
+						<set_job_active job="'pmc_pl_scout_al'" activate="true" chance="faction.player.hasrelation.enemy.{faction.plutarch} and $SV" />
+						<set_job_active job="'pmc_pl_scout_al'" activate="false" chance="faction.player.hasrelation.neutral.{faction.plutarch} or $SV1" />
+						<!-- TURN OFF -->
+						<!-- Civilian Ships -->
+						<set_job_active job="'pmc_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_miner_mineral_large_01'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_miner_mineral_large_02'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_miner_mineral_large_03'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_miner_mineral_medium1'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_miner_mineral_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_miner_mineral_medium3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_mineral_medium1'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_mineral_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_drones_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_drones_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_energy_medium1'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_energy_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_energy_medium3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_missile_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_missile_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_refined_large2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_refined_large3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_refined_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_refined_medium3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_large2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_large3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_extended_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_shiptech_medium3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_weapontech_large2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_weapontech_large3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_weapontech_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_trader_weapontech_medium3'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_universe_guest_omicron_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'pmc_universe_minerals_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- Experimental builders -->
+						<set_job_active job="'pmc_builder_albion'" activate="false" chance="$SV1"/>
+						<set_job_active job="'pmc_builder_albion2'" activate="false" chance="$SV1"/>
+						<set_job_active job="'pmc_builder_albion3'" activate="false" chance="$SV1"/>
+						<!-- Military Ships -->
+						<!-- Military ships in Albion-->					
+						<set_job_active job="'pmc_squadron_defense05'" activate="false" chance="$SV1"/>
+						<set_job_active job="'pmc_squadron_defense06'" activate="false" chance="$CUSP1"/>
+						<set_job_active job="'pmc_squadron_defense07'" activate="false" chance="$WRECK1"/>					
+						<set_job_active job="'pmc_lightfleet_defend06'" activate="false" chance="$CUSP1"/>
+						<set_job_active job="'pmc_lightfleet_defend05'" activate="false" chance="$SV1"/>
+						<set_job_active job="'pmc_lightfleet_defend07'" activate="false" chance="$WRECK1"/>					
+						<set_job_active job="'pmc_heavyfleet_defend06'" activate="false" chance="$CUSP1"/>
+						<set_job_active job="'pmc_heavyfleet_defend05'" activate="false" chance="$SV1"/>
+						<set_job_active job="'pmc_heavyfleet_defend07'" activate="false" chance="$WRECK1"/>					
+						<set_job_active job="'pmc_heavyfleet_defendWRECK'" activate="false" chance="$WRECK1"/>
+						<set_job_active job="'pmc_heavyfleet_defendAUSP'" activate="false" chance="$WRECK1"/>
+						<set_job_active job="'pmc_heavyfleet_defendCUS'" activate="false" chance="$CUSP1"/>					
+						<set_job_active job="'pmc_heavyfleet_defendSV'" activate="false" chance="$SV1"/>					
+						<set_job_active job="'pmc_heavyfleet_attBT'" activate="false" chance="$BT" />
+						<set_job_active job="'pmc_heavyfleet_attSV'" activate="false" chance="$SV" />
+						<set_job_active job="'pmc_heavyfleet_attCUS'" activate="false" chance="$CUSP" />
+
+						<do_if value="$SV1 or $BT1">
+							<set_job_active job="'pmc_heavyfleet_defendBT'" activate="false" />
+						</do_if>
+						<do_if value="$AE1">
+							<set_job_active job="'pmc_squadron_attack17'" activate="false" />
+							<set_job_active job="'pmc_heavyfleet_attack17'" activate="false" />	
+							<set_job_active job="'pmc_heavyfleet_attack17_2'" activate="false" />
+						</do_if>					
+						<do_if value="$AE">
+							<set_job_active job="'pmc_heavyfleet_attAE'" activate="false" />						
+						</do_if>				
+						<do_if value="$TBE">
+							<set_job_active job="'pmc_heavyfleet_attTBE'" activate="false" />	
+							<!--<show_notification caption="'=== CWIR patrol OFF ==='"/>
+							<write_to_logbook category="tips" text="'Patrol turned OFF'" />-->
+						</do_if>					
+						<do_if value="$TBE1">
+							<set_job_active job="'pmc_squadron_attack04'" activate="false" />				    
+							<set_job_active job="'pmc_lightfleet_attack04'" activate="false" />
+							<set_job_active job="'pmc_heavyfleet_attack04'" activate="false"  />
+							<set_job_active job="'pmc_heavyfleet_defendTBE'" activate="false"  />
+						</do_if>					
+						<do_if value="$FC and $LF">						
+							<set_job_active job="'pmc_heavyfleet_attJB'" activate="false" />						
+						</do_if>
+						<!-- turn off Cold Peaks -->
+						<do_if value="$COLD1">
+							<set_job_active job="'pmc_heavyfleet_defendCold'" activate="false" />							
+						</do_if>
+						<do_if value="$COLD">
+							<set_job_active job="'pmc_heavyfleet_acold'" activate="false" />
+						</do_if>
+						
+						<!-- TURN OFF DEVRIES -->
+						<do_if value="$TS">
+							<set_job_active job="'pmc_heavyfleet_attaTS'" activate="false" />						
+						</do_if>					
+						<do_if value="$TS1">
+							<set_job_active job="'pmc_squadron_attack17'" activate="false" />
+							<set_job_active job="'pmc_heavyfleet_attack17'" activate="false" />	
+							<set_job_active job="'pmc_heavyfleet_attglaring'" activate="false" />
+							<set_job_active job="'pmc_heavyfleet_attack17_2'" activate="false" />
+							<set_job_active job="'pmc_heavyfleet_DEFTS'" activate="false" />
+						</do_if>
+						<do_if value="$FC1">						
+							<set_job_active job="'pmc_heavyfleet_attglaring'" activate="false" />						
+						</do_if>					
+						<do_if value="$LF">						
+							<set_job_active job="'pmc_heavyfleet_attLFbea'" activate="false" />						
+						</do_if>					
+						<do_if value="$FC">						
+							<set_job_active job="'pmc_heavyfleet_attFCbea'" activate="false" />						
+						</do_if>					
+						<do_if value="$LF1">						
+							<set_job_active job="'pmc_heavyfleet_attmolten'" activate="false" />
+							<set_job_active job="'pmc_squadron_attack20'" activate="false" />
+						</do_if>					
+					</do_elseif>
+					<do_elseif value="$ThisFaction == faction.sovereignsyndicate">
+						<!--<set_job_active job="'sos_destroyer_fleet'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'sos_attackfighter_albion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'sos_bomber_patrol_sov'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+
+						<set_value name="$TBE" exact="0" comment="set variable to zero"/>
+						<set_value name="$TBE1" exact="100" comment="set variable to 100"/>					
+						<set_value name="$SV" exact="0" comment="set variable to zero"/>
+						<set_value name="$SV1" exact="100" comment="set variable to 100"/>
+						<set_value name="$EL" exact="0" comment="set variable to zero"/>
+						<set_value name="$EL1" exact="100" comment="set variable to 100"/>
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone27_macro">
+								<set_value name="$TBE" exact="100" />
+								<set_value name="$TBE1" exact="0" />
+							</do_if>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone10_macro">
+								<set_value name="$EL" exact="100" />
+								<set_value name="$EL1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone19_macro">
+								<set_value name="$SV" exact="100" />
+								<set_value name="$SV1" exact="0" />							
+							</do_elseif>
+						</do_all>
+
+						<set_job_active job="'sos_destroyer_fleet'" activate="true" chance="$EL" />
+						<set_job_active job="'sos_attackfighter_albion'" activate="true" chance="$EL" />
+						<set_job_active job="'sos_bomber_patrol_sov'" activate="true" chance="$EL" />
+						<set_job_active job="'sov_pl_scout_al'" activate="true" chance="faction.player.hasrelation.enemy.{faction.sovereignsyndicate} and $EL"/>
+						<!-- TURN OFF -->
+						<set_job_active job="'sos_destroyer_fleet'" activate="false" chance="$EL1" />
+						<set_job_active job="'sos_attackfighter_albion'" activate="false" chance="$EL1" />
+						<set_job_active job="'sos_bomber_patrol_sov'" activate="false" chance="$EL1" />
+						<set_job_active job="'sov_pl_scout_al'" activate="false" chance="faction.player.hasrelation.neutral.{faction.sovereignsyndicate} or $EL1"/>
+
+					</do_elseif>
+					<do_elseif value="$ThisFaction == faction.wholesomefoods">
+						<!-- Civilian Ships -->
+						<set_job_active job="'wholesome_trader_agricultural_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wholesome_trader_agricultural_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wholesome_trader_food_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wholesome_trader_food_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wholesome_trader_water_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wholesome_trader_water_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wsf_universe_food_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'wsf_universe_agricultural_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'wsf_squadron_even'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'wsf_squadron_exhaustless'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'wsf_squadron_gemstone'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<set_job_active job="'wsf_squadron_rising'" activate="true" chance="$ThisFactionStrength * 5 * $P20"/>
+						<!-- TURN OFF -->
+						<!-- Civilian Ships -->
+						<set_job_active job="'wholesome_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wholesome_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wholesome_trader_food_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wholesome_trader_food_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wholesome_trader_water_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wholesome_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wsf_universe_food_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wsf_universe_agricultural_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- Paramilitary Ships -->
+						<set_job_active job="'wsf_squadron_even'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wsf_squadron_exhaustless'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wsf_squadron_gemstone'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'wsf_squadron_rising'" activate="false" chance="$ThisFactionStrength * 0"/>
+					</do_elseif>
+
+					<!-- Devries Factions -->
+					<do_elseif value="$ThisFaction == faction.canteran">
+						<!--<set_job_active job="'can_fighter_wing17'" activate="false" chance="$ThisFactionStrength * 5 * $P40" comment="this means that this job will not spawn for strength lesser or equal to 40 percent"/>
+					<set_job_active job="'can_fighter_wing18'" activate="false" chance="$ThisFactionStrength * 5"/>
+					<set_job_active job="'can_lightfleet_glaring'" activate="false" chance="$ThisFactionStrength * 5"/>-->					
+						<!-- Civilian Ships -->
+						<set_job_active job="'roc_miner_ice_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_miner_ice_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_miner_ore_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_energy_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_energy_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_energy_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_water_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_water_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_water_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_agricultural_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_agricultural_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_trader_food_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_guest_omicron_liquid'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_guest_omicron_energy'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_guest_albion_energy'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						<set_job_active job="'roc_universe_guest_albion_liquid'" activate="true" chance="$ThisFactionStrength * 5 * $P05"/>
+						
+						
+						<!-- Military Ships -->
+						<!--<set_job_active job="'roc_squadron_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_squadron_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_lightfleet_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_lightfleet_attack19'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_destroyerfleet_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_destroyerfleet_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+						<!-- Molten Archon -->
+						<set_value name="$VS" exact="0" comment="set variable to zero"/>
+						<set_value name="$VS1" exact="100" comment="set variable to 100"/>
+						<set_value name="$LF" exact="0" comment="set variable to zero"/>
+						<set_value name="$LF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GAH" exact="0" comment="set variable to zero"/>
+						<set_value name="$GAH1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FIEND" exact="0" comment="set variable to zero"/>
+						<set_value name="$FIEND1" exact="100" comment="set variable to 100"/>
+						<set_value name="$EXT" exact="0" comment="set variable to zero"/>
+						<set_value name="$EXT1" exact="100" comment="set variable to 100"/>
+						<!-- Bleak Pebble -->
+						<set_value name="$TS" exact="0" comment="set variable to zero"/>
+						<set_value name="$TS1" exact="100" comment="set variable to 100"/>					
+						<!-- Glaring Truth -->
+						<set_value name="$FC" exact="0" comment="set variable to zero"/>
+						<set_value name="$FC1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DHA" exact="0" comment="set variable to zero"/>
+						<set_value name="$DHA1" exact="100" comment="set variable to 100"/>
+						<set_value name="$RB" exact="0" comment="set variable to zero"/>
+						<set_value name="$RB1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FR" exact="0" comment="set variable to zero"/>
+						<set_value name="$FR1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SCA" exact="0" comment="set variable to zero"/>
+						<set_value name="$SCA1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GS" exact="0" comment="set variable to zero"/>
+						<set_value name="$GS1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FT" exact="0" comment="set variable to zero"/>
+						<set_value name="$FT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$MP" exact="0" comment="set variable to zero"/>
+						<set_value name="$MP1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FUC" exact="0" comment="set variable to zero"/>
+						<set_value name="$FUC1" exact="100" comment="set variable to 100"/>
+						<!-- Barren Heart -->
+						<set_value name="$SA" exact="0" comment="set variable to zero"/>
+						<set_value name="$SA1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$FA" exact="0" comment="set variable to zero"/>
+						<set_value name="$FA1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TV" exact="0" comment="set variable to zero"/>
+						<set_value name="$TV1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$HM" exact="0" comment="set variable to zero"/>
+						<set_value name="$HM1" exact="100" comment="set variable to 100"/>
+						<set_value name="$UM" exact="0" comment="set variable to zero"/>
+						<set_value name="$UM1" exact="100" comment="set variable to 100"/>
+						<!-- Auspicious Excavation-->
+						<set_value name="$AE" exact="0" comment="set variable to zero"/>
+						<set_value name="$AE1" exact="100" comment="set variable to 100"/>
+
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+							<!-- Bleak Pebble -->
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone34_macro">
+								<set_value name="$TS" exact="100" />
+								<set_value name="$TS1" exact="0" />
+							</do_if>					
+							<!-- Glaring Truth -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone45_macro">
+								<set_value name="$FC" exact="100" />
+								<set_value name="$FC1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone46_macro">
+								<set_value name="$GS" exact="100" />
+								<set_value name="$GS1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone47_macro">
+								<set_value name="$FUC" exact="100" />
+								<set_value name="$FUC1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone48_macro">
+								<set_value name="$FT" exact="100" />
+								<set_value name="$FT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone49_macro">
+								<set_value name="$MP" exact="100" />
+								<set_value name="$MP1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone50_macro">
+								<set_value name="$DHA" exact="100" />
+								<set_value name="$DHA1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone51_macro">
+								<set_value name="$RB" exact="100" />
+								<set_value name="$RB1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone52_macro">
+								<set_value name="$FR" exact="100" />
+								<set_value name="$FR1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone53_macro">
+								<set_value name="$SCA" exact="100" />
+								<set_value name="$SCA1" exact="0" />
+							</do_elseif>
+							<!-- Barren Heart -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone40_macro">
+								<set_value name="$FA" exact="100" />
+								<set_value name="$FA1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone41_macro">
+								<set_value name="$HM" exact="100" />
+								<set_value name="$HM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone42_macro">
+								<set_value name="$SA" exact="100" />
+								<set_value name="$SA1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone43_macro">
+								<set_value name="$TV" exact="100" />
+								<set_value name="$TV1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone44_macro">
+								<set_value name="$UM" exact="100" />
+								<set_value name="$UM1" exact="0" />
+							</do_elseif>	
+							<!-- Molten Archon -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone54_macro">
+								<set_value name="$VS" exact="100" />
+								<set_value name="$VS1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone55_macro">
+								<set_value name="$LF" exact="100" />
+								<set_value name="$LF1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone56_macro">
+								<set_value name="$EXT" exact="100" />
+								<set_value name="$EXT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone57_macro">
+								<set_value name="$FIEND" exact="100" />
+								<set_value name="$FIEND1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone58_macro">
+								<set_value name="$GAH" exact="100" />
+								<set_value name="$GAH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone05_macro">
+								<set_value name="$AE" exact="100" />
+								<set_value name="$AE1" exact="0" />
+							</do_elseif>
+						</do_all>
+
+						<!-- ZONE CONTROL RESPONSE FLEETS -->						
+						<set_job_active job="'roc_squadron_defend18'" activate="true" chance="$DHA" />
+						<set_job_active job="'roc_lightfleet_defend18'" activate="true" chance="$DHA" />
+						<set_job_active job="'roc_destroyerfleet_defend18'" activate="true" chance="$DHA" />
+						<set_job_active job="'roc_destroyerfleet_defFC'" activate="true" chance="$DHA" />					
+						<set_job_active job="'roc_lightfleet_defendDHA'" activate="true" chance="$DHA" />
+						<set_job_active job="'roc_lightfleet_defendFCB'" activate="true" chance="$DHA" />
+
+						<do_if value="$DHA and $FC and $GS and $FUC and $FT and $MP and $RB and $FR and $SCA">
+							<set_job_active job="'roc_squadron_attack17'" activate="true" />				    
+							<set_job_active job="'roc_lightfleet_attack19'" activate="true" />					    
+							<set_job_active job="'roc_squadron_attack19'" activate="true"  />
+							<set_job_active job="'roc_destroyerfleet_attaTS'" activate="true"  />
+							<set_job_active job="'roc_lightfleet_attack17'" activate="true"  />
+							<set_job_active job="'roc_destroyerfleet_attaMA'" activate="true"  />
+						</do_if>
+						<do_if value="$DHA and $FC and $GS and $FUC and $FT and $MP and $RB and $FR and $SCA and $TS">
+							<set_job_active job="'roc_destroyerfleet_attack17'" activate="true"  />
+							<set_job_active job="'roc_destroyerfleet_defTS'" activate="true"  />
+						</do_if>
+						<do_if value="$DHA and $FC and $GS and $FUC and $FT and $MP and $RB and $FR and $SCA and $VS and $LF">
+							<set_job_active job="'roc_destroyerfleet_defVS'" activate="true"  />							
+						</do_if>
+						<do_if value="$DHA and $FC and $GS and $FUC and $FT and $MP and $RB and $FR and $SCA and $LF">
+							<set_job_active job="'roc_destroyerfleet_defLF'" activate="true"  />
+							<set_job_active job="'roc_lightfleet_attack20'" activate="true"  />
+						</do_if>
+						<do_if value="$FA and $HM and $SA and $TV and $UM">
+							<set_job_active job="'roc_squadron_defend19'" activate="true" />				    
+							<set_job_active job="'roc_destroyerfleet_defend19'" activate="true" />												
+						</do_if>
+						<do_if value="$VS and $LF and $EXT and $FIEND and $GAH">
+							<set_job_active job="'roc_squadron_defend20'" activate="true" />				    
+							<set_job_active job="'roc_destroyerfleet_defend20'" activate="true" />												
+						</do_if>
+
+						<!-- Conquer Auspicious Excavation -->
+						<do_if value="$TS and $AE1 and $DHA and $FC and $GS and $FUC and $FT and $MP and $RB and $FR and $SCA">
+							<set_job_active job="'roc_destroyerfleet_attaAE'" activate="true" />					    											
+						</do_if>
+
+						<do_if value="$TS and $AE">
+							<set_job_active job="'roc_destroyerfleet_defAE'" activate="true" />					    											
+						</do_if>
+						<!-- Canteran Scouts -->
+						<do_if value="faction.player.hasrelation.enemy.{faction.canteran} and $DHA">
+							<set_job_active job="'can_pl_scout_dv'" activate="true" />																				
+						</do_if>
+						<!--<set_job_active job="'can_pl_scout_dv'" activate="true" chance="faction.player.hasrelation.enemy.{faction.canteran} and $DHA" /> -->
+						<set_job_active job="'can_pl_scout_dv'" activate="false" chance="faction.player.hasrelation.neutral.{faction.canteran} or $DHA1" />
+						<!-- TURN OFF CIVILIAN SHIPS -->
+						<set_job_active job="'roc_miner_ice_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_miner_ice_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_miner_ore_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_energy_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_water_medium2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_water_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_trader_food_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_guest_omicron_liquid'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_guest_omicron_energy'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_guest_albion_energy'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'roc_universe_guest_albion_liquid'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<!-- TURN OFF -->						
+
+						<do_if value="$TS">
+							<set_job_active job="'roc_destroyerfleet_attaTS'" activate="false"  />
+						</do_if>
+						
+						<do_if value="$LF">
+							<set_job_active job="'roc_destroyerfleet_attaMA'" activate="false"  />
+						</do_if>
+						
+						<do_if value="$LF1">
+							<set_job_active job="'roc_destroyerfleet_defLF'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_defVS'" activate="false"  />
+							<set_job_active job="'roc_lightfleet_attack20'" activate="false"  />
+						</do_if>
+						
+						<do_if value="$VS1">							
+							<set_job_active job="'roc_destroyerfleet_defVS'" activate="false"  />
+						</do_if>
+
+						<do_if value="$TS1">
+							<set_job_active job="'roc_destroyerfleet_attack17'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_defTS'" activate="false"  />
+						</do_if>
+
+						<do_if value="$DHA1">						
+							<set_job_active job="'roc_squadron_defend18'" activate="false" />
+							<set_job_active job="'roc_lightfleet_defend18'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_defend18'" activate="false" />
+							<set_job_active job="'roc_destroyerfleet_defFC'" activate="false" />
+							<set_job_active job="'roc_lightfleet_defendDHA'" activate="false" />
+							<set_job_active job="'roc_lightfleet_defendFCB'" activate="false" />
+						</do_if>
+						<do_if value="$FC1 or $DHA1 or $GS1 or $FUC1 or $FT1 or $MP1 or $RB1 or $FR1 or $SCA1">
+							<set_job_active job="'roc_squadron_attack17'" activate="false" />				    
+							<set_job_active job="'roc_lightfleet_attack19'" activate="false" />					    
+							<set_job_active job="'roc_squadron_attack19'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_attaTS'" activate="false"  />		
+							<set_job_active job="'roc_destroyerfleet_attack17'" activate="false"  />
+							<set_job_active job="'roc_lightfleet_attack17'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_defTS'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_attaMA'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_defVS'" activate="false"  />
+							<set_job_active job="'roc_destroyerfleet_defLF'" activate="false"  />
+							<set_job_active job="'roc_lightfleet_attack20'" activate="false"  />
+						</do_if>
+						<do_if value="$FA1 or $HM1 or $SA1 or $TV1 or $UM1">
+							<set_job_active job="'roc_squadron_defend19'" activate="false" />
+							<set_job_active job="'roc_destroyerfleet_defend19'" activate="false" />						
+						</do_if>
+						<do_if value="$VS1 or $LF1 or $EXT1 or $FIEND1 or $GAH1">
+							<set_job_active job="'roc_squadron_defend20'" activate="false" />				    
+							<set_job_active job="'roc_destroyerfleet_defend20'" activate="false" />												
+						</do_if>
+
+						<do_if value="$FC1 or $DHA1 or $GS1 or $FUC1 or $FT1 or $MP1 or $RB1 or $FR1 or $SCA1 or $TS1 or $AE">
+
+							<set_job_active job="'roc_destroyerfleet_attaAE'" activate="false"  />		
+
+						</do_if>
+
+						<do_if value="$TS1 or $AE1">
+
+							<set_job_active job="'roc_destroyerfleet_defAE'" activate="false"  />		
+
+						</do_if>
+
+
+
+					</do_elseif>
+					<do_elseif value="$ThisFaction == faction.reivers">
+						<!--<set_job_active job="'rei_raiders_defend19'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+						<!--<set_job_active job="'rei_raiders_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+						<!--<set_job_active job="'rei_raiders_attack18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+						<!--<set_job_active job="'rei_builder'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+					<set_job_active job="'rei_baseship_attackdevries'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>-->
+						<!--<set_job_active job="'rei_frigate_attackdevries'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+						<!--<set_job_active job="'rei_frigate_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+						<!-- All of BARREN HEART -->
+						<set_value name="$SA" exact="0" comment="set variable to zero"/>
+						<set_value name="$SA1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$FA" exact="0" comment="set variable to zero"/>
+						<set_value name="$FA1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TV" exact="0" comment="set variable to zero"/>
+						<set_value name="$TV1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$HM" exact="0" comment="set variable to zero"/>
+						<set_value name="$HM1" exact="100" comment="set variable to 100"/>
+						<set_value name="$UM" exact="0" comment="set variable to zero"/>
+						<set_value name="$UM1" exact="100" comment="set variable to 100"/>
+						<!-- Bleak Pebble -->
+						<set_value name="$PD" exact="0" comment="set variable to zero"/>
+						<set_value name="$PD1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SW" exact="0" comment="set variable to zero"/>
+						<set_value name="$SW1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TS" exact="0" comment="set variable to zero"/>
+						<set_value name="$TS1" exact="100" comment="set variable to 100"/>
+						<set_value name="$FF" exact="0" comment="set variable to zero"/>
+						<set_value name="$FF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DF" exact="0" comment="set variable to zero"/>
+						<set_value name="$DF1" exact="100" comment="set variable to 100"/>
+						<set_value name="$CR" exact="0" comment="set variable to zero"/>
+						<set_value name="$CR1" exact="100" comment="set variable to 100"/>
+						<!-- Glaring Truth -->
+						<set_value name="$FC" exact="0" comment="set variable to zero"/>
+						<set_value name="$FC1" exact="100" comment="set variable to 100"/>
+						<!-- Molten Archon -->
+						<set_value name="$LF" exact="0" comment="set variable to zero"/>
+						<set_value name="$LF1" exact="100" comment="set variable to 100"/>
+
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone40_macro">
+								<set_value name="$FA" exact="100" />
+								<set_value name="$FA1" exact="0" />
+							</do_if>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone41_macro">
+								<set_value name="$HM" exact="100" />
+								<set_value name="$HM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone42_macro">
+								<set_value name="$SA" exact="100" />
+								<set_value name="$SA1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone43_macro">
+								<set_value name="$TV" exact="100" />
+								<set_value name="$TV1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone44_macro">
+								<set_value name="$UM" exact="100" />
+								<set_value name="$UM1" exact="0" />
+							</do_elseif>	
+
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone37_macro">
+								<set_value name="$PD" exact="100" />
+								<set_value name="$PD1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone45_macro">
+								<set_value name="$FC" exact="100" />
+								<set_value name="$FC1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone55_macro">
+								<set_value name="$LF" exact="100" />
+								<set_value name="$LF1" exact="0" />
+							</do_elseif>					
+
+
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone34_macro">
+								<set_value name="$TS" exact="100" />
+								<set_value name="$TS1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone35_macro">
+								<set_value name="$FF" exact="100" />
+								<set_value name="$FF1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone38_macro">
+								<set_value name="$SW" exact="100" />
+								<set_value name="$SW1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone39_macro">
+								<set_value name="$CR" exact="100" />
+								<set_value name="$CR1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone36_macro">
+								<set_value name="$DF" exact="100" />
+								<set_value name="$DF1" exact="0" />					
+							</do_elseif>
+
+						</do_all>
+
+						<!--<do_if value="$P10 and $SA">-->
+						<!-- DONE -->
+						<do_if value="$SA">
+							<set_job_active job="'rei_raiders_defend19'" activate="true" />				    
+							<set_job_active job="'rei_raiders_attack18'" activate="true" />
+							<set_job_active job="'rei_raiders_attack20'" activate="true"  />
+							<set_job_active job="'rei_builder'" activate="true"  />	
+							<set_job_active job="'rei_baseship_defenseSA'" activate="true"  />
+							<set_job_active job="'rei_frigate_defend19'" activate="true"  />						
+						</do_if>					
+						<!-- DONE -->
+						<do_if value="$SA1 and $FA">
+							<set_job_active job="'rei_raiders_defend219'" activate="true" />
+							<set_job_active job="'rei_raiders_attack218'" activate="true" />
+							<set_job_active job="'rei_raiders_attack220'" activate="true" />
+							<set_job_active job="'rei_baseship_defenseBH'" activate="true"  />
+							<set_job_active job="'rei_frigate_defend219'" activate="true"  />
+						</do_if>
+						<!-- DONE-->
+						<do_if value="$P10 and $PD">
+							<set_job_active job="'rei_raiders_attack17'" activate="true" />	
+							<!--<set_job_active job="'rei_frigate_attack17'" activate="true" />-->
+						</do_if>
+						<!-- DONE -->
+						<do_if value="$P10 and $PD and $SA1 and $FA1">
+							<set_job_active job="'rei_baseship_attBH'" activate="true" />					    
+						</do_if>
+						<!-- DONE -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM">
+							<set_job_active job="'rei_frigate_attack18'" activate="true" comment="If Reivers control all of Barren Heart RAID"/>
+							<set_job_active job="'rei_frigate_attack20'" activate="true" comment="If Reivers control all of Barren Heart RAID"/>
+							<set_job_active job="'rei_baseship_attackbleak'" activate="true" comment="If Reivers control all of Barren Heart INVADE"/>
+						</do_if>
+						<!-- Done -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM and $FC1 and $LF1">
+							<set_job_active job="'rei_baseship_attackallbea'" activate="true" comment="If Reivers control all of Barren Heart attack the beacons"/>						
+						</do_if>						
+						<!-- DONE -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM and $FC and $LF1">
+							<set_job_active job="'rei_baseship_attackLFbea'" activate="true" comment="If Reivers control all of Barren Heart and Fervid Corona but not Lava Flow"/>						
+						</do_if>
+						<!-- DONE -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM and $FC1 and $LF">
+							<set_job_active job="'rei_baseship_attackFCbea'" activate="true" comment="If Reivers control all of Barren Heart and Lava Flow but not Fervid Corona"/>						
+						</do_if>
+						<!-- DONE -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM and $FC">
+							<set_job_active job="'rei_baseship_attackglaring'" activate="true" comment="If Reivers control Barren Heart and Fervid Corona INVADE"/>						
+						</do_if>
+						<!-- DONE -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM and $LF">
+							<set_job_active job="'rei_baseship_attackmolten'" activate="true" comment="If Reivers control Barren Heart and Lava Flow INVADE"/>						
+						</do_if>
+						<!-- DONE -->
+						<!-- UNLEASH THE KRAKEN -->
+						<do_if value="$SA and $FA and $TV and $HM and $UM and $PD and $TS and $SW and $FF and $DF and $CR">
+							<set_job_active job="'rei_baseship_attackall'" activate="true" comment="If Reivers control Barren Heart and Bleak Pebble INVADE"/>						
+						</do_if>
+
+						<!-- REIVER SCOUTS -->
+						<set_job_active job="'rei_pl_scout_dv'" activate="true" chance="faction.player.hasrelation.enemy.{faction.reivers} and $SA" />
+						<set_job_active job="'rei_pl_scout_dv'" activate="false" chance="faction.player.hasrelation.neutral.{faction.reivers} or $SA1" />
+						
+						<!-- TURN OFF FOOL -->
+						<do_if value="$SA1">
+							<set_job_active job="'rei_raiders_defend19'" activate="false" />				    
+							<set_job_active job="'rei_raiders_attack18'" activate="false" />
+							<set_job_active job="'rei_raiders_attack20'" activate="false"  />
+							<set_job_active job="'rei_builder'" activate="false"  />	
+							<set_job_active job="'rei_baseship_defenseSA'" activate="false"  />
+							<set_job_active job="'rei_frigate_defend19'" activate="false"  />						
+						</do_if>
+						<do_if value="$FA1">
+							<set_job_active job="'rei_raiders_defend219'" activate="false" />
+							<set_job_active job="'rei_raiders_attack218'" activate="false" />
+							<set_job_active job="'rei_raiders_attack220'" activate="false" />
+							<set_job_active job="'rei_baseship_defenseBH'" activate="false"  />
+							<set_job_active job="'rei_frigate_defend219'" activate="false"  />
+						</do_if>
+						<do_if value="$FC and $LF">
+							<set_job_active job="'rei_baseship_attackallbea'" activate="false" comment="If Reivers control all of Barren Heart attack the beacons"/>
+						</do_if>
+						<do_if value="$SA1 or $FA1 or $TV1 or $HM1 or $UM1">
+							<set_job_active job="'rei_frigate_attack18'" activate="false" />
+							<set_job_active job="'rei_frigate_attack20'" activate="false" />
+							<set_job_active job="'rei_baseship_attackbleak'" activate="false" />
+							<set_job_active job="'rei_baseship_attackmolten'" activate="false" />	
+							<set_job_active job="'rei_baseship_attackallbea'" activate="false" />	
+							<set_job_active job="'rei_baseship_attackFCbea'" activate="false" />
+							<set_job_active job="'rei_baseship_attackLFbea'" activate="false" />
+							<set_job_active job="'rei_baseship_attackglaring'" activate="false" />
+						</do_if>
+						<do_if value="$PD1">
+							<set_job_active job="'rei_raiders_attack17'" activate="false" />	
+							<set_job_active job="'rei_frigate_attack17'" activate="false" />
+							<set_job_active job="'rei_baseship_attBH'" activate="false" />						
+						</do_if>
+						<do_if value="$FC1">
+							<set_job_active job="'rei_baseship_attackglaring'" activate="false" />	
+						</do_if>
+						<do_if value="$LF">
+							<set_job_active job="'rei_baseship_attackLFbea'" activate="false" comment="If Reivers control all of Barren Heart and Lava Flow"/>						
+						</do_if>
+						<do_if value="$LF1">
+							<set_job_active job="'rei_baseship_attackmolten'" activate="false" />
+						</do_if>
+						<do_if value="$FC">
+							<set_job_active job="'rei_baseship_attackFCbea'" activate="false" comment="If Reivers control all of Barren Heart and Fervid Coronoa"/>						
+						</do_if>					
+						<do_if value="$TS1 or $SW1 or $FF1 or $DF1 or $CR1 or $UM1 or $HM1 or $TV1 or $FA1 or $PD1 or $SA1">
+							<set_job_active job="'rei_baseship_attackall'" activate="false" />	
+						</do_if>				
+					</do_elseif>
+
+					<!-- Maelstrom -->				
+					<do_elseif value="$ThisFaction == faction.hereticvanguards">
+						<!-- All of Sigma Sector -->
+						<set_value name="$ALPHA" exact="0" comment="set variable to zero"/>
+						<set_value name="$ALPHA1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$AGED" exact="0" comment="set variable to zero"/>
+						<set_value name="$AGED1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GRIM" exact="0" comment="set variable to zero"/>
+						<set_value name="$GRIM1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TIMID" exact="0" comment="set variable to zero"/>
+						<set_value name="$TIMID1" exact="100" comment="set variable to 100"/>
+						<set_value name="$INVITING" exact="0" comment="set variable to zero"/>
+						<set_value name="$INVITING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$BLAST" exact="0" comment="set variable to zero"/>
+						<set_value name="$BLAST1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$STURDY" exact="0" comment="set variable to zero"/>
+						<set_value name="$STURDY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SUNK" exact="0" comment="set variable to zero"/>
+						<set_value name="$SUNK1" exact="100" comment="set variable to 100"/>
+						<set_value name="$IMMIN" exact="0" comment="set variable to zero"/>
+						<set_value name="$IMMIN1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DECEPT" exact="0" comment="set variable to zero"/>
+						<set_value name="$DECEPT1" exact="100" comment="set variable to 100"/>					
+						<!-- All of Devoid Clime -->
+						<set_value name="$KEEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$KEEN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$SILENT" exact="0" comment="set variable to zero"/>
+						<set_value name="$SILENT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$PATH" exact="0" comment="set variable to zero"/>
+						<set_value name="$PATH1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$SOLITUDE" exact="0" comment="set variable to zero"/>
+						<set_value name="$SOLITUDE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$COZY" exact="0" comment="set variable to zero"/>
+						<set_value name="$COZY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$ETERNAL" exact="0" comment="set variable to zero"/>
+						<set_value name="$ETERNAL1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$ILLUSORY" exact="0" comment="set variable to zero"/>
+						<set_value name="$ILLUSORY1" exact="100" comment="set variable to 100"/>							
+						<!-- All of Commerce Core -->
+						<set_value name="$FALLEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$FALLEN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$LAST" exact="0" comment="set variable to zero"/>
+						<set_value name="$LAST1" exact="100" comment="set variable to 100"/>
+						<set_value name="$VORACIOUS" exact="0" comment="set variable to zero"/>
+						<set_value name="$VORACIOUS1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$AERO" exact="0" comment="set variable to zero"/>
+						<set_value name="$AERO1" exact="100" comment="set variable to 100"/>
+						<set_value name="$ICY" exact="0" comment="set variable to zero"/>
+						<set_value name="$ICY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$THRIVING" exact="0" comment="set variable to zero"/>
+						<set_value name="$THRIVING1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$DOUBLE" exact="0" comment="set variable to zero"/>
+						<set_value name="$DOUBLE1" exact="100" comment="set variable to 100"/>	
+						<!-- RADIANT HAVEN -->
+						<set_value name="$ASPIRE" exact="0" comment="set variable to zero"/>
+						<set_value name="$ASPIRE1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$HIGH" exact="0" comment="set variable to zero"/>
+						<set_value name="$HIGH1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GLEAM" exact="0" comment="set variable to zero"/>
+						<set_value name="$GLEAM1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TOWERING" exact="0" comment="set variable to zero"/>
+						<set_value name="$TOWERING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$EVERLASTING" exact="0" comment="set variable to zero"/>
+						<set_value name="$EVERLASTING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$VINDICAT" exact="0" comment="set variable to zero"/>
+						<set_value name="$VINDICAT1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$PARAMOUNT" exact="0" comment="set variable to zero"/>
+						<set_value name="$PARAMOUNT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$MAGNIFICENT" exact="0" comment="set variable to zero"/>
+						<set_value name="$MAGNIFICENT1" exact="100" comment="set variable to 100"/>
+						<!-- ECLIPSE CLOUDS -->
+						<set_value name="$WAVY" exact="0" comment="set variable to zero"/>
+						<set_value name="$WAVY1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$PEARLY" exact="0" comment="set variable to zero"/>
+						<set_value name="$PEARLY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$MURKY" exact="0" comment="set variable to zero"/>
+						<set_value name="$MURKY1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$PEARLY" exact="0" comment="set variable to zero"/>
+						<set_value name="$PEARLY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GREAT" exact="0" comment="set variable to zero"/>
+						<set_value name="$GREAT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TWIN" exact="0" comment="set variable to zero"/>
+						<set_value name="$TWIN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$RELOCATING" exact="0" comment="set variable to zero"/>
+						<set_value name="$RELOCATING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SSCREEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$SSCREEN1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DRIPPY" exact="0" comment="set variable to zero"/>
+						<set_value name="$DRIPPY1" exact="100" comment="set variable to 100"/>
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+							<!-- Sigma Sector -->
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone94_macro">
+								<set_value name="$ALPHA" exact="100" />
+								<set_value name="$ALPHA1" exact="0" />
+							</do_if>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone95_macro">
+								<set_value name="$AGED" exact="100" />
+								<set_value name="$AGED1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone96_macro">
+								<set_value name="$GRIM" exact="100" />
+								<set_value name="$GRIM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone97_macro">
+								<set_value name="$TIMID" exact="100" />
+								<set_value name="$TIMID1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone98_macro">
+								<set_value name="$INVITING" exact="100" />
+								<set_value name="$INVITING1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone99_macro">
+								<set_value name="$BLAST" exact="100" />
+								<set_value name="$BLAST1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone100_macro">
+								<set_value name="$STURDY" exact="100" />
+								<set_value name="$STURDY1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone101_macro">
+								<set_value name="$SUNK" exact="100" />
+								<set_value name="$SUNK1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone102_macro">
+								<set_value name="$IMMIN" exact="100" />
+								<set_value name="$IMMIN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone103_macro">
+								<set_value name="$DECEPT" exact="100" />
+								<set_value name="$DECEPT1" exact="0" />
+							</do_elseif>					
+							<!-- Devoid Clime -->		
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$KEEN" exact="100" />
+								<set_value name="$KEEN1" exact="0" />
+							</do_elseif>		
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$SILENT" exact="100" />
+								<set_value name="$SILENT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$PATH" exact="100" />
+								<set_value name="$PATH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$SOLITUDE" exact="100" />
+								<set_value name="$SOLITUDE1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$COZY" exact="100" />
+								<set_value name="$COZY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$ETERNAL" exact="100" />
+								<set_value name="$ETERNAL1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$ILLUSORY" exact="100" />
+								<set_value name="$ILLUSORY1" exact="0" />
+							</do_elseif>
+							<!-- Commerce Core -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone59_macro">
+								<set_value name="$FALLEN" exact="100" />
+								<set_value name="$FALLEN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone60_macro">
+								<set_value name="$LAST" exact="100" />
+								<set_value name="$LAST1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone61_macro">
+								<set_value name="$VORACIOUS" exact="100" />
+								<set_value name="$VORACIOUS1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone62_macro">
+								<set_value name="$AERO" exact="100" />
+								<set_value name="$AERO1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone63_macro">
+								<set_value name="$ICY" exact="100" />
+								<set_value name="$ICY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone64_macro">
+								<set_value name="$THRIVING" exact="100" />
+								<set_value name="$THRIVING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone65_macro">
+								<set_value name="$DOUBLE" exact="100" />
+								<set_value name="$DOUBLE1" exact="0" />
+							</do_elseif>
+							<!-- Radiant Haven -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone75_macro">
+								<set_value name="$ASPIRE" exact="100" />
+								<set_value name="$ASPIRE1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone76_macro">
+								<set_value name="$HIGH" exact="100" />
+								<set_value name="$HIGH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone77_macro">
+								<set_value name="$GLEAM" exact="100" />
+								<set_value name="$GLEAM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone78_macro">
+								<set_value name="$TOWERING" exact="100" />
+								<set_value name="$TOWERING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone79_macro">
+								<set_value name="$EVERLASTING" exact="100" />
+								<set_value name="$EVERLASTING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone80_macro">
+								<set_value name="$VINDICAT" exact="100" />
+								<set_value name="$VINDICAT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone81_macro">
+								<set_value name="$PARAMOUNT" exact="100" />
+								<set_value name="$PARAMOUNT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone82_macro">
+								<set_value name="$MAGNIFICENT" exact="100" />
+								<set_value name="$MAGNIFICENT1" exact="0" />
+							</do_elseif>
+							<!-- ECLIPSE CLOUDS -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone66_macro">
+								<set_value name="$WAVY" exact="100" />
+								<set_value name="$WAVY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone67_macro">
+								<set_value name="$PEARLY" exact="100" />
+								<set_value name="$PEARLY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone68_macro">
+								<set_value name="$MURKY" exact="100" />
+								<set_value name="$MURKY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone69_macro">
+								<set_value name="$RATFISH" exact="100" />
+								<set_value name="$RATFISH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone70_macro">
+								<set_value name="$GREAT" exact="100" />
+								<set_value name="$GREAT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone71_macro">
+								<set_value name="$TWIN" exact="100" />
+								<set_value name="$TWIN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone72_macro">
+								<set_value name="$RELOCATING" exact="100" />
+								<set_value name="$RELOCATING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone73_macro">
+								<set_value name="$SSCREEN" exact="100" />
+								<set_value name="$SSCREEN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone74_macro">
+								<set_value name="$DRIPPY" exact="100" />
+								<set_value name="$DRIPPY1" exact="0" />
+							</do_elseif>
+
+						</do_all>
+						<!-- Activate Trade Ships -->
+						<set_job_active job="'heretic_collector_ions_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_collector_plasma_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_miner_mineral_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_miner_mineral_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_minerals_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_agricultural_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_agricultural_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_drones_medium_01'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_energy_large_01'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_energy_medium_01'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_food_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_food_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_hightech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_hightech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_water_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_water_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_missile_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_pharmaceutical_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_pharmaceutical_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_refined_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_refined_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_shiptech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_shiptech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_shiptech_extended_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_weapontech_large'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'heretic_trader_weapontech_medium'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'hev_universe_trader'" activate="true" chance="$ThisFactionStrength * 5 * $P10"/>				
+						<!-- DEACTIVATE TRADE SHIPS -->
+						<!--<set_job_active job="'heretic_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_miner_ice_large_01'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_miner_mineral_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_miner_mineral_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_minerals_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_drones_medium_01'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_energy_large_01'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_energy_medium_01'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_food_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_food_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_water_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_missile_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_pharmaceutical_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_pharmaceutical_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_shiptech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'heretic_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'hev_universe_trader'" activate="false" chance="$ThisFactionStrength * 0"/>-->
+
+
+						<!-- ACTIVATE-->
+						<!-- Sigma Sector Defense DONE-->
+						<do_if value="$SUNK">
+							<set_job_active job="'hev_defense_wing'" activate="true" />						    
+							<set_job_active job="'HEV_SF_deffleet'" activate="true"  />
+							<set_job_active job="'HEV_SF_carfleet'" activate="true"  />	
+							<set_job_active job="'HEV_SS_deffleet'" activate="true"  />						
+							<set_job_active job="'HEV_RES_deffleet'" activate="true" />						    
+							<set_job_active job="'HEV_MCrui_deffleet'" activate="true"  />
+							<set_job_active job="'HEV_Lcrui_deffleet'" activate="true"  />	
+
+							<set_job_active job="'heretic_collector_ions_large'" activate="true" />						    
+							<set_job_active job="'heretic_collector_plasma_large'" activate="true"  />
+							<set_job_active job="'heretic_miner_ice_large_01'" activate="true"  />	
+							<set_job_active job="'heretic_collector_ions_medium'" activate="true"/>
+							<set_job_active job="'heretic_collector_plasma_medium'" activate="true" />
+							<set_job_active job="'heretic_miner_mineral_large'" activate="true" />
+							<set_job_active job="'heretic_miner_mineral_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_minerals_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_agricultural_large'" activate="true" />
+							<set_job_active job="'heretic_trader_agricultural_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_drones_medium_01'" activate="true" />
+							<set_job_active job="'heretic_trader_energy_large_01'" activate="true" />
+							<set_job_active job="'heretic_trader_energy_medium_01'" activate="true" />
+							<set_job_active job="'heretic_trader_food_large'" activate="true" />
+							<set_job_active job="'heretic_trader_food_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_hightech_large'" activate="true" />
+							<set_job_active job="'heretic_trader_hightech_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_water_large'" activate="true" />
+							<set_job_active job="'heretic_trader_water_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_missile_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_pharmaceutical_large'" activate="true" />
+							<set_job_active job="'heretic_trader_pharmaceutical_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_refined_large'" activate="true" />
+							<set_job_active job="'heretic_trader_refined_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_shiptech_large'" activate="true"/>
+							<set_job_active job="'heretic_trader_shiptech_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_shiptech_extended_medium'" activate="true" />
+							<set_job_active job="'heretic_trader_weapontech_large'" activate="true" />
+							<set_job_active job="'heretic_trader_weapontech_medium'" activate="true" />
+							<set_job_active job="'hev_universe_trader'" activate="true" />				
+						
+						</do_if>
+						<!-- Attack Alpha Quadrant DONE-->
+						<do_if value="$SUNK and $ALPHA1">
+							<set_job_active job="'HEV_alpha_attack'" activate="true"  />
+						</do_if>
+
+						<!-- Invasion of Devoid Clime DONE-->
+						<do_if value="$ALPHA and $SUNK">
+							<set_job_active job="'hev_attack_devoid'" activate="true" />					    
+						</do_if>
+
+						<do_if value="$ALPHA and $SUNK and $SILENT1">										    
+							<set_job_active job="'HEV_devoid_gateattack'" activate="true" />
+						</do_if>
+
+						<do_if value="$ALPHA and $SUNK and $SILENT">										    
+							<set_job_active job="'HEV_devoid_invasion'" activate="true" />
+							<set_job_active job="'HEV_Bcruidev_support'" activate="true" />
+						</do_if>
+
+						<!-- Secure Devoid Clime Gate DONE-->
+						<do_if value="$SILENT">
+							<set_job_active job="'HEV_devoidgate_secure'" activate="true" />				    					
+						</do_if>
+
+						<!-- Invasion of Commerce Core and Extra Support for Devoid Clime-->
+						<do_if value="$KEEN and $SILENT and $PATH and $SOLITUDE and $COZY and $ETERNAL and $ILLUSORY">
+							<set_job_active job="'hev_attack_commerce'" activate="true" />
+							<set_job_active job="'HEV_commerce_jbattack'" activate="true" />
+							<set_job_active job="'HEV_MCrui_devdeffleet'" activate="true" />
+							<set_job_active job="'HEV_Lcrui_devdeffleet'" activate="true" />
+						</do_if>					
+						<!-- Secure Commerce Core JB-->
+						<do_if value="$LAST">
+							<set_job_active job="'HEV_commercegate_jbsecure'" activate="true" />				    					
+						</do_if>
+						<!-- Invasion of Commerce Core -->
+						<do_if value="$KEEN and $SILENT and $PATH and $SOLITUDE and $COZY and $ETERNAL and $ILLUSORY and $LAST">
+							<set_job_active job="'HEV_commerce_invasion'" activate="true" />
+							<set_job_active job="'HEV_Bcruicom_support'" activate="true" />
+						</do_if>
+						<!-- Support Subjugation of Commerce Core -->
+						<do_if value="$FALLEN and $LAST and $VORACIOUS and $AERO and $ICY and $THRIVING and $DOUBLE">
+							<set_job_active job="'HEV_Lcrui_comdeffleet'" activate="true" />
+							<set_job_active job="'HEV_MCrui_comdeffleet'" activate="true" />
+						</do_if>
+						<!-- Heretic Vanguard Scout Ships -->
+						<set_job_active job="'hv_pl_scout_ma'" activate="true" chance="faction.player.hasrelation.enemy.{faction.hereticvanguards} and $SUNK" />
+						<set_job_active job="'hv_pl_scout_ma'" activate="false" chance="faction.player.hasrelation.neutral.{faction.hereticvanguards} or $SUNK1" />
+
+						<!-- DEACTIVATE -->
+						<do_if value="$SUNK1">
+							<set_job_active job="'hev_attack_wing'" activate="false" />				    
+							<set_job_active job="'hev_attack2_wing'" activate="false" />
+							<set_job_active job="'HEV_SF_deffleet'" activate="false"  />
+							<set_job_active job="'HEV_SF_carfleet'" activate="false"  />	
+							<set_job_active job="'HEV_SS_deffleet'" activate="false"  />
+							<set_job_active job="'HEV_alpha_attack'" activate="false"  />
+							
+							<set_job_active job="'heretic_collector_ions_large'" activate="false" />
+							<set_job_active job="'heretic_collector_ions_medium'" activate="false" />
+							<set_job_active job="'heretic_collector_plasma_large'" activate="false" />
+							<set_job_active job="'heretic_collector_plasma_medium'" activate="false" />
+							<set_job_active job="'heretic_miner_ice_large_01'" activate="false" />
+							<set_job_active job="'heretic_miner_mineral_large'" activate="false" />
+							<set_job_active job="'heretic_miner_mineral_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_minerals_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_agricultural_large'" activate="false" />
+							<set_job_active job="'heretic_trader_agricultural_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_drones_medium_01'" activate="false" />
+							<set_job_active job="'heretic_trader_energy_large_01'" activate="false" />
+							<set_job_active job="'heretic_trader_energy_medium_01'" activate="false" />
+							<set_job_active job="'heretic_trader_food_large'" activate="false" />
+							<set_job_active job="'heretic_trader_food_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_hightech_large'" activate="false" />
+							<set_job_active job="'heretic_trader_hightech_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_water_large'" activate="false" />
+							<set_job_active job="'heretic_trader_water_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_missile_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_pharmaceutical_large'" activate="false" />
+							<set_job_active job="'heretic_trader_pharmaceutical_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_refined_large'" activate="false" />
+							<set_job_active job="'heretic_trader_refined_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_shiptech_large'" activate="false" />
+							<set_job_active job="'heretic_trader_shiptech_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_shiptech_extended_medium'" activate="false" />
+							<set_job_active job="'heretic_trader_weapontech_large'" activate="false" />
+							<set_job_active job="'heretic_trader_weapontech_medium'" activate="false" />
+							<set_job_active job="'hev_universe_trader'" activate="false" />
+						</do_if>
+
+						<do_if value="$ALPHA">
+							<set_job_active job="'HEV_alpha_attack'" activate="false" />				    
+						</do_if>
+
+						<do_if value="$KEEN1 or $SILENT1 or $PATH1 or $SOLITUDE1 or $COZY1 or $ETERNAL1 or $ILLUSORY1">
+							<set_job_active job="'hev_attack_commerce'" activate="false" />
+							<set_job_active job="'HEV_commerce_jbattack'" activate="false" />
+						</do_if>
+
+						<do_if value="$SILENT or $ALPHA1 or $SUNK1">
+							<set_job_active job="'HEV_devoid_gateattack'" activate="false" />				    
+						</do_if>
+
+						<do_if value="$SILENT1 or $ALPHA1 or $SUNK1">
+							<set_job_active job="'HEV_devoid_invasion'" activate="false" />	
+							<set_job_active job="'HEV_Bcruidev_support'" activate="false" />
+						</do_if>
+
+						<do_if value="$SILENT1">
+							<set_job_active job="'HEV_devoidgate_secure'" activate="false" />	
+							<set_job_active job="'HEV_MCrui_devdeffleet'" activate="false" />
+							<set_job_active job="'HEV_Lcrui_devdeffleet'" activate="false" />
+						</do_if>
+
+						<do_if value="$LAST1">
+							<set_job_active job="'HEV_commercegate_jbsecure'" activate="false" />
+							<set_job_active job="'HEV_Lcrui_comdeffleet'" activate="false" />
+							<set_job_active job="'HEV_MCrui_comdeffleet'" activate="false" />
+						</do_if>
+
+						<do_if value="$KEEN1 and $SILENT1 and $PATH1 and $SOLITUDE1 and $COZY1 and $ETERNAL1 and $ILLUSORY1 and $LAST1">
+							<set_job_active job="'HEV_commerce_invasion'" activate="false" />
+							<set_job_active job="'HEV_Bcruicom_support'" activate="false" />
+						</do_if>
+					</do_elseif>
+
+					<do_elseif value="$ThisFaction == faction.familyryak">
+						<!-- All of Blurred Reflection -->
+						<set_value name="$PREV" exact="0" comment="set variable to zero"/>
+						<set_value name="$PREV1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$UNEND" exact="0" comment="set variable to zero"/>
+						<set_value name="$UNEND1" exact="100" comment="set variable to 100"/>
+						<set_value name="$INDIGN" exact="0" comment="set variable to zero"/>
+						<set_value name="$INDIGN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TWISTED" exact="0" comment="set variable to zero"/>
+						<set_value name="$TWISTED1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SIXTH" exact="0" comment="set variable to zero"/>
+						<set_value name="$SIXTH1" exact="100" comment="set variable to 100"/>					
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">										
+							<!-- Blurred Reflection -->		
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone104_macro">
+								<set_value name="$PREV" exact="100" />
+								<set_value name="$PREV1" exact="0" />
+							</do_if>		
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone105_macro">
+								<set_value name="$UNEND" exact="100" />
+								<set_value name="$UNEND1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone106_macro">
+								<set_value name="$INDIGN" exact="100" />
+								<set_value name="$INDIGN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone107_macro">
+								<set_value name="$TWISTED" exact="100" />
+								<set_value name="$TWISTED1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone108_macro">
+								<set_value name="$SIXTH" exact="100" />
+								<set_value name="$SIXTH1" exact="0" />
+							</do_elseif>	
+								
+
+						</do_all>
+						<!-- Activate Split -->
+						<do_if value="$SIXTH">
+							<set_job_active job="'rya_dfighter_blurred'" activate="true" />						    
+							<set_job_active job="'rya_defdestroyer_blur'" activate="true"  />
+							<set_job_active job="'rya_defdestroyer_six'" activate="true"  />
+						</do_if>
+						<!-- Deactivate Split -->
+						<do_if value="$SIXTH1">
+							<set_job_active job="'rya_dfighter_blurred'" activate="false" />						    
+							<set_job_active job="'rya_defdestroyer_blur'" activate="false"  />
+							<set_job_active job="'rya_defdestroyer_six'" activate="false"  />											
+						</do_if>
+						<!-- Split Scouts -->
+						<set_job_active job="'rya_pl_scout_ma'" activate="true" chance="faction.player.hasrelation.enemy.{faction.familyryak} and $SIXTH" />
+						<set_job_active job="'rya_pl_scout_ma'" activate="false" chance="faction.player.hasrelation.neutral.{faction.familyryak} or $SIXTH1" />
+						
+					</do_elseif>
+
+					<do_elseif value="$ThisFaction == faction.xenon">
+						<!-- All of Sigma Sector -->
+						<set_value name="$ALPHA" exact="0" comment="set variable to zero"/>
+						<set_value name="$ALPHA1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$AGED" exact="0" comment="set variable to zero"/>
+						<set_value name="$AGED1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GRIM" exact="0" comment="set variable to zero"/>
+						<set_value name="$GRIM1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TIMID" exact="0" comment="set variable to zero"/>
+						<set_value name="$TIMID1" exact="100" comment="set variable to 100"/>
+						<set_value name="$INVITING" exact="0" comment="set variable to zero"/>
+						<set_value name="$INVITING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$BLAST" exact="0" comment="set variable to zero"/>
+						<set_value name="$BLAST1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$STURDY" exact="0" comment="set variable to zero"/>
+						<set_value name="$STURDY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SUNK" exact="0" comment="set variable to zero"/>
+						<set_value name="$SUNK1" exact="100" comment="set variable to 100"/>
+						<set_value name="$IMMIN" exact="0" comment="set variable to zero"/>
+						<set_value name="$IMMIN1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DECEPT" exact="0" comment="set variable to zero"/>
+						<set_value name="$DECEPT1" exact="100" comment="set variable to 100"/>
+						<!-- All of Blurred Reflection -->
+						<set_value name="$PREV" exact="0" comment="set variable to zero"/>
+						<set_value name="$PREV1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$UNEND" exact="0" comment="set variable to zero"/>
+						<set_value name="$UNEND1" exact="100" comment="set variable to 100"/>
+						<set_value name="$INDIGN" exact="0" comment="set variable to zero"/>
+						<set_value name="$INDIGN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TWISTED" exact="0" comment="set variable to zero"/>
+						<set_value name="$TWISTED1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SIXTH" exact="0" comment="set variable to zero"/>
+						<set_value name="$SIXTH1" exact="100" comment="set variable to 100"/>
+						<!-- All of Sable Vortex -->
+						<set_value name="$SHAT" exact="0" comment="set variable to zero"/>
+						<set_value name="$SHAT1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$VENT" exact="0" comment="set variable to zero"/>
+						<set_value name="$VENT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DRIFT" exact="0" comment="set variable to zero"/>
+						<set_value name="$DRIFT1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TIME" exact="0" comment="set variable to zero"/>
+						<set_value name="$TIME1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GRAV" exact="0" comment="set variable to zero"/>
+						<set_value name="$GRAV1" exact="100" comment="set variable to 100"/>
+						<set_value name="$CRYPT" exact="0" comment="set variable to zero"/>
+						<set_value name="$CRYPT1" exact="100" comment="set variable to 100"/>	
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+						
+							<!-- Sigma Sector -->
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone94_macro">
+								<set_value name="$ALPHA" exact="100" />
+								<set_value name="$ALPHA1" exact="0" />
+							</do_if>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone95_macro">
+								<set_value name="$AGED" exact="100" />
+								<set_value name="$AGED1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone96_macro">
+								<set_value name="$GRIM" exact="100" />
+								<set_value name="$GRIM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone97_macro">
+								<set_value name="$TIMID" exact="100" />
+								<set_value name="$TIMID1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone98_macro">
+								<set_value name="$INVITING" exact="100" />
+								<set_value name="$INVITING1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone99_macro">
+								<set_value name="$BLAST" exact="100" />
+								<set_value name="$BLAST1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone100_macro">
+								<set_value name="$STURDY" exact="100" />
+								<set_value name="$STURDY1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone101_macro">
+								<set_value name="$SUNK" exact="100" />
+								<set_value name="$SUNK1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone102_macro">
+								<set_value name="$IMMIN" exact="100" />
+								<set_value name="$IMMIN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone103_macro">
+								<set_value name="$DECEPT" exact="100" />
+								<set_value name="$DECEPT1" exact="0" />
+							</do_elseif>					
+							<!-- Blurred Reflection -->		
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone104_macro">
+								<set_value name="$PREV" exact="100" />
+								<set_value name="$PREV1" exact="0" />
+							</do_if>		
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone105_macro">
+								<set_value name="$UNEND" exact="100" />
+								<set_value name="$UNEND1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone106_macro">
+								<set_value name="$INDIGN" exact="100" />
+								<set_value name="$INDIGN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone107_macro">
+								<set_value name="$TWISTED" exact="100" />
+								<set_value name="$TWISTED1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector02_Zone108_macro">
+								<set_value name="$SIXTH" exact="100" />
+								<set_value name="$SIXTH1" exact="0" />
+							</do_elseif>
+							<!--Sable Vortex -->
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector03_Zone109_macro">
+								<set_value name="$SHAT" exact="100" />
+								<set_value name="$SHAT1" exact="0" />
+							</do_if>
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector03_Zone110_macro">
+								<set_value name="$VENT" exact="100" />
+								<set_value name="$VENT1" exact="0" />
+							</do_if>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector03_Zone111_macro">
+								<set_value name="$DRIFT" exact="100" />
+								<set_value name="$DRIFT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector03_Zone112_macro">
+								<set_value name="$TIME" exact="100" />
+								<set_value name="$TIME1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector03_Zone113_macro">
+								<set_value name="$GRAV" exact="100" />
+								<set_value name="$GRAV1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_A_Sector03_Zone114_macro">
+								<set_value name="$CRYPT" exact="100" />
+								<set_value name="$CRYPT1" exact="0" />
+							</do_elseif>
+						</do_all>
+						
+						<set_job_active job="'xen_fattack_albion'" activate="true"/>
+						<set_job_active job="'xen_fattack_devries'" activate="true"/>
+						<set_job_active job="'xen_fattack_omicron'" activate="true"/>
+						<set_job_active job="'xen_fleetleader_albion'" activate="true"/>
+						<set_job_active job="'xen_fleetleader_devries'" activate="true"/>
+						<set_job_active job="'xen_fleetleader2_omicron'" activate="true"/>
+						<set_job_active job="'xen_fleetleader_maelstrom'" activate="true"/>
+						<set_job_active job="'xen_lightfleet_maelstrom'" activate="true"/>
+						<set_job_active job="'xen_lightfleet_albion'" activate="true"/>
+						<set_job_active job="'xen_lightfleet_devries'" activate="true"/>
+						<set_job_active job="'xen_lightfleet_devries2'" activate="true"/>
+						<set_job_active job="'xen_lightfleet_omicron'" activate="true"/>
+						<set_job_active job="'xen_lightfleet2_omicron'" activate="true"/>
+						<set_job_active job="'xen_fleetdefense_shipyard'" activate="true"/>
+						
+						<!-- Turn off Xenon -->
+						<set_job_active job="'xen_fattack_albion'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fattack_devries'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fattack_omicron'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fleetleader_albion'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fleetleader_devries'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fleetleader2_omicron'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fleetleader_maelstrom'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_lightfleet_maelstrom'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_lightfleet_albion'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_lightfleet_devries'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_lightfleet_devries2'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_lightfleet_omicron'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_lightfleet2_omicron'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_fleetdefense_shipyard'" activate="false" chance="$ThisFactionStrength * 0"/>
+						
+						<set_job_active job="'xen_scout_a_xl'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_miner_mineral_medium_a03111'" activate="false" chance="$ThisFactionStrength * 0"/>
+						<set_job_active job="'xen_miner_collector_medium_a03111'" activate="false" chance="$ThisFactionStrength * 0"/>
+						
+						<!-- Xenon Scout Ships -->
+						<set_job_active job="'xen_pl_scout_ma'" activate="true" chance="faction.player.hasrelation.enemy.{faction.xenon}" />
+						<set_job_active job="'xen_pl_scout_ma'" activate="false" chance="$ThisFactionStrength * 0" />
+					</do_elseif>  
+
+					<do_elseif value="$ThisFaction == faction.argongovernment">		
+						<!-- All of Sigma Sector -->
+						<set_value name="$ALPHA" exact="0" comment="set variable to zero"/>
+						<set_value name="$ALPHA1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$AGED" exact="0" comment="set variable to zero"/>
+						<set_value name="$AGED1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GRIM" exact="0" comment="set variable to zero"/>
+						<set_value name="$GRIM1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TIMID" exact="0" comment="set variable to zero"/>
+						<set_value name="$TIMID1" exact="100" comment="set variable to 100"/>
+						<set_value name="$INVITING" exact="0" comment="set variable to zero"/>
+						<set_value name="$INVITING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$BLAST" exact="0" comment="set variable to zero"/>
+						<set_value name="$BLAST1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$STURDY" exact="0" comment="set variable to zero"/>
+						<set_value name="$STURDY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SUNK" exact="0" comment="set variable to zero"/>
+						<set_value name="$SUNK1" exact="100" comment="set variable to 100"/>
+						<set_value name="$IMMIN" exact="0" comment="set variable to zero"/>
+						<set_value name="$IMMIN1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DECEPT" exact="0" comment="set variable to zero"/>
+						<set_value name="$DECEPT1" exact="100" comment="set variable to 100"/>					
+						<!-- All of Devoid Clime -->
+						<set_value name="$KEEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$KEEN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$SILENT" exact="0" comment="set variable to zero"/>
+						<set_value name="$SILENT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$PATH" exact="0" comment="set variable to zero"/>
+						<set_value name="$PATH1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$SOLITUDE" exact="0" comment="set variable to zero"/>
+						<set_value name="$SOLITUDE1" exact="100" comment="set variable to 100"/>
+						<set_value name="$COZY" exact="0" comment="set variable to zero"/>
+						<set_value name="$COZY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$ETERNAL" exact="0" comment="set variable to zero"/>
+						<set_value name="$ETERNAL1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$ILLUSORY" exact="0" comment="set variable to zero"/>
+						<set_value name="$ILLUSORY1" exact="100" comment="set variable to 100"/>							
+						<!-- All of Commerce Core -->
+						<set_value name="$FALLEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$FALLEN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$LAST" exact="0" comment="set variable to zero"/>
+						<set_value name="$LAST1" exact="100" comment="set variable to 100"/>
+						<set_value name="$VORACIOUS" exact="0" comment="set variable to zero"/>
+						<set_value name="$VORACIOUS1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$AERO" exact="0" comment="set variable to zero"/>
+						<set_value name="$AERO1" exact="100" comment="set variable to 100"/>
+						<set_value name="$ICY" exact="0" comment="set variable to zero"/>
+						<set_value name="$ICY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$THRIVING" exact="0" comment="set variable to zero"/>
+						<set_value name="$THRIVING1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$DOUBLE" exact="0" comment="set variable to zero"/>
+						<set_value name="$DOUBLE1" exact="100" comment="set variable to 100"/>
+						<!-- RADIANT HAVEN -->
+						<set_value name="$ASPIRE" exact="0" comment="set variable to zero"/>
+						<set_value name="$ASPIRE1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$HIGH" exact="0" comment="set variable to zero"/>
+						<set_value name="$HIGH1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GLEAM" exact="0" comment="set variable to zero"/>
+						<set_value name="$GLEAM1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$TOWERING" exact="0" comment="set variable to zero"/>
+						<set_value name="$TOWERING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$EVERLASTING" exact="0" comment="set variable to zero"/>
+						<set_value name="$EVERLASTING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$VINDICAT" exact="0" comment="set variable to zero"/>
+						<set_value name="$VINDICAT1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$PARAMOUNT" exact="0" comment="set variable to zero"/>
+						<set_value name="$PARAMOUNT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$MAGNIFICENT" exact="0" comment="set variable to zero"/>
+						<set_value name="$MAGNIFICENT1" exact="100" comment="set variable to 100"/>
+						<!-- ECLIPSE CLOUDS -->
+						<set_value name="$WAVY" exact="0" comment="set variable to zero"/>
+						<set_value name="$WAVY1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$PEARLY" exact="0" comment="set variable to zero"/>
+						<set_value name="$PEARLY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$MURKY" exact="0" comment="set variable to zero"/>
+						<set_value name="$MURKY1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$PEARLY" exact="0" comment="set variable to zero"/>
+						<set_value name="$PEARLY1" exact="100" comment="set variable to 100"/>
+						<set_value name="$GREAT" exact="0" comment="set variable to zero"/>
+						<set_value name="$GREAT1" exact="100" comment="set variable to 100"/>
+						<set_value name="$TWIN" exact="0" comment="set variable to zero"/>
+						<set_value name="$TWIN1" exact="100" comment="set variable to 100"/>			
+						<set_value name="$RELOCATING" exact="0" comment="set variable to zero"/>
+						<set_value name="$RELOCATING1" exact="100" comment="set variable to 100"/>
+						<set_value name="$SSCREEN" exact="0" comment="set variable to zero"/>
+						<set_value name="$SSCREEN1" exact="100" comment="set variable to 100"/>
+						<set_value name="$DRIPPY" exact="0" comment="set variable to zero"/>
+						<set_value name="$DRIPPY1" exact="100" comment="set variable to 100"/>
+
+						<do_all exact="@$ThisFactionZones.count" counter="$j">
+							<!-- Sigma Sector -->
+							<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone94_macro">
+								<set_value name="$ALPHA" exact="100" />
+								<set_value name="$ALPHA1" exact="0" />
+							</do_if>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone95_macro">
+								<set_value name="$AGED" exact="100" />
+								<set_value name="$AGED1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone96_macro">
+								<set_value name="$GRIM" exact="100" />
+								<set_value name="$GRIM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone97_macro">
+								<set_value name="$TIMID" exact="100" />
+								<set_value name="$TIMID1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone98_macro">
+								<set_value name="$INVITING" exact="100" />
+								<set_value name="$INVITING1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone99_macro">
+								<set_value name="$BLAST" exact="100" />
+								<set_value name="$BLAST1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone100_macro">
+								<set_value name="$STURDY" exact="100" />
+								<set_value name="$STURDY1" exact="0" />
+							</do_elseif>	
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone101_macro">
+								<set_value name="$SUNK" exact="100" />
+								<set_value name="$SUNK1" exact="0" />
+							</do_elseif>					
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone102_macro">
+								<set_value name="$IMMIN" exact="100" />
+								<set_value name="$IMMIN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_a_sector01_zone103_macro">
+								<set_value name="$DECEPT" exact="100" />
+								<set_value name="$DECEPT1" exact="0" />
+							</do_elseif>					
+							<!-- Devoid Clime -->		
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$KEEN" exact="100" />
+								<set_value name="$KEEN1" exact="0" />
+							</do_elseif>		
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$SILENT" exact="100" />
+								<set_value name="$SILENT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$PATH" exact="100" />
+								<set_value name="$PATH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$SOLITUDE" exact="100" />
+								<set_value name="$SOLITUDE1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$COZY" exact="100" />
+								<set_value name="$COZY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$ETERNAL" exact="100" />
+								<set_value name="$ETERNAL1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector08_Zone93_macro">
+								<set_value name="$ILLUSORY" exact="100" />
+								<set_value name="$ILLUSORY1" exact="0" />
+							</do_elseif>
+							<!-- Commerce Core -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone59_macro">
+								<set_value name="$FALLEN" exact="100" />
+								<set_value name="$FALLEN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone60_macro">
+								<set_value name="$LAST" exact="100" />
+								<set_value name="$LAST1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone61_macro">
+								<set_value name="$VORACIOUS" exact="100" />
+								<set_value name="$VORACIOUS1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone62_macro">
+								<set_value name="$AERO" exact="100" />
+								<set_value name="$AERO1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone63_macro">
+								<set_value name="$ICY" exact="100" />
+								<set_value name="$ICY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone64_macro">
+								<set_value name="$THRIVING" exact="100" />
+								<set_value name="$THRIVING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector09_Zone65_macro">
+								<set_value name="$DOUBLE" exact="100" />
+								<set_value name="$DOUBLE1" exact="0" />
+							</do_elseif>
+							<!-- Radiant Haven -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone75_macro">
+								<set_value name="$ASPIRE" exact="100" />
+								<set_value name="$ASPIRE1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone76_macro">
+								<set_value name="$HIGH" exact="100" />
+								<set_value name="$HIGH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone77_macro">
+								<set_value name="$GLEAM" exact="100" />
+								<set_value name="$GLEAM1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone78_macro">
+								<set_value name="$TOWERING" exact="100" />
+								<set_value name="$TOWERING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone79_macro">
+								<set_value name="$EVERLASTING" exact="100" />
+								<set_value name="$EVERLASTING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone80_macro">
+								<set_value name="$VINDICAT" exact="100" />
+								<set_value name="$VINDICAT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone81_macro">
+								<set_value name="$PARAMOUNT" exact="100" />
+								<set_value name="$PARAMOUNT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector11_Zone82_macro">
+								<set_value name="$MAGNIFICENT" exact="100" />
+								<set_value name="$MAGNIFICENT1" exact="0" />
+							</do_elseif>
+							<!-- ECLIPSE CLOUDS -->
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone66_macro">
+								<set_value name="$WAVY" exact="100" />
+								<set_value name="$WAVY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone67_macro">
+								<set_value name="$PEARLY" exact="100" />
+								<set_value name="$PEARLY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone68_macro">
+								<set_value name="$MURKY" exact="100" />
+								<set_value name="$MURKY1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone69_macro">
+								<set_value name="$RATFISH" exact="100" />
+								<set_value name="$RATFISH1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone70_macro">
+								<set_value name="$GREAT" exact="100" />
+								<set_value name="$GREAT1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone71_macro">
+								<set_value name="$TWIN" exact="100" />
+								<set_value name="$TWIN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone72_macro">
+								<set_value name="$RELOCATING" exact="100" />
+								<set_value name="$RELOCATING1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone73_macro">
+								<set_value name="$SSCREEN" exact="100" />
+								<set_value name="$SSCREEN1" exact="0" />
+							</do_elseif>
+							<do_elseif value="$ThisFactionZones.{$j}.macro == macro.tzoneCluster_C_Sector10_Zone74_macro">
+								<set_value name="$DRIPPY" exact="100" />
+								<set_value name="$DRIPPY1" exact="0" />
+							</do_elseif>
+						</do_all>
+						<!-- Turn on Civilian Ships -->
+						<set_job_active job="'omicron_collector_hydrogen_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_collector_hydrogen_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_collector_ions_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_collector_ions_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_collector_plasma_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_collector_plasma_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_ice_large_011'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_ice_large_021'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_ice_medium_011'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_ice_medium_021'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_mineral_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_mineral_large2'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_mineral_large3'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_miner_mineral_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_minerals_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_agricultural_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_agricultural_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_drones_medium_011'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_drones_medium_021'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_energy_large_011'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_energy_medium_011'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_energy_large_021'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_energy_medium_021'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_food_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_food_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_hightech_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_hightech_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_water_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_water_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_missile_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_missile_medium2'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_pharmaceutical_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_pharmaceutical_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_refined_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_refined_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_shiptech_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_shiptech_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_shiptech_extended_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'omicron_trader_weapontech_large1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>					
+						<set_job_active job="'omicron_trader_weapontech_medium1'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<set_job_active job="'BlackRain_arg_trader_refined_large'" activate="true" chance="$ThisFactionStrength * 5 * $P15"/>
+						<!-- Turn off Civilian Ships -->
+						<set_job_active job="'omicron_collector_hydrogen_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_collector_hydrogen_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_collector_ions_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_collector_ions_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_collector_plasma_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_collector_plasma_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_ice_large_011'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_ice_large_021'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_ice_medium_011'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_ice_medium_021'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_mineral_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_mineral_large2'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_mineral_large3'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_miner_mineral_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_minerals_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_agricultural_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_agricultural_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_drones_medium_011'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_drones_medium_021'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_energy_large_011'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_energy_medium_011'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_energy_large_021'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_energy_medium_021'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_food_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_food_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_hightech_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_hightech_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_water_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_water_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_missile_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_missile_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_pharmaceutical_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_pharmaceutical_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_refined_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_refined_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_shiptech_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_shiptech_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_shiptech_extended_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'omicron_trader_weapontech_large1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>					
+						<set_job_active job="'omicron_trader_weapontech_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<set_job_active job="'BlackRain_arg_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+						<!-- Military Ships -->
+												
+						<!-- Activate Jobs -->
+						<!-- Argon Government in Sigma Sector -->
+						<do_if value="$ALPHA">
+							<set_job_active job="'arg_defensefleet_alpha'" activate="true" />						
+						</do_if>
+						<!-- Retake Alpha Quadrant -->
+						<do_if value="$ALPHA1 and $SILENT">
+							<set_job_active job="'arg_retake_alpha'" activate="true" />				    
+						</do_if>
+						<!-- Invade Sigma Sector -->
+						<do_if value="$ALPHA and $SILENT">
+							<set_job_active job="'arg_invade_sigma'" activate="true" />						
+						</do_if>
+						<!-- Fortify Sigma Sector -->
+						<do_if value="$ALPHA and $SILENT and $AGED and $GRIM and $TIMID and $INVITING and $BLAST and $SUNK and $IMMIN and $DECEPT">
+							<set_job_active job="'arg_fortify_sigma'" activate="true" />						
+						</do_if>
+						<!-- Argon Defense of Devoid Clime -->
+						<do_if value="$ETERNAL">
+							<set_job_active job="'arg_defensefleet_devoid'" activate="true" />
+							<set_job_active job="'arg_defensefleet_eternal'" activate="true" />
+							<set_job_active job="'arg_defensefleet_silent'" activate="true" />
+						</do_if>
+						<!-- Argon Defense of Eclipse Clouds -->
+						<do_if value="$WAVY">
+							<set_job_active job="'arg_defensefleet_eclipse'" activate="true" />
+							<set_job_active job="'arg_defensefleet_wavy'" activate="true" />
+						</do_if>
+						<!-- Retake Wavy Haze -->
+						<do_if value="$WAVY1 and $LAST and $ETERNAL1">
+							<set_job_active job="'arg_retakefleet_wavy'" activate="true" />							
+						</do_if>
+						<do_if value="$WAVY1 and $ETERNAL">
+							<set_job_active job="'arg_retakefleet_wavy2'" activate="true" />							
+						</do_if>
+						<!-- Retake Eternal Dawn -->
+						<do_if value="$ETERNAL1 and $LAST">
+							<set_job_active job="'arg_retakefleet_eternal'" activate="true" />						
+						</do_if>
+						<do_if value="$ETERNAL1 and $LAST1 and $WAVY">
+							<set_job_active job="'arg_retakefleet_eternal2'" activate="true" />						
+						</do_if>
+						<!-- Defense of Commerce Core -->
+						<do_if value="$VORACIOUS">
+							<set_job_active job="'arg_defensefleet_commerce'" activate="true" />
+							<set_job_active job="'arg_defensefleet_voracious'" activate="true" />
+							<set_job_active job="'arg_defensefleet_laststand'" activate="true" />
+						</do_if>
+						<!-- Retake Voracious -->
+						<do_if value="$VORACIOUS1 and $ASPIRE">
+							<set_job_active job="'arg_retakefleet_voracious'" activate="true" />						
+						</do_if>
+						<!-- Argon Defense of Radiant Heaven -->
+						<do_if value="$ASPIRE">
+							<set_job_active job="'arg_defensefleet_radiant'" activate="true" />
+							<set_job_active job="'arg_defensefleet_aspire'" activate="true" />
+							<set_job_active job="'arg_defensefleet_gleam'" activate="true" />
+						</do_if>
+						<!-- Argon Scouts -->
+						<set_job_active job="'ag_pl_scout_om'" activate="true" chance="faction.player.hasrelation.enemy.{faction.argongovernment} and $ETERNAL" />
+						<set_job_active job="'ag_pl_scout_om'" activate="false" chance="faction.player.hasrelation.neutral.{faction.argongovernment} or $ETERNAL1" />
+						<!-- Deactivate Jobs -->
+						<do_if value="$ALPHA1">
+							<set_job_active job="'arg_defensefleet_alpha'" activate="false" />				    
+						</do_if>
+
+						<do_if value="$ALPHA or $SILENT1">
+							<set_job_active job="'arg_retake_alpha'" activate="false" />				    
+						</do_if>
+
+						<do_if value="$ALPHA1 or $SILENT1">
+							<set_job_active job="'arg_invade_sigma'" activate="false" />				    
+						</do_if>
+
+						<do_if value="$ALPHA1 and $SILENT1 and $AGED1 and $GRIM1 and $TIMID1 and $INVITING1 and $BLAST1 and $SUNK1 and $IMMIN1 and $DECEPT1">
+							<set_job_active job="'arg_fortify_sigma'" activate="false" />						
+						</do_if>
+
+						<do_if value="$ETERNAL1">
+							<set_job_active job="'arg_defensefleet_devoid'" activate="false" />
+							<set_job_active job="'arg_defensefleet_eternal'" activate="false" />
+							<set_job_active job="'arg_defensefleet_silent'" activate="false" />
+						</do_if>
+						
+						<do_if value="$WAVY1">
+							<set_job_active job="'arg_defensefleet_eclipse'" activate="false" />
+							<set_job_active job="'arg_defensefleet_wavy'" activate="false" />							
+						</do_if>
+
+						<do_if value="$ETERNAL or $LAST1">
+							<set_job_active job="'arg_retakefleet_eternal'" activate="false" />						
+						</do_if>
+						
+						<do_if value="$ETERNAL or $WAVY1">
+							<set_job_active job="'arg_retakefleet_eternal2'" activate="false" />						
+						</do_if>
+						
+						<do_if value="$WAVY or $LAST1">
+							<set_job_active job="'arg_retakefleet_wavy'" activate="false" />						
+						</do_if>
+						
+						<do_if value="$WAVY or $ETERNAL1">
+							<set_job_active job="'arg_retakefleet_wavy2'" activate="false" />						
+						</do_if>
+						
+						<do_if value="$ASPIRE or $ETERNAL1">
+							<set_job_active job="'arg_retakefleet_aspire'" activate="false" />						
+						</do_if>
+						
+						<do_if value="$VORACIOUS1">
+							<set_job_active job="'arg_defensefleet_commerce'" activate="false" />
+							<set_job_active job="'arg_defensefleet_voracious'" activate="false" />
+							<set_job_active job="'arg_defensefleet_laststand'" activate="false" />
+						</do_if>
+
+						<do_if value="$VORACIOUS or $ASPIRE1">
+							<set_job_active job="'arg_retakefleet_voracious'" activate="false" />						
+						</do_if>
+					</do_elseif>
+					<set_value name="$text" exact="'%1 [%4] -St.: %2 -Z.: %3 \n'.[$ThisFaction.name, $ThisFactionStations.count, $ThisFactionZones.count, $ThisFactionStrength]" operation="add" />
+
+					<!-- Scout Jobs 
+					<do_if value="$ThisFaction == faction.plutarch">
+						<set_job_active job="'pmc_patrol_scout_al'" activate="if $ThisFactionStrength gt 10 then true else false" />
+					</do_if>
+					<do_elseif value="$ThisFaction == faction.heartofalbion">
+						<set_job_active job="'hva_patrol_scout_al'" activate="if $ThisFactionStrength gt 10 then true else false" />
+					</do_elseif>
+					<do_elseif value="$ThisFaction == faction.argongovernment">
+						<set_job_active job="'ag_patrol_scout_ol'" activate="if $ThisFactionStrength gt 10 then true else false" />
+					</do_elseif>
+					-->
+				</do_all>
+				
+				<!--<write_to_logbook category="missions" text="$text"/>-->
+				<remove_value name="$text"/>
+
+			</actions>				
+		</cue>
+	</cues>
+
+</mdscript>

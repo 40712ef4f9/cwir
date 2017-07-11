@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff>
+	<add sel="//set_value[@name='$missilecapacity']" pos="after">
+      <set_value name="$isplayerowned" exact="false" chance="if global.$BRrearmplayerships and $isplayerowned and $object.isclass.ship then 100 else 0"/>
+	</add>
+</diff>

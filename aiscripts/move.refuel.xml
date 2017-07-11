@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+<!-- Conquer_mod v020 -->
+
+	<add sel="/aiscript/attention/actions/do_if[@value='$selloffers.count == 0'][1]" pos="before">
+		<do_all exact="$selloffers.count" counter="$i">
+			<!--<do_if value="$selloffers.{$i}.seller.boarder or $selloffers.{$i}.seller.owner.hasrelation.enemy.{this.ship.owner}">-->
+			<do_if value="$selloffers.{$i}.seller.owner.hasrelation.enemy.{this.ship.owner}">
+				<remove_value name="$selloffers.{$i}" />
+			</do_if>
+        </do_all>	
+	</add>
+	
+	<add sel="/aiscript/attention/actions/do_if[@value='$selloffers.count == 0']/do_if[@value='$selloffers.count == 0']" pos="before">
+		<do_all exact="$selloffers.count" counter="$i">
+			<do_if value="$selloffers.{$i}.seller.owner.hasrelation.enemy.{this.ship.owner}">
+				<remove_value name="$selloffers.{$i}" />
+			</do_if>
+        </do_all>	
+	</add>
+	
+	<add sel="/aiscript/attention/actions/do_if[@value='$selloffers.count == 0'][2]" pos="before">
+		<do_all exact="$selloffers.count" counter="$i">
+			<do_if value="$selloffers.{$i}.seller.owner.hasrelation.enemy.{this.ship.owner}">
+				<remove_value name="$selloffers.{$i}" />
+			</do_if>
+        </do_all>	
+	</add>
+	
+	<add sel="/aiscript/attention/actions/do_if[@value='$selloffers.count == 0'][2]/set_value[@name='$failreason']" pos="before">
+			<!--<debug_text text="'Refuel actions stopped because no valid seller was found.'" chance="100" />-->
+			<!--<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />
+			<write_to_logbook category="general" text="'=== Refuel actions stopped 3 === No valid seller was found \n this ship %1 faction %2.\n destination %3 faction %4 \n zone %5.'.[this.ship.name, this.ship.owner.name, $tradeoffer.seller.name, $tradeoffer.seller.owner.name, $tradeoffer.seller.zone.name]"/>-->
+	</add>
+	
+
+	<add sel="/aiscript/attention/actions/do_if[@value='this.sector']" pos="before">
+		<do_if value="$tradeoffer.seller.owner.hasrelation.enemy.{this.ship.owner}">
+			<!--<debug_text text="'Refuel actions stopped before move by refuel seller faction relation'" chance="100" />-->
+			<!--<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />
+			<write_to_logbook category="general" text="'=== Refuel actions stopped 1 === \n this ship %1 faction %2.\n destination %3 faction %4 \n zone %5.'.[this.ship.name, this.ship.owner.name, $tradeoffer.seller.name, $tradeoffer.seller.owner.name, $tradeoffer.seller.zone.name]"/>-->
+			
+			<set_value name="$failreason" exact="'ERR_TARGET_INVALID'" />
+			<resume label="findfuel" />
+		</do_if>
+	</add>
+	
+	
+</diff>

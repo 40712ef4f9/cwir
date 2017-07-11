@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<diff>
+	<add sel="/aiscript/interrupts/handler/conditions/event_object_update_supply" pos="after">
+	  <check_value value="not $last_ammo? or $last_ammo lt player.age" />
+	</add>
+	<add sel="/aiscript/interrupts/handler/actions/run_interrupt_script" pos="before">
+	  <set_value name="$last_ammo" exact="player.age+10min" />
+	</add>
+	<add sel="//find_sell_offer[@tradepartner='this.station']" type="@chance" >if this.station.canbuildships then 0 else 100</add>
+	<add sel="//find_sell_offer[@tradepartner='this.station']"  pos="before" >
+		<create_list name="$selloffers"/>
+	</add>
+</diff>

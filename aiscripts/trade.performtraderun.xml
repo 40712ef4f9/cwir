@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+<!-- Conquer_mod v020 -->
+
+	<replace sel="/aiscript/attention/actions/do_if[@value='not $targetobject.isoperational']">
+		<do_if value="not $targetobject.isoperational or @this.ship.owner.relationto.{$targetobject.owner} le this.ship.owner.relation.enemy.min">
+		<!--	<debug_text text="'Trade actions interrupted before move by destination faction relation or by being boarded.'" chance="100" />-->
+			<set_value name="$failreason" exact="'ERR_TARGET_INVALID'" />
+			<resume label="finish" />
+		</do_if>
+	</replace>
+	
+	<add sel="/aiscript/attention/actions/set_value[@name='$reserved']" pos="before">
+		<do_if value="@$targetobject and $targetobject.owner and this.ship.owner.relationto.{$targetobject.owner} le this.ship.owner.relation.enemy.min">		
+			<!--<debug_text text="'Trade actions interrupted after move by destination faction relation or by being boarded.'" chance="100" />-->
+			<set_value name="$failreason" exact="'ERR_TARGET_INVALID'" />
+			<resume label="finish" />
+		</do_if>
+	</add>
+
+	<add sel="//do_if[@value='$parkresult']" pos="before">
+		<do_if value="@$targetobject and $targetobject.owner and this.ship.owner.relationto.{$targetobject.owner} le this.ship.owner.relation.enemy.min">		
+			<set_value name="$failreason" exact="'ERR_TARGET_INVALID'" />
+			<resume label="finish" />
+		</do_if>
+	</add>
+	<add sel="//do_if[@value='not $dockresult']" pos="before">
+		<do_if value="@$targetobject and $targetobject.owner and this.ship.owner.relationto.{$targetobject.owner} le this.ship.owner.relation.enemy.min">		
+			<set_value name="$failreason" exact="'ERR_TARGET_INVALID'" />
+			<resume label="finish" />
+		</do_if>
+	</add>
+	<add sel="//label[@name='perform trade']" pos="after">
+		<do_if value="$targetobject and $targetobject.isoperational" negate="true">		
+			<set_value name="$failreason" exact="'ERR_TARGET_INVALID'" />
+			<resume label="finish" />
+		</do_if>
+	</add>
+</diff>

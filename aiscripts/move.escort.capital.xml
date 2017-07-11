@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- Conquer_mod v019s -->
+	<add sel="/aiscript/attention/actions/wait[@min='200ms']" pos="before">
+	 <!-- CM intervention -->	  
+	  <do_if value="this.ship.isclass.ship_l or this.ship.isclass.ship_xl">
+		<set_value name="$separation" exact="3000m" />
+		<set_value name="$nmax" exact="4" />
+	  </do_if>
+	<!-- CM intervention -->
+	</add>
+</diff>

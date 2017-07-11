@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_canteran_frigate_macro" />
+	</add>	
+<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_dv_fury_new_defence_macro" />
+	</add>	
+	<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_dv_arb_new_defence_macro" />
+	</add>			
+	<!--<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_ice_collector_macro" />
+	</add>
+	<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_ore_collector_macro" />
+	</add>
+	<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_hydrogen_collector_macro" />
+	</add>
+	<add sel="//macros/macro[@name='buildmodule_ships_devries_l_macro']/properties/builder">
+	<macro ref="units_size_l_ions_collector_macro" />
+	</add>-->
+	
+	</diff>

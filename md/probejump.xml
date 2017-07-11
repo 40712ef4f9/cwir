@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="ProbeJump" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+<!-- Conquer_mod v019s -->
+<!-- CWIR -->
+ <cues>
+ 	 		
+	<cue name="ProbeJ1" instantiate="true" namespace="this">
+		<conditions>
+			<event_conversation_next_section sectionprefix="gSendProbe"/>
+			<!--<check_value value="player.entity.inventory.{ware.inv_probe}.count"/>-->
+		</conditions>
+		<actions>
+			<signal_cue cue="md.Guidance.EndGuidance"/>
+			<play_sound object="player.primaryship" sound="'tdrone_undock_pship'" />
+			<remove_inventory entity="player.entity" ware="ware.inv_probe" exact="1" />
+			
+		<do_if value="(player.ship) and (player.ship == player.primaryship)" >
+			<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="player.primaryship.zone">
+				<owner exact="faction.player" overridenpc="true"/>
+				<pilot>
+					<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+				</pilot>
+				<position object="player.primaryship" x="-1.5m" y="5.5m" z="-24.5m"/>
+				<rotation value="player.primaryship.rotation" />
+			</create_ship>	
+		</do_if>
+		<do_else>
+			<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="player.primaryship.zone">
+				<owner exact="faction.player" overridenpc="true"/>
+				<pilot>
+					<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+				</pilot>
+				<position object="player.ship" x="-1.5m" y="-175m" z="-24.5m"/>
+				<rotation value="player.ship.rotation" />
+			</create_ship>	
+			</do_else>
+			
+			
+			<!-- Better safe position (in front) -->
+			<get_safe_pos object="player.primaryship" zone="player.primaryship.zone" radius="500m" result="$safepos" directionobject="player.primaryship" direction="quadrant.front" ignored="player.primaryship" />
+			<start_script object="$Probe.pilot" name="'move.probe'">
+				<param name="destination" value="player.primaryship.zone" />
+				<param name="position" value="$safepos" />
+				<param name="jumpto" value="event.param2" />
+			</start_script>			
+		</actions>
+	</cue>	
+		
+	<cue name="ProbeJ2" instantiate="true" namespace="this">
+	  <conditions>
+        <check_any>
+          <event_conversation_started conversation="default" />
+          <event_conversation_returned_to_section section="default" />
+        </check_any>
+        <check_value value="not event.object.customhandler" />
+      </conditions>
+      <actions>
+		<do_if value="event.object.ship.macro == macro.unit_size_xs_probe_macro" >
+           <add_player_choice_sub text="'Destroy Probe'" position="top_right" section="gMain_Probe" choiceparam="event.object.ship" />
+		</do_if>
+	  </actions>
+	</cue>	
+		
+	<cue name="ProbeJ3" instantiate="true" namespace="this">
+		<conditions>
+			<event_conversation_next_section sectionprefix="gMain_Probe"/>
+		</conditions>
+		<actions>
+			<destroy_object object="event.object.ship" explosion="true"/>
+		</actions>
+	</cue>	
+ </cues>
+</mdscript>

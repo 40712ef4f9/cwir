@@ -1,0 +1,1847 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="Conquer_Mod" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\patch_09\libraries\md.xsd">
+	<cues>
+		<!-- v020 -->
+		<!-- X:R Conquer mod Short version 0.20 - mod by Rubini - X:R 4.00 compatible-->
+		<!-- Credits to Van-Fim that made the initial code to destroy stations and -->
+		<!-- zones ownership change, this was the start point of this mod, so thanks to him -->
+
+		<!-- Changes can be made on CM_Config.xml file on the mod md folder-->
+
+		<cue name="Start" instantiate="false" version="5">
+			<conditions>
+				<check_any>
+					<event_player_created />
+					<event_cue_signalled cue="md.Setup.GameStart" />
+				</check_any>
+			</conditions>
+			<actions>
+				<!-- starting the mod for the first time -->
+				<create_list name="md.Conquer_Mod.Start.$TheListStations"/>
+				<create_list name="md.Conquer_Mod.Start.$TheListPos"/>
+				<!-- for short version make the correct allegiances -->
+				<set_value name="md.Conquer_Mod.Start.$Main_Factions" exact="[faction.heartofalbion, faction.plutarch, faction.canteran, faction.argongovernment, faction.xenon, faction.familyryak, faction.sovereignsyndicate, faction.reivers, faction.hereticvanguards]"/>
+				<set_value name="md.Conquer_Mod.Start.$Main_FactionsShort" exact="[faction.canteran, faction.xenon, faction.plutarch, faction.sovereignsyndicate, faction.reivers, faction.hereticvanguards]"/>
+				<include_actions ref="Start_include" />													
+
+				<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="false"/>
+				<set_faction_relation_locked faction="faction.hereticvanguards" locked="false"/>
+				<set_faction_relation_locked faction="faction.xenon" locked="false"/>
+				<set_faction_relation_locked faction="faction.reivers" locked="false"/>
+
+
+				<set_faction_relation faction="faction.canteran" otherfaction="faction.plutarch" value="faction.canteran.relation.kill.max"/>
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.canteran" value="faction.plutarch.relation.kill.max"/>
+
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.reivers" value="faction.plutarch.relation.kill.max"/>
+				<set_faction_relation faction="faction.reivers" otherfaction="faction.plutarch" value="faction.reivers.relation.kill.max"/>
+
+				<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.plutarch" value="faction.heartofalbion.relation.kill.max"/>
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.heartofalbion" value="faction.plutarch.relation.kill.max"/>
+
+				<set_faction_relation faction="faction.canteran" otherfaction="faction.heartofalbion" value="faction.canteran.relation.friend.max"/>
+				<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.canteran" value="faction.heartofalbion.relation.friend.max"/>
+
+				<set_faction_relation faction="faction.argongovernment" otherfaction="faction.familyryak" value="0"/>
+				<set_faction_relation faction="faction.familyryak" otherfaction="faction.argongovernment" value="0"/>
+
+				<do_if value="md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity" comment="dlc compatibility">
+					<set_value name="$todo" exact="['teladi', 'teladidrugrunner', 'teladigunrunner']"/>
+					<set_faction_relation faction="faction.{$todo.{1}}" otherfaction="faction.{$todo.{2}}" value="faction.{$todo.{1}}.relation.kill.max"/>
+					<set_faction_relation faction="faction.{$todo.{1}}" otherfaction="faction.{$todo.{3}}" value="faction.{$todo.{1}}.relation.kill.max"/>
+					<remove_value name="$todo"/>
+				</do_if>
+
+				<set_faction_relation faction="faction.player" otherfaction="faction.hereticvanguards" value="0"/>
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.player" value="0"/>
+
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.aquarius" value="0"/>
+				<set_faction_relation faction="faction.aquarius" otherfaction="faction.hereticvanguards" value="0"/>
+
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.chow" value="0"/>
+				<set_faction_relation faction="faction.chow" otherfaction="faction.hereticvanguards" value="0"/>
+
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.frantonpharma" value="0"/>
+				<set_faction_relation faction="faction.frantonpharma" otherfaction="faction.hereticvanguards" value="0"/>
+
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.jonferson" value="0"/>
+				<set_faction_relation faction="faction.jonferson" otherfaction="faction.hereticvanguards" value="0"/>
+
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.sonraenergy" value="0"/>
+				<set_faction_relation faction="faction.sonraenergy" otherfaction="faction.hereticvanguards" value="0"/>
+
+
+
+				<add_inventory entity="player.entity" ware="ware.inv_probe" min="3" max="6"/>
+
+
+
+				<!-- create pirate stations and give to them one ship to protect their new stations -->
+				<find_zone name="$EpiLow" macro="macro.tzonecluster_b_sector07_zone10_macro" />
+				<create_station name="$SS_pirateA" macro="macro.struct_bt_dv_reivers_outpost_01_macro" zone="$EpiLow" owner="faction.sovereignsyndicate">
+					<safepos x="1500m" y="-100m"/>
+					<buildsequence sequence="'a'" stage="1"/>
+				</create_station>
+				<!--<add_units object="$SS_pirateA" category="unitcategory.welder" mk="1" exact="10" />-->
+				<create_cue_actor name="$defencemanager" cue="this">
+					<select faction="faction.sovereignsyndicate" tags="tag.defencecontrol"/>
+					<owner exact="faction.sovereignsyndicate" />
+				</create_cue_actor>
+				<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+				<assign_defence_manager object="$SS_pirateA" actor="$defencemanager"/>
+				<start_script object="$defencemanager" name="'fight.attack.object.station'" />
+				<create_cue_actor name="$engineer" cue="this">
+					<select faction="faction.sovereignsyndicate" tags="tag.engineer"/>
+					<owner exact="faction.sovereignsyndicate" />
+				</create_cue_actor>
+				<set_entity_type entity="$engineer" type="entitytype.engineer" />      
+				<assign_engineer object="$SS_pirateA" actor="$engineer" />        
+				<start_script object="$engineer" name="'engineer.ai'" />
+				<signal_objects param2="$SS_pirateA" param="'init station'" object="player.galaxy"/>
+
+				<create_station name="$SS_pirateB" macro="macro.struct_bt_dv_reivers_outpost_03_macro" zone="$EpiLow" owner="faction.sovereignsyndicate">
+					<safepos x="-1500m" y="-500m"/>
+					<buildsequence sequence="'a'" stage="1"/>
+				</create_station>
+				<create_cue_actor name="$defencemanager" cue="this">
+					<select faction="faction.sovereignsyndicate" tags="tag.defencecontrol"/>
+					<owner exact="faction.sovereignsyndicate" />
+				</create_cue_actor>
+				<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+				<assign_defence_manager object="$SS_pirateB" actor="$defencemanager"/>
+				<start_script object="$defencemanager" name="'fight.attack.object.station'" />
+				<create_cue_actor name="$engineer" cue="this">
+					<select faction="faction.sovereignsyndicate" tags="tag.engineer"/>
+					<owner exact="faction.sovereignsyndicate" />
+				</create_cue_actor>
+				<set_entity_type entity="$engineer" type="entitytype.engineer" />      
+				<assign_engineer object="$SS_pirateB" actor="$engineer" />        
+				<start_script object="$engineer" name="'engineer.ai'" />
+				<signal_objects param2="$SS_pirateB" param="'init station'" object="player.galaxy"/>
+				<create_ship name="$Enemy_Ship" zone="$EpiLow" macro="units_size_xl_cargo_hauler_2_macro">
+					<owner exact="faction.sovereignsyndicate" overridenpc="true"/>
+					<pilot>
+						<select faction="faction.sovereignsyndicate" tags="[tag.commander]"/>
+					</pilot>
+					<defence>
+						<select faction="faction.sovereignsyndicate" tags="[tag.defencecontrol]"/>
+					</defence>
+					<engineer>
+						<select faction="faction.sovereignsyndicate" tags="[tag.engineer]"/>
+					</engineer>
+					<units>
+						<unit category="unitcategory.marine" mk="1" min="10" max="15"/>
+						<unit category="unitcategory.marine" mk="2" min="10" max="15"/>
+						<unit category="unitcategory.defence" min="15" max="25" mk="1" />
+						<unit category="unitcategory.welder" mk="1" exact="5" />
+						<unit category="unitcategory.transport" mk="1" exact="10" />
+					</units>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent min="70" max="80"/>
+						</wares>
+					</cargo>
+					<safepos max="5km"/>
+				</create_ship>
+				<start_script object="$Enemy_Ship.pilot" name="'move.patrol'" />
+
+				<!-- TEST NEW SHIPYARD -->
+				<find_zone name="$Sunken" macro="macro.tzonecluster_a_sector01_zone101_macro" />
+				<create_station name="$HV_shipyard" macro="macro.struct_bt_sy_heretic_macro" zone="$Sunken" owner="faction.hereticvanguards">
+					<position x="2877.9296875" y="1141.11328125" z="2421.875" />
+					<buildsequence sequence="'a'" stage="2"/>
+					<buildsequence sequence="'b'" stage="2"/>
+					<buildsequence sequence="'c'" stage="2"/>
+					<buildsequence sequence="'d'" stage="1"/>
+					<buildsequence sequence="'e'" stage="1"/>
+
+				</create_station>
+
+				<add_default_production_wares object="$HV_shipyard" lowerlimit="25" upperlimit="50"/>
+				<signal_objects param2="$HV_shipyard" param="'init station'" object="player.galaxy"/>
+
+				<!--<find_zone name="$cryptic" macro="macro.tzonecluster_a_sector03_zone114_macro" />
+					<create_station name="$Xen_shipyard" macro="macro.struct_bt_sy_xenon_macro" zone="$cryptic" owner="faction.xenon">
+               			<position x="-12877.9296875" y="21141.11328125" z="2421.875" />
+							<buildsequence sequence="'a'" stage="2"/>
+							<buildsequence sequence="'b'" stage="2"/>
+							<buildsequence sequence="'c'" stage="3"/>
+							<buildsequence sequence="'d'" stage="1"/>
+							<buildsequence sequence="'e'" stage="1"/>
+
+
+                	</create_station>
+
+					<add_default_production_wares object="$Xen_shipyard" lowerlimit="50" upperlimit="75"/>
+					<signal_objects param2="$Xen_shipyard" param="'init station'" object="player.galaxy"/>-->
+				<!--<write_to_logbook category="general" text="'=== Conquer Mod First Run Check === \n Status: Ok.'.[]"/>-->
+				<write_to_logbook category="general" text="{40002,1012}"/>
+				<signal_cue cue="md.CM_Config.Settings"/>
+			</actions>
+			<patch sinceversion="4" state="complete">
+				<include_actions ref="Start_include" />
+			</patch>
+			<patch sinceversion="5" state="complete">
+				<remove_value name="$allzones"/>
+			</patch>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<!--<cue name="Kill_Stations_cue" instantiate="true" version="1">-->
+		<cue name="Kill_Stations_cue" version="1">
+			<conditions>
+				<event_cue_signalled/>
+				<cue_is_complete cue="md.Setup.Start"/>
+			</conditions>
+			<actions>
+				<show_notification caption="'=== Conquer Mod Main Code Check ==='" details="' \n\n Status: %1 '.[md.CM_Config.Settings.$StartMessage]" timeout="5s" queued="false" priority="8" sound="notification_generic"/>
+				<write_to_logbook category="general" text="'=== Conquer Mod Main Code Check === \n Status: %1 '.[md.CM_Config.Settings.$StartMessage]"/>
+				<!-- settings some global variables at each game load  -->
+
+				<set_value name="md.Conquer_Mod.Start.$Debug" exact="0" />
+				<do_if value="not md.Conquer_Mod.Start.$RetakeFlag_Zone?" >
+					<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Zone" exact="0" />
+					<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Faction" exact="0" />
+				</do_if>
+				<do_if value="not md.$JunkDealerLists.{1}.indexof.{[ware.inv_probe, 1, 2, 45]}">
+					<append_to_list name="md.$JunkDealerLists.{1}" exact="[ware.inv_probe, 1, 2, 45]" />
+				</do_if>
+				<do_if value="not md.$EquipmentLists.{1}.indexof.{[ware.inv_probe, 2, 5, 85]}">
+					<append_to_list name="md.$EquipmentLists.{1}" exact="[ware.inv_probe, 2, 5, 85]" />
+				</do_if>
+				<do_if value="not md.$EquipmentLists.{1}.indexof.{[ware.inv_hyperdrivecrystal, 8, 15, 85]}">
+					<append_to_list name="md.$EquipmentLists.{1}" exact="[ware.inv_hyperdrivecrystal, 8, 15, 85]" />
+				</do_if>
+
+				<do_if value="not md.Conquer_Mod.Start.$TheListTimestamp?">
+					<remove_value name="md.Conquer_Mod.Start.$TheListMacro"/>
+					<create_list name="md.Conquer_Mod.Start.$TheListTimestamp"/>
+					<do_all exact="md.Conquer_Mod.Start.$TheListStations.count">
+						<append_to_list name="md.Conquer_Mod.Start.$TheListTimestamp" exact="player.age" />
+					</do_all>
+				</do_if>
+
+				<!-- start to find destroyed stations -->
+				<do_if value="md.Conquer_Mod.Start.$TheListStations.count gt 0" >
+
+					<do_all exact="md.Conquer_Mod.Start.$TheListStations.count" counter="$k" reverse="true">
+
+						<do_if value="@md.Conquer_Mod.Start.$TheListStations.{$k} != 1" >
+
+							<set_value name="$match" exact="0"/>
+							<find_station name="$EStations" space="md.Conquer_Mod.Start.$TheListStations.{$k}" multiple="true"/>
+
+							<do_all exact="$EStations.count" counter="$k1">
+
+								<!--<write_to_logbook category="general" text="'=== KILL STATION DEBUG === \n ListStCount k %1 %2 \n ListSt(k)name %7 \n ListPosCount k %3 %2 \n ListPos(k)x %4 \n Estationcount k1 %5 %6 \n Estationk1 name %8 '.[md.Conquer_Mod.Start.$TheListStations.count, $k, md.Conquer_Mod.Start.$TheListPos.count, md.Conquer_Mod.Start.$TheListPos.{$k}.x, $EStations.count, $k1, md.Conquer_Mod.Start.$TheListStations.{$k}.name, $EStations.{$k1}.name]"/>		-->
+
+								<set_value name="$aX" exact="md.Conquer_Mod.Start.$TheListPos.{$k}.x - $EStations.{$k1}.position.x" />
+								<set_value name="$aY" exact="md.Conquer_Mod.Start.$TheListPos.{$k}.y - $EStations.{$k1}.position.y" />
+								<set_value name="$aZ" exact="md.Conquer_Mod.Start.$TheListPos.{$k}.z - $EStations.{$k1}.position.z" />
+
+								<do_if value="$aX lt 50m and $aX gt -50m and $aY lt 50m and $aY gt -50m and $aZ lt 50m and $aZ gt -50m" >
+
+									<do_if value="$EStations.{$k1}.zone.npcbuildlocations.indexof.{$EStations.{$k1}.buildlocation} or $EStations.{$k1}.zone.buildlocations.indexof.{$EStations.{$k1}.buildlocation}">
+										<continue />
+									</do_if>
+									<do_else>
+										<set_value name="$match" exact="1"/>
+									</do_else>
+
+									<!-- just for debug, to be commented  -->
+									<!--<show_help position="12" duration="10s" custom="' Destroyed station found and destroyed again  by save reload. Station %1  \n Station faction %2 \n Station zone %3.'.[$EStations.{$k1}.name, $EStations.{$k1}.owner, $EStations.{$k1}.zone.name]" />
+						-->
+									<!-- just for debug, to be commented  -->
+									<do_if value="['xenon_weaponplatform_macro', 'khaak_weaponplatform_macro', 'struct_econ_weapon_ar_defence_macro', 'struct_bt_ls_defence_macro'].indexof.{$EStations.{$k1}.macro.id} and md.Conquer_Mod.Start.$TheListTimestamp.{$k} + 24h lt player.age">
+										<do_if value="$EStations.{$k1}.owner == $EStations.{$k1}.zone.owner or not $EStations.{$k1}.zone.owner.hasrelation.enemy.{$EStations.{$k1}.owner}">
+											<signal_objects object="player.galaxy" param="'init station'" param2="$EStations.{$k1}"/>
+											<set_value name="$match" exact="0"/>
+										</do_if>
+										<do_elseif value="$EStations.{$k1}.zone.owner.hasrelation.enemy.{$EStations.{$k1}.owner}">
+											<set_owner object="$EStations.{$k1}" faction="$EStations.{$k1}.zone.owner" />
+											<signal_objects object="player.galaxy" param="'init station'" param2="$EStations.{$k1}"/>
+											<set_value name="$match" exact="0"/>
+										</do_elseif>
+										<do_else>
+											<destroy_object object="$EStations.{$k1}" explosion="false"/>
+										</do_else>
+
+										<do_if value="true" chance="100" comment="DEBUG">
+											<get_control_entities object="$EStations.{$k1}" groupname="$ControlEntities"/>
+											<debug_text text="'OWNERLESS: %1 [%3] %2 %4'.[$EStations.{$k1}.macro.id, $EStations.{$k1}.zone.knownname, $ControlEntities.count, $EStations.{$k1}.knownname]" filter="error" chance="100" />
+											<remove_value name="$ControlEntities"/>
+										</do_if>
+									</do_if>
+									<do_elseif value="['masstraffic_station_01_macro', 'masstraffic_station_02_macro', 'masstraffic_station_03_macro', 'masstraffic_station_04_macro'].indexof.{$EStations.{$k1}.macro.id} and md.Conquer_Mod.Start.$TheListTimestamp.{$k} + 24h lt player.age">
+										<set_owner object="$EStations.{$k1}" faction="faction.ownerless" />
+										<set_value name="$match" exact="0"/>
+
+										<do_if value="true" chance="100" comment="DEBUG">
+											<get_control_entities object="$EStations.{$k1}" groupname="$ControlEntities"/>
+											<debug_text text="'OWNERLESS: %1 [%3] %2 %4'.[$EStations.{$k1}.macro.id, $EStations.{$k1}.zone.knownname, $ControlEntities.count, $EStations.{$k1}.knownname]" filter="error" chance="100" />
+											<remove_value name="$ControlEntities"/>
+										</do_if>
+									</do_elseif>
+									<do_else>
+										<destroy_object object="$EStations.{$k1}" explosion="false"/>
+									</do_else>
+
+									<break />
+								</do_if>
+							</do_all>
+
+							<do_if value="$match" negate="true">
+								<remove_value name="md.Conquer_Mod.Start.$TheListStations.{$k}"/>
+								<remove_value name="md.Conquer_Mod.Start.$TheListPos.{$k}"/>
+								<remove_value name="md.Conquer_Mod.Start.$TheListTimestamp.{$k}"/>
+							</do_if>
+						</do_if>
+					</do_all>
+
+				</do_if>
+				<set_value name="md.CM_Config.Settings.$Check" exact="1" />
+				<reset_cue cue="Kill_Stations_cue"/>
+			</actions>
+		</cue>
+
+		<!--<==========================================checktime="10s" checkinterval="10s" ==============================>-->
+
+		<cue name="EWS_cue" version="2">
+			<conditions>
+				<check_any>
+					<event_object_signalled object="player.computer" param="'CM_EWS'" />
+					<event_object_signalled object="player.computer" param="'CM_EWS_SCOUT'" />
+				</check_any>
+				<check_value value="md.CM_Config.Settings.$Check == 1" />
+			</conditions>
+			<delay exact="md.CM_Config.Settings.$EWS_Delay"/>
+			<!--<delay exact="120s" />-->
+			<actions>
+				<do_if value="event.param2?" negate="true">
+					<debug_text text="'ERROR event.param2 missing'" filter="error" chance="0" />
+				</do_if>
+				<do_else>
+					<do_if value="event.param" exact="'CM_EWS_SCOUT'">
+						<write_to_logbook category="general" text="{40002,118}.[event.param2.{1}.name, event.param2.{2}.name]"/>
+						<show_notification caption="{40002,17}" details="{40002,119}.[event.param2.{1}.name, event.param2.{2}.name]" timeout="5s" queued="true" priority="8" sound="ews"/>
+						<!--<write_to_logbook category="general" text="{40002,19}.[event.param2.{1}, event.param2.{2}]"/>-->
+						<signal_cue_instantly cue="md.Guidance.NewTarget" param="[event.param2.{1}, false, false]" chance="if player.primaryship.zone == event.param2.{1}.zone then 100 else 0" />
+					</do_if>
+					<do_else>
+						<create_list name="$Zones"/>
+						<find_ship name="$EnemyShip" class="[class.ship_l, class.ship_xl]" functional="true" space="event.param2.zone" multiple="true">
+							<match_relation faction="faction.player" relation="enemy"/>
+							<match_distance object="event.param2" max="30km"/>
+							<match_any>
+								<match primarypurpose="objectpurpose.fight"/>
+								<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+								<match macro="macro.units_size_l_pir_container_03_macro"/>
+							</match_any>
+						</find_ship>
+						<!-- check zero-->
+						<do_if value="@$EnemyShip.count gt 0" >
+							<do_if value="not $Zones.indexof.{event.param2.zone}">
+								<append_to_list name="$Zones" exact="event.param2.zone" />
+								<do_if value="md.CM_Config.Settings.$EWS_Level lt 1">
+									<set_value name="md.CM_Config.Settings.$EWS_Level" exact="1" />
+								</do_if>
+								<do_if value="(@$EnemyShip.count gt md.CM_Config.Settings.$EWS_Level_cutoff) and (event.param2.zone != player.primaryship.zone)" chance="((@$EnemyShip.count / (md.CM_Config.Settings.$EWS_Level * 1.0f)) * 100)i" >		 
+									<set_value name="$Loc" exact="event.param2.zone.name + ', ' + event.param2.zone.sector.knownname + ', ' + event.param2.zone.cluster.knownname"/>
+									<!--<show_notification caption="'=== Early Warning System ==='" details="' \n\n Unknown Enemy Force at \n %1.\n We have units there. \n Please assist if you can.'.[$Loc]" timeout="10s" queued="true" priority="8" sound="ews">-->
+									<show_notification caption="{40002,17}" details="{40002,18}.[$Loc]" timeout="3s" queued="true" priority="8" sound="ews">
+										<interaction text="''" param="event.param2.zone" param2="'GiveMeTheMap'" />
+									</show_notification>
+									<!--<write_to_logbook category="general" text="'=== Early Warning System === \n Unknown Enemy Force at \n %1.\n We have units there.'.[$Loc]"/>-->
+									<write_to_logbook category="general" text="{40002,19}.[$Loc, $EnemyShip.count, $EnemyShip.{1}.name]"/>
+
+									<do_if value="md.CM_Config.Settings.$DebugMessages" >
+										<write_to_logbook category="general" text="'=== Early Warning System === \n Unknown Enemy Force at \n %1.\n We have units there. \n %2 \n%3'.[$Loc, $EnemyShip.count, $EnemyShip.{1}.name]"/>
+									</do_if>
+								</do_if>
+							</do_if>
+						</do_if>
+						<clear_list list="$Zones"/>
+					</do_else>
+				</do_else>
+
+				<reset_cue cue="EWS_cue"/>
+			</actions>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="MapInteract_cue" instantiate="true">
+			<conditions>
+				<event_player_interaction param2="'GiveMeTheMap'"/>
+				<check_value value="event.param.isclass.zone" />
+			</conditions>
+			<!--<delay exact="10ms"/>-->
+			<actions>      
+				<set_value name="$ZoneMap" exact="event.param" />
+				<start_conversation actor="player.copilot" conversation="OpenMap"/>
+			</actions>
+			<cues>
+				<cue name="OpenMap_cue">
+					<conditions>
+						<event_conversation_started conversation="OpenMap" />
+					</conditions>
+					<actions>
+						<add_npc_line speaker="player.entity" line="1300" comment="give me the map"  />
+						<do_if value="md.CM_Config.Settings.$MapSector" >
+							<open_conversation_menu menu="MapMenu" param="[0, 0, 'sector', $ZoneMap.sector, null, $ZoneMap]" />
+						</do_if>
+						<do_elseif value="not md.CM_Config.Settings.$MapSector">
+							<open_conversation_menu menu="MapMenu" param="[0, 0, 'zone', $ZoneMap]" />
+						</do_elseif>
+						<add_conversation_view view="closeupdetailmonitor" />
+					</actions>
+				</cue>
+			</cues>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="ShipyardResourceConsume_cue" instantiate="true" version="1">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<actions>
+				<set_value name="$ShipOwner" exact="if event.param2.{1}? and typeof event.param2.{2} == datatype.faction then event.param2.{2} else if md.Conquer_Mod.Start.$Owner? and typeof md.Conquer_Mod.Start.$Owner == datatype.faction then md.Conquer_Mod.Start.$Owner else null" />
+				<do_if value="$ShipOwner">
+					<set_value name="$Factor" exact="0" />
+					<find_station name="$Shipyards" space="player.galaxy" owner="$ShipOwner" functional="true" multiple="true">
+						<match_any>
+							<match_content class="class.buildmodule" />
+							<match macro="macro.struct_bt_ol_small_ships_yard_macro" />
+							<match macro="macro.struct_bt_alb_small_ships_yard_macro" />
+						</match_any>
+					</find_station>
+					<do_if value="not $Shipyards.count">
+						<find_station name="$Shipyards" space="player.galaxy" owner="$ShipOwner" productsize="ship"  functional="true" multiple="true"/>
+					</do_if>
+					<do_if value="not $Shipyards.count">
+						<do_any>
+							<set_value name="$ShipOwner" exact="faction.leddaindustrial" />
+							<set_value name="$ShipOwner" exact="faction.jonferson" />
+						</do_any>
+						<set_value name="$Factor" min="0.02f" max="0.04f" />
+						<find_station name="$Shipyards" space="player.galaxy" owner="$ShipOwner" functional="true" multiple="true">
+							<match_any>
+								<match macro="macro.struct_bt_alb_small_ships_yard_macro" />
+								<match_content class="class.buildmodule" />
+							</match_any>
+						</find_station>
+					</do_if>
+					<do_if value="$Shipyards.count">
+						<do_all exact="$Shipyards.count" counter="$k">
+							<set_value name="$Resources" exact="$Shipyards.{$k}.cargo.list" />
+							<do_all exact="$Resources.count" counter="$j">
+								<do_if value="not $Factor">
+									<set_value name="$Factor" min="0.04f" max="0.07f" />
+								</do_if>
+								<set_value name="$WareAmount" exact="$Shipyards.{$k}.cargo.{$Resources.{$j}}.count" />
+								<!-- limit the min amount to between 3 to 6 units with a threshold of 2 units-->
+								<do_if value="$WareAmount gt 2">
+									<remove_cargo object="$Shipyards.{$k}" ware="$Resources.{$j}" exact="(($WareAmount * $Factor * md.CM_Config.Settings.$ResourcesFactor)f + 0.75f)i" />
+								</do_if>
+							</do_all>
+
+							<do_if value="md.CM_Config.Settings.$DebugMessages" >
+								<show_notification caption="'=== Resource_consume ==='" details="' \n Shypyard: %1 \n Faction: %2 \n Number of resources %3 \n Last resource name: %4 \n Last resource initial: %5 \n Last resource final : %6 \n Faction: %7 '.[$Shipyards.{$k}.name, $ShipOwner.name, $Resources.count, $Resources.{$Resources.count}.name, $WareAmount, $Shipyards.{$k}.cargo.{$Resources.{$Resources.count}}.count, md.Conquer_Mod.Start.$Owner]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+								<write_to_logbook category="general" text="'=== Resource_consume === \n Shypyard: %1 \n Faction: %2 \n Number of resources %3 \n Last resource name: %4 \n Last resource initial: %5 \n Last resource final : %6 \n Faction: %7'.[$Shipyards.{$k}.name, $ShipOwner.name, $Resources.count, $Resources.{$Resources.count}.name, $WareAmount, $Shipyards.{$k}.cargo.{$Resources.{$Resources.count}}.count, md.Conquer_Mod.Start.$Owner]"/>
+							</do_if>
+
+						</do_all>
+					</do_if>
+				</do_if>
+			</actions>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="Destroy_Stations_ai_cue_bridge" instantiate="true" namespace="this">
+			<conditions>
+				<event_object_signalled object="player.galaxy" param="'CM_DestroyStation'" />
+			</conditions>
+			<actions>
+				<do_if value="event.param2.exists">
+					<do_if value="md.Conquer_Mod.Start.$StationsUnderAttack?" negate="true">
+						<create_list name="md.Conquer_Mod.Start.$StationsUnderAttack" />
+					</do_if>
+					<do_if value="md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{event.param2}" negate="true">
+						<append_to_list name="md.Conquer_Mod.Start.$StationsUnderAttack" exact="event.param2"/>
+					</do_if>
+				</do_if>
+			</actions>
+		</cue>
+
+		<cue name="Destroy_Stations_cue" instantiate="true" namespace="this" checktime="player.age + 6s" checkinterval="30s" version="1">
+			<conditions>
+				<cue_is_complete cue="md.Setup.Start"/>
+				<check_value value="md.CM_Config.Settings.$Check == 1" />
+			</conditions>
+			<delay min="1s" max="9s"/>
+			<actions>
+				<do_if value="md.Conquer_Mod.Start.$StationsUnderAttack?" negate="true">
+					<create_list name="md.Conquer_Mod.Start.$StationsUnderAttack" />
+				</do_if>
+				<set_value name="$Stations" exact="md.Conquer_Mod.Start.$StationsUnderAttack.clone" />
+
+				<create_list name="$checkhull" />
+
+				<do_all exact="$Stations.count" counter="$i" reverse="true">
+
+					<!-- skip and remove unnecessary entries -->
+					<do_if value="not $Stations.{$i}.exists or $Stations.{$i}.hullpercentage ge global.$BROozHull">
+						<remove_value name="md.Conquer_Mod.Start.$StationsUnderAttack.{md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{$Stations.{$i}}}"/>
+						<continue />
+					</do_if>
+
+					<!-- here must not check for faction.player -->
+					<do_if value="[faction.enemy, faction.criminal, faction.smuggler, faction.neutral, faction.friend, faction.ownerless].indexof.{$Stations.{$i}.owner}" negate="true">
+						<set_value name="$Flag1" exact="0" />
+						<find_object_component object="$Stations.{$i}" name="$Cmpnent" multiple="true" hullinvulnerable="false" surfaceelement="false" class="class.destructible" indestructible="false" integrated="false">
+							<match_size min="30m"/>
+						</find_object_component>
+<set_value name="$text2" exact="''" />
+						<do_all exact="$Cmpnent.count" counter="$j">
+							<do_if value="$Cmpnent.{$j}.hull gt 1 and not $Cmpnent.{$j}.isconstruction" >
+<set_value name="$text2" exact="'\n* ' + $j + ' ' + $Cmpnent.{$j}.hullpercentage + ' ' + @$Cmpnent.{$j}.macro.id" chance="if 'struct_bt_ol_metalworks1_macro' == $Stations.{$i}.macro.id then 0 else 0" operation="add" />
+								<set_value name="$Flag1" operation="add" exact="$Cmpnent.{$j}.hullpercentage" /> <!-- .hull -->
+							</do_if>
+						</do_all>
+
+<set_value name="$text" exact="''" />
+						<do_if value="$Stations.{$i}.hullpercentage lt 5 or ($Cmpnent.count and $Flag1 le 1) or ($Cmpnent.count == 0 and $Stations.{$i}.hullpercentage le 10)" >
+<set_value name="$text" exact="'DO'" />
+							<do_if value="not md.Conquer_Mod.Start.$StDest?">
+								<do_if value="$Stations.{$i}.zone.npcbuildlocations.indexof.{$Stations.{$i}.buildlocation} or $Stations.{$i}.zone.buildlocations.indexof.{$Stations.{$i}.buildlocation}" negate="true">
+									<append_to_list name="md.Conquer_Mod.Start.$TheListStations" exact="$Stations.{$i}.zone"/>
+									<append_to_list name="md.Conquer_Mod.Start.$TheListPos" exact="$Stations.{$i}.position"/>
+									<append_to_list name="md.Conquer_Mod.Start.$TheListTimestamp" exact="player.age"/>
+								</do_if>
+								<set_value name="md.Conquer_Mod.Start.$Explos_Delay" exact="25s" />
+								<do_if value="$Stations.{$i}.zone != player.primaryship.zone">
+									<set_value name="md.Conquer_Mod.Start.$Explos_Delay" exact="1s" />
+								</do_if>
+								<set_value name="md.Conquer_Mod.Start.$StDest" exact="$Stations.{$i}" />
+								<do_if value="@md.Conquer_Mod.Start.$Main_Factions.indexof.{$Stations.{$i}.owner}">
+									<signal_cue_instantly cue="Retaliation_Patrol_cue" param="[$Stations.{$i}, 0, 0]"/>
+								</do_if>
+								<add_effect object="$Stations.{$i}" effect="'capital_explosion'"/>
+								<signal_cue cue="ExplosionTimer_cue"/>
+								<remove_value name="md.Conquer_Mod.Start.$StationsUnderAttack.{md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{$Stations.{$i}}}"/>
+							</do_if>
+						</do_if>
+						<do_elseif value="md.Conquer_Mod.Start.$DSC_prevhull? and md.Conquer_Mod.Start.$DSC_prevhull.indexof.{(($Flag1)i + ($Stations.{$i}.hullpercentage)i)}">
+<set_value name="$text" exact="'REmovE'" />
+							<remove_value name="md.Conquer_Mod.Start.$StationsUnderAttack.{md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{$Stations.{$i}}}"/>
+						</do_elseif>
+						<do_else>
+							<append_to_list name="$checkhull" exact="($Flag1)i + ($Stations.{$i}.hullpercentage)i"/>
+						</do_else>
+<debug_text text="$text + 'destruct: %1 [%2] Comp:%3 = %4 [%5] %6: %7'.[$Stations.{$i}.macro, $Stations.{$i}.hullpercentage, $Cmpnent.count, $Flag1, $i, $text2, @md.Conquer_Mod.Start.$DSC_prevhull]" filter="error" chance="0" />
+<remove_value name="$text"/>
+					</do_if>
+				</do_all>
+				<set_value name="md.Conquer_Mod.Start.$DSC_prevhull" exact="$checkhull.clone" />
+				<remove_value name="$checkhull"/>
+				<remove_value name="$Cmpnent"/>
+				<remove_value name="$Stations"/>
+				<remove_value name="$Flag1"/>
+			</actions>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="ExplosionTimer_cue" instantiate="true" version="1">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<actions>
+				<set_value name="$KilledStation" exact="md.Conquer_Mod.Start.$StDest" />
+				<set_value name="$Loc" exact="$KilledStation.zone.name + ', ' + $KilledStation.zone.sector.knownname + ', ' + $KilledStation.zone.cluster.knownname"/>
+			</actions>
+
+			<cues>
+				<cue name="ExplosionTimer_cue_Timer" version="1">
+					<delay exact="md.Conquer_Mod.Start.$Explos_Delay"/>
+					<actions>
+
+						<!--<write_to_logbook category="general" text="'=== Spy Net Report === \n %1 was destroyed in \n %2.'.[$KilledStation.name, $Loc]"/>-->
+						<write_to_logbook category="general" text="{40002,20}.[$KilledStation.knownname, $Loc]" chance="if $KilledStation.isplayerowned or md.CM_Config.Settings.$SDM then 100 else 0"/>
+						<do_if value="$KilledStation.zone == player.primaryship.zone">
+							<!--<show_notification caption="'=== Spy Net Report ==='" details="' \n\n Spy Net report that a \n %1 was destroyed in \n %2.'.[$KilledStation.name, $Loc]" timeout="10s" queued="true" priority="8" sound="spy_net_near"/>-->
+							<show_notification caption="{40002,21}" details="{40002,22}.[$KilledStation.knownname, $Loc]" timeout="10s" queued="true" priority="8" sound="spy_net_near" chance="if $KilledStation.isplayerowned or ( md.CM_Config.Settings.$SDM and ( md.CM_Config.Settings.$SDM gt 2 or ( md.CM_Config.Settings.$SDM gt 1 and ( ($KilledStation.owner.licences.indexof.{$KilledStation.owner.licence.military} and faction.player.haslicence.military.{$KilledStation.owner}) or faction.player.hasrelation.member.{$KilledStation.owner} ) ) ) ) then 100 else 0"/>
+						</do_if>
+						<do_else>
+
+							<!-- Map / Probe intervention start -->
+							<!--<find_object name="$Object" class="[class.ship, class.station]" functional="true" space="$KilledStation.zone" owner="faction.player" multiple="true"/>
+							 <do_if value="@$Object.count le 0" chance="60" >
+								<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="$KilledStation.zone">
+									<owner exact="faction.player" overridenpc="true"/>
+									<pilot>
+										<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+									</pilot>
+									<safepos radius="5km"/>
+								</create_ship>
+								<start_script object="$Probe.pilot" name="'move.idle'">
+									<param name="MaxDistance" value="20km" />
+								</start_script>
+							 </do_if>-->
+							<!-- Map / Probe intervention end -->
+
+							<!--<show_notification caption="'=== Spy Net Report ==='" details="' \n\n Spy Net report that a \n %1 was destroyed in \n %2.'.[$KilledStation.name, $Loc]" timeout="10s" queued="true" priority="8" sound="spy_net">-->
+							<show_notification caption="{40002,21}" details="{40002,22}.[$KilledStation.knownname, $Loc]" timeout="3s" queued="true" priority="8" sound="spy_net" chance="if
+										$KilledStation.isplayerowned or
+										(
+											md.CM_Config.Settings.$SDM and
+											(	md.CM_Config.Settings.$SDM gt 2 or
+												( md.CM_Config.Settings.$SDM gt 1 and
+													(
+														($KilledStation.owner.licences.indexof.{$KilledStation.owner.licence.military} and faction.player.haslicence.military.{$KilledStation.owner}) or
+														faction.player.hasrelation.member.{$KilledStation.owner}
+													 )
+												)
+											)
+										) then 100 else 0">
+								<interaction text="''" param="$KilledStation.zone" param2="'GiveMeTheMap'" />
+							</show_notification>
+						</do_else>
+
+						<do_if value="$KilledStation.defencenpc.$watchdogs?">
+							<do_all exact="$KilledStation.defencenpc.$watchdogs.count" counter="$m" reverse="true">
+								<destroy_object object="$KilledStation.defencenpc.$watchdogs.{$m}" explosion="true"/>
+							</do_all>
+						</do_if>
+
+						<destroy_object object="$KilledStation" explosion="false"/>
+
+						<remove_value name="md.Conquer_Mod.Start.$StDest"/>
+					</actions>
+				</cue>
+			</cues>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="Retaliation_Patrol_cue" instantiate="true" namespace="this" version="1">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<!--<delay exact="5s"/>-->
+			<actions>
+
+				<set_value name="$KSt" exact="event.param.{1}" />
+				<set_value name="$KSt_Name" exact="$KSt.name" />
+				<set_value name="$KSt_pos" exact="$KSt.position" />
+				<set_value name="$KSt_Zone" exact="$KSt.zone" />
+				<set_value name="$KSt_Faction" exact="$KSt.owner" />
+				<set_value name="$Ts_label" exact="event.param.{2}" />
+				<set_value name="$Label" exact="event.param.{3}" />
+
+				<set_value name="$DelayFactor" exact="if $Ts_label then 3 else 1"/>
+				<debug_text text="'DelayFactor: ' + $DelayFactor + '. TS_label: ' + $Ts_label" />
+
+				<!-- this is for EnemyStation_catch -->
+				<do_if value="$Ts_label == 2" >
+					<set_value name="$KSt_Faction" exact="$KSt_Zone.owner"/>
+				</do_if>
+				<!-- this is for EnemyStation_catch -->
+
+				<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Zone" exact="$KSt_Zone" />
+				<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Faction" exact="$KSt_Faction" />
+				<set_value name="$Loc" exact="$KSt_Zone.knownname + ', ' + $KSt_Zone.sector.knownname + ', ' + $KSt_Zone.cluster.knownname"/>
+			</actions>
+			<cues>
+				<cue name="Retaliation_Patrol_cue_Spawn">
+					<delay min="(md.CM_Config.Settings.$RFDelay_Min + 25s)*$DelayFactor" max="(md.CM_Config.Settings.$RFDelay_Max + 25s)*$DelayFactor"/>
+					<actions>
+
+						<!--<!{1}** short version player **{1}>
+						<do_if value="$KSt_Faction == faction.player" >
+							<set_value name="$KSt_Faction" exact="faction.canteran" chance="md.CM_Config.Settings.$Can_RFChance"/>
+						</do_if>
+						<!{1}** short version player **{1}>
+						-->
+						<!-- check this faction stations amount -->
+						<find_station name="$ThisFactionStations" space="player.galaxy" functional="true" multiple="true">
+							<match owner="$KSt_Faction"/>
+							<match macro="macro.struct_bt_alb_outpost_macro" negate="true"/>
+							<match macro="macro.struct_at_xen_xenon_outpost_macro" negate="true"/>
+							<!--<match macro="macro.struct_bt_alb_warehouse_macro" negate="true"/>-->
+						</find_station>
+						<!-- check zero-->
+						<!-- if zero the faction will have no more conditions to build Retaliation Forces, will "die" sometime ahead -->
+						<!-- note that the vanilla jobs.xml will continue eventually to spawn ships from this faction, but will be not a threat anymore DOES NOT APPLY TO CWIR-->
+						<do_if value="@$ThisFactionStations.count gt 0" >
+							<do_if value="md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}" chance="md.CM_Config.Settings.$RFChance">
+								<set_value name="$Main_Factions_Fighters" exact="['hoa_heavy_fighter', 'pmc_heavy_fighter', 'can_heavy_fighter', 'arg_heavy_fighter', 'xen_heavy_fighter', 'rya_heavy_fighter', 'sos_heavy_fighter', 'rei_heavy_fighter', 'hev_heavy_fighter']"/>
+								<set_value name="$FighterGroup" exact="if $Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}}? then $Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}} else 'pmc_heavy_fighter'" />
+								<set_value name="$Num_Enemy_Squad_Wingmen" exact="md.CM_Config.Settings.$Wing" />
+								<set_value name="$Num_Enemy_Squads_For_Capship" exact="md.CM_Config.Settings.$Squad" />
+								<set_value name="$max" exact="md.CM_Config.Settings.$RFMaxShips"/>
+								<set_value name="$Num_Enemy_Capships" min="1" max="$max"/>
+								<do_if value="$KSt_Faction == faction.xenon">
+									<set_value name="$Num_Enemy_Capships" exact="md.CM_Config.Settings.$RFMaxXenonShips"/>
+								</do_if>
+
+								<do_if value="player.primaryship.zone == $KSt_Zone and @$KSt_Faction.hasrelation.enemy.{faction.player}" >
+									<!--<show_notification caption="'=== ALERT ==='" details="' \n\n Enemy Force class %1 jumping in.\n\n Prepar to Battle!'.[$Num_Enemy_Capships]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>-->
+									<show_notification caption="{40002,23}" details="{40002,24}.[$Num_Enemy_Capships]" timeout="3s" queued="false" priority="8" sound="notification_generic"/>
+									<!--<write_to_logbook category="general" text="'=== ALERT === \n Enemy Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>-->
+									<write_to_logbook category="general" text="{40002,24}.[$Num_Enemy_Capships]"/>
+									<play_sound object="player.primaryship" sound="'enemy_jump'" />
+								</do_if>
+								<do_elseif value="player.primaryship.zone == $KSt_Zone and @$KSt_Faction.hasrelation.member.{faction.player}" >
+									<!--<show_notification caption="'=== ALERT ==='" details="' \n\n Allied Force class %1 jumping in.\n\n They ask for help!'.[$Num_Enemy_Capships]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>-->
+									<show_notification caption="{40002,23}" details="{40002,26}.[$Num_Enemy_Capships]" timeout="3s" queued="false" priority="8" sound="notification_generic"/>
+									<!--<write_to_logbook category="general" text="'=== ALERT === \n Allied Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>-->
+									<write_to_logbook category="general" text="{40002,27}.[$Num_Enemy_Capships]"/>
+									<play_sound object="player.primaryship" sound="'allied_jump'" />
+								</do_elseif>
+								<do_elseif value="player.primaryship.zone == $KSt_Zone" >
+									<!--<show_notification caption="'=== ALERT ==='" details="' \n\n Unknown Force class %1 jumping in.\n\n Prepar to Battle!'.[$Num_Enemy_Capships]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>-->
+									<show_notification caption="{40002,23}" details="{40002,28}.[$Num_Enemy_Capships]" timeout="3s" queued="false" priority="8" sound="notification_generic"/>
+									<!--<write_to_logbook category="general" text="'=== ALERT === \n Unknown Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>-->
+									<write_to_logbook category="general" text="{40002,29}.[$Num_Enemy_Capships]"/>
+									<play_sound object="player.primaryship" sound="'unknown_jump'" />
+								</do_elseif>
+
+								<!-- needs CWIR adjust here new voiced call for allies in ooz -->
+								<do_elseif value="player.primaryship.zone != $KSt_Zone and @$KSt_Faction.hasrelation.member.{faction.player}" >
+									<!--<show_notification caption="'=== ATTENTION ==='" details="' \n\n War Command Center inform that an Allied fleet is counter attacking at %1. \n\n They ask us to join the force.'.[$Loc]" timeout="10s" queued="true" priority="8" sound="allied_counterattack">-->
+									<show_notification caption="{40002,30}" details="{40002,31}.[$Loc]" timeout="3s" queued="true" priority="8" sound="allied_counterattack">
+										<interaction text="''" param="$KSt_Zone" param2="'GiveMeTheMap'" />
+									</show_notification>
+									<!--<write_to_logbook category="general" text="'=== ATTENTION === \n Canteran fleet is counter attacking at %1.'.[$Loc]"/>-->
+									<write_to_logbook category="general" text="{40002,32}.[$Loc]"/>
+								</do_elseif>
+								<do_elseif value="player.primaryship.zone != $KSt_Zone and (@$KSt_Zone.owner == faction.player or @$KSt_Zone.owner.hasrelation.member.{faction.player})" >
+									<!--<show_notification caption="'=== EWS ALERT ==='" details="' \n\n Unknown Force class %1 jumping at \n %2.\n\n Recon says that they are in attack formation. \n Please assist if you can.'.[$Num_Enemy_Capships, $Loc]" timeout="10s" queued="true" priority="8" sound="unknown_inv">-->
+									<show_notification caption="{40002,33}" details="{40002,34}.[$Num_Enemy_Capships, $Loc]" timeout="3s" queued="true" priority="8" sound="unknown_inv">
+										<interaction text="''" param="$KSt_Zone" param2="'GiveMeTheMap'" />
+									</show_notification>
+									<!--<write_to_logbook category="general" text="'=== EWS ALERT === \n Unknown Force class %1 jumping at \n %2.'.[$Num_Enemy_Capships, $Loc]"/>-->
+									<write_to_logbook category="general" text="{40002,35}.[$Num_Enemy_Capships, $Loc]"/>
+								</do_elseif>
+
+								<get_safe_pos result="$Safepos" zone="$KSt_Zone" value="$KSt_pos" radius="400m" min="10km" max="15km" allowyaxis="false"/>
+								<create_orientation name="$Orientation" orientation="look_at" refposition="$KSt_pos">
+									<position value="$Safepos" />
+								</create_orientation>
+
+								<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" >
+									<!--<show_notification caption="'=== Retaliation_Patrol_cue ==='" details="' \n KilledStation: %1 \n KilledStation.name: %2 \n KilledStations.zone: %3 \n KilledStation.faction.name: %4 \n KilledStations_amount: %5 '.[$KSt, $KSt_Name, $KSt_Zone.name, $KSt_Faction, md.Conquer_Mod.Start.$TheListStations.count]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>-->
+									<write_to_logbook category="general" text="'=== Retaliation_Patrol_cue === \n KilledStation: %1 \n KilledStation.name: %2 \n KilledStations.zone: %3 \n KilledStation.faction.name: %4 \n KilledStations_amount: %5 '.[$KSt, $KSt_Name, $KSt_Zone.name, $KSt_Faction, md.Conquer_Mod.Start.$TheListStations.count]"/>
+								</do_if>
+
+								<!-- Map / Probe intervention start -->
+								<!--<do_if value="$KSt_Faction.hasrelation.member.{faction.player} or $KSt_Zone.owner.hasrelation.member.{faction.player}" > -->
+								<!--<do_if value="$KSt_Faction == faction.canteran or $KSt_Zone.owner == faction.canteran">-->
+								<!-- <find_object name="$Object" class="[class.ship, class.station]" functional="true" space="$KSt_Zone" owner="faction.player" multiple="true"/>
+									 <do_if value="@$Object.count le 0" >
+										<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="$KSt_Zone">
+											<owner exact="faction.player" overridenpc="true"/>
+											<pilot>
+												<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+											</pilot>
+											<safepos radius="5km"/>
+										</create_ship>
+										<start_script object="$Probe.pilot" name="'move.idle'">
+											<param name="MaxDistance" value="20km" />
+										</start_script>
+									 </do_if>
+									</do_if>-->
+								<!-- Map / Probe intervention end -->
+
+								<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_list" />
+								<set_value name="$fleetFaction" exact="$KSt_Faction"/>
+								<set_value name="$CreateTSZone" exact="$KSt_Zone"/>
+
+								<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+
+								<set_value name="$defineEOL" exact="player.age + 2h" />
+								<do_if value="$fleetulator.{$key}? and $fleetulator.{$key}.{2}.count">
+									<set_value name="$data" exact="$fleetulator.{$key}.{2}.random"/>
+									<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_construct" />
+								</do_if>
+								<do_else>
+									<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_simplelist" />
+									<set_value name="$key" exact="'$ship_xl'"/>
+									<set_value name="$data" exact="$fleetulator.{$key}.{2}.random"/>
+									<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_construct" />
+								</do_else>
+								<remove_value name="$defineEOL"/>
+
+								<do_if value="$KSt_Faction != faction.xenon and $Ts_label">
+									<signal_cue_instantly cue="TroopShips" param="[$Safepos, $KSt_Zone, $KSt_Faction, $FighterGroup, $Label]" chance="md.CM_Config.Settings.$TS_RtFChance" />
+								</do_if>
+
+							</do_if>
+							<!-- clean vars -->
+							<remove_value name="$max"/>
+							<remove_value name="$Num_Enemy_Capships"/>
+							<remove_value name="$Num_Enemy_Squads_For_Capship"/>
+							<remove_value name="$Num_Enemy_Squad_Wingmen"/>
+							<remove_value name="$targetZoneStation"/>
+							<remove_value name="$KSt_Faction"/>
+							<remove_value name="$fleetFaction"/>
+							<remove_value name="$targetFaction"/>
+							<remove_value name="$ZoneEnemyStations"/>
+							<remove_value name="$shipyard"/>
+							<remove_value name="$CreateTSZone"/>
+							<remove_value name="$Orientation"/>
+							<remove_value name="$Safepos"/>
+							<remove_value name="$Main_Factions_Fighters"/>
+							<remove_value name="$FighterGroup"/>
+						</do_if>
+						<do_else>
+
+							<do_if value="md.CM_Config.Settings.$DebugMessages" >
+								<show_notification caption="'=== Retaliation_Patrol_cue ==='" details="' \n\n Retaliation Patrol SPAWN aborted by chance! '.[]" timeout="3s" queued="false" priority="8" sound="notification_generic"/>
+								<write_to_logbook category="general" text="'=== Retaliation_Patrol_cue === \n\n Retaliation Patrol SPAWN aborted by chance! '.[]"/>
+							</do_if>
+						</do_else>
+					</actions>
+				</cue>
+			</cues>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="Check_ZoneOwner_ini" namespace="this">
+			<conditions>
+				<check_any>
+					<event_cue_signalled cue="md.Setup.GameStart"/>
+					<event_game_loaded />
+					<event_cue_signalled/>
+				</check_any>
+			</conditions>
+			<actions>
+				<do_if value="$Stations?" negate="true">
+					<create_group groupname="$Stations"/>
+					<create_group groupname="$builderships"/>
+					<find_station name="$Stations_tmp" space="player.galaxy" functional="true" multiple="true">
+						<match owner="faction.ownerless" negate="true"/>
+					</find_station>
+					<find_ship name="$builderships_tmp" class="[class.ship_l, class.ship_xl]" functional="true" space="player.galaxy" multiple="true">
+						<match primarypurpose="objectpurpose.build"/>
+						<match owner="faction.neutral" negate="true"/>
+						<match owner="faction.enemy" negate="true"/>
+						<match owner="faction.ownerless" negate="true"/>
+					</find_ship>
+					<do_if value="$Stations_tmp.count">
+						<add_to_group groupname="$Stations" list="$Stations_tmp"/>
+					</do_if>
+					<do_if value="$builderships_tmp.count">
+						<add_to_group groupname="$builderships" list="$builderships_tmp"/>
+						<reset_cue cue="Check_ZoneOwner_control_ships_base"/>
+						<reset_cue cue="Check_ZoneOwner_control_ships"/>
+						<reset_cue cue="Check_ZoneOwner_control_ships_destroyed"/>
+					</do_if>
+					<remove_value name="$Stations_tmp"/>
+					<remove_value name="$builderships_tmp"/>
+					<reset_cue cue="Check_ZoneOwner_control"/>
+					<reset_cue cue="Check_ZoneOwner_control_owner"/>
+				</do_if>
+			</actions>
+			<cues>
+				<cue name="Check_ZoneOwner_control" instantiate="true">
+					<conditions>
+						<event_object_destroyed group="$Stations"/>
+					</conditions>
+					<actions>
+						<signal_cue_instantly cue="Check_ZoneOwner_cue_new" param="event.object.zone" />
+						<remove_from_group group="$Stations" object="event.object"/>
+						<do_if value="md.Conquer_Mod.Start.$StationsUnderAttack.count? and md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{event.object}">
+							<remove_value name="md.Conquer_Mod.Start.$StationsUnderAttack.{md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{event.object}}"/>
+						</do_if>
+						<reset_cue cue="Check_ZoneOwner_control_owner"/>
+					</actions>
+				</cue>
+				<cue name="Check_ZoneOwner_control_owner" instantiate="true">
+					<conditions>
+						<event_object_changed_owner group="$Stations"/>
+					</conditions>
+					<actions>
+						<do_if value="md.Conquer_Mod.Start.$StationsUnderAttack.count? and md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{event.object}">
+							<remove_value name="md.Conquer_Mod.Start.$StationsUnderAttack.{md.Conquer_Mod.Start.$StationsUnderAttack.indexof.{event.object}}"/>
+						</do_if>
+						<signal_cue_instantly cue="Check_ZoneOwner_cue_new" param="event.object" />
+					</actions>
+				</cue>
+
+				<cue name="Check_ZoneOwner_control_ships_base">
+					<actions>
+						<do_if value="$builderships.count" negate="true">
+							<cancel_cue cue="Check_ZoneOwner_control_ships"/>
+							<cancel_cue cue="Check_ZoneOwner_control_ships_destroyed"/>
+							<cancel_cue cue="this"/>
+						</do_if>
+					</actions>
+					<cues>
+						<cue name="Check_ZoneOwner_control_ships" instantiate="true">
+							<conditions>
+								<event_build_finished group="@$builderships"/>
+							</conditions>
+							<actions>
+								<signal_cue_instantly cue="Check_ZoneOwner_cue_new" param="event.object.zone" />
+							</actions>
+						</cue>
+						<cue name="Check_ZoneOwner_control_ships_destroyed" instantiate="true">
+							<conditions>
+								<event_object_destroyed group="@$builderships"/>
+							</conditions>
+							<actions>
+								<remove_from_group group="$builderships" object="event.object"/>
+							</actions>
+						</cue>
+					</cues>
+				</cue>
+				<cue name="Check_ZoneOwner_control_ships_OCV" instantiate="true">
+					<conditions>
+						<check_any>
+							<event_cue_signalled cue="md.OutpostCV.InitBuiltStation_cue"/>
+							<event_cue_signalled cue="md.NPC_Architect.BuildFinished_Wait"/>
+							<event_cue_signalled cue="md.CWIR_StationConstruction.CWIR_ConstructNPCStation_MoveBuild"/>
+						</check_any>
+					</conditions>
+					<actions>
+						<find_ship name="$builderships_tmp" class="[class.ship_l, class.ship_xl]" functional="true" space="player.galaxy" multiple="true">
+							<match primarypurpose="objectpurpose.build"/>
+							<match owner="faction.neutral" negate="true"/>
+							<match owner="faction.enemy" negate="true"/>
+							<match owner="faction.ownerless" negate="true"/>
+						</find_ship>
+						<do_if value="$builderships_tmp.count">
+							<remove_value name="$builderships"/>
+							<create_group groupname="$builderships"/>
+							<add_to_group groupname="$builderships" list="$builderships_tmp"/>
+							<reset_cue cue="Check_ZoneOwner_control_ships_base"/>
+							<reset_cue cue="Check_ZoneOwner_control_ships"/>
+							<reset_cue cue="Check_ZoneOwner_control_ships_destroyed"/>
+						</do_if>
+						<remove_value name="$builderships_tmp"/>
+					</actions>
+				</cue>
+
+				<cue name="Check_ZoneOwner_cue_helper" checktime="15s" checkinterval="480s" version="1">
+					<conditions>
+						<cue_is_complete cue="md.Setup.Start"/>
+						<check_value value="md.CM_Config.Settings.$Check == 1" />
+					</conditions>
+					<delay min="262s" max="500s"/>
+					<actions>
+						<do_if value="$Stations?">
+							<find_station name="$Stations_check" space="player.galaxy" functional="true" multiple="true">
+								<match owner="faction.ownerless" negate="true"/>
+							</find_station>
+							<create_list name="$zones" />
+							<do_if value="$Stations_check.count != $Stations.count" >
+								<set_value name="$Stations_tmp" exact="$Stations.list.clone" />
+								<do_all exact="$Stations_check.count" counter="$j">
+									<do_if value="$Stations_tmp.indexof.{$Stations_check.{$j}} == 0">
+										<do_if value="$zones.indexof.{$Stations_check.{$j}.zone} == 0">
+											<append_to_list name="$zones" exact="$Stations_check.{$j}.zone"/>
+										</do_if>
+									</do_if>
+								</do_all>
+								<do_if value="$zones.count">
+									<signal_cue_instantly cue="Check_ZoneOwner_cue_new" param="$zones" />
+									<remove_value name="$Stations"/>
+									<create_group groupname="$Stations"/>
+									<add_to_group groupname="$Stations" list="$Stations_check"/>
+									<reset_cue cue="Check_ZoneOwner_control"/>
+									<reset_cue cue="Check_ZoneOwner_control_owner"/>
+								</do_if>
+								<remove_value name="$Stations_check"/>
+								<remove_value name="$Stations_tmp"/>
+								<remove_value name="$zones"/>
+							</do_if>
+							<reset_cue cue="Check_ZoneOwner_cue_helper"/>
+						</do_if>
+						<do_else>
+							<reset_cue cue="Check_ZoneOwner_ini"/>
+							<signal_cue cue="Check_ZoneOwner_ini"/>
+						</do_else>
+					</actions>
+				</cue>
+
+			</cues>
+		</cue>
+		<cue name="Check_ZoneOwner_start">
+			<conditions>
+				<event_cue_signalled cue="md.CM_Config.Settings"/>
+			</conditions>
+			<delay min="20s"/>
+			<actions>
+				<find_zone name="$zones" space="player.galaxy" priorityzone="true" tempzone="false" multiple="true" >
+					<match class="class.highway" negate="true"/>
+				</find_zone>
+				<signal_cue_instantly cue="Check_ZoneOwner_cue_new" param="$zones" />
+				<remove_value name="$zones" />
+			</actions>
+		</cue>
+
+		<cue name="Check_ZoneOwner_cue_new" instantiate="true">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<delay min="500ms"/>
+			<actions>
+				<do_if value="event.param?" negate="true">
+					<debug_text text="'ERROR event.param missing'" filter="error" chance="0" />
+				</do_if>
+				<do_else>
+					<do_if value="typeof event.param != datatype.list and event.param.isclass.station">
+						<set_value name="$zones" exact="[event.param.zone]" />
+					</do_if>
+					<do_else>
+						<set_value name="$zones" exact="if typeof event.param == datatype.list then event.param.clone else if event.param.exists and event.param.isclass.zone then [event.param] else []" />
+					</do_else>
+					<do_all exact="$zones.count" counter="$z">
+						<set_value name="$Flag" exact="1" />
+						<set_value name="$Flag_i" exact="table[]" />
+
+						<find_station name="$Stations" space="$zones.{$z}" functional="true" multiple="true">
+							<match owner="faction.ownerless" negate="true"/>
+						</find_station>
+
+						<do_if value="@$Stations.count gt 0" >
+							<do_all exact="$Stations.count" counter="$j">
+								<!-- check -->
+								<do_if value="$Stations.{$j}.isplayerowned or md.Conquer_Mod.Start.$Main_Factions.indexof.{$Stations.{$j}.owner}">
+									<do_if value="$Flag_i.{'$%1'.[$Stations.{$j}.owner.id]}?">
+										<set_value name="$Flag_i.{'$%1'.[$Stations.{$j}.owner.id]}.{1}" operation="add" />
+									</do_if>
+									<do_else>
+										<set_value name="$Flag_i.{'$%1'.[$Stations.{$j}.owner.id]}" exact="[1,$Stations.{$j}.owner]" />
+									</do_else>
+								</do_if>
+								<!-- regular owner creation -->
+								<do_if value="$Stations.{$j}.owner == @$zones.{$z}.owner" >
+									<set_value name="$Flag" exact="0" />
+								</do_if>
+								<do_elseif value="$Flag" >
+									<do_if value="$zones.{$z}.owner == null or $zones.{$z}.owner.hasrelation.enemy.{$Stations.{$j}.owner}" >
+										<set_value name="$Flag" exact="$Stations.{$j}.owner" />
+									</do_if>
+								</do_elseif>
+							</do_all>
+
+							<!-- cross check -->
+							<do_if value="$zones.{$z}.owner != null and $Flag_i.keys.list.count">
+								<set_value name="$keys" exact="$Flag_i.keys.list" />
+								<do_all exact="$keys.count" counter="$f">
+									<do_if value="not $tmp?">
+										<set_value name="$tmp" exact="$Flag_i.{$keys.{$f}}.{2}"/>
+										<set_value name="$tmp_count" exact="$Flag_i.{$keys.{$f}}.{1}"/>
+									</do_if>
+									<do_elseif value="$Flag_i.{$keys.{$f}}.{1} gt $tmp_count">
+										<set_value name="$tmp" exact="$Flag_i.{$keys.{$f}}.{2}"/>
+										<set_value name="$tmp_count" exact="$Flag_i.{$keys.{$f}}.{1}"/>
+									</do_elseif>
+								</do_all>
+								<remove_value name="$keys"/>
+								<remove_value name="$Flag_i"/>
+								<remove_value name="$tmp_count"/>
+
+								<do_if value="$tmp != $Flag and $tmp != @$zones.{$z}.owner and ($zones.{$z}.owner.hasrelation.enemy.{$tmp} or not md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$z}.owner})" >
+									<find_station name="$Stations_old" space="$zones.{$z}" functional="true" multiple="true">
+										<match owner="faction.ownerless" negate="true"/>
+										<match_relation faction="$zones.{$z}.owner"  relation="neutral" comparison="ge"/>
+									</find_station>
+									<find_station name="$Stations_new" space="$zones.{$z}" functional="true" multiple="true">
+										<match owner="faction.ownerless" negate="true"/>
+										<match_relation faction="$tmp"  relation="neutral" comparison="ge"/>
+									</find_station>
+									<clear_list list="$Stations_old" chance="if md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$z}.owner} then 0 else 100"/>
+									<clear_list list="$Stations_new" chance="if md.Conquer_Mod.Start.$Main_Factions.indexof.{$tmp} then 0 else 100"/>
+									<do_if value="$Stations_new.count gt $Stations_old.count">
+										<set_value name="$Flag" exact="$tmp" />
+									</do_if>
+									<remove_value name="$Stations_new"/>
+									<remove_value name="$Stations_old"/>
+								</do_if>
+								<remove_value name="$tmp"/>
+							</do_if>
+
+
+							<do_if value="$Flag and ($Flag != 1)" >
+								<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" >
+									<!--<show_notification caption="'=== Conquer Mod ZoneOwner Changed ==='" details="' \n Zone: %1 \n Old Owner: %2 \n New Owner: %3 '.[$zones.{$i}.name, @$zones.{$i}.owner.knownname, @$Flag.knownname]" timeout="5s" queued="true" priority="8" sound="notification_generic"/>-->
+									<write_to_logbook category="general" text="'=== Conquer Mod ZoneOwner Changed === \n Zone: %1 \n Old Owner: %2 \n New Owner: %3 '.[$zones.{$z}.name, @$zones.{$z}.owner.knownname, @$Flag.knownname]"/>
+								</do_if>
+
+								<do_if value="false">
+									<set_value name="$keys" exact="$Flag_i.keys.list" />
+									<do_all exact="$keys.count" counter="$f">
+										<do_if value="not $tmp?">
+											<set_value name="$tmp" exact="$Flag_i.{$keys.{$f}}.{2}"/>
+											<set_value name="$tmp_count" exact="$Flag_i.{$keys.{$f}}.{1}"/>
+										</do_if>
+										<do_elseif value="$Flag_i.{$keys.{$f}}.{1} gt $tmp_count">
+											<set_value name="$tmp" exact="$Flag_i.{$keys.{$f}}.{2}"/>
+											<set_value name="$tmp_count" exact="$Flag_i.{$keys.{$f}}.{1}"/>
+										</do_elseif>
+									</do_all>
+									<remove_value name="$keys"/>
+									<remove_value name="$Flag_i"/>
+									<set_value name="$Flag" exact="$tmp" />
+								</do_if>
+								<set_owner object="$zones.{$z}" faction="$Flag" />
+								<!--signal_objects object="player.entity" param="'ZoneOwnerChanged'" param2="$zones.{$z}" param3="$Flag" delay="1s" comment="Signal MD cue" /-->
+							</do_if>
+							<!-- non Mainfaction fallback -->
+							<do_if value="typeof $Flag != datatype.faction and not md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$z}.owner} and not $zones.{$z}.isplayerowned" >
+								<set_value name="$Flag" exact="$zones.{$z}.owner" />
+							</do_if>
+							<do_if value="typeof $Flag == datatype.faction and not md.Conquer_Mod.Start.$Main_Factions.indexof.{$Flag} and $Flag != faction.player" >
+								<find_station name="$ZoneOwnerStation" space="$zones.{$z}" functional="true" multiple="false">
+									<match_any>
+										<match macro="macro.struct_bt_alb_outpost_macro"/>
+										<match macro="macro.struct_at_xen_xenon_outpost_macro"/>
+										<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+									</match_any>
+								</find_station>
+								<do_if value="$ZoneOwnerStation" negate="true">
+									<create_list name="$Owners"/>
+									<find_ship name="$zoneShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$zones.{$z}" multiple="true">
+										<match_any>
+											<match primarypurpose="objectpurpose.fight"/>
+											<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+											<match macro="macro.units_size_l_pir_container_03_macro"/>
+										</match_any>
+									</find_ship>
+									<do_all exact="$zoneShips.count" counter="$j">
+										<do_if value="md.Conquer_Mod.Start.$Main_Factions.indexof.{$zoneShips.{$j}.owner} and not $Owners.indexof.{$zoneShips.{$j}.owner}">
+											<append_to_list name="$Owners" exact="$zoneShips.{$j}.owner" />
+										</do_if>
+									</do_all>
+									<do_if value="$Owners.count == 0">
+										<do_all exact="$zones.{$z}.adjacentzones.count" counter="$j">
+											<do_if value="$zones.{$z}.adjacentzones.{$j}.owner != null and md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$z}.adjacentzones.{$j}.owner} and not $Owners.indexof.{$zones.{$z}.adjacentzones.{$j}.owner}">
+												<append_to_list name="$Owners" exact="$zones.{$z}.adjacentzones.{$j}.owner" />
+											</do_if>
+										</do_all>
+									</do_if>
+
+									<do_if value="$Owners.count ge 1 and not $Flag.hasrelation.enemy.{$Owners.{1}}" >
+										<signal_cue_instantly cue="md.OutpostCV.OutpostCV_C1" param="[$zones.{$z}, $Owners.{1}]"/>
+									</do_if>
+									<do_elseif value="$Owners.count gt 1 and not $Flag.hasrelation.enemy.{$Owners.{2}}" >
+										<signal_cue_instantly cue="md.OutpostCV.OutpostCV_C1" param="[$zones.{$z}, $Owners.{2}]"/>
+									</do_elseif>
+									<remove_value name="$zoneShips"/>
+									<remove_value name="$Owners"/>
+								</do_if>
+								<remove_value name="$ZoneOwnerStation"/>
+							</do_if>
+
+						</do_if>
+						<do_else>
+							<do_if value="$zones.{$z}.istemporaryzone or $zones.{$z}.name == {20005,200} or $zones.{$z}.name == {20006,301}" negate="true">
+								<continue />
+							</do_if>
+							<create_list name="$Owners"/>
+							<find_ship name="$zoneShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$zones.{$z}" multiple="true">
+								<match_any>
+									<match primarypurpose="objectpurpose.fight"/>
+									<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+									<match macro="macro.units_size_l_pir_container_03_macro"/>
+								</match_any>
+							</find_ship>
+							<do_if value="@$zoneShips.count" >
+								<do_all exact="$zoneShips.count" counter="$j">
+									<do_if value="not $Owners.indexof.{$zoneShips.{$j}.owner}">
+										<append_to_list name="$Owners" exact="$zoneShips.{$j}.owner" />
+									</do_if>
+								</do_all>
+								<do_if value="$Owners.count == 1 and (md.Conquer_Mod.Start.$Main_Factions.indexof.{$Owners.{1}} or $Owners.{1} == faction.player)" chance="md.CM_Config.Settings.$StgRFChance" >
+									<do_if value="$Owners.{1} != faction.player and (@$zones.{$z}.owner.hasrelation.enemy.{$Owners.{1}} or $zones.{$z}.owner == $Owners.{1} or $zones.{$z}.owner == null)" >
+										<signal_cue_instantly cue="md.OutpostCV.OutpostCV_C1" param="[$zones.{$z}, $Owners.{1}]"/>
+									</do_if>
+								</do_if>
+							</do_if>
+							<remove_value name="$zoneShips"/>
+							<remove_value name="$Owners"/>
+						</do_else>
+					</do_all>
+					<remove_value name="$Stations"/>
+					<remove_value name="$zones"/>
+					<remove_value name="$Flag_i"/>
+					<remove_value name="$Flag"/>
+				</do_else>
+			</actions>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<cue name="Build_StrongHold_cue" instantiate="true" namespace="this" checktime="player.age + 15s" checkinterval="180s" version="1">
+			<conditions>
+				<cue_is_complete cue="md.Setup.Start"/>
+				<check_value value="md.CM_Config.Settings.$Check == 1" />
+			</conditions>
+			<delay min="92s" max="137s"/>
+			<actions>
+				<!-- conditions: unique owner of military l or xl in a zone, no enemy stations or stronghold present, zone ownership must be enemy, own or null -->
+				<create_list name="$Owners"/>
+				<find_zone name="$zones" space="player.galaxy" priorityzone="true" tempzone="false" multiple="true" >
+					<match class="class.highway" negate="true"/>
+				</find_zone>
+
+				<do_all exact="$zones.count" counter="$i">
+					<do_if value="not $zones.{$i}.istemporaryzone and $zones.{$i}.name != {20005,200} and $zones.{$i}.name != {20006,301}" >	
+
+						<do_if value="$zones.{$i}.owner != null" comment="short station check">
+							<find_station name="$ZoneOwnerStation" space="$zones.{$i}" functional="true" multiple="false">
+								<match_any>
+									<match owner="$zones.{$i}.owner"/>
+									<match macro="macro.struct_bt_alb_outpost_macro"/>
+									<match macro="macro.struct_at_xen_xenon_outpost_macro"/>
+									<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+								</match_any>
+							</find_station>
+							<do_if value="$ZoneOwnerStation">
+								<remove_value name="$ZoneOwnerStation"/>
+								<continue />
+							</do_if>
+							<remove_value name="$ZoneOwnerStation"/>
+						</do_if>
+
+						<find_ship name="$zoneShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$zones.{$i}" multiple="true">
+							<match_any>
+								<match primarypurpose="objectpurpose.fight"/>
+								<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+								<match macro="macro.units_size_l_pir_container_03_macro"/>
+							</match_any>
+						</find_ship>
+						<do_if value="@$zoneShips.count" >
+							<do_all exact="$zoneShips.count" counter="$j">
+								<do_if value="$Owners.indexof.{$zoneShips.{$j}.owner} == 0">
+									<append_to_list name="$Owners" exact="$zoneShips.{$j}.owner" />
+								</do_if>
+							</do_all>
+							<do_if value="$Owners.count == 1 and (md.Conquer_Mod.Start.$Main_Factions.indexof.{$Owners.{1}} or $Owners.{1} == faction.player)" chance="md.CM_Config.Settings.$StgRFChance" >
+
+								<set_value name="$Flag1" exact="1" />
+
+								<find_station name="$Stations" space="$zones.{$i}" functional="true" multiple="false">
+									<match_any>
+										<match_relation faction="$Owners.{1}" relation="enemy"/>
+										<match macro="macro.struct_bt_alb_outpost_macro"/>
+										<match macro="macro.struct_at_xen_xenon_outpost_macro"/>
+										<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+									</match_any>
+								</find_station>
+								<do_if value="$Stations" >
+									<set_value name="$Flag1" exact="0" />
+								</do_if>
+								<remove_value name="$Stations"/>
+
+								<do_if value="$Flag1 and $Owners.{1} != faction.player and (@$zones.{$i}.owner.hasrelation.enemy.{$Owners.{1}} or $zones.{$i}.owner == $Owners.{1} or $zones.{$i}.owner == null)" >
+									<signal_cue_instantly cue="md.OutpostCV.OutpostCV_C1" param="[$zones.{$i}, $Owners.{1}]"/>
+								</do_if>
+							</do_if>
+							<remove_value name="$zoneShips"/>
+							<clear_list list="$Owners"/>
+						</do_if>
+
+					</do_if>
+				</do_all>
+				<!--reset_cue cue="Build_StrongHold_cue"/-->
+			</actions>
+		</cue>
+
+		<!--<========================================================================>-->
+
+		<!-- New on v020 START-->
+		<cue name="TroopShips" instantiate="true">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+
+			<!-- just for test-->
+			<!--<delay min="120s" max="180s"/>-->
+			<!--<delay min="30s" max="45s"/>-->
+
+			<actions>
+				<set_value name="$Safepos" exact="event.param.{1}" />
+				<set_value name="$KSt_Zone" exact="event.param.{2}" />
+				<set_value name="$KSt_Faction" exact="event.param.{3}" />
+				<set_value name="$FighterGroup" exact="event.param.{4}" />
+				<set_value name="$Label" exact="event.param.{5}" />
+				<set_value name="$Zone" exact="if $Label != 0 and $Label.isoperational then $Label.zone else $KSt_Zone" />
+
+				<!-- Board NPC Ships creation -->
+				<!-- added zone enemy station presence condition, except outpost -->
+				<!-- create troop transports with fighter escorts for each targeted station  -->
+				<!-- the number of troop transports for each targeted station is attached to its size  -->
+				<!-- crew have explicit skills to allow station hack chance	-->
+
+				<!-- add target  -->
+				<find_station name="$ZoneEnemyStations" space="$Zone" functional="true" multiple="true">
+					<match_any>
+						<match_relation faction="$KSt_Faction" relation="enemy"/>
+						<match owner="faction.ownerless"/>
+					</match_any>
+					<match owner="faction.xenon" negate="true" />
+					<match macro="macro.struct_bt_alb_outpost_macro" negate="true"/>
+					<match macro="macro.struct_at_xen_xenon_outpost_macro" negate="true"/>
+				</find_station>
+
+				<!--<show_notification caption="'TroopShips debug 1'" details="'\n target zone %1 \n attacker %2 \n %3 \n ZoneEnemyStations count %4 \n spawn zone %5 '.[$Zone.name, $KSt_Faction.name, $FighterGroup, @$ZoneEnemyStations.count, $KSt_Zone.name]" timeout="8s" queued="true" priority="8" sound="notification_generic"/>
+
+				<write_to_logbook category="general" text="'=== TroopShips debug 1 === \n target zone %1 \n attacker %2 \n %3 \n ZoneEnemyStations count %4 \n spawn zone %5 '.[$Zone.name, $KSt_Faction.name, $FighterGroup, @$ZoneEnemyStations.count, $KSt_Zone.name]"/>		-->
+
+				<!-- to fix retaliation by board -->
+				<do_if value="@$ZoneEnemyStations.count gt 0 and $Label != 0 and $Label.isoperational" >
+					<clear_list list="$ZoneEnemyStations"/>
+					<append_to_list name="$ZoneEnemyStations" exact="$Label" />
+				</do_if>
+
+				<do_all exact="$ZoneEnemyStations.count" counter="$i">
+
+					<set_value name="$target" exact="$ZoneEnemyStations.{$i}" />
+					<set_value name="$faction" exact="$KSt_Faction" />
+
+					<find_dock_location name="$DockingBay" container="$ZoneEnemyStations.{$i}" multiple="true" />
+					<set_value name="$TroopShipNumber" exact="($DockingBay.count / 3)i + 1" />
+
+					<!--<do_all exact="$TroopShipNumber" counter="$i">-->
+
+					<create_orientation name="$Orientation" orientation="look_at" refobject="$target">
+						<position value="$Safepos" />
+					</create_orientation>
+
+					<create_ship name="$Ship" zone="$KSt_Zone" macro="if $faction == faction.canteran then 'units_size_l_troop_transporter1_macro' else 'units_size_l_troop_transporter5_macro'">
+
+						<owner exact="$faction" overridenpc="true"/>
+						<pilot>
+							<select faction="$faction" tags="[tag.commander]"/>
+							<skills>
+								<skill type="combat" min="3" max="5"/>
+								<skill type="engineering" min="3" max="5"/>
+								<skill type="leadership" min="3" max="5"/>
+								<skill type="management" min="3" max="5"/>
+								<skill type="morale" min="3" max="5"/>
+								<skill type="navigation" min="3" max="5"/>
+								<skill type="science" min="3" max="5"/>
+								<skill type="boarding" min="3" max="5"/>
+							</skills> 	
+						</pilot>
+						<defence>
+							<select faction="$faction" tags="[tag.defencecontrol]"/>
+							<skills>
+								<skill type="combat" min="3" max="5"/>
+								<skill type="engineering" min="3" max="5"/>
+								<skill type="leadership" min="3" max="5"/>
+								<skill type="management" min="3" max="5"/>
+								<skill type="morale" min="3" max="5"/>
+								<skill type="navigation" min="3" max="5"/>
+								<skill type="science" min="3" max="5"/>
+								<skill type="boarding" min="3" max="5"/>
+							</skills>
+						</defence>
+						<engineer>
+							<select faction="$faction" tags="[tag.engineer]"/>
+							<skills>
+								<skill type="combat" min="3" max="5"/>
+								<skill type="engineering" min="3" max="5"/>
+								<skill type="leadership" min="3" max="5"/>
+								<skill type="management" min="3" max="5"/>
+								<skill type="morale" min="3" max="5"/>
+								<skill type="navigation" min="3" max="5"/>
+								<skill type="science" min="3" max="5"/>
+								<skill type="boarding" min="3" max="5"/>
+							</skills>
+						</engineer>
+						<units>
+							<unit category="unitcategory.defence" mk="4" exact="7"/>
+							<unit category="unitcategory.welder" mk="1" exact="3" />
+						</units>
+						<cargo>
+							<wares list="[ware.fuelcells]">
+								<fillpercent min="70" max="80"/>
+							</wares>
+						</cargo>
+						<safepos value="$Safepos" radius="2km" max="5km"/>
+						<rotation value="$Orientation" />
+					</create_ship>
+
+					<signal_cue_instantly cue="ShipyardResourceConsume_cue" param="[$faction, $Ship]"/>
+
+					<add_units object="$Ship" category="unitcategory.marine" exact="5*$TroopShipNumber" mk="3" />
+					<add_units object="$Ship" category="unitcategory.marine" min="20*$TroopShipNumber" max="25*$TroopShipNumber" mk="2" />
+					<add_units object="$Ship" category="unitcategory.marine" exact="30*$TroopShipNumber" mk="1" comment="the excess will be ignored"/>
+
+
+					<add_effect object="$Ship" effect="'jump_jumpin_xl'"/>
+
+					<do_all exact="4">
+						<create_ship name="$Enemy_Leader" groupname="$Enemy_Ships" ref="$FighterGroup" zone="$KSt_Zone">
+							<position object="$Ship" max="5km"/>
+							<owner exact="$faction" overridenpc="true"/>
+						</create_ship>
+						<add_effect object="$Enemy_Leader" effect="'jump_jumpin_l'"/>
+						<set_object_commander object="$Enemy_Leader" commander="$Ship" />
+						<start_script object="$Enemy_Leader.pilot" name="'BR.move.escort'">
+							<param name="target" value="$Ship"/>
+						</start_script>
+					</do_all>
+
+					<create_cue_actor name="$marine" cue="this">
+						<select faction="$faction" tags="tag.marine"/>
+						<owner exact="$faction"/>
+						<skills>
+							<skill type="combat" min="3" max="5"/>
+							<skill type="engineering" min="3" max="5"/>
+							<skill type="leadership" min="3" max="5"/>
+							<skill type="management" min="3" max="5"/>
+							<skill type="morale" min="3" max="5"/>
+							<skill type="navigation" min="3" max="5"/>
+							<skill type="science" min="3" max="5"/>
+							<skill type="boarding" min="3" max="5"/>
+						</skills>
+					</create_cue_actor>    
+					<assign_boarding_commander object="$Ship" actor="$marine" />
+					<remove_cue_actor actor="$marine" cue="this" />
+					<remove_value name="$marine" />
+
+					<!--<show_notification caption="'TroopShips debug x'" details="'\n %1 TroopShip sent to %2 to board station %3.'.[$faction.name, $target.zone.name, $target.name]" timeout="8s" queued="true" priority="8" sound="notification_generic"/>
+
+					<write_to_logbook category="general" text="'=== TroopShips debug x === \n %1 TroopShip sent to %2 to board station %3.'.[$faction.name, $target.zone.name, $target.name]"/>		-->
+
+					<start_script name="'boarding.npc'" object="$Ship.pilot">
+						<param name="target" value="$target" />
+						<param name="canhacktarget" value="true" />
+						<param name="initialwaittime" value="180s" />
+					</start_script>
+					<!--</do_all> -->
+				</do_all>
+			</actions>
+		</cue>
+
+		<cue name="EnemyStation_catch" instantiate="true" namespace="this" checktime="player.age + 25min" checkinterval="45min">
+			<!-- this cue will check regulary for isolated stations presence at enemy zones and then send a retake small fleet if right conditions are meet-->
+			<conditions>
+				<cue_is_complete cue="md.Setup.Start"/>
+				<check_value value="md.CM_Config.Settings.$Check == 1" />
+			</conditions>
+			<actions>
+				<find_zone name="$zones" space="player.galaxy" tempzone="false" multiple="true" >
+					<match class="class.highway" negate="true"/>
+					<match owner="null" negate="true"/>
+					<match owner="faction.player" negate="true" />
+				</find_zone>
+				<do_all exact="$zones.count" counter="$i">
+					<do_if value="not $zones.{$i}.istemporaryzone and $zones.{$i}.name != {20005,200} and $zones.{$i}.name != {20006,301}" >	 
+						<find_station name="$ZoneEnemyStations" space="$zones.{$i}" functional="true" multiple="true">
+							<match_any>
+								<match_relation faction="$zones.{$i}.owner" relation="enemy"/>
+								<match owner="faction.ownerless"/>
+							</match_any>
+							<!--<match owner="faction.xenon" negate="true" />-->
+							<match macro="macro.struct_bt_alb_outpost_macro" negate="true"/>
+							<match macro="macro.struct_at_xen_xenon_outpost_macro" negate="true"/>
+							<!--<match macro="macro.struct_bt_alb_warehouse_macro" negate="true"/>-->
+						</find_station>
+						<do_all exact="$ZoneEnemyStations.count" counter="$j">
+
+							<!-- seems ok -->
+							<find_ship name="$TroopShip" functional="true" space="$zones.{$i}" owner="$zones.{$i}.owner" multiple="true">
+								<match_any>
+									<match macro="macro.units_size_l_troop_transporter1_macro"/>
+									<match macro="macro.units_size_l_troop_transporter5_macro"/>
+								</match_any>
+							</find_ship>
+
+
+							<find_ship name="$MilitaryCapShip" class="[class.ship_l, class.ship_xl]" functional="true" space="$zones.{$i}" owner="$zones.{$i}.owner" multiple="true">
+								<match_any>
+									<match primarypurpose="objectpurpose.fight"/>
+									<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+								</match_any>
+							</find_ship>
+
+							<do_if value="not $TroopShip.count and not $MilitaryCapShip.count" >
+								<signal_cue_instantly cue="Retaliation_Patrol_cue" param="[$ZoneEnemyStations.{$j}, 2, $ZoneEnemyStations.{$j}]" chance="md.CM_Config.Settings.$TS_RtFChance" />
+
+								<!--<write_to_logbook category="general" text="'=== EnemyStation_catch 1 === \n TS count %1 \n MS count %2 \n zone owner %3 \n zone name %4 \n Station %5.'.[$TroopShip.count, $MilitaryCapShip.count, $zones.{$i}.owner, $zones.{$i}.name, $ZoneEnemyStations.{$j}.name]"/>-->
+
+							</do_if>
+
+							<do_elseif value="not $TroopShip.count and $MilitaryCapShip.count and $zones.{$i}.owner != faction.xenon">
+
+								<!--<write_to_logbook category="general" text="'=== EnemyStation_catch 2 === \n TS count %1 \n MS count %2 \n zone owner %3 \n zone name %4 \n Station %5.'.[$TroopShip.count, $MilitaryCapShip.count, $zones.{$i}.owner, $zones.{$i}.name, $ZoneEnemyStations.{$j}.name]"/>-->
+
+								<do_if value="md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$i}.owner}">
+									<set_value name="$Main_Factions_Fighters" exact="['hoa_heavy_fighter', 'pmc_heavy_fighter', 'can_heavy_fighter', 'arg_heavy_fighter', 'xen_heavy_fighter', 'rya_heavy_fighter', 'sos_heavy_fighter', 'rei_heavy_fighter', 'hev_heavy_fighter']"/>
+									<set_value name="$FighterGroup" exact="if $Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$i}.owner}}? then $Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$zones.{$i}.owner}} else 'pmc_heavy_fighter'" />
+								</do_if>
+								<get_safe_pos result="$Safepos" zone="$zones.{$i}" value="$ZoneEnemyStations.{$j}.position" radius="400m" min="10km" max="15km" allowyaxis="false"/>
+								<signal_cue_instantly cue="TroopShips" param="[$Safepos, $zones.{$i}, $zones.{$i}.owner, $FighterGroup, $ZoneEnemyStations.{$j}]" chance="md.CM_Config.Settings.$TS_RtFChance" />
+							</do_elseif>
+
+						</do_all>
+					</do_if>
+				</do_all>
+			</actions>
+		</cue>
+
+		<!--<========================================================================>-->
+		<!-- New on v020 END-->
+
+		<!-- library stuff-->
+		<library name="Start_include">
+			<actions>
+				<set_value name="md.Conquer_Mod.Start.$Corp_Factions" exact="[faction.jonferson, faction.sonraenergy, faction.aquarius, faction.chow, faction.frantonpharma, faction.albionenergy, faction.wholesomefoods, faction.leddaindustrial, faction.beryll, faction.nolimits]"/>
+				<set_value name="md.Conquer_Mod.Start.$Corp_Factions_zone" exact="[faction.jonferson, [macro.tzoneCluster_A_Sector01_Zone94_macro, macro.tzoneCluster_A_Sector01_Zone95_macro, macro.tzoneCluster_A_Sector01_Zone96_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone97_macro, macro.tzoneCluster_A_Sector01_Zone98_macro, macro.tzoneCluster_A_Sector01_Zone99_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone100_macro, macro.tzoneCluster_A_Sector01_Zone101_macro, macro.tzoneCluster_A_Sector01_Zone102_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone103_macro, macro.tzoneCluster_A_Sector02_Zone104_macro, macro.tzoneCluster_A_Sector02_Zone105_macro,
+																			 macro.tzoneCluster_A_Sector02_Zone106_macro, macro.tzoneCluster_A_Sector02_Zone107_macro, macro.tzoneCluster_A_Sector02_Zone108_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone109_macro, macro.tzoneCluster_A_Sector03_Zone110_macro, macro.tzoneCluster_A_Sector03_Zone111_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone112_macro, macro.tzoneCluster_A_Sector03_Zone113_macro, macro.tzoneCluster_A_Sector03_Zone114_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone87_macro, macro.tzoneCluster_C_Sector08_Zone88_macro, macro.tzoneCluster_C_Sector08_Zone89_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone90_macro, macro.tzoneCluster_C_Sector08_Zone91_macro, macro.tzoneCluster_C_Sector08_Zone92_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone93_macro, macro.tzoneCluster_C_Sector09_Zone59_macro, macro.tzoneCluster_C_Sector09_Zone60_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone61_macro, macro.tzoneCluster_C_Sector09_Zone62_macro, macro.tzoneCluster_C_Sector09_Zone63_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone64_macro, macro.tzoneCluster_C_Sector09_Zone65_macro, macro.tzoneCluster_C_Sector10_Zone66_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone67_macro, macro.tzoneCluster_C_Sector10_Zone68_macro, macro.tzoneCluster_C_Sector10_Zone69_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone70_macro, macro.tzoneCluster_C_Sector10_Zone71_macro, macro.tzoneCluster_C_Sector10_Zone72_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone73_macro, macro.tzoneCluster_C_Sector10_Zone74_macro, macro.tzoneCluster_C_Sector11_Zone75_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone76_macro, macro.tzoneCluster_C_Sector11_Zone77_macro, macro.tzoneCluster_C_Sector11_Zone78_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone79_macro, macro.tzoneCluster_C_Sector11_Zone80_macro, macro.tzoneCluster_C_Sector11_Zone81_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone82_macro, macro.tzoneCluster_D_Sector20_Zone54_macro, macro.tzoneCluster_D_Sector20_Zone55_macro,
+																			 macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro, macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.sonraenergy, [macro.tzoneCluster_A_Sector01_Zone94_macro, macro.tzoneCluster_A_Sector01_Zone95_macro, macro.tzoneCluster_A_Sector01_Zone96_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone97_macro, macro.tzoneCluster_A_Sector01_Zone98_macro, macro.tzoneCluster_A_Sector01_Zone99_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone100_macro, macro.tzoneCluster_A_Sector01_Zone101_macro, macro.tzoneCluster_A_Sector01_Zone102_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone103_macro, macro.tzoneCluster_A_Sector02_Zone104_macro, macro.tzoneCluster_A_Sector02_Zone105_macro,
+																			 macro.tzoneCluster_A_Sector02_Zone106_macro, macro.tzoneCluster_A_Sector02_Zone107_macro, macro.tzoneCluster_A_Sector02_Zone108_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone109_macro, macro.tzoneCluster_A_Sector03_Zone110_macro, macro.tzoneCluster_A_Sector03_Zone111_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone112_macro, macro.tzoneCluster_A_Sector03_Zone113_macro, macro.tzoneCluster_A_Sector03_Zone114_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone87_macro, macro.tzoneCluster_C_Sector08_Zone88_macro, macro.tzoneCluster_C_Sector08_Zone89_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone90_macro, macro.tzoneCluster_C_Sector08_Zone91_macro, macro.tzoneCluster_C_Sector08_Zone92_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone93_macro, macro.tzoneCluster_C_Sector09_Zone59_macro, macro.tzoneCluster_C_Sector09_Zone60_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone61_macro, macro.tzoneCluster_C_Sector09_Zone62_macro, macro.tzoneCluster_C_Sector09_Zone63_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone64_macro, macro.tzoneCluster_C_Sector09_Zone65_macro, macro.tzoneCluster_C_Sector10_Zone66_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone67_macro, macro.tzoneCluster_C_Sector10_Zone68_macro, macro.tzoneCluster_C_Sector10_Zone69_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone70_macro, macro.tzoneCluster_C_Sector10_Zone71_macro, macro.tzoneCluster_C_Sector10_Zone72_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone73_macro, macro.tzoneCluster_C_Sector10_Zone74_macro, macro.tzoneCluster_C_Sector11_Zone75_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone76_macro, macro.tzoneCluster_C_Sector11_Zone77_macro, macro.tzoneCluster_C_Sector11_Zone78_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone79_macro, macro.tzoneCluster_C_Sector11_Zone80_macro, macro.tzoneCluster_C_Sector11_Zone81_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone82_macro, macro.tzoneCluster_D_Sector20_Zone54_macro, macro.tzoneCluster_D_Sector20_Zone55_macro,
+																			 macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro, macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.aquarius, [macro.tzoneCluster_A_Sector01_Zone94_macro, macro.tzoneCluster_A_Sector01_Zone95_macro, macro.tzoneCluster_A_Sector01_Zone96_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone97_macro, macro.tzoneCluster_A_Sector01_Zone98_macro, macro.tzoneCluster_A_Sector01_Zone99_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone100_macro, macro.tzoneCluster_A_Sector01_Zone101_macro, macro.tzoneCluster_A_Sector01_Zone102_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone103_macro, macro.tzoneCluster_A_Sector02_Zone104_macro, macro.tzoneCluster_A_Sector02_Zone105_macro,
+																			 macro.tzoneCluster_A_Sector02_Zone106_macro, macro.tzoneCluster_A_Sector02_Zone107_macro, macro.tzoneCluster_A_Sector02_Zone108_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone109_macro, macro.tzoneCluster_A_Sector03_Zone110_macro, macro.tzoneCluster_A_Sector03_Zone111_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone112_macro, macro.tzoneCluster_A_Sector03_Zone113_macro, macro.tzoneCluster_A_Sector03_Zone114_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone87_macro, macro.tzoneCluster_C_Sector08_Zone88_macro, macro.tzoneCluster_C_Sector08_Zone89_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone90_macro, macro.tzoneCluster_C_Sector08_Zone91_macro, macro.tzoneCluster_C_Sector08_Zone92_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone93_macro, macro.tzoneCluster_C_Sector09_Zone59_macro, macro.tzoneCluster_C_Sector09_Zone60_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone61_macro, macro.tzoneCluster_C_Sector09_Zone62_macro, macro.tzoneCluster_C_Sector09_Zone63_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone64_macro, macro.tzoneCluster_C_Sector09_Zone65_macro, macro.tzoneCluster_C_Sector10_Zone66_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone67_macro, macro.tzoneCluster_C_Sector10_Zone68_macro, macro.tzoneCluster_C_Sector10_Zone69_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone70_macro, macro.tzoneCluster_C_Sector10_Zone71_macro, macro.tzoneCluster_C_Sector10_Zone72_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone73_macro, macro.tzoneCluster_C_Sector10_Zone74_macro, macro.tzoneCluster_C_Sector11_Zone75_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone76_macro, macro.tzoneCluster_C_Sector11_Zone77_macro, macro.tzoneCluster_C_Sector11_Zone78_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone79_macro, macro.tzoneCluster_C_Sector11_Zone80_macro, macro.tzoneCluster_C_Sector11_Zone81_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone82_macro, macro.tzoneCluster_D_Sector20_Zone54_macro, macro.tzoneCluster_D_Sector20_Zone55_macro,
+																			 macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro, macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.chow, [macro.tzoneCluster_A_Sector01_Zone94_macro, macro.tzoneCluster_A_Sector01_Zone95_macro, macro.tzoneCluster_A_Sector01_Zone96_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone97_macro, macro.tzoneCluster_A_Sector01_Zone98_macro, macro.tzoneCluster_A_Sector01_Zone99_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone100_macro, macro.tzoneCluster_A_Sector01_Zone101_macro, macro.tzoneCluster_A_Sector01_Zone102_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone103_macro, macro.tzoneCluster_A_Sector02_Zone104_macro, macro.tzoneCluster_A_Sector02_Zone105_macro,
+																			 macro.tzoneCluster_A_Sector02_Zone106_macro, macro.tzoneCluster_A_Sector02_Zone107_macro, macro.tzoneCluster_A_Sector02_Zone108_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone109_macro, macro.tzoneCluster_A_Sector03_Zone110_macro, macro.tzoneCluster_A_Sector03_Zone111_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone112_macro, macro.tzoneCluster_A_Sector03_Zone113_macro, macro.tzoneCluster_A_Sector03_Zone114_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone87_macro, macro.tzoneCluster_C_Sector08_Zone88_macro, macro.tzoneCluster_C_Sector08_Zone89_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone90_macro, macro.tzoneCluster_C_Sector08_Zone91_macro, macro.tzoneCluster_C_Sector08_Zone92_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone93_macro, macro.tzoneCluster_C_Sector09_Zone59_macro, macro.tzoneCluster_C_Sector09_Zone60_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone61_macro, macro.tzoneCluster_C_Sector09_Zone62_macro, macro.tzoneCluster_C_Sector09_Zone63_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone64_macro, macro.tzoneCluster_C_Sector09_Zone65_macro, macro.tzoneCluster_C_Sector10_Zone66_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone67_macro, macro.tzoneCluster_C_Sector10_Zone68_macro, macro.tzoneCluster_C_Sector10_Zone69_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone70_macro, macro.tzoneCluster_C_Sector10_Zone71_macro, macro.tzoneCluster_C_Sector10_Zone72_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone73_macro, macro.tzoneCluster_C_Sector10_Zone74_macro, macro.tzoneCluster_C_Sector11_Zone75_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone76_macro, macro.tzoneCluster_C_Sector11_Zone77_macro, macro.tzoneCluster_C_Sector11_Zone78_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone79_macro, macro.tzoneCluster_C_Sector11_Zone80_macro, macro.tzoneCluster_C_Sector11_Zone81_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone82_macro, macro.tzoneCluster_D_Sector20_Zone54_macro, macro.tzoneCluster_D_Sector20_Zone55_macro,
+																			 macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro, macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.frantonpharma, [macro.tzoneCluster_A_Sector01_Zone94_macro, macro.tzoneCluster_A_Sector01_Zone95_macro, macro.tzoneCluster_A_Sector01_Zone96_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone97_macro, macro.tzoneCluster_A_Sector01_Zone98_macro, macro.tzoneCluster_A_Sector01_Zone99_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone100_macro, macro.tzoneCluster_A_Sector01_Zone101_macro, macro.tzoneCluster_A_Sector01_Zone102_macro,
+																			 macro.tzoneCluster_A_Sector01_Zone103_macro, macro.tzoneCluster_A_Sector02_Zone104_macro, macro.tzoneCluster_A_Sector02_Zone105_macro,
+																			 macro.tzoneCluster_A_Sector02_Zone106_macro, macro.tzoneCluster_A_Sector02_Zone107_macro, macro.tzoneCluster_A_Sector02_Zone108_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone109_macro, macro.tzoneCluster_A_Sector03_Zone110_macro, macro.tzoneCluster_A_Sector03_Zone111_macro,
+																			 macro.tzoneCluster_A_Sector03_Zone112_macro, macro.tzoneCluster_A_Sector03_Zone113_macro, macro.tzoneCluster_A_Sector03_Zone114_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone87_macro, macro.tzoneCluster_C_Sector08_Zone88_macro, macro.tzoneCluster_C_Sector08_Zone89_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone90_macro, macro.tzoneCluster_C_Sector08_Zone91_macro, macro.tzoneCluster_C_Sector08_Zone92_macro,
+																			 macro.tzoneCluster_C_Sector08_Zone93_macro, macro.tzoneCluster_C_Sector09_Zone59_macro, macro.tzoneCluster_C_Sector09_Zone60_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone61_macro, macro.tzoneCluster_C_Sector09_Zone62_macro, macro.tzoneCluster_C_Sector09_Zone63_macro,
+																			 macro.tzoneCluster_C_Sector09_Zone64_macro, macro.tzoneCluster_C_Sector09_Zone65_macro, macro.tzoneCluster_C_Sector10_Zone66_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone67_macro, macro.tzoneCluster_C_Sector10_Zone68_macro, macro.tzoneCluster_C_Sector10_Zone69_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone70_macro, macro.tzoneCluster_C_Sector10_Zone71_macro, macro.tzoneCluster_C_Sector10_Zone72_macro,
+																			 macro.tzoneCluster_C_Sector10_Zone73_macro, macro.tzoneCluster_C_Sector10_Zone74_macro, macro.tzoneCluster_C_Sector11_Zone75_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone76_macro, macro.tzoneCluster_C_Sector11_Zone77_macro, macro.tzoneCluster_C_Sector11_Zone78_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone79_macro, macro.tzoneCluster_C_Sector11_Zone80_macro, macro.tzoneCluster_C_Sector11_Zone81_macro,
+																			 macro.tzoneCluster_C_Sector11_Zone82_macro, macro.tzoneCluster_D_Sector20_Zone54_macro, macro.tzoneCluster_D_Sector20_Zone55_macro,
+																			 macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro, macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.albionenergy, [macro.tzoneCluster_B_Sector04_Zone27_macro, macro.tzoneCluster_B_Sector04_Zone28_macro, macro.tzoneCluster_B_Sector04_Zone29_macro,
+																			macro.tzoneCluster_B_Sector04_Zone30_macro, macro.tzoneCluster_B_Sector04_Zone31_macro, macro.tzoneCluster_B_Sector04_Zone32_macro,
+																			macro.tzoneCluster_B_Sector04_Zone33_macro, macro.tzoneCluster_B_Sector05_Zone19_macro, macro.tzoneCluster_B_Sector05_Zone20_macro,
+																			macro.tzoneCluster_B_Sector05_Zone21_macro, macro.tzoneCluster_B_Sector05_Zone22_macro, macro.tzoneCluster_B_Sector05_Zone23_macro,
+																			macro.tzoneCluster_B_Sector05_Zone24_macro, macro.tzoneCluster_B_Sector05_Zone25_macro, macro.tzoneCluster_B_Sector05_Zone26_macro,
+																			macro.tzoneCluster_B_Sector06_Zone11_macro, macro.tzoneCluster_B_Sector06_Zone12_macro, macro.tzoneCluster_B_Sector06_Zone13_macro,
+																			macro.tzoneCluster_B_Sector06_Zone14_macro, macro.tzoneCluster_B_Sector06_Zone15_macro, macro.tzoneCluster_B_Sector06_Zone16_macro,
+																			macro.tzoneCluster_B_Sector06_Zone17_macro, macro.tzoneCluster_B_Sector06_Zone18_macro, macro.tzoneCluster_B_Sector07_Zone01_macro,
+																			macro.tzoneCluster_B_Sector07_Zone02_macro, macro.tzoneCluster_B_Sector07_Zone03_macro, macro.tzoneCluster_B_Sector07_Zone04_macro,
+																			macro.tzoneCluster_B_Sector07_Zone05_macro, macro.tzoneCluster_B_Sector07_Zone06_macro, macro.tzoneCluster_B_Sector07_Zone07_macro,
+																			macro.tzoneCluster_B_Sector07_Zone08_macro, macro.tzoneCluster_B_Sector07_Zone09_macro, macro.tzoneCluster_B_Sector07_Zone10_macro,
+																			macro.tzoneCluster_D_Sector17_Zone34_macro, macro.tzoneCluster_D_Sector17_Zone35_macro, macro.tzoneCluster_D_Sector17_Zone36_macro,
+																			macro.tzoneCluster_D_Sector17_Zone37_macro, macro.tzoneCluster_D_Sector17_Zone38_macro, macro.tzoneCluster_D_Sector17_Zone39_macro,
+																			macro.tzoneCluster_D_Sector19_Zone40_macro, macro.tzoneCluster_D_Sector19_Zone41_macro, macro.tzoneCluster_D_Sector19_Zone42_macro,
+																			macro.tzoneCluster_D_Sector19_Zone43_macro, macro.tzoneCluster_D_Sector19_Zone44_macro, macro.tzoneCluster_D_Sector20_Zone54_macro,
+																			macro.tzoneCluster_D_Sector20_Zone55_macro, macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro,
+																			macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.wholesomefoods, [macro.tzoneCluster_B_Sector04_Zone27_macro, macro.tzoneCluster_B_Sector04_Zone28_macro, macro.tzoneCluster_B_Sector04_Zone29_macro,
+																			macro.tzoneCluster_B_Sector04_Zone30_macro, macro.tzoneCluster_B_Sector04_Zone31_macro, macro.tzoneCluster_B_Sector04_Zone32_macro,
+																			macro.tzoneCluster_B_Sector04_Zone33_macro, macro.tzoneCluster_B_Sector05_Zone19_macro, macro.tzoneCluster_B_Sector05_Zone20_macro,
+																			macro.tzoneCluster_B_Sector05_Zone21_macro, macro.tzoneCluster_B_Sector05_Zone22_macro, macro.tzoneCluster_B_Sector05_Zone23_macro,
+																			macro.tzoneCluster_B_Sector05_Zone24_macro, macro.tzoneCluster_B_Sector05_Zone25_macro, macro.tzoneCluster_B_Sector05_Zone26_macro,
+																			macro.tzoneCluster_B_Sector06_Zone11_macro, macro.tzoneCluster_B_Sector06_Zone12_macro, macro.tzoneCluster_B_Sector06_Zone13_macro,
+																			macro.tzoneCluster_B_Sector06_Zone14_macro, macro.tzoneCluster_B_Sector06_Zone15_macro, macro.tzoneCluster_B_Sector06_Zone16_macro,
+																			macro.tzoneCluster_B_Sector06_Zone17_macro, macro.tzoneCluster_B_Sector06_Zone18_macro, macro.tzoneCluster_B_Sector07_Zone01_macro,
+																			macro.tzoneCluster_B_Sector07_Zone02_macro, macro.tzoneCluster_B_Sector07_Zone03_macro, macro.tzoneCluster_B_Sector07_Zone04_macro,
+																			macro.tzoneCluster_B_Sector07_Zone05_macro, macro.tzoneCluster_B_Sector07_Zone06_macro, macro.tzoneCluster_B_Sector07_Zone07_macro,
+																			macro.tzoneCluster_B_Sector07_Zone08_macro, macro.tzoneCluster_B_Sector07_Zone09_macro, macro.tzoneCluster_B_Sector07_Zone10_macro,
+																			macro.tzoneCluster_D_Sector17_Zone34_macro, macro.tzoneCluster_D_Sector17_Zone35_macro, macro.tzoneCluster_D_Sector17_Zone36_macro,
+																			macro.tzoneCluster_D_Sector17_Zone37_macro, macro.tzoneCluster_D_Sector17_Zone38_macro, macro.tzoneCluster_D_Sector17_Zone39_macro,
+																			macro.tzoneCluster_D_Sector19_Zone40_macro, macro.tzoneCluster_D_Sector19_Zone41_macro, macro.tzoneCluster_D_Sector19_Zone42_macro,
+																			macro.tzoneCluster_D_Sector19_Zone43_macro, macro.tzoneCluster_D_Sector19_Zone44_macro, macro.tzoneCluster_D_Sector20_Zone54_macro,
+																			macro.tzoneCluster_D_Sector20_Zone55_macro, macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro,
+																			macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.leddaindustrial, [macro.tzoneCluster_B_Sector04_Zone27_macro, macro.tzoneCluster_B_Sector04_Zone28_macro, macro.tzoneCluster_B_Sector04_Zone29_macro,
+																			macro.tzoneCluster_B_Sector04_Zone30_macro, macro.tzoneCluster_B_Sector04_Zone31_macro, macro.tzoneCluster_B_Sector04_Zone32_macro,
+																			macro.tzoneCluster_B_Sector04_Zone33_macro, macro.tzoneCluster_B_Sector05_Zone19_macro, macro.tzoneCluster_B_Sector05_Zone20_macro,
+																			macro.tzoneCluster_B_Sector05_Zone21_macro, macro.tzoneCluster_B_Sector05_Zone22_macro, macro.tzoneCluster_B_Sector05_Zone23_macro,
+																			macro.tzoneCluster_B_Sector05_Zone24_macro, macro.tzoneCluster_B_Sector05_Zone25_macro, macro.tzoneCluster_B_Sector05_Zone26_macro,
+																			macro.tzoneCluster_B_Sector06_Zone11_macro, macro.tzoneCluster_B_Sector06_Zone12_macro, macro.tzoneCluster_B_Sector06_Zone13_macro,
+																			macro.tzoneCluster_B_Sector06_Zone14_macro, macro.tzoneCluster_B_Sector06_Zone15_macro, macro.tzoneCluster_B_Sector06_Zone16_macro,
+																			macro.tzoneCluster_B_Sector06_Zone17_macro, macro.tzoneCluster_B_Sector06_Zone18_macro, macro.tzoneCluster_B_Sector07_Zone01_macro,
+																			macro.tzoneCluster_B_Sector07_Zone02_macro, macro.tzoneCluster_B_Sector07_Zone03_macro, macro.tzoneCluster_B_Sector07_Zone04_macro,
+																			macro.tzoneCluster_B_Sector07_Zone05_macro, macro.tzoneCluster_B_Sector07_Zone06_macro, macro.tzoneCluster_B_Sector07_Zone07_macro,
+																			macro.tzoneCluster_B_Sector07_Zone08_macro, macro.tzoneCluster_B_Sector07_Zone09_macro, macro.tzoneCluster_B_Sector07_Zone10_macro,
+																			macro.tzoneCluster_D_Sector17_Zone34_macro, macro.tzoneCluster_D_Sector17_Zone35_macro, macro.tzoneCluster_D_Sector17_Zone36_macro,
+																			macro.tzoneCluster_D_Sector17_Zone37_macro, macro.tzoneCluster_D_Sector17_Zone38_macro, macro.tzoneCluster_D_Sector17_Zone39_macro,
+																			macro.tzoneCluster_D_Sector19_Zone40_macro, macro.tzoneCluster_D_Sector19_Zone41_macro, macro.tzoneCluster_D_Sector19_Zone42_macro,
+																			macro.tzoneCluster_D_Sector19_Zone43_macro, macro.tzoneCluster_D_Sector19_Zone44_macro, macro.tzoneCluster_D_Sector20_Zone54_macro,
+																			macro.tzoneCluster_D_Sector20_Zone55_macro, macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro,
+																			macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.beryll, [macro.tzoneCluster_B_Sector04_Zone27_macro, macro.tzoneCluster_B_Sector04_Zone28_macro, macro.tzoneCluster_B_Sector04_Zone29_macro,
+																			macro.tzoneCluster_B_Sector04_Zone30_macro, macro.tzoneCluster_B_Sector04_Zone31_macro, macro.tzoneCluster_B_Sector04_Zone32_macro,
+																			macro.tzoneCluster_B_Sector04_Zone33_macro, macro.tzoneCluster_B_Sector05_Zone19_macro, macro.tzoneCluster_B_Sector05_Zone20_macro,
+																			macro.tzoneCluster_B_Sector05_Zone21_macro, macro.tzoneCluster_B_Sector05_Zone22_macro, macro.tzoneCluster_B_Sector05_Zone23_macro,
+																			macro.tzoneCluster_B_Sector05_Zone24_macro, macro.tzoneCluster_B_Sector05_Zone25_macro, macro.tzoneCluster_B_Sector05_Zone26_macro,
+																			macro.tzoneCluster_B_Sector06_Zone11_macro, macro.tzoneCluster_B_Sector06_Zone12_macro, macro.tzoneCluster_B_Sector06_Zone13_macro,
+																			macro.tzoneCluster_B_Sector06_Zone14_macro, macro.tzoneCluster_B_Sector06_Zone15_macro, macro.tzoneCluster_B_Sector06_Zone16_macro,
+																			macro.tzoneCluster_B_Sector06_Zone17_macro, macro.tzoneCluster_B_Sector06_Zone18_macro, macro.tzoneCluster_B_Sector07_Zone01_macro,
+																			macro.tzoneCluster_B_Sector07_Zone02_macro, macro.tzoneCluster_B_Sector07_Zone03_macro, macro.tzoneCluster_B_Sector07_Zone04_macro,
+																			macro.tzoneCluster_B_Sector07_Zone05_macro, macro.tzoneCluster_B_Sector07_Zone06_macro, macro.tzoneCluster_B_Sector07_Zone07_macro,
+																			macro.tzoneCluster_B_Sector07_Zone08_macro, macro.tzoneCluster_B_Sector07_Zone09_macro, macro.tzoneCluster_B_Sector07_Zone10_macro,
+																			macro.tzoneCluster_D_Sector17_Zone34_macro, macro.tzoneCluster_D_Sector17_Zone35_macro, macro.tzoneCluster_D_Sector17_Zone36_macro,
+																			macro.tzoneCluster_D_Sector17_Zone37_macro, macro.tzoneCluster_D_Sector17_Zone38_macro, macro.tzoneCluster_D_Sector17_Zone39_macro,
+																			macro.tzoneCluster_D_Sector19_Zone40_macro, macro.tzoneCluster_D_Sector19_Zone41_macro, macro.tzoneCluster_D_Sector19_Zone42_macro,
+																			macro.tzoneCluster_D_Sector19_Zone43_macro, macro.tzoneCluster_D_Sector19_Zone44_macro, macro.tzoneCluster_D_Sector20_Zone54_macro,
+																			macro.tzoneCluster_D_Sector20_Zone55_macro, macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro,
+																			macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.nolimits, [macro.tzoneCluster_B_Sector04_Zone27_macro, macro.tzoneCluster_B_Sector04_Zone28_macro, macro.tzoneCluster_B_Sector04_Zone29_macro,
+																			macro.tzoneCluster_B_Sector04_Zone30_macro, macro.tzoneCluster_B_Sector04_Zone31_macro, macro.tzoneCluster_B_Sector04_Zone32_macro,
+																			macro.tzoneCluster_B_Sector04_Zone33_macro, macro.tzoneCluster_B_Sector05_Zone19_macro, macro.tzoneCluster_B_Sector05_Zone20_macro,
+																			macro.tzoneCluster_B_Sector05_Zone21_macro, macro.tzoneCluster_B_Sector05_Zone22_macro, macro.tzoneCluster_B_Sector05_Zone23_macro,
+																			macro.tzoneCluster_B_Sector05_Zone24_macro, macro.tzoneCluster_B_Sector05_Zone25_macro, macro.tzoneCluster_B_Sector05_Zone26_macro,
+																			macro.tzoneCluster_B_Sector06_Zone11_macro, macro.tzoneCluster_B_Sector06_Zone12_macro, macro.tzoneCluster_B_Sector06_Zone13_macro,
+																			macro.tzoneCluster_B_Sector06_Zone14_macro, macro.tzoneCluster_B_Sector06_Zone15_macro, macro.tzoneCluster_B_Sector06_Zone16_macro,
+																			macro.tzoneCluster_B_Sector06_Zone17_macro, macro.tzoneCluster_B_Sector06_Zone18_macro, macro.tzoneCluster_B_Sector07_Zone01_macro,
+																			macro.tzoneCluster_B_Sector07_Zone02_macro, macro.tzoneCluster_B_Sector07_Zone03_macro, macro.tzoneCluster_B_Sector07_Zone04_macro,
+																			macro.tzoneCluster_B_Sector07_Zone05_macro, macro.tzoneCluster_B_Sector07_Zone06_macro, macro.tzoneCluster_B_Sector07_Zone07_macro,
+																			macro.tzoneCluster_B_Sector07_Zone08_macro, macro.tzoneCluster_B_Sector07_Zone09_macro, macro.tzoneCluster_B_Sector07_Zone10_macro,
+																			macro.tzoneCluster_D_Sector17_Zone34_macro, macro.tzoneCluster_D_Sector17_Zone35_macro, macro.tzoneCluster_D_Sector17_Zone36_macro,
+																			macro.tzoneCluster_D_Sector17_Zone37_macro, macro.tzoneCluster_D_Sector17_Zone38_macro, macro.tzoneCluster_D_Sector17_Zone39_macro,
+																			macro.tzoneCluster_D_Sector19_Zone40_macro, macro.tzoneCluster_D_Sector19_Zone41_macro, macro.tzoneCluster_D_Sector19_Zone42_macro,
+																			macro.tzoneCluster_D_Sector19_Zone43_macro, macro.tzoneCluster_D_Sector19_Zone44_macro, macro.tzoneCluster_D_Sector20_Zone54_macro,
+																			macro.tzoneCluster_D_Sector20_Zone55_macro, macro.tzoneCluster_D_Sector20_Zone56_macro, macro.tzoneCluster_D_Sector20_Zone57_macro,
+																			macro.tzoneCluster_D_Sector20_Zone58_macro],
+													 faction.terracorp, [macro.tzoneCluster_L_Sector01_Zone001_macro, macro.tzoneCluster_L_Sector01_Zone002_macro, macro.tzoneCluster_L_Sector01_Zone003_macro,
+																		 macro.tzoneCluster_L_Sector01_Zone004_macro, macro.tzoneCluster_L_Sector02_Zone001_macro, macro.tzoneCluster_L_Sector02_Zone002_macro,
+																		 macro.tzoneCluster_L_Sector02_Zone003_macro, macro.tzoneCluster_L_Sector02_Zone004_macro, macro.tzoneCluster_L_Sector02_Zone005_macro,
+																		 macro.tzoneCluster_L_Sector02_Zone006_macro, macro.tzoneCluster_L_Sector03_Zone001_macro, macro.tzoneCluster_L_Sector03_Zone002_macro,
+																		 macro.tzoneCluster_L_Sector03_Zone003_macro, macro.tzoneCluster_L_Sector03_Zone004_macro, macro.tzoneCluster_L_Sector03_Zone005_macro,
+																		 macro.tzoneCluster_M_Sector01_Zone001_macro, macro.tzoneCluster_M_Sector01_Zone002_macro, macro.tzoneCluster_M_Sector01_Zone003_macro,
+																		 macro.tzoneCluster_M_Sector01_Zone004_macro, macro.tzoneCluster_M_Sector01_Zone005_macro, macro.tzoneCluster_M_Sector01_Zone006_macro,
+																		 macro.tzoneCluster_M_Sector01_Zone007_macro, macro.tzoneCluster_M_Sector01_Zone008_macro, macro.tzoneCluster_M_Sector01_Zone009_macro,
+																		 macro.tzoneCluster_M_Sector01_Zone010_macro, macro.tzoneCluster_M_Sector01_Zone011_macro, macro.tzoneCluster_M_Sector01_Zone012_macro,
+																		 macro.tzoneCluster_M_Sector02_Zone001_macro, macro.tzoneCluster_M_Sector02_Zone002_macro, macro.tzoneCluster_M_Sector02_Zone003_macro,
+																		 macro.tzoneCluster_M_Sector02_Zone004_macro, macro.tzoneCluster_M_Sector02_Zone005_macro, macro.tzoneCluster_M_Sector02_Zone006_macro,
+																		 macro.tzoneCluster_M_Sector02_Zone007_macro, macro.tzoneCluster_M_Sector03_Zone001_macro, macro.tzoneCluster_M_Sector03_Zone002_macro,
+																		 macro.tzoneCluster_M_Sector03_Zone003_macro, macro.tzoneCluster_M_Sector03_Zone004_macro, macro.tzoneCluster_M_Sector03_Zone005_macro,
+																		 macro.tzoneCluster_M_Sector03_Zone006_macro, macro.tzoneCluster_M_Sector03_Zone007_macro, macro.tzoneCluster_M_Sector04_Zone001_macro,
+																		 macro.tzoneCluster_M_Sector04_Zone002_macro, macro.tzoneCluster_M_Sector04_Zone003_macro, macro.tzoneCluster_M_Sector04_Zone004_macro,
+																		 macro.tzoneCluster_M_Sector04_Zone005_macro, macro.tzoneCluster_M_Sector04_Zone006_macro, macro.tzoneCluster_M_Sector04_Zone007_macro,
+																		 macro.tzoneCluster_N_Sector01_Zone001_macro, macro.tzoneCluster_N_Sector01_Zone002_macro, macro.tzoneCluster_N_Sector01_Zone003_macro,
+																		 macro.tzoneCluster_N_Sector01_Zone004_macro, macro.tzoneCluster_N_Sector01_Zone005_macro, macro.tzoneCluster_N_Sector01_Zone006_macro,
+																		 macro.tzoneCluster_N_Sector01_Zone007_macro, macro.tzoneCluster_N_Sector01_Zone008_macro, macro.tzoneCluster_N_Sector01_Zone009_macro,
+																		 macro.tzoneCluster_N_Sector01_Zone010_macro, macro.tzoneCluster_N_Sector01_Zone011_macro, macro.tzoneCluster_N_Sector01_Zone012_macro,
+																		 macro.tzoneCluster_N_Sector01_Zone013_macro, macro.tzoneCluster_N_Sector01_Zone014_macro, macro.tzoneCluster_N_Sector01_Zone015_macro,
+																		 macro.tzoneCluster_N_Sector01_Zone016_macro, macro.tzoneCluster_N_Sector01_Zone017_macro, macro.tzoneCluster_N_Sector01_Zone018_macro]
+																		 ]"/>
+
+				<set_value name="md.Conquer_Mod.Start.$Corp_Factions_stations" exact="[faction.jonferson, [macro.struct_bt_ol_high_energy_construction_macro, macro.struct_bt_ol_tech_complex_macro, macro.struct_bt_ol_hightec_construction_macro, macro.struct_bt_ol_weaponrycomplex_macro, macro.struct_bt_ol_weaponryproduction_macro, macro.struct_bt_ol_drone_complex_macro, macro.struct_bt_ol_drone_factory_macro],
+													 faction.sonraenergy, [macro.struct_bt_ol_solar_power_plant_macro, macro.struct_bt_ol_cell_refinery_macro],
+													 faction.aquarius, [macro.struct_bt_ol_water_destillery_macro, macro.struct_bt_ol_metalworks_macro, macro.struct_bt_ol_crystal_refinement_macro, macro.struct_bt_ol_construction_material_macro],
+													 faction.chow, [macro.struct_bt_ol_bofu_plant_macro, macro.struct_bt_ol_spacefuel_production_macro, macro.struct_bt_ol_farm_complex_macro, macro.struct_bt_ol_plankton_tank_macro, macro.struct_bt_ol_soy_farm_macro],
+													 faction.frantonpharma, [macro.struct_bt_ol_laboratory_macro, macro.struct_bt_ol_spice_farm_macro, macro.struct_bt_ol_medical_supplies_macro],
+													 faction.albionenergy, [macro.struct_bt_alb_cell_refinery_macro, macro.struct_bt_alb_solar_power_plant_macro],
+													 faction.wholesomefoods, [macro.struct_bt_alb_wheat_farm_macro, macro.struct_bt_alb_food_production_plant_macro, macro.struct_bt_alb_food_production_complex_macro, macro.struct_bt_alb_farm_complex_macro, macro.struct_bt_alb_cattle_ranch_macro],
+													 faction.leddaindustrial, [macro.struct_bt_alb_weaponry_complex_macro, macro.struct_bt_alb_weaponry_production_macro, macro.struct_bt_alb_constructionmaterial_production_macro, macro.struct_bt_alb_crystal_refinement_macro, macro.struct_bt_alb_hightec_construction_macro, macro.struct_bt_alb_drone_factory_macro, macro.struct_bt_alb_drone_complex_macro, macro.struct_bt_alb_high_energy_construction_macro],
+													 faction.beryll, [macro.struct_bt_alb_laboratory_macro, macro.struct_bt_alb_tech_complex_macro, macro.struct_bt_alb_hightec_construction_macro],
+													 faction.nolimits, [macro.struct_bt_alb_medical_supplies_macro, macro.struct_bt_alb_spice_farm_macro, macro.struct_bt_alb_laboratory_macro]
+													 ]"/>
+
+				<!-- DLC stuff -->
+				<create_list name="$todo" />
+				<set_value name="$doRun" exact="false"/>
+				<do_if value="md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity">
+					<append_to_list name="$todo" exact="'teladi'"/>
+				</do_if>
+				<do_if value="md.$DLC2_Clusters? and md.$DLC2_Clusters.count">
+					<append_to_list name="$todo" exact="'terracorp'"/>
+					<append_to_list name="$todo" exact="'terran'"/>
+				</do_if>
+				<do_all exact="$todo.count" counter="$y">
+					<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions.indexof.{faction.{$todo.{$y}}} == 0">
+						<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_stations" exact="faction.{$todo.{$y}}"/>
+						<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_stations" exact="[]"/>
+						<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_zone" exact="faction.{$todo.{$y}}"/>
+						<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_zone" exact="[]"/>
+						<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions" exact="faction.{$todo.{$y}}"/>
+						<set_value name="$doRun" exact="true"/>
+					</do_if>
+				</do_all>
+
+				<do_all exact="md.Conquer_Mod.Start.$Corp_Factions_zone.count" counter="$x" chance="if $doRun and ( (md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity) or (md.$DLC2_Clusters? and md.$DLC2_Clusters.count) ) then 100 else 0">
+					<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_zone.{$x} == datatype.faction" negate="true">
+						<continue />
+					</do_if>
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x}.id" list="['albionenergy', 'wholesomefoods', 'leddaindustrial', 'beryll', 'nolimits']" chance="if md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity then 100 else 0">
+						<set_value name="$todo" exact="['Cluster_T_Sector01_Zone001_macro', 'Cluster_T_Sector01_Zone002_macro', 'Cluster_T_Sector01_Zone003_macro', 'Cluster_T_Sector01_Zone004_macro', 'Cluster_T_Sector01_Zone005_macro', 'Cluster_T_Sector01_Zone006_macro', 'Cluster_T_Sector01_Zone007_macro', 'Cluster_T_Sector01_Zone008_macro', 'Cluster_T_Sector01_Zone009_macro', 'Cluster_T_Sector01_Zone010_macro', 'Cluster_T_Sector01_Zone011_macro', 'Cluster_T_Sector01_Zone012_macro', 'Cluster_T_Sector02_Zone001_macro', 'Cluster_T_Sector02_Zone002_macro', 'Cluster_T_Sector02_Zone003_macro', 'Cluster_T_Sector02_Zone004_macro', 'Cluster_T_Sector02_Zone005_macro', 'Cluster_T_Sector02_Zone006_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x}.id" list="['teladi']" chance="if md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity then 100 else 0">
+						<set_value name="$todo" exact="['Cluster_T_Sector01_Zone001_macro', 'Cluster_T_Sector01_Zone002_macro', 'Cluster_T_Sector01_Zone003_macro', 'Cluster_T_Sector01_Zone004_macro', 'Cluster_T_Sector01_Zone005_macro', 'Cluster_T_Sector01_Zone006_macro', 'Cluster_T_Sector01_Zone007_macro', 'Cluster_T_Sector01_Zone008_macro', 'Cluster_T_Sector01_Zone009_macro', 'Cluster_T_Sector01_Zone010_macro', 'Cluster_T_Sector01_Zone011_macro', 'Cluster_T_Sector01_Zone012_macro', 'Cluster_T_Sector02_Zone001_macro', 'Cluster_T_Sector02_Zone002_macro', 'Cluster_T_Sector02_Zone003_macro', 'Cluster_T_Sector02_Zone004_macro', 'Cluster_T_Sector02_Zone005_macro', 'Cluster_T_Sector02_Zone006_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x}.id" list="['terran']" chance="if md.$DLC2_Clusters? and md.$DLC2_Clusters.count then 100 else 0">
+						<set_value name="$todo" exact="['tzoneCluster_L_Sector01_Zone001_macro', 'tzoneCluster_L_Sector01_Zone002_macro', 'tzoneCluster_L_Sector01_Zone003_macro', 'tzoneCluster_L_Sector01_Zone004_macro', 'tzoneCluster_L_Sector02_Zone001_macro', 'tzoneCluster_L_Sector02_Zone002_macro', 'tzoneCluster_L_Sector02_Zone003_macro', 'tzoneCluster_L_Sector02_Zone004_macro', 'tzoneCluster_L_Sector02_Zone005_macro', 'tzoneCluster_L_Sector02_Zone006_macro', 'tzoneCluster_L_Sector03_Zone001_macro', 'tzoneCluster_L_Sector03_Zone002_macro', 'tzoneCluster_L_Sector03_Zone003_macro', 'tzoneCluster_L_Sector03_Zone004_macro', 'tzoneCluster_L_Sector03_Zone005_macro', 'tzoneCluster_N_Sector01_Zone001_macro', 'tzoneCluster_N_Sector01_Zone002_macro', 'tzoneCluster_N_Sector01_Zone003_macro', 'tzoneCluster_N_Sector01_Zone004_macro', 'tzoneCluster_N_Sector01_Zone005_macro', 'tzoneCluster_N_Sector01_Zone006_macro', 'tzoneCluster_N_Sector01_Zone007_macro', 'tzoneCluster_N_Sector01_Zone008_macro', 'tzoneCluster_N_Sector01_Zone009_macro', 'tzoneCluster_N_Sector01_Zone010_macro', 'tzoneCluster_N_Sector01_Zone011_macro', 'tzoneCluster_N_Sector01_Zone012_macro', 'tzoneCluster_N_Sector01_Zone013_macro', 'tzoneCluster_N_Sector01_Zone014_macro', 'tzoneCluster_N_Sector01_Zone015_macro', 'tzoneCluster_N_Sector01_Zone016_macro', 'tzoneCluster_N_Sector01_Zone017_macro', 'tzoneCluster_N_Sector01_Zone018_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x}.id" list="['terracorp']" chance="if md.$DLC2_Clusters? and md.$DLC2_Clusters.count then 100 else 0">
+						<set_value name="$todo" exact="['tzoneCluster_L_Sector01_Zone001_macro', 'tzoneCluster_L_Sector01_Zone002_macro', 'tzoneCluster_L_Sector01_Zone003_macro', 'tzoneCluster_L_Sector01_Zone004_macro', 'tzoneCluster_L_Sector02_Zone001_macro', 'tzoneCluster_L_Sector02_Zone002_macro', 'tzoneCluster_L_Sector02_Zone003_macro', 'tzoneCluster_L_Sector02_Zone004_macro', 'tzoneCluster_L_Sector02_Zone005_macro', 'tzoneCluster_L_Sector02_Zone006_macro', 'tzoneCluster_L_Sector03_Zone001_macro', 'tzoneCluster_L_Sector03_Zone002_macro', 'tzoneCluster_L_Sector03_Zone003_macro', 'tzoneCluster_L_Sector03_Zone004_macro', 'tzoneCluster_L_Sector03_Zone005_macro', 'tzoneCluster_M_Sector01_Zone001_macro', 'tzoneCluster_M_Sector01_Zone002_macro', 'tzoneCluster_M_Sector01_Zone003_macro', 'tzoneCluster_M_Sector01_Zone004_macro', 'tzoneCluster_M_Sector01_Zone005_macro', 'tzoneCluster_M_Sector01_Zone006_macro', 'tzoneCluster_M_Sector01_Zone007_macro', 'tzoneCluster_M_Sector01_Zone008_macro', 'tzoneCluster_M_Sector01_Zone009_macro', 'tzoneCluster_M_Sector01_Zone010_macro', 'tzoneCluster_M_Sector01_Zone011_macro', 'tzoneCluster_M_Sector01_Zone012_macro', 'tzoneCluster_M_Sector02_Zone001_macro', 'tzoneCluster_M_Sector02_Zone002_macro', 'tzoneCluster_M_Sector02_Zone003_macro', 'tzoneCluster_M_Sector02_Zone004_macro', 'tzoneCluster_M_Sector02_Zone005_macro', 'tzoneCluster_M_Sector02_Zone006_macro', 'tzoneCluster_M_Sector02_Zone007_macro', 'tzoneCluster_M_Sector03_Zone001_macro', 'tzoneCluster_M_Sector03_Zone002_macro', 'tzoneCluster_M_Sector03_Zone003_macro', 'tzoneCluster_M_Sector03_Zone004_macro', 'tzoneCluster_M_Sector03_Zone005_macro', 'tzoneCluster_M_Sector03_Zone006_macro', 'tzoneCluster_M_Sector03_Zone007_macro', 'tzoneCluster_M_Sector04_Zone001_macro', 'tzoneCluster_M_Sector04_Zone002_macro', 'tzoneCluster_M_Sector04_Zone003_macro', 'tzoneCluster_M_Sector04_Zone004_macro', 'tzoneCluster_M_Sector04_Zone005_macro', 'tzoneCluster_M_Sector04_Zone006_macro', 'tzoneCluster_M_Sector04_Zone007_macro', 'tzoneCluster_N_Sector01_Zone001_macro', 'tzoneCluster_N_Sector01_Zone002_macro', 'tzoneCluster_N_Sector01_Zone003_macro', 'tzoneCluster_N_Sector01_Zone004_macro', 'tzoneCluster_N_Sector01_Zone005_macro', 'tzoneCluster_N_Sector01_Zone006_macro', 'tzoneCluster_N_Sector01_Zone007_macro', 'tzoneCluster_N_Sector01_Zone008_macro', 'tzoneCluster_N_Sector01_Zone009_macro', 'tzoneCluster_N_Sector01_Zone010_macro', 'tzoneCluster_N_Sector01_Zone011_macro', 'tzoneCluster_N_Sector01_Zone012_macro', 'tzoneCluster_N_Sector01_Zone013_macro', 'tzoneCluster_N_Sector01_Zone014_macro', 'tzoneCluster_N_Sector01_Zone015_macro', 'tzoneCluster_N_Sector01_Zone016_macro', 'tzoneCluster_N_Sector01_Zone017_macro', 'tzoneCluster_N_Sector01_Zone018_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_zone.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+				</do_all>
+
+				<do_all exact="md.Conquer_Mod.Start.$Corp_Factions_stations.count" counter="$x" chance="if $doRun and ( (md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity) or (md.$DLC2_Clusters? and md.$DLC2_Clusters.count) ) then 100 else 0">
+					<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_stations.{$x} == datatype.faction" negate="true">
+						<continue />
+					</do_if>
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_stations.{$x}.id" list="['teladi']" chance="if md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity then 100 else 0">
+						<set_value name="$todo" exact="['struct_econ_cw_generic_te_water_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_stations.{$x}.id" list="['terran']" chance="if md.$DLC2_Clusters? and md.$DLC2_Clusters.count then 100 else 0">
+						<set_value name="$todo" exact="['struct_bt_alb_cattle_ranch_macro', 'struct_bt_alb_weaponry_complex_macro', 'struct_bt_alb_weaponry_production_macro', 'struct_bt_alb_cell_refinery_macro', 'struct_bt_alb_constructionmaterial_production_macro', 'struct_bt_alb_crystal_refinement_macro', 'struct_bt_alb_solar_power_plant_macro', 'struct_bt_alb_farm_complex_macro', 'struct_bt_alb_food_production_complex_macro', 'struct_bt_alb_water_destillery_macro', 'struct_bt_alb_hightec_construction_macro', 'struct_bt_alb_medical_supplies_macro', 'struct_bt_alb_high_energy_construction_macro', 'struct_bt_alb_medical_supplies_macro', 'struct_bt_alb_spice_farm_macro', 'struct_bt_alb_food_production_plant_macro', 'struct_bt_alb_laboratory_macro', 'struct_bt_alb_tech_complex_macro', 'struct_bt_alb_drone_factory_macro', 'struct_bt_alb_drone_complex_macro', 'struct_bt_alb_wheat_farm_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<do_if value="md.Conquer_Mod.Start.$Corp_Factions_stations.{$x}.id" list="['terracorp']" chance="if md.$DLC2_Clusters? and md.$DLC2_Clusters.count then 100 else 0">
+						<set_value name="$todo" exact="['struct_bt_alb_cattle_ranch_macro', 'struct_bt_alb_weaponry_complex_macro', 'struct_bt_alb_weaponry_production_macro', 'struct_bt_alb_cell_refinery_macro', 'struct_bt_alb_constructionmaterial_production_macro', 'struct_bt_alb_crystal_refinement_macro', 'struct_bt_alb_solar_power_plant_macro', 'struct_bt_alb_farm_complex_macro', 'struct_bt_alb_food_production_complex_macro', 'struct_bt_alb_water_destillery_macro', 'struct_bt_alb_hightec_construction_macro', 'struct_bt_alb_medical_supplies_macro', 'struct_bt_alb_high_energy_construction_macro', 'struct_bt_alb_medical_supplies_macro', 'struct_bt_alb_spice_farm_macro', 'struct_bt_alb_food_production_plant_macro', 'struct_bt_alb_laboratory_macro', 'struct_bt_alb_tech_complex_macro', 'struct_bt_alb_drone_factory_macro', 'struct_bt_alb_drone_complex_macro', 'struct_bt_alb_wheat_farm_macro']"/>
+						<set_value name="$x_1" exact="$x + 1"/>
+						<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1} == datatype.list" negate="true">
+							<continue />
+						</do_if>
+						<do_all exact="$todo.count" counter="$y">
+							<do_if value="$todo.{$y} and md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1}.indexof.{macro.{$todo.{$y}}} == 0">
+								<append_to_list name="md.Conquer_Mod.Start.$Corp_Factions_stations.{$x_1}" exact="macro.{$todo.{$y}}"/>
+							</do_if>
+						</do_all>
+					</do_if>
+				</do_all>
+				<remove_value name="$x_1"/>
+				<remove_value name="$todo"/>
+				<remove_value name="$doRun"/>
+			</actions>
+		</library>
+
+	</cues>
+	<!-- ==================== END ========================= -->
+</mdscript>

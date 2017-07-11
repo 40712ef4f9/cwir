@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<add sel="/aiscript/interrupts">
+	  <handler>
+		<conditions>
+			<event_object_signalled object="this.ship" param="'reboot'" />
+		</conditions>
+		<actions>
+			<do_all exact="this.ship.subordinates.count" counter="$j">
+			  <signal_objects object="this.ship.subordinates.{$j}" param="'reboot'" delay="10ms" comment="Wake Follower" />
+			</do_all>
+			<abort_called_scripts resume="start" />
+		</actions>
+	  </handler>
+	</add>
+	<add sel="/aiscript/init">
+	    <do_if value="$target == 'commander'">
+	      <set_value name="$target" exact="this.ship.commander"/>
+	    </do_if>
+	</add>
+</diff>

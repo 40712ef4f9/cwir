@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Exported by: Lino (192.168.3.137) at 14.12.2015_10-48-22-->
+<macros>
+  <macro name="struct_bt_dv_reivers_outpost1_03_macro" class="station">
+    <component ref="struct_bt_dv_reivers_outpost_03" />
+    <properties>
+      <identification name="{20102,3501}" description="{20102,3502}" unique="0" />
+    </properties>
+    <connections>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_dronedock_macro">
+        <macro ref="struct_econ_ref_ar_pmc_dronedock_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_canteran_ring_part_03_destroyed_macro">
+        <build mode="optional" group="storage" sequence="A" stage="1" tags="primary " />
+        <macro ref="struct_econ_special_canteran_ring_part_03_destroyed_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_canteran_steelcable_01">
+        <macro>
+          <component ref="struct_econ_special_canteran_steelcable_01" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_canteran_steelcable_02">
+        <macro>
+          <component ref="struct_econ_special_canteran_steelcable_02" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_canteran_steelcable_03">
+        <macro>
+          <component ref="struct_econ_special_canteran_steelcable_03" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_canteran_steelcable_031">
+        <macro>
+          <component ref="struct_econ_special_canteran_steelcable_03" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_canteran_steelcable_04">
+        <macro>
+          <component ref="struct_econ_special_canteran_steelcable_04" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_reiver_outpost_01_macro">
+        <macro ref="struct_econ_special_reiver_outpost_01_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_special_reiver_outpost_03_debris">
+        <macro>
+          <component ref="struct_econ_special_reiver_outpost_03_debris" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="connection_controlroom01">
+        <macro ref="control_room_macro" connection="Connection01" />
+      </connection>
+    </connections>
+  </macro>
+</macros>

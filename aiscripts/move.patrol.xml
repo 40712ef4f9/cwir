@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<replace sel="//run_script[@name=&quot;'move.seekenemies'&quot;]/@name">if ($range == 'station' and this.ship.commander and this.ship.commander.isclass.station and $targetzone == this.ship.commander.zone) or ($patrolobject.exists and $patrolobject.isclass.station) then 'move.seekenemies.zone' else 'move.seekenemies'</replace>	
+</diff>

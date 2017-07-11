@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<language id="49">
+	<page id="2802" voice="no">
+		<t id="1000">Nächsten 5, starten mit %1 von %2</t>
+		<t id="1001">Truppen verlegen</t>
+		<t id="1011">von Skunk</t>
+		<t id="1012">zu Skunk</t>
+		<t id="1013">Reserve zu Flotte</t>
+		<t id="1014">Reserve zu Skunk</t>
+		<t id="1015">Marines einlagern</t>
+		<t id="1020">Du bist hier: %1 \naber das Ziel in %2</t>
+		<t id="1021">Beginne entern von ...</t>
+		<t id="1022">Kämpfe für dich selbst</t>
+		<t id="1023">Kämpfe für %1</t>
+		<t id="1024">Kämpfe für [%1]</t>
+		<t id="1025">nächste Fraktion</t>
+		<t id="1450">Diplomatie</t>
+		<t id="1452">verhandeln mit %1</t>
+		<t id="1454">vereinbare "weniger Feindseligkeiten"</t>
+		<t id="1455">"weniger Feindseligkeiten" setzt die Beziehungen von töten auf Feind</t>
+		<t id="1456">vereinbare "brüchiger Frieden"</t>
+		<t id="1457">"brüchiger Frieden" ermöglicht die Aufnahme von Handelsbeziehungen</t>
+		<t id="1458">vereinbare "Allianz"</t>
+		<t id="1459">wird eine "Allianz" ausgerufen werden Feinde deines Partners auch deine Feinde</t>
+		<t id="1460">Nächsten 5, starten mit %1 von %2</t>
+		<t id="1462">Tausch von Besitztümern</t>
+		<t id="1463">erlaubt den Handel und Tausch von Stationen und Zonen</t>
+		<t id="1464">Error: falscher Besitzer und/oder kein Besitz</t>
+		<t id="1466">Error: die letzte Station kann nicht gehandelt werden</t>
+		<t id="1468">AKZEPTIEREN [%1]</t>
+		<t id="1470">Auswahl von %1</t>
+		<t id="1472">Spende Schiffe</t>
+	</page>
+
+	<page id="40000" title="Added Stations and ships" descr="Text for Build Shipyards mod." voice="no">
+		<t id="1">PMC Xenon Schiffstech-Fab</t>
+		<t id="2">The PMC Xenon Tech Ship Complex produces ships which utilize Xenon technology as well as producing other standard freighters and miners. The resources needed to produce these ships are also produced here. This Complex is the latest in Plutarch technology boasting the most powerful Corvette and fighter class ships in all of Albion.</t>
+
+		<t id="3">{20101,6201} Waffenplattform</t>
+		<t id="4">Die Mobile Waffenplattform ist eine neue Variante der Schweren Sul. Das bestehende Design wurde mit schweren Schwaffen erweitert und beinhaltet zwei vollständige HIVI/MA Türme.</t>
+
+		<t id="5">{20101,6101} Typhoon</t>
+		<t id="6">Die Sul Typhoon ist eine neue Variante der populären Sul Klasse. Durch den verstärkten Einsatz von Drohnen, neben Jägern, erschien es notwendig ein Schiff zu entwickeln, welches im Gefecht ganzen Schwärmen dieser Angreifer widerstehen kann. Dafür trägt die Sul Typhoon zusätzliche 8 HIT/MA Türme für große und 8 Hagelsturm Türme für kurze Distanzen. Diese bieten exzellenten Schutz gegen größere Gegenertruppen aus Jägern sowie Drohnen.</t>
+
+		<t id="7">{20101,6101} Eclipse</t>
+		<t id="8">Die Eclipse ist eine weitere Variante der Sul Klasse. Nach der Sul Typhoon, erschien es Albions Schiffsbauern notwendig eine universeller einsetzbare Variante zu erstellen. Diese Version verfügt über 6 Jet/LR Türme für Distanzkämpfe.</t>
+
+		<t id="9">{20101,6101} Arbiter</t>
+		<t id="10">Die Sul Arbiter ist ein sehr wendiges und schlagkräftiges Kampfschiff. Es ist für schnelle Einsätze konzipiert um hart und entschieden zuzuschlagen. Es basiert auf der Sul Klasse und ist mit 6 Hydra-Startern ausgerüstet.</t>
+
+		<t id="11">{20101,8901} Armadillo</t>
+		<t id="12">Die Lepton Armadillo basiert auf dem Lepton Transportschiff. Während dieses Schiff in erster Linie für die Rolle der Kampfschiffabwehr umfunktioniert wurde, schlägt es sich gegen andere Fregatten ähnlicher Klasse dank seiner 2 Hydra-Starter erstaunlich gut. Zudem ist sie mit 4 HIT/MA und 4 Hagelsturm Türmen ausgestattet. Durch den für diese Klasse vergleichsweise günstigen Preis ist es gerade in größeren Mengen ein Ernstzunehmender Gegner und kann durch seine Feuerkraft überzeugen.</t>
+
+		<t id="13">{20101,4801} {20106, 1101}</t>
+		<t id="14">Durch den Kriegseintritt mit der Plutarch Mining Corporation sah die Republik Cantera einen Bedarf an mehr Feuerkraft und durch die Allianz mit Herz von Albion war hier auch der Zugang zu neuester Waffentechnolgie gegeben. Wärend man aber noch auf die alten Schiffsdesigns setzen muss, können diese aber wenigstens mit starken Waffen ausgestattet werden, der Succellus Vanguard ist ein Ergebnis dieser Bemühungen.</t>
+
+		<t id="15">{20101,13301} Arbalest</t>
+		<t id="16">Dieses Schiff wurde alleinig zur Kampfschiffabwehr entworfen und dank neuer Technologieen auf die man dank Herz von Albion nun Zugang hat stark verbessert.</t>
+
+		<t id="17">{20101,13301} Fury</t>
+		<t id="18">Wie auch das Schwesterschiff Arbalest, wird dieses Schiff auf Basis des Stromvok gebaut und schließt die Lücke zwischen dem Stromvok Arbalest und dem Succellus Verteidiger.</t>
+
+		<t id="19">{20101,4401} Battle Star</t>
+		<t id="20">Die Scaldis Battle Star ist der neueste Zugang der Herz von Albion Flotte. Die wachsende Bedrohung durch PMC und den Xenon machte ein schlagkräftiges Kampfschiff basierend auf dem bewährten Design der Scaldis nötig. Hierfür wurde es was Bewaffnung und Panzerung angeht militärischen Anforderungen angepasst.</t>
+
+		<t id="21">Sennin Raider</t>
+		<t id="22">Die Sennin Raider ist ein schnelles Kampfschiff das häufig als Gefolgsschiff Verwendung findet. Sie macht sich eine der älteste und nobelsten Piratentradition zu eigen, den Kampf, um davon zu laufen. Der herausragende Unterschied dieses Modells ist jedoch der Laderaum, womit sich die Beute dann auch wegschaffen lässt.</t>
+
+		<t id="23">Sennin {20106, 1101}</t>
+		<t id="24">Die Sennin Verteidiger ist ein Piratenschiff das mit einem Schuss mehr Feuerkraft konzipiert wurde aber auch eine effektive Jägerabwehr mitbringt. Wie andere Sennin Modelle sind sie wegen ihrer Eigenschafften besser für schnelle taktische Schläge mit anschließendem Rückzug aus dem Kampfgebiet geeignet.</t>
+
+		<t id="25">Sennin Belagerer</t>
+		<t id="26">Die Sennin Belagerer ist ein Versuch der Piraten hohe Feuerkraft mit einem unauffälligen Erscheinungsbild zu kombinieren. Leider hat das Schiff große Defizite in der Jägerabwehr sowie keine nennswerte Panzerung und kann nur durch überdurchschnittliche Antriebsleistung glänzen, daher ist auch dieses Modell eher für Hit and Run Manöver geeignet, denn als ernstzunehmende Balgerungswaffe.</t>
+
+		<t id="27">Piraten Großschiff-Werft</t>
+		<t id="28">Die Piraten Großschiff-Werft ist eine auf die Piratenwirtschaft zugeschnitte Fertigungsanlage. Sie baut Titurels, Sennins und alle Arten von Förderschiffen.</t>
+
+		<t id="29">Piraten Schiffstech-Fab</t>
+		<t id="30">Die Piraten Schiffstech-Fab produziert nicht nur Schiffe, es werden auch erforderliche hochtechnologie Komponenten direkt vor Ort gefertigt.</t>
+
+		<t id="31">Piraten Schiffswerft</t>
+		<t id="32">Diese Piraten Schiffswerft is komepltt auf die Bedürfnisse der Piraten-Armada ausgelegt.</t>
+
+		<t id="33">PMC Xenon Schiffswerft</t>
+		<t id="34">Die PMC Xenon Schiffswerft produziert neben den normalen Frachtern und Bergbauschiffen, auch auf Xenon-Technologie basierende Modelle. Diese Schiffswerft ist die modernste Produktionsstätte der Plutarch, mit dem Anspruch die hochentwickeltsten Kampfschiffe Albions zu fertigen.</t>
+
+		<t id="35">Chimera</t>
+		<t id="36">Der schwere Kreuzer Chimera ist ein stark bewaffneter Kreuzer. Das Schiff wurde konzipiert um die feindliche Verteidigung vor dem eintreffen der Behemoth Zerstörer aufzuweichen.</t>
+
+		<t id="37">Behemoth</t>
+		<t id="38">Der Behemoth Zerstörer ist die Antwort der Ketzerischen Vorhut auf den Fulmekron der Argonischen Regierung. Die unterlegene Feuerkraft kompensiert es mit kraftvollen Schilden und einer starken Hülle.</t>
+
+		<t id="39">Wraith</t>
+		<t id="40">Der Wraith Kreuzer ist ein Schiff für Eskortaufgaben. Dieses Schiff ergänzt sich mit seiner Jägerabwehr beispielsweise perfekt mit dem schweren Kreuzer Chimera. Mit seinen Plasma-Strahl Türmen ist es aber ebenfalls für scharmützel mit anderen Großschiffen gerüstet, sofern diese nicht allzu stark bewaffnet sind.</t>
+
+		<t id="41">Harpy Raketenkreuzer</t>
+		<t id="42">Der Harpy Raketenkreuzer ist ein starkes Langstreckenschiff für Distanz-Bombardementst. Das Schiff braucht jedoch Schutz da es über keine eigene Jägerabwehr verfügt und ohne Eskorte zu einer leichten Beute wird.</t>
+
+		<t id="43">Hades Drohnenträger</t>
+		<t id="44">Der Hades Drohnenträger ist ein großer auf Schwarm- und Sturm-Drohnen spezialisierter Träger mit außergewöhnliche großer Drohnen-Nutzlast.</t>
+
+		<t id="45">Experimental Schiffswerft</t>
+		<t id="46">The Experimental Shipyard has the capabilities to construct prototype ship designs which have not been released for mass production. These ships are powerful and expensive and still in need of extensive testing before they will see mass use</t>
+
+		<t id="47">Außenposten {20101,4001}</t>
+		<t id="48">Dieses Konstruktionsschiff ist speziell zur vollautomatischen Errichtung von Außenposten vorgesehen. Alle benötigten Rohstoffe werden direkt aus dem Konstruktionsschiff bezogen.</t>
+
+		<t id="49">Außenposten</t>
+		<t id="50">Der Außenposten is eine kompakte und robuste Struktur, speziell konzipiert zur autonomen Verwaltung entlegener Gebiete. Für seine Größe ist der Außenposten sehr gut bewaffnet und kann kleinere Angreifer problemlos abwehren und selbst großeren feindlichen Truppenkontingenten lange genug standhalten bis Verstärkung eintrifft.</t>
+
+		<t id="51">X4-Sonde</t>
+		<t id="52">Eine vollautomatische, autonom aggierende Sinde, mit erweiterten Sensoren zur Detektion und Analyse von Objekten im tiefen Raum weit entfernt von der Heimatbasis. Die X4-Sonde kann jedoch als strategische Sprungboje genutzt werden. Das Hüllenmaterial der X4-Sonde wurde von der Experimental abgeleitet und erlaubt dank neuester Quantic Teleport Technology direkte Sprünge ohne Sprungantrieb. Entwickelt wurde die Sonde für das Militär, sie findet jedoch auch in der Wissenschaft und Forschung Verwendung.</t>
+
+		<t id="53">HyperDrive Kristall</t>
+		<t id="54">Diese seltenen Kristalle findet in einer neuen HyperDrive-Technologie Verwendung. Sie wurden bei einer Ausgrabung auf einem der fernen Albion Monde entdeckt und obwohl seine bemerkenswerten Fähigkeiten schon seit vielen Jahren bekannt sind und erforscht werden, konnte erst kürzlich eine Technologie entwickelt werden diese als HyperDrive nutzbar zu machen. Dieser HyperDrive erlaubt es Schiffen direkt zu allen bekannten Koordinaten zu reisen. Im aktuellen Konflikt könnte dies ein entscheidender Faktor werden der über Sieg oder Niederlage entscheidet.</t>
+		<!--<t id="53">Xenon Shipyard</t>
+	  <t id="54">This Xenon Station produces Xenon ships and is the center of the Xenon matrix. From here, they conquer the universe.</t>
+	  
+	  <t id="55">Xenon Small Shipyard</t>
+	  <t id="56">The Xenon Small Shipyard produces the many fighter vessels that accompany the much larger Xenon Capital ships.</t>-->
+
+		<t id="57">Wachfeste</t>
+		<t id="58">Die Wachfeste stammt ursprünglich von der Plutarch Mining Corporation, wurde wegen gesetzlicher Bestimmungen nie in Albion direkt eingesetzt. Mit der Eskalation des Konfliktes zwischen PMC und HvA und dem ausgerufenen Kriegsrecht trifft man diese nun jedoch häufiger an. Die seitens Herz von Albion durch Spionage erbeuteten Baupläne haben dann auch Ihren weg zur Republik Cantera und der Argonischen Regierung gefunden, welche die Station nun ebenfalls als wichtiges Kontrollinstrument für strategisch wichtige Zonen nutzten.</t>
+		
+		<t id="59">{20101, 17103} {20106, 3201}</t>
+	  <t id="60">{20101, 17103} {20106, 3301}</t>
+	  <t id="61">{20101, 17103} {20106, 3001}</t>
+	  <t id="62">{20101, 17103} {20106, 3401}</t>
+	  <t id="63">{20101, 17103} {20106, 3501}</t>
+	  <t id="64">The Sanahar was created in reaction to the explosion in popularity of the 'Common Ground' design, providing traders with a smaller, faster alternative when it comes to all manner of transport ships. </t>
+	  <t id="65">{20101,17503} {20106,3801}</t>
+	  
+	 </page>
+	  
+	  
+
+	<page id="40001" title="Jobs" descr="Text for jobs." voice="no">
+		<t id="1">Unterwerfungsflotte</t>	  
+		<t id="2">Der Abwracktrupp</t>
+		<t id="3">Der Vorbote</t>
+		<t id="4">Invasionsflotte</t>	  
+		<t id="5">Hungersnotflotte</t>
+		<t id="6">Erwiderungsflotte</t>
+	</page>
+
+	<page id="40002" title="UI" descr="Notifications, logbook, other stuff..." voice="no">
+		<t id="1">=== Sondierungsreport ===</t>
+		<t id="2">\n Sondierungsgebiet erfolgreich erfasst</t>
+		<t id="3">=== Sondierungsreport ===</t>
+		<t id="4">\n Sonde hat Zielgebiet %1 erreicht</t>
+		<t id="5">Terran Commander</t>
+		<t id="6">Du hattest ziemliches Glück bei deinen ersten Missionen, nun hat die Republik Cantera dir das Kommando über ein Schiff gebeben. Kämpfe an der Seite deiner Brüder und stoppe die Plutarch Invasion deiner Heimat.</t>
+		<t id="7">Söldner der Ketzerische Vorhut</t>
+		<t id="8">Sie sind ein freier Mitarbeiter der Ketzerische Vorhut. Sie sind ein Anhänger ihrer Ideale und Credo. Sie hassen alle Xenon und wohl so ziemlich alle anderen auch. Führe nun Omicron Lyrae zurück zu altem Glanz durch die Verbreitung der Botschaft der Ketzerische Vorhut!</t>
+		<t id="9">=== Automatisches Aufbauprogramm gestartet ===</t>
+		<t id="10">\n \n  Main Trade Computer ... online! \n  Argon MK5 - B.O.B. ... online! \n  Dronen Interface ... online! \n \n  We are ready, Sir!</t>
+		<t id="11">=== Automatisches Aufbauprogramm gestartet === \n \n Main Trade Computer ... online! \n Argon MK5 - B.O.B. ... online! \n Drones Interface ... online! \n \n We are ready, Sir!</t>
+		<t id="12">  === Automated Build Report ===</t>
+		<t id="13">\n  Ship: %1 \n  Architect: %2 \n  Architect initial account: %3 Cr \n \n  Buy: %4  %5  for %6 Cr/unit.\n  Payable: %7 Cr \n \n  Architect final account: %8 Cr</t>
+		<t id="14">   === Automated Build Report ===  \n Ship: %1 \n Architect: %2 \n Architect initial account: %3 Cr \n \n Purchased: %4  %5  for %6 Cr per unit.\n Valour to be debited: %7 Cr \n \n Architect final account: %8 Cr</t>
+		<t id="15">\n  Build operations HALTED! \n \n  Ship: %1 \n  Architect: %2 \n  Architect actual account: %3 Cr \n  Transfer at least MORE %4 Cr for your Architect.</t>
+		<t id="16">   === Automated Build Report === \n  Build operations HALTED! \n \n  Ship: %1 \n  Architect: %2 \n  Architect actual account: %3 Cr \n  Please transfer at least MORE %4 Cr for your Architect.</t>
+		<t id="17">=== Frühwarnsystem ===</t>
+		<t id="18">\n \n Feindliche Truppen unbekannter Stärke in \n %1.\n Wir haben Einheiten hier. \n Bitten um Unterstützung.</t>
+		<t id="19">=== Frühwarnsystem === \n Feindliche Truppen unbekannter Stärke in \n %1.\n Wir haben Einheiten hier. \n %2 \n%3.</t>
+		<t id="20">=== Spionage Netzwerk Bericht === \n %1 wurde zerstört in \n %2.</t>
+		<t id="21">=== Spionage Netzwerk Bericht ===</t>
+		<t id="22">\n \n Spionage Netzwerk berichtet dass \n %1 zerstört wurde in \n %2.</t>
+		<t id="23">=== ALARM ===</t>
+		<t id="24">\n \n Feindliche Truppen erreichen %1. \n \n Gefechtsbereitschaft herstellen!</t>
+		<t id="25">=== ALARM === \n Feindliche Truppen erreichen %1.</t>
+		<t id="26">\n \n Alliierte Truppen erreichen %1. \n \n Sie bitten um Unterstützung!</t>
+		<t id="27">=== ALARM === \n Alliierte Truppen erreichen %1.</t>
+		<t id="28">\n \n Truppen unbekannter Stärke und Gesinnung erreichen %1. \n \n Gefechtsbereitschaft herstellen!</t>
+		<t id="29">=== ALARM === \n Truppen unbekannter Stärke und Gesinnung erreichen %1.</t>
+		<t id="30">=== ACHTUNG ===</t>
+		<t id="31">\n \n Das Flottenoberkommando informiert darüber, dass eine alliierte Flotte einen Angriff auf %1 führt. \n \n Man bitte zudem um Unterstützung.</t>
+		<t id="32">=== ACHTUNG === \n Alliierte Station ist unter Beschuss in %1.</t>
+		<t id="33">=== Frühwarnsystem ALARM ===</t>
+		<t id="34">\n \n Unbekannte Truppen springen nach %1 in \n %2. \n \n Aufklärung bestätigt Angriffsformation. \n Wir bitten um Unterstützung.</t>
+		<t id="35">=== Frühwarnsystem ALARM === \n Unbekannte Truppen springen nach %1 in \n %2.</t>
+		<t id="36">Errichte Außenposten at my zone</t>
+		<t id="37">Errichte Außenposten at chosen zone</t>
+		<t id="38">Sonde in meiner Zone aussetzen</t>
+		<t id="39">Sonde zu dieser Zone senden</t>
+		<t id="40">=== Konto Aktualisierung === \n Ein Außenposten KS wurde für 10 Mio Cr erworben und nach %1 entsandt. \n Neuer Kontostand: %2</t>
+		<t id="41">\n \n Ein %1 APKS von %2 ist entsandt um einen Außenposten in %3 zu errichten.</t>
+		<t id="42">=== Spionage Netzwerk Bericht === \n \n Ein %1 APKS von %2 ist entsandt um einen Außenposten in %3 zu errichten.</t>
+		<t id="43"> Vorrat: \n %1 Sonde(n) \n %2 Cr.</t>
+		<t id="44">Herzlichen Glückwunsch zum Aufstieg! Du hast eine kleine Flotte zur Verstärkung der Canteranischen Präsenz erhalten.</t>
+		<t id="45">Die Truppenstärke sehr dünn hier, aber es gibt viele Freiwillige von Herz von Albion mit denen wir unsere Schiffe besetzen können.</t>
+		<t id="46">Du erhältst ebenfalls eine Stryvok und einige Upgrades für dein Schiff um direkt mit dem Handel zu beginnen.</t>
+		<t id="47">Jedoch musst Du noch eine Crew für deine Stryvok beschaffen!</t>
+		<t id="48">Willkommen zu {40002,1013} von Conquest and War in Rebirth!</t>
+		<t id="49">Du wirst ein sehr viel aktiveres Universum vorfinden.</t>
+		<t id="50">Sei auf alles vorbereitet und denke strategisch wenn du auf feindliche Fraktionen triffst.</t>
+		<t id="51">Fehlermeldungen an Blackrain und/oder Rubini im Forum.</t>
+		<t id="52">Viel Glück!</t>
+		<t id="53">Du bist Mitglied der stolzen und wahren Gemeinschaft der Goner, nun bekannt als {20203,2501}</t>
+		<t id="54">Es ist deine Mission die Botschaft deiner Fraktion mit Feuer und Schwert alle jenen zu bringen die sich ihr verweigern</t>
+		<t id="55">Kein Xeno wird verschont und bald auch wird die {20203,101} angesichts der Macht der {20203,2501} ihrem Ende entgegen sehen</t>
+		<t id="56">Unterstütze deine Fraktion um Dominanz in diesem gefährlichen Teil des Universums zu erlangen</t>
+		<t id="57">Schiff %1 ist auf einen ernstzunehmenden Gegner in %2 gestoßen und hat sich nach %3 zurückgezogen, erwarte nun neue Befehle.</t>
+		<t id="58">Schiff %1 ist auf einen ernstzunehmenden Gegner in %2 gestoßen. Trete den Rückzug an und erwarte nun neue Befehle in %3.</t>
+		<t id="59">=== Steuereinnahmen === \n Gesamterlös durch Steuern und Zölle: %1 \n Alter Kontostand: %2 \n Neuer Kontostand: %3</t>
+		<t id="60">=== Personalkosten === \n Aufwand für Löhne und Gehälter: %1 \n Alter Kontostand: %2 \n Neuer Kontostand: %3</t>
+		<t id="61">xxx</t>
+		<t id="62">xxx</t>
+		<t id="63">xxx</t>
+		<t id="64">xxx</t>
+		<t id="65">xxx</t>
+		<t id="66">xxx</t>
+		<t id="67">xxx</t>
+		<t id="68">xxx</t>
+		<t id="69">xxx</t>
+		<t id="70">xxx</t>
+		<t id="71">Ehrgeiziger Unternehmer</t>
+		<t id="72">Dein Vater war einmal ein Vorstandsmitglied der Plutarch Mining Corporation. Allerdings verschwand er eines Tages unter mysteriösen Umständen, jedoch hat er dir ein ansehnliches Vermögen hinterlassen. So kauftest du dir einige schnelle Schiffe und machtest dich auf durch das neu geöffnete Tor, wo du fremden unerforschten Raum vor dir hast, mit potentiellen Verbündeten und unbekannten Feinden. Nun liegt es an dir, dir hier in einen Namen zu machen.</t>
+		<t id="73">Nach der Trauer um deinen Vater, hast du die Gelegenheit genutzt im Chaos der Rebellion Albion zu verlassen.</t>
+		<t id="74">Niemand scheint dein Verschwinden bemerkt zu haben da du nun schon Monate hier bist.</t>
+		<t id="75">Scheint als ob der PMC Vorstand dich in Treiben ihren Einfluß auszuweiten vergessen hat.</t>
+		<t id="76">Zeit im Gedenken an deinen Vater zu beweisen wozu du fähig bist.</t>
+		<t id="77">{20003,3}, {20004,19}, {20005,48}</t>
+		<t id="78">{20003,7}, {20004,25}, {20005,101}</t>
+		<t id="79">{20003,7}, {20004,27}, {20005,105}</t>
+		<t id="80">400,000 {1001,101}</t>
+		<t id="81">5,000,000 {1001,101}</t>
+		<t id="82">100,000,000 {1001,101}</t>
+		<t id="83">{20108,2701}, {20108,2501}, {20108,3301}, {20108,2101}, {20108,501}, {20108,3601}</t>
+		<t id="84">{20108,2701}, {20108,2501}, {20108,3301}, {20108,2101}, {20108,501}, {20108,3601}</t>
+		<t id="85">{20108,2801}, {20108,2601}, {20108,3401}, {20108,3001}, {20108,3201}, {20108,2401}, {20108,401}, {20108,3701}, {20108,4301}, {20108,4601}</t>
+		<t id="86">1x {40000,17}, 0-6x {20101,11501}, 0-1x {20101,12703}</t>
+		<t id="87">1x {40000,39}, 1x {40000,41}</t>
+		<t id="88">3x {20101,4201}, 3x {20101,4001}</t>
+		<t id="89">=== Spionage Netzwerk Bericht === \n Aufbruch einer Entermannschaft: \n Angreifer:  %1 \n Flotte von %2\n Eigentümer: %3 \n Zielgebiet: %4 \n Enterziel: %5.</t>
+		<t id="90">=== Spionage Netzwerk Bericht === \n Eine neue Station wird errichtet! === \n Zone: %1 \n Besitzer: %2 \n Station: %3.</t>
+		<t id="91">=== Spionage Netzwerk Bericht === \n Eine neue Station wird errichtet! === \n Zone: %1 \n Besitzer: %2 \n Station: %3.</t>
+		<t id="92">=== Spionage Netzwerk Bericht === \n Eine feindliche Streitmacht bereitet sich auf einen Angriff vor! \n Angreifer:  %1 \n Zielgebiet: %2.</t>
+		<t id="93">{20203,201} Offizier</t>
+		<t id="94">Sie sind ein kleiner Offizier in einem rießigen Unternehmen bekannt als die Plutarch Mining Corporation. PMC ist aber nicht nur eine Bergbaugesellschaft, aber auch du bist nicht wie die anderen Offiziere. Machen Dir einen Namen unter den unzähligen Massen und hilf dem Unternehmen sich zu behaupten! Wer weiß, es könnte sogar eine Beförderung in Ihrer nahen Zukunft geben.</t>
+		<t id="95">{20203,101} Konteradmiral</t>
+		<t id="96">Als die argonische Regierung die Hälfte seiner Flotte gegen die Xenon, bei ihrem ersten erscheinen, im Kampf verlor, warst du in irgendeiner Bar, vermutlich in Herz des Kommerz, so genau erinnerst du dich nicht. Nach einer unehrenhaften Entlassung aus dem Argon Militär und einer Reihe von wirtschaftlichen Rückschlägen, gabst du dich mehr und mehr dem trinken hin um die Scham zu lindern. Bis dann ein alter Freund sich für dich einsetzte, du hättest nie erwartet, dass man dich wieder aufnehmen würde, geschweige denn auch noch mit einer ganz eigenen neuen Flotte als Konteradmiral. Zeige dich dem in dich gesetzen Vertrauen als würdig und bringe den Argonen den Sieg!</t>
+		<t id="97">{20203,1201} Kapitän</t>
+		<t id="98">The Civil War between the Heart of Albion Faction and the Plutarch Mining Corporation has cost the lives of many of your fellow citizens in Albion, but you can no longer turn a blind eye to the evil machinations of PlutarchDer Bürgerkrieg zwischen Herz von Albion und Plutarch Mining Corporation hat jetzt schon das Leben vieler Bürger in Albion gekostet, aber dies sollen nicht um sonst gewesen sein. Sie sind vor kurzem als Kapitän der Herzen von Albion Flotte beigetreten. Sie haben durch Beziehungen eine gewisse Handlungsfreiheit erworben um auf Ihre Weise das Ziel, den Wiederstand zu unterstützen, zu erreichen. Helfen Sie Ihrer Fraktion die Vorherrschaft zu erhalten, unterstützen Sie die lokale Wirtschaft und drängen Sie die Plutarch Bedrohung zurück!</t>
+		<t id="99">Sie sind ein Unternehmer! Kampfe für den Ruhm von Plutarch!</t>
+		<t id="100">Heart of Albion ist belagert! Retten Sie Ihre Fraktion vor der völligen Zerstörung!</t>
+		<t id="101">Hilf der argonischen Regierung nach ihren Verlusten gegenüber den Xenon wieder zu Kräften zu kommen und führe sie zum Sieg gegen die Alien-Bedrohung!</t>
+		<t id="102">{20003,1}, {20004,5}, {20005,19}</t> 
+		<t id="103">100,000,000 {1001,101}</t>
+		<t id="104">{20108,2701}, {20108,2501}, {20108,3301}, {20108,2101}, {20108,501}, {20108,3601}</t>
+		<t id="105">1x {20101,4201}, 1x {20101,4001}, 1x {20101,6201}, 1x {20101,6101}</t>
+		<t id="106">{20003,1}, {20004,7}, {20005,32}</t>
+		<t id="107">50,000,000 {1001,101}</t>
+		<t id="108">{20108,2701}, {20108,2601}, {20108,3301}, {20108,2901}, {20108,3101}, {20108,601}, {20108,2201}, {20108,3601}</t>
+		<t id="109">1x {20101,3901}</t>
+		<t id="110">{20003,5}, {20004,9}, {20005,92}</t>
+		<t id="111">10,000,000 {1001,101}</t>
+		<t id="112">{20108,2801}, {20108,2601}, {20108,3301}, {20108,3001}, {20108,3201}, {20108,701}, {20108,2301}, {20108,3601}</t>
+		<t id="113">1x {20101,13501}, 2x {20101,13401}, 12x {20101,10303}</t>
+		<t id="114"></t>
+		<t id="115"></t>
+		<t id="116"></t>
+		<t id="117"></t>
+		<t id="118">=== Frühwarnsystem === \n Ein verdächstiges Schiff wurde gesichtet in \n %2.\n Überprüfung empfohlen!</t>
+		<t id="119">\n\n Ein verdächstiges Schiff wurde gesichtet in \n %2.\n Überprüfung empfohlen!</t>
+		<t id="120">Energy Subsidiary Inc.</t>
+		<t id="121">test test</t>
+		<t id="122">ESI</t>
+		<t id="123">Must Terraform!</t>
+		<t id="124">Xenon Synthetic Lifeform</t>
+		
+		<t id="125">10,000,000 {1001,101}</t>
+		<t id="126">{20003,7}, {20004,29}, {20005,111}</t>
+		<t id="127">{20108,2801}, {20108,2601}, {20108,3401}, {20108,3001}, {20108,3201}, {20108,2401}, {20108,401}, {20108,3701}, {20108,4401}, {20108,4601}, {20108,4901}, {20201,15901}</t>
+		<t id="128">1x {20101,7101}, 1x {20101,13801}</t>
+		
+		<t id="150">Unternehmer beauftragen</t>
+		<t id="152">Vollständiger Aufbau [langsam]</t>
+		<t id="153">Durch NPC errichtet, nutzt lokale Materialien</t>
+		<t id="154">Vollständiger Aufbau [schnell]</t>
+		<t id="155">Durch NPC errichtet, nutzt priorisierte Versorgung</t>
+		<t id="156">Vollständiger Aufbau [schlüsselfertig]</t>
+		<t id="157">Durch NPC errichtet, nutzt priorisierte Versorgung, Betreiber NPCs und Grundversorgung wird ggf. gestellt</t>
+		<t id="158">Die neue Station \n%1 \nin %2 ist fertiggestellt.\n %3 Cr Betrag dankend erhalten</t>
+		<t id="160">Grundausstattung und Mannschaft von \n%1 \nin %2 eingetroffen.\n %3 Cr Betrag dankend erhalten</t>
+		<t id="161">Errichte eine Station in der Zone</t>
+		<t id="1010">You are using the latest version of Conquest and War in Rebirth, {40002,1013}.</t>
+		<t id="1011">=== CWIR CONFIG === \n Status: OK.</t>
+		<t id="1012">=== CWIR First Run Check === \n Status: Ok.</t>
+		<t id="1013">Version 1.6 RC</t>
+	</page>
+
+</language>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="CM_Config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\MODS_JSGME\libraries\md.xsd">
+	<cues>
+
+		<!-- X:R Conquer mod for CWIR v1.3 - mod by Rubini - X:R 4.00 compatible-->
+		<!-- Config File-->
+
+		<cue name="Settings" instantiate="true" version="1">
+			<conditions>
+				<check_all>
+					<check_any>
+						<check_all>
+							<event_game_loaded/>
+							<check_value value="@md.CM_Config.Settings.$Check"/>
+						</check_all>	
+						<event_cue_signalled/>	
+					</check_any>
+					<!--<event_cue_completed cue="md.Conquer_Mod.Start"/>-->
+					<!--<check_value value="md.Conquer_Mod.Start.$TheListMacro.exists"/>-->
+					<!--<cue_is_complete cue="md.Conquer_Mod.Start"/>-->
+				</check_all>
+			</conditions>
+			<actions>
+
+				<!-- Change these settings with caution. Take in mind  that X:R is a slow paced Empire Build game -->
+
+				<!-- free reload missiles for playerships, "1" is on and "0" is off -->
+				<set_value name="global.$BRrearmplayerships" exact="0" />
+				<!-- Tax script, "1" is on and "0" is off -->
+				<set_value name="md.CM_Config.Settings.$brtaxstations" exact="1" />
+				<!-- Salary script, "1" is on and "0" is off -->
+				<set_value name="md.CM_Config.Settings.$brnpcexpenses" exact="1" />
+				<!-- BRSPAWNNPC This script handles the spawning of NPC's on player stations and will also handle Specialists You can turn it off by putting in 0, turn on with 1 -->
+				<set_value name="md.CM_Config.Settings.$brspawnnpc" exact="0" />
+
+				<!-- Automated Builder on(1) /off (0). Defaul = 1 -->
+				<!-- This enable or disable the automated builder script.-->
+				<set_value name="md.CM_Config.Settings.$Builder" exact="1" />
+
+				<!-- Automated Builder minimum money to start to work. Defaul = 5000000Cr -->
+				<!-- The automated routine will only start to work if the architect have at least this amount of money -->
+				<!-- this is too a in game possibility to enable or disable this feature (Automated Builder) -->
+				<set_value name="md.CM_Config.Settings.$BuilderMoney" exact="5000000Cr" />
+
+
+
+				<!-- EWS messages delay in seconds.  Default = 120s" (dont forget the "s") -->
+				<!-- This controls the interval for general Early Warning System messages if any.-->
+				<!-- If made too short can become annoying, if made too long can become too late to help anyone -->
+				<set_value name="md.CM_Config.Settings.$EWS_Delay" exact="120s" />
+
+				<!-- EWS level.  Default = 2 -->
+				<!-- This controls the sensibility for general Early Warning System messages. -->
+				<!-- level 1: will always trigger EWS if at least one enemy military xl or l ship is present in a zone which player have a capitalship or station -->
+				<!-- level 2: 50% chance when 1 enemy capship is present and 100% chance when 2 or more enemy capship are present -->
+				<!-- level 3: 33% for 1 enemy capship present, 50% when 2 enemy capship are present, 100% chance when 3 or more are present -->
+				<!-- level 4: 25% for 1 enemy capship present, 50% for 2 enemy capship present, 75% when 3 enemy capship is present and 100% when 4 or more enemy capship are present -->
+				<!-- and so on. Infinite levels. Just dont use "0".--> 
+				<set_value name="md.CM_Config.Settings.$EWS_Level" exact="2" />
+
+				<!-- EWS level cutoff.  Default = 0 -->
+				<!-- This controls the the minimum number of enemy ships that will trigger EWS.-->
+				<!-- So, you can have, for example, EWS at level 4 but a cutoff of 1.-->
+				<!-- It will works with chances as above but only for 2 or more enemy units and so on.-->
+				<!-- "0" means no cutoff at all -->
+				<set_value name="md.CM_Config.Settings.$EWS_Level_cutoff" exact="0" />
+
+				<!-- EWS Interact Map level.  Default = 0 -->
+				<!-- This controls the map level when the player click on a flashing EWS message -->
+				<!-- If set to "0" it will opens the event zone directly -->
+				<!-- If set to "1" it will open the event place at sector level, perhaps allowing a more strategic view of the area-->
+				<set_value name="md.CM_Config.Settings.$MapSector" exact="0" />
+
+
+
+				<!-- Station Destruction Message / Log -->
+				<!-- player owned stations will always given -->
+				<!-- 0 = off, 1 = only Log, 2 = Log and Message only if "Defence Membership" exists or relation member (default), 3 = all -->
+				<set_value name="md.CM_Config.Settings.$SDM" exact="2" />
+
+
+
+				<!-- Retaliation Force chance in percent.  Default = 95 -->
+				<!-- This controls the chance for a Retaliation Force creation after a Station is destroyed as a distress response -->
+				<set_value name="md.CM_Config.Settings.$RFChance" exact="25" />
+
+				<!-- Canteran Retaliation Force to help player, chance in percent.  Default = 75 -->
+				<!-- This controls the chance for a Canteran (player allied) Retaliation Force creation after a player Station destruction -->
+				<set_value name="md.CM_Config.Settings.$Can_RFChance" exact="0" />
+
+				<!-- Minimum and Maximum Retaliation Force delay in seconds.  Default min="180s" max="300s" (dont forget the "s") -->
+				<!-- This controls the min and max delay for Retaliation Force arrival after its creation -->
+				<set_value name="md.CM_Config.Settings.$RFDelay_Min" exact="180s" />
+				<set_value name="md.CM_Config.Settings.$RFDelay_Max" exact="300s" />
+
+				<!-- Retaliation Force capship max number.  Default = 3 -->
+				<!-- This controls the max capships on a Retaliation Force  -->
+				<set_value name="md.CM_Config.Settings.$RFMaxShips" exact="3" />
+
+				<!-- Retaliation Force Xenon capship max number.  Default = 3 -->
+				<!-- This controls the Xenon max capships on a Retaliation Force  -->
+				<set_value name="md.CM_Config.Settings.$RFMaxXenonShips" exact="2" />
+
+
+
+				<!-- Invasion force chance for early game.  Default = 4 -->
+				<!-- this number means the minimum player strength force to the mod start invasions -->
+				<!-- it is calculated this way : (militarycapships(l or xl) + tradeXLships/2), note that trade xl ships will also count by half -->
+				<!-- This will be checked before all others settings for Invasion Force -->
+				<!-- you can choose any number, "0" will allows invasions since beginning -->
+				<!-- to simplificate (as the calc is a bit more complex) lets say that the strength is the number of military capships, see the example below -->
+				<!-- "3" will allow invasions only after the strength of "3", in a chance of 33%(3 ships), 66% (6 ships), 100% (9 or more ships) -->
+				<!-- "4" will allow invasions only after the strength of "4", in a chance of 33%(4 ships ), 66% (8 ships), 100% (12 or more ships) -->
+				<!-- "5" will allow invasions only after the strength of "5", in a chance of 33%(5 ships ), 66% (10 ships), 100% (15 or more ships) -->
+				<!-- "6" will allow invasions only after the strength of "6", in a chance of 33%(6 ships ), 66% (12 ships), 100% (18 or more ships) -->
+				<!-- and so on. I suggested a number between 4 to 6, allowing to a more standard game at the beggining, giving more time to you be prepared to war -->
+				<!-- note that all others features will work since the beginning of the game, icluding retaliation forces if a station is destroyed -->
+				<set_value name="md.CM_Config.Settings.$PlayerFactor" exact="4" />
+
+				<!-- Invasion Force outer chance in percent.  Default = 80 -->
+				<!-- This controls the chance for a Invasion Force round per cycle (in practice, cycle = delay, see below) -->
+				<set_value name="md.CM_Config.Settings.$IFChance_Out" exact="80" />
+
+				<!-- Invasion Force inner chance in percent.  Default = 25 -->
+				<!-- This controls the chance for a Invasion Force creation for each individual faction, if outer (above) chance is acquired. -->
+				<!-- Since v0.18s was added to this chance one more value: playerforcestrength =(militarycapships(l or xl) + tradeXLships/2)-->
+				<!-- The final calc for inner chance is: md.CM_Config.Settings.$IFChance_In + (playerforcestrength)*2 -->
+				<!-- Note that the playerforcestrength is limited to 15 for this calc -->
+				<set_value name="md.CM_Config.Settings.$IFChance_In" exact="25" />
+
+
+				<!-- Minimum and Maximum Invasion Force delay in seconds.  Default min="420s" max="900s" (dont forget the "s") -->
+				<!-- This controls the min and max delay for each Invasion Force round -->
+				<set_value name="md.CM_Config.Settings.$IFDelay_Min" exact="420s" />
+				<set_value name="md.CM_Config.Settings.$IFDelay_Max" exact="900s" />
+
+				<!-- Maximum Xenon Invasion Force ships number.  -->
+				<!-- This controls the max ship number for Xenon Invasion Force. They are too strong. -->
+				<set_value name="md.CM_Config.Settings.$XenonMax" exact="2" />
+
+
+				<!-- Capships max escort squads.-->
+				<!-- This controls the number of max escort squad for capships (for Invasion and Retaliation forces). If too much, can slow down your fps-->
+
+				<!-- Now works with all JOB FLEETS in the game -->
+				<set_value name="md.CM_Config.Settings.$Squad" exact="4" />
+
+				<!-- Wingman max for each squad.  -->
+				<!-- This controls the max number of wingman for each escort squad (for Invasion and Retaliation forces). If too much, can slow down your fps-->
+
+				<!-- Now works with all JOB FLEETS in the game -->
+				<set_value name="md.CM_Config.Settings.$Wing" exact="5" />
+
+
+
+				<!-- Stronghold creation chance for all zones that meet right conditions, in percent.  Default = 100 -->
+				<!-- Must be high for the AI war calc works well --> 
+				<set_value name="md.CM_Config.Settings.$StgRFChance" exact="100" />
+
+				<!-- Stronghold minefile min and max mines number.  Default min="50" max="75" -->
+				<!-- This is very cpu intensive. An i7 is needed to handle well, for example, from 150 to 300 mines -->
+				<!-- Note that these mines are not replaced, will only be set with a new stronghold -->
+				<set_value name="md.CM_Config.Settings.$MineMin" exact="10" />
+				<set_value name="md.CM_Config.Settings.$MineMax" exact="20" />
+
+
+
+				<!-- OOZ station intervention by code chance in percent.  Default = 75 -->
+				<!-- This controls the the OOZ(out of zone) combat capship x station. Use "100" for "on" or "0" for "off", but any value can be used. -->
+				<!-- NOT USED ANYMORE, it is in fight.attack.object.capital.xml file now -->
+				<set_value name="md.CM_Config.Settings.$OozChance" exact="75" />
+
+				<!-- OOZ station intervention by code max hull in percent.  Default = 90 -->
+				<!-- This controls the OOZ station hull damage threshold. Must be high because OOZ is really crappy on capship x stations combat. -->
+				<remove_value name="md.CM_Config.Settings.$OozHull"/>
+				<set_value name="global.$BROozHull" exact="15" />
+
+
+
+				<!-- Trade ship jump intervention by code on/off.  Default = 1 -->
+				<!-- This enable or disable the trade ship (l or xl) jump feature when in potencial danger -->
+				<!-- Trade ships will try to jump 30-35km away from potencial dangerous enemy military capships -->
+				<!-- Works for any faction (including player trade l or xl ships), in zone or OOZ -->
+				<!-- Note that it will only work for ships that are not docked, assign to dock or have not any attack command and with a chance -->
+				<!-- When in same zone of player ship you can see the fx effects and eventually some ships trying to jump but failing -->
+				<!-- it works more or less as the automated emergency jump mod, but only for trade ships (military ships will always engage) -->
+				<set_value name="md.CM_Config.Settings.$TradeShipJump" exact="1" />
+
+				<!-- Trade ship jump OOZ chance in percent.  Default = 50 -->
+				<!-- This control the OOZ chance for a trade capship jump when in potencial danger and when meet the right conditions -->
+				<!-- NOT USED ANYMORE, the chance is now inversely attached to shieldpercentage -->
+				<set_value name="md.CM_Config.Settings.$JumpChanceOOZ" exact="50" />
+
+				<!-- Move.flee on/off.  Default = 0 -->
+				<!-- This enable or disable the new feature move.flee after patch 4.00 -->
+				<!-- Althrough it could be a good idea, capships can withdraw from battlefield too early -->
+				<!-- Note that trade ships already have a flee feature (see above), so if you want a persistent combat disable move.flee-->		
+				<set_value name="global.$Disable_MoveFlee" exact="0" />
+
+
+
+				<!-- Shipyard resources consume factor.  Default = 1 -->
+				<!-- This controls the percent of shipyard resources consumed by each ship that this mod creates -->
+				<!-- value 1 (default) means between 4 to 8%, 2 will double it: between 8 to 16%, 0.5 is a half: 2 to 4%, zero will halt it, and so on -->
+				<!-- (note that neutral shipyards are used by more than one faction, then its default rate is already the half of the above and so on) -->
+				<!-- (note also that the above explained percent is just aproximated as the calc is a bit more complex for small amounts ) -->
+				<set_value name="md.CM_Config.Settings.$ResourcesFactor" exact="1" />
+
+
+
+				<!-- AI TroopShips spawn chance.  Default = 65/85 -->
+				<!-- $TS_InvFChance: controls the chance for an AI Invasion Force calls TroopShips to board stations  -->
+				<!-- $TS_RtFChance: controls the chance for an AI Retaliation Force also have TroopShips if an station was lost for the enemy  -->
+				<set_value name="md.CM_Config.Settings.$TS_InvFChance" exact="1" />
+				<set_value name="md.CM_Config.Settings.$TS_RtFChance" exact="50" />
+
+				<!-- NPC Command Overwatch(CO) build factor chance multiply per cycle.  Default = 4 -->
+				<!-- This controls the chance to call a NPC CV to build a CO if right conditions are meet each cycle (60min)-->
+				<!-- The Command Overwatch is a heavy armored Outpost to allow better defences for an strategic zone -->
+				<!--The NPC faction will try to choose priority high level strategic zones and have a maximum of one CO per sector and 3 CO per cluster-->
+				<!--choose a value between 0 to 10, 0 will not build CO at all, 10 will build almost always-->
+				<set_value name="md.CM_Config.Settings.$CO_CvChance" exact="4" />
+
+
+				<!-- Debug Messages on/off. Default = "0" - 0 is disable. 1 is enable (vanilla)-->
+				<!-- you can turn on to see the mod working on background; you can, for example, go to a zone where an invasion started to "see" it by yourself. -->
+				<!-- but is recommended to run the mod with it turnned off to avoid spoilers. use "0" for "off" and "100" for on-->
+				<!-- take note that all messages from this mod are also wrote on logbook, so if you lose it at PDA take a look in your loogbook -->
+				<set_value name="md.CM_Config.Settings.$DebugMessages" exact="0" />
+
+
+				<!-- don´t change the code below-->
+
+				<!-- Extension Compatibility -->
+				<do_if value="event.name" exact="'event_game_loaded'">
+					<set_value name="md.CM_Config.Settings.$CWIR_includes_TO" exact="0" />
+					<set_value name="md.CM_Config.Settings.$CWIR_includes_LS" exact="0" />
+				</do_if>
+
+				<set_value name="md.CM_Config.Settings.$StartMessage" exact="{40002,1010}" />
+
+				<write_to_logbook category="general" text="{40002,1011}"/>
+				<set_value name="md.CM_Config.Settings.$Check" exact="0" />
+				<signal_cue cue="md.Conquer_Mod.Kill_Stations_cue"/>
+			</actions>
+		</cue>
+	</cues>
+
+</mdscript>

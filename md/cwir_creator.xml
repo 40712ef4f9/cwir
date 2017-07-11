@@ -1,0 +1,1194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="CWIR_CREATOR" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+	<cues>
+
+		<cue name="Invasion_forces" instantiate="true" namespace="this">
+			<conditions>
+				<check_any>
+					<check_all>
+						<event_object_signalled object="player.galaxy" param="'CW_invade'" />
+						<check_value value="true" chance="md.CM_Config.Settings.$TS_InvFChance" />
+					</check_all>
+					<event_object_signalled object="player.galaxy" param="'CW_invade_now'" />
+				</check_any>
+			</conditions>
+			<actions>		
+				<do_if value="event.param == 'CW_invade_now' and ( (typeof event.param2 == datatype.list and event.param2.{1}.isclass.station) or (typeof event.param2 != datatype.list and event.param2.isclass.station) )" >
+					<set_value name="$targetZoneStation" exact="if typeof event.param2 == datatype.list then event.param2.{1}.zone else event.param2.zone" />		
+					<set_value name="$fleetFaction" exact="if typeof event.param3 == datatype.list then event.param3.{1} else event.param3" />
+					<set_value name="$targetFaction" exact="if typeof event.param3 == datatype.list then event.param3.{2} else if typeof event.param2 == datatype.list then event.param2.{1}.owner else event.param2.owner" />
+					<set_value name="$ZoneEnemyStations" exact="if typeof event.param2 == datatype.list then event.param2.clone else [event.param2]" />
+				</do_if>
+				<do_else>
+					<set_value name="$targetZoneStation" exact="event.param2" />		
+					<set_value name="$fleetFaction" exact="if typeof event.param3 == datatype.list then event.param3.{1} else event.param3" />
+					<find_station name="$ZoneEnemyStations" space="$targetZoneStation" functional="true" multiple="true">
+						<match_relation faction="$fleetFaction" relation="enemy" comparison="le"/>
+					</find_station>
+					<set_value name="$targetFaction" exact="if typeof event.param3 == datatype.list then event.param3.{2} else if event.param2.owner then event.param2.owner else $ZoneEnemyStations.{1}.owner" />
+				</do_else>
+
+				<do_if value="$ZoneEnemyStations.count and not $targetZoneStation.istemporaryzone and $targetZoneStation.name != {20005,200} and $targetZoneStation.name != {20006,301}" >
+					<!-- look for best zone to generate the TS -->
+					<set_value name="$CreateTSZone" exact="null" />
+					<!-- strength -->
+					<find_ship name="$ZoneEnemyShips" class="[class.ship_xl, class.ship_l]" space="$targetZoneStation"  multiple="true">
+						<match_relation faction="$fleetFaction" relation="enemy"/>
+						<match primarypurpose="objectpurpose.trade" negate="true"/>
+						<match primarypurpose="objectpurpose.build" negate="true"/>
+					</find_ship>
+					<do_if value="false" chance="16" comment="small chance to calculate based on sector ships ?">
+						<find_ship name="$ZoneEnemyShips" class="[class.ship_xl, class.ship_l]" space="$targetZoneStation.sector"  multiple="true">
+							<match_relation faction="$fleetFaction" relation="enemy"/>
+							<match primarypurpose="objectpurpose.trade" negate="true"/>
+							<match primarypurpose="objectpurpose.build" negate="true"/>
+						</find_ship>
+					</do_if>
+					<!-- strength small
+					<find_ship name="$ZoneEnemyShipsSmall" class="[class.ship_s, class.ship_m]" space="$targetZoneStation"  multiple="true">
+						<match_relation faction="$fleetFaction" relation="enemy"/>
+						<match primarypurpose="objectpurpose.trade" negate="true"/>
+						<match primarypurpose="objectpurpose.build" negate="true"/>
+					</find_ship>  -->
+
+					<set_value name="$Num_Enemy_Squad_Wingmen" exact="md.CM_Config.Settings.$Wing" />
+					<set_value name="$Num_Enemy_Squads_For_Capship" exact="md.CM_Config.Settings.$Squad" />
+					<set_value name="$Num_Enemy_Capships" min="$ZoneEnemyStations.count*1" max="$ZoneEnemyStations.count*2 + $ZoneEnemyShips.count"/>
+					<do_if value="$fleetFaction == faction.xenon" chance="100">
+						<set_value name="$XenonMax" exact="md.CM_Config.Settings.$XenonMax" />
+						<set_value name="$XenonMax" exact="$Num_Enemy_Capships" chance="if event.param == 'CW_invade_now' and $Num_Enemy_Capships/3 gt $XenonMax then 100 else 0" />
+						<set_value name="$Num_Enemy_Capships" exact="[$Num_Enemy_Capships, $XenonMax].min"/>
+						<remove_value name="$XenonMax"/>
+					</do_if>
+
+					<!-- less cheating -->
+					<do_if value="$Num_Enemy_Capships">
+						<find_ship name="$possibleFleeShips" class="[class.ship_l, class.ship_xl]" functional="true" space="player.galaxy" multiple="true">
+							<match owner="$fleetFaction"/>
+							<match primarypurpose="objectpurpose.trade" negate="true"/>
+							<match primarypurpose="objectpurpose.build" negate="true"/>
+						</find_ship>
+						<do_if value="$possibleFleeShips.count lt $Num_Enemy_Capships">
+							<do_if value="$possibleFleeShips.count gt 2">
+								<set_value name="$Num_Enemy_Capships" min="1" max="$possibleFleeShips.count/2"/>
+							</do_if>
+							<do_else>
+								<set_value name="$Num_Enemy_Capships" exact="0" />		
+							</do_else>
+						</do_if>
+						<remove_value name="$possibleFleeShips"/>
+					</do_if>
+					<!--
+					<do_if value="$ZoneEnemyShips.count">
+
+						<set_value name="$ShipNumber" exact="($enemyCapShips.count + $enemyCapShipsT.count / 2.0f)i" />
+						<set_value name="$PlayerCapFactor" exact="1" />
+						<set_value name="$PlayerCapFactor" min="1" max="md.CM_Config.Settings.$PlayerFactor * 3" chance="if $targetFaction == faction.player then 100 else 0" />
+
+					</do_if>
+					-->
+
+					<!-- Startpoint -->
+					<do_if value="$fleetFaction == faction.xenon">
+						<!-- local -->
+						<find_station name="$portal" space="$targetZoneStation.cluster" functional="true" multiple="true">
+							<match macro="macro.struct_at_xen_xenon_portal_macro"/>
+							<match owner="$fleetFaction"/>
+						</find_station>
+						<do_if value="$portal.count" negate="true">
+							<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+								<match_any>
+									<match macro="macro.struct_at_xen_xenon_portal_macro"/>
+									<match_content class="class.buildmodule" />
+								</match_any>
+								<match owner="$fleetFaction"/>
+							</find_station>
+						</do_if>
+						<do_else>
+							<set_value name="$shipyard" exact="$portal.clone" />
+						</do_else>
+						<remove_value name="$portal"/>
+					</do_if>
+					<do_else>
+						<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+							<match_content class="class.buildmodule" />
+							<match owner="$fleetFaction"/>
+						</find_station>
+					</do_else>
+
+					<do_if value="$shipyard.count" negate="true">
+						<!-- fallback -->
+						<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+							<match_content class="class.buildmodule" />
+							<match_relation faction="$fleetFaction" relation="neutral" comparison="ge"/>
+						</find_station>
+					</do_if>
+					<do_if value="$shipyard.count">
+						<set_value name="$tmpSY" exact="null" />
+						<do_all exact="$shipyard.count" counter="$k">		
+							<do_if value="$tmpSY and $shipyard.{$k}.zone != $targetZoneStation and $shipyard.{$k}.distanceto.{$targetZoneStation} lt $tmpSY.distanceto.{$targetZoneStation}">
+								<set_value name="$tmpSY" exact="$shipyard.{$k}" />
+								<do_if value="$shipyard.{$k}.macro.ismacro.struct_at_xen_xenon_portal_macro">
+									<set_value name="$station" exact="$shipyard.{$k}"/>
+								</do_if>
+								<do_else>
+									<remove_value name="$station"/>
+								</do_else>	
+							</do_if>
+							<do_elseif value="$tmpSY" negate="true">
+								<set_value name="$tmpSY" exact="$shipyard.{$k}" />
+								<do_if value="$shipyard.{$k}.macro.ismacro.struct_at_xen_xenon_portal_macro">
+									<set_value name="$station" exact="$shipyard.{$k}"/>
+								</do_if>
+								<do_else>
+									<remove_value name="$station"/>
+								</do_else>	
+							</do_elseif>
+						</do_all>
+						<set_value name="$CreateTSZone" exact="$tmpSY.zone" />
+						<remove_value name="$tmpSY"/>
+						<do_if value="$targetZoneStation.cluster != $CreateTSZone.cluster and (not $next_portal? or ($next_portal and $next_portal lt player.age))">
+							<set_value name="$next_portal" exact="player.age + 2h" />
+							<signal_cue_instantly cue="md.CWIR_Creator_CV.CreatorCV" param="[if $targetZoneStation.isclass.sector then $targetZoneStation else $targetZoneStation.sector, faction.xenon, macro.struct_at_xen_xenon_portal_macro]"/>
+						</do_if>
+
+					</do_if>
+
+					<do_if value="$CreateTSZone" negate="true">
+						<find_zone name="$TSZone" space="player.galaxy" tempzone="false" multiple="true">
+							<match class="class.highway" negate="true"/>
+							<match macro="$targetZoneStation.macro" negate="true" />
+							<match owner="$fleetFaction"/>
+						</find_zone>
+						<do_all exact="$TSZone.count" counter="$k">
+							<do_if value="$TSZone.{$k}.cluster == $targetZoneStation.cluster">
+								<set_value name="$CreateTSZone" exact="$TSZone.{$k}" />
+								<break />
+							</do_if>
+							<do_else>
+								<set_value name="$CreateTSZone" exact="$TSZone.{$k}" />
+							</do_else>	
+						</do_all>
+					</do_if>
+<debug_text text="'MESSAGE: Invasion fleet [%7] from %1 [C:%2, F:%3-%4] %5 in %6'.[$CreateTSZone.name, $Num_Enemy_Capships, $Num_Enemy_Squads_For_Capship, $Num_Enemy_Squad_Wingmen, $ZoneEnemyStations.count, $targetZoneStation.name, $fleetFaction.name]" filter="error" chance="100" />
+
+					<!-- create fleet -->
+					<do_if value="$CreateTSZone and $Num_Enemy_Capships" >
+
+						<get_safe_pos result="$Safepos" zone="$CreateTSZone" radius="1km" min="10km" max="15km" allowyaxis="false"/>
+						<create_orientation name="$Orientation" orientation="look_at" refposition="position.[0, 0, 0]">
+							<position value="$Safepos" />
+						</create_orientation>
+
+						<include_actions ref="CWIR_CR_INVfleet_list" />
+		
+						<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+
+						<do_if value="$fleetulator.{$key}? and $fleetulator.{$key}.{2}.count">
+							<set_value name="$data" exact="$fleetulator.{$key}.{2}.random"/>
+							<set_value name="$defineEOL" exact="player.age + 3h" />
+							<include_actions ref="CWIR_CR_INVfleet_construct" />
+							<remove_value name="$defineEOL"/>
+						</do_if>
+						<do_else>
+							<!-- <=========== CAPITAL SHIPS ===========> -->            
+							<set_value name="$groups" exact="1" />
+							<do_all exact="$groups">
+								<!-- special Invasionleader -->
+								<do_if value="false" chance="100">
+									<set_value name="$do_create" exact="'xl_CAP'" />
+									<include_actions ref="CWIR_CR_INVfleet" />
+									<start_script object="$Enemy_Ship.pilot" name="'BR.move.patrol'">
+										<param name="patrolobject" value="$targetZoneStation" />
+									</start_script>
+									<set_value name="$Base_Leader" exact="$Enemy_Ship" />
+								</do_if>
+								<!-- regular -->
+								<do_all exact="$Num_Enemy_Capships">
+		
+									<set_value name="$do_create" exact="'CAP'" />
+									<include_actions ref="CWIR_CR_INVfleet" />
+									<!-- Job -->
+									<do_if value="$Base_Leader? and $Base_Leader.exists">
+										<set_object_commander object="$Enemy_Ship" commander="$Base_Leader" />
+										<start_script object="$Enemy_Ship.pilot" name="'BR.move.patrol'">
+											<param name="patrolobject" value="$Base_Leader" />
+										</start_script>
+									</do_if>
+									<do_else>
+										<start_script object="$Enemy_Ship.pilot" name="'BR.move.patrol'">
+											<param name="patrolobject" value="$targetZoneStation" />
+										</start_script>
+									</do_else>	
+									<set_value name="$Main_Leader" exact="$Enemy_Ship" />
+									<!-- escort -->
+									<do_all min="2" max="$Num_Enemy_Squads_For_Capship">
+										<set_value name="$do_create" exact="'noCAP'" />
+										<include_actions ref="CWIR_CR_INVfleet" />
+										<set_object_commander object="$Enemy_Ship" commander="$Main_Leader" />
+										<start_script object="$Enemy_Ship.pilot" name="'BR.move.escort'">
+											<param name="target" value="$Main_Leader"/>
+										</start_script>
+										<set_value name="$Squad_Leader" exact="$Enemy_Ship" />
+										<!-- Wingman -->
+										<do_all min="4" max="$Num_Enemy_Squad_Wingmen">
+											<set_value name="$do_create" exact="'noCAP'" />
+											<include_actions ref="CWIR_CR_INVfleet" />
+											<set_object_commander object="$Enemy_Ship" commander="$Squad_Leader" />
+											<start_script object="$Enemy_Ship.pilot" name="'BR.move.escort'">
+												<param name="target" value="$Squad_Leader" />
+											</start_script>
+										</do_all>                  
+									</do_all>
+								</do_all>
+							</do_all>
+							<!-- clean vars -->
+							<remove_value name="$Base_Leader"/>
+							<remove_value name="$Main_Leader"/>
+							<remove_value name="$Squad_Leader"/>
+							<remove_value name="$Enemy_Ship"/>
+							<remove_value name="$groups"/>
+						</do_else>	
+					</do_if>
+
+				</do_if>		
+				<!-- clean vars -->
+				<remove_value name="$Num_Enemy_Capships"/>
+				<remove_value name="$Num_Enemy_Squads_For_Capship"/>
+				<remove_value name="$Num_Enemy_Squad_Wingmen"/>
+				<remove_value name="$targetZoneStation"/>
+				<remove_value name="$fleetFaction"/>
+				<remove_value name="$targetFaction"/>
+				<remove_value name="$ZoneEnemyStations"/>
+				<remove_value name="$shipyard"/>
+				<remove_value name="$CreateTSZone"/>
+				<remove_value name="$Orientation"/>
+				<remove_value name="$Safepos"/>
+			</actions>
+		</cue>	
+		<cue name="Job_Squad_builder" instantiate="true" namespace="this">
+			<conditions>
+				<event_object_signalled object="player.galaxy" param="'CW_Job_Squad_builder'" />
+				<check_value value="event.param2? and event.param2.owner and [faction.enemy,faction.criminal,faction.smuggler,faction.neutral,faction.ownerless,faction.player,faction.friend].indexof.{event.param2.trueowner} == 0" />
+			</conditions>
+			<actions>		
+				<do_if value="event.param2?" negate="true"> 
+					<debug_text text="'ERROR event.param2 missing'" filter="error" chance="0" />
+				</do_if>
+				<do_elseif value="event.param2.isclass.ship">
+
+					<set_value name="$Consume" exact="0"/>
+					<set_value name="$Num_Enemy_Squad_Wingmen" exact="md.CM_Config.Settings.$Wing" />
+					<set_value name="$Num_Enemy_Squads_For_Capship" exact="md.CM_Config.Settings.$Squad" />
+					<set_value name="$jobTitle" exact="if event.param3? and event.param3 and typeof event.param3 == datatype.string and event.param3 != '1' then event.param3 else {40001,6}"/>
+					<set_value name="$MainShip" exact="event.param2"/>
+					<set_value name="$fleetFaction" exact="$MainShip.owner"/>
+					<set_value name="$CreateTSZone" exact="$MainShip.zone"/>
+					<set_value name="$Safepos" exact="$MainShip.position"/>
+					<set_value name="$Orientation" exact="$MainShip.rotation"/>
+
+					<do_if value="$MainShip.isclass.[class.ship_l, class.ship_xl]" >
+						<include_actions ref="CWIR_CR_INVfleet_list" />
+						<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+					</do_if>
+					<do_else>
+						<include_actions ref="CWIR_CR_INVfleet_simplelist" />
+						<set_value name="$key" exact="'$%1'.[$MainShip.class]"/>
+					</do_else>	
+					
+					<!--set_value name="$key" exact="'$%1_%2'.[$MainShip.class.id, $fleetFaction.id]"/-->
+					<set_value name="$data" exact="if $fleetulator.{$key}? then $fleetulator.{$key}.{2}.random else null"/>
+					<do_if value="$data" negate="true">
+						<set_value name="$key" exact="'$%1'.[$MainShip.class]"/>
+						<set_value name="$data" exact="if $fleetulator.{$key}? then $fleetulator.{$key}.{2}.random else null"/>
+					</do_if>
+					<do_if value="$data" negate="true">
+						<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+						<set_value name="$data" exact="if $fleetulator.{$key}? then $fleetulator.{$key}.{2}.random else null"/>
+					</do_if>
+
+					<do_if value="$data" negate="true">
+						<set_value name="$key" exact="'$%1'.[$MainShip.class]"/>
+						<include_actions ref="CWIR_CR_INVfleet_simplelist" />
+						<set_value name="$data" exact="if $fleetulator.{$key}? then $fleetulator.{$key}.{2}.random else null"/>
+					</do_if>
+
+					<include_actions ref="CWIR_CR_INVfleet_squadconstruct" />
+				</do_elseif>	
+				<!-- clean vars -->
+				<remove_value name="$Num_Enemy_Capships"/>
+				<remove_value name="$Num_Enemy_Squads_For_Capship"/>
+				<remove_value name="$Num_Enemy_Squad_Wingmen"/>
+				<remove_value name="$fleetFaction"/>
+				<remove_value name="$shipyard"/>
+				<remove_value name="$CreateTSZone"/>
+				<remove_value name="$Orientation"/>
+				<remove_value name="$Safepos"/>
+				<remove_value name="$jobTitle"/>
+				<remove_value name="$Consume"/>
+			</actions>
+		</cue>
+
+		<library name="CWIR_CR_INVfleet">
+			<actions>
+				<do_if value="$do_create == 'CAP'">
+
+					<do_if value="[faction.sovereignsyndicate].indexof.{$fleetFaction}">
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone" macro="units_size_xl_capital_destroyer_2_macro">
+							<owner exact="$fleetFaction" overridenpc="true"/>
+
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.commander]"/>
+							</pilot>
+
+							<defence>
+								<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+							</defence>
+
+							<engineer>
+								<select faction="$fleetFaction" tags="[tag.engineer]"/>
+							</engineer>
+
+							<cargo>
+								<wares list="[ware.fuelcells]">
+									<fillpercent min="70" max="80"/>
+								</wares>
+							</cargo>
+
+							<position value="$Safepos" max="5km"/>
+							<rotation value="$Orientation" />
+						</create_ship>
+					</do_if>
+	
+					<do_if value="[faction.reivers].indexof.{$fleetFaction}">
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone" macro="units_size_xl_cargo_hauler_2_macro">
+							<owner exact="$fleetFaction" overridenpc="true"/>
+
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.commander]"/>
+							</pilot>
+
+							<defence>
+								<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+							</defence>
+
+							<engineer>
+								<select faction="$fleetFaction" tags="[tag.engineer]"/>
+							</engineer>
+
+							<cargo>
+								<wares list="[ware.fuelcells]">
+									<fillpercent min="70" max="80"/>
+								</wares>
+							</cargo>
+
+							<position value="$Safepos" max="5km"/>
+							<rotation value="$Orientation" />
+						</create_ship>
+					</do_if>
+
+					<do_elseif value="[faction.argongovernment, faction.familyryak, faction.hereticvanguards].indexof.{$fleetFaction}">
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone">
+							<select faction="$fleetFaction" size="class.ship_xl" tags="[tag.military]"/>
+							<owner exact="$fleetFaction" overridenpc="true"/>
+
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.commander]"/>
+							</pilot>
+
+							<defence>
+								<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+							</defence>
+
+							<engineer>
+								<select faction="$fleetFaction" tags="[tag.engineer]"/>
+							</engineer>
+
+							<cargo>
+								<wares list="[ware.fuelcells]">
+									<fillpercent min="70" max="80"/>
+								</wares>
+							</cargo>
+
+							<position value="$Safepos" max="5km"/>
+
+							<rotation value="$Orientation" />
+						</create_ship>
+					</do_elseif>
+
+					<do_elseif value="$fleetFaction == faction.xenon">
+						<do_any>
+							<set_value name="$size" exact="class.ship_xl" weight="10"/>
+							<set_value name="$size" exact="class.ship_l" weight="90"/>
+						</do_any>
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone">
+							<select faction="$fleetFaction" size="$size" tags="[tag.military]" />
+							<owner exact="$fleetFaction" overridenpc="true"/>
+
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.commander]"/>
+							</pilot>
+
+							<defence>
+								<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+							</defence>
+
+							<engineer>
+								<select faction="$fleetFaction" tags="[tag.engineer]"/>
+							</engineer>
+
+							<cargo>
+								<wares list="[ware.fuelcells]">
+									<fillpercent min="70" max="80"/>
+								</wares>
+							</cargo>
+
+							<position value="$Safepos" max="5km"/>
+							<rotation value="$Orientation" />
+						</create_ship>
+					</do_elseif>
+
+					<do_else>
+						<do_any>
+							<set_value name="$size" exact="class.ship_xl" weight="40"/>
+							<set_value name="$size" exact="class.ship_l" weight="60"/>
+						</do_any>
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone">
+							<select faction="$fleetFaction" size="$size" tags="[tag.military]" />
+							<owner exact="$fleetFaction" overridenpc="true"/>
+
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.commander]"/>
+							</pilot>
+
+							<defence>
+								<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+							</defence>
+
+							<engineer>
+								<select faction="$fleetFaction" tags="[tag.engineer]"/>
+							</engineer>
+
+							<cargo>
+								<wares list="[ware.fuelcells]">
+									<fillpercent min="70" max="80"/>
+								</wares>
+							</cargo>
+
+							<position value="$Safepos" max="5km"/>
+							<rotation value="$Orientation" />
+						</create_ship>
+					</do_else>
+
+					<set_value name="$Unitcapacity" exact="$Enemy_Ship.units.maxcount" />
+					<do_if value="$Unitcapacity">
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_impulse_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_xs_welder_drone_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_xs_transp_empty_macro" exact="[5 ,$Enemy_Ship.units.count].min"/>
+					</do_if>
+					<remove_value name="$Unitcapacity" />
+
+<!--
+					<add_effect object="$Enemy_Ship" effect="'jump_jumpin_xl'"/>
+					<signal_cue_instantly cue="md.Conquer_Mod.ShipyardResourceConsume_cue" param="[$fleetFaction, $Enemy_Ship]"/>
+-->
+				</do_if>
+				<do_elseif value="$do_create == 'xl_CAP'">
+					<create_ship name="$Enemy_Ship" zone="$CreateTSZone">
+						<select faction="$fleetFaction" size="class.ship_xl" tags="[tag.military]" />
+						<owner exact="$fleetFaction" overridenpc="true"/>
+
+						<pilot>
+							<select faction="$fleetFaction" tags="[tag.commander]"/>
+						</pilot>
+
+						<defence>
+							<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+						</defence>
+
+						<engineer>
+							<select faction="$fleetFaction" tags="[tag.engineer]"/>
+						</engineer>
+
+						<cargo>
+							<wares list="[ware.fuelcells]">
+								<fillpercent min="70" max="80"/>
+							</wares>
+						</cargo>
+
+						<position value="$Safepos" max="5km"/>
+						<rotation value="$Orientation" />
+					</create_ship>
+
+					<set_value name="$Unitcapacity" exact="$Enemy_Ship.units.maxcount" />
+					<do_if value="$Unitcapacity">
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_impulse_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_xs_welder_drone_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+						<add_units object="$Enemy_Ship" macro="macro.units_size_xs_transp_empty_macro" exact="[5 ,$Enemy_Ship.units.count].min"/>
+					</do_if>
+					<remove_value name="$Unitcapacity" />
+
+<!--
+					<add_effect object="$Enemy_Ship" effect="'jump_jumpin_xl'"/>
+					<signal_cue_instantly cue="md.Conquer_Mod.ShipyardResourceConsume_cue" param="[$fleetFaction, $Enemy_Ship]"/>
+-->
+				</do_elseif>
+				<do_else>
+					<set_value name="$Main_Factions" exact="[faction.heartofalbion, faction.plutarch, faction.canteran, faction.argongovernment, faction.xenon, faction.familyryak, faction.sovereignsyndicate, faction.reivers, faction.hereticvanguards]"/>	
+					<do_if value="$Main_Factions.indexof.{$fleetFaction}">
+						<set_value name="$Main_Factions_Fighters" exact="['hoa_heavy_fighter', 'pmc_heavy_fighter', 'can_heavy_fighter', 'arg_heavy_fighter', 'xen_heavy_fighter', 'rya_heavy_fighter', 'sos_heavy_fighter', 'rei_heavy_fighter', 'hev_heavy_fighter']"/>	
+						<set_value name="$FighterGroup" exact="$Main_Factions_Fighters.{$Main_Factions.indexof.{$fleetFaction}}" />
+						<create_ship name="$Enemy_Ship" ref="$FighterGroup" zone="$CreateTSZone">
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.fighterpilot]"/>
+							</pilot>
+							<position value="$Safepos" max="5km"/>
+						</create_ship>
+					</do_if>
+					<do_else>
+						<do_any>
+							<set_value name="$size" exact="class.ship_m" weight="40"/>
+							<set_value name="$size" exact="class.ship_s" weight="60"/>
+						</do_any>
+						<do_if value="[faction.canteran, faction.xenon].indexof.{$fleetFaction} == 0">
+							<set_value name="$size" exact="class.ship_s"/>
+						</do_if>
+						<do_elseif value="[faction.canteran].indexof.{$fleetFaction}">
+							<set_value name="$size" exact="class.ship_m"/>
+						</do_elseif>
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone">
+							<select faction="$fleetFaction" size="$size" tags="[tag.military]" />
+							<owner exact="$fleetFaction" overridenpc="true"/>
+							<pilot>
+								<select faction="$fleetFaction" tags="[tag.fighterpilot]"/>
+							</pilot>
+							<position value="$Safepos" max="5km"/>
+						</create_ship>
+					</do_else>
+				</do_else>
+				<set_object_name object="$Enemy_Ship" name="{40001,4} + ' ' + $Enemy_Ship.name" />
+				<do_if value="$Enemy_Ship.pilot.$end_of_work?" negate="true">
+					<set_value name="$Enemy_Ship.pilot.$end_of_work" exact="player.age + 12h" />
+				</do_if>
+				<remove_value name="$Main_Factions_Fighters"/>
+				<remove_value name="$Main_Factions"/>
+				<remove_value name="$FighterGroup"/>
+				<remove_value name="$do_create"/>
+
+			</actions>
+		</library>
+
+		<!--
+		+ $ref
+		* $station
+		* $tag
+		* $CreateTSZone
+		+ $Safepos
+		+ $Orientation
+		* $fleetFaction
+		<include_actions ref="CWIR_CR_INVfleet_create" />
+		-->
+		<library name="CWIR_CR_INVfleet_create">
+			<actions>
+				<do_if value="$ref? and $ref">
+					<do_if value="typeof $ref == datatype.macro">
+	
+						<do_if value="typeof $ref == datatype.macro and [class.ship_l, class.ship_xl].indexof.{$ref.class} and $station? and $station">
+							<create_ship name="$Enemy_Ship" dock="$station" zone="$station.zone" macro="$ref">
+								<owner exact="$fleetFaction" overridenpc="true"/>
+								<pilot>
+									<select faction="$fleetFaction" tags="[tag.commander]"/>
+								</pilot>
+								<defence>
+									<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+								</defence>
+								<engineer>
+									<select faction="$fleetFaction" tags="[tag.engineer]"/>
+								</engineer>
+							</create_ship>
+						</do_if>
+						<do_elseif value="typeof $ref == datatype.macro and [class.ship_l, class.ship_xl].indexof.{$ref.class}">
+							<create_ship name="$Enemy_Ship" zone="$CreateTSZone" macro="$ref">
+								<owner exact="$fleetFaction" overridenpc="true"/>
+								<pilot>
+									<select faction="$fleetFaction" tags="[tag.commander]"/>
+								</pilot>
+								<defence>
+									<select faction="$fleetFaction" tags="[tag.defencecontrol]"/>
+								</defence>
+								<engineer>
+									<select faction="$fleetFaction" tags="[tag.engineer]"/>
+								</engineer>
+								<position value="$Safepos" max="5km"/>
+								<rotation value="$Orientation" />
+							</create_ship>
+						</do_elseif>
+						<do_elseif value="typeof $ref == datatype.macro and $station? and $station">
+							<create_ship name="$Enemy_Ship" dock="$station" zone="$station.zone" macro="$ref">
+								<owner exact="$fleetFaction" overridenpc="true"/>
+								<pilot>
+									<select faction="$fleetFaction" tags="[tag.fighterpilot]"/>
+								</pilot>
+							</create_ship>
+						</do_elseif>
+						<do_elseif value="typeof $ref == datatype.macro">
+							<create_ship name="$Enemy_Ship" zone="$CreateTSZone" macro="$ref">
+								<owner exact="$fleetFaction" overridenpc="true"/>
+								<pilot>
+									<select faction="$fleetFaction" tags="[tag.fighterpilot]"/>
+								</pilot>
+								<position value="$Safepos" max="5km"/>
+								<rotation value="$Orientation" />
+							</create_ship>
+						</do_elseif>
+	
+						<do_if value="$Enemy_Ship.isclass.[class.ship_l,class.ship_xl]" negate="true">
+							<destroy_object object="$Enemy_Ship.defencenpc" explosion="false" chance="if $Enemy_Ship.defencenpc then 100 else 0"/>
+							<destroy_object object="$Enemy_Ship.engineer" explosion="false" chance="if $Enemy_Ship.engineer then 100 else 0"/>
+						</do_if>
+						<do_else>
+							<set_value name="$Unitcapacity" exact="$Enemy_Ship.units.maxcount" />
+			
+							<do_if value="$Enemy_Ship.cargo.{ware.fuelcells}.free gt 2499">
+								<add_cargo ware="ware.fuelcells" object="$Enemy_Ship" exact="2500" />
+							</do_if>
+			
+							<do_if value="$Unitcapacity">
+								<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_impulse_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7" chance="40"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_xs_welder_drone_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+								<add_units object="$Enemy_Ship" macro="macro.units_size_xs_transp_empty_macro" exact="[5 ,$Enemy_Ship.units.maxcount-$Enemy_Ship.units.count].min"/>
+							</do_if>
+							<remove_value name="$Unitcapacity" />
+			
+						</do_else>
+		
+					</do_if>
+					<do_else>
+						<do_if value="typeof $ref == datatype.class and $station? and $station">
+							<create_ship name="$Enemy_Ship" dock="$station" zone="$station.zone">
+								<select faction="$fleetFaction" size="$ref" tags="if $tag? and $tag then $tag else [tag.military]" />
+								<owner exact="$fleetFaction" overridenpc="true"/>
+							</create_ship>
+						</do_if>
+						<do_elseif value="typeof $ref == datatype.class">
+							<create_ship name="$Enemy_Ship" zone="$CreateTSZone">
+								<select faction="$fleetFaction" size="$ref" tags="if $tag? and $tag then $tag else [tag.military]" />
+								<owner exact="$fleetFaction" overridenpc="true"/>
+								<position value="$Safepos" max="5km"/>
+								<rotation value="$Orientation" />
+							</create_ship>
+						</do_elseif>
+						<do_elseif value="$station? and $station">
+							<create_ship name="$Enemy_Ship" dock="$station" ref="$ref" zone="$station.zone" />
+						</do_elseif>
+						<do_else>
+							<create_ship name="$Enemy_Ship" ref="$ref" zone="$CreateTSZone">
+								<position value="$Safepos" max="5km"/>
+								<rotation value="$Orientation" />
+							</create_ship>
+						</do_else>
+					</do_else>
+				</do_if>
+
+				<do_if value="$Enemy_Ship? and $Enemy_Ship" negate="true">
+					<do_if value="$station? and $station">
+						<create_ship name="$Enemy_Ship" dock="$station" zone="$station.zone" macro="units_size_m_pmc_xen_02_macro">
+							<owner exact="$fleetFaction" overridenpc="true"/>
+							<pilot group="argon.pilot" />
+						</create_ship>
+					</do_if>
+					<do_else>
+						<create_ship name="$Enemy_Ship" zone="$CreateTSZone" macro="units_size_m_pmc_xen_02_macro">
+							<owner exact="$fleetFaction" overridenpc="true"/>
+							<pilot group="argon.pilot" />
+							<position value="$Safepos" max="5km"/>
+							<rotation value="$Orientation" />
+						</create_ship>
+					</do_else>
+				</do_if>
+
+				<do_if value="$Elite? and $Elite and $Enemy_Ship">
+					<get_control_entities object="$Enemy_Ship" groupname="$ControlEntities"/>
+					<do_all exact="$ControlEntities.count" counter="$Counter">
+						<set_skill entity="$ControlEntities.{$Counter}" type="combat" max="5"/>
+						<set_skill entity="$ControlEntities.{$Counter}" type="engineering" exact="5"/>
+						<set_skill entity="$ControlEntities.{$Counter}" type="leadership" exact="5"/>
+						<set_skill entity="$ControlEntities.{$Counter}" type="management" exact="5"/>
+						<set_skill entity="$ControlEntities.{$Counter}" type="morale" max="5"/>
+						<set_skill entity="$ControlEntities.{$Counter}" type="navigation" max="5"/>
+						<set_skill entity="$ControlEntities.{$Counter}" type="science" max="5"/>
+					</do_all>
+					<remove_value name="$ControlEntities"/>
+				</do_if>
+
+<!--
+				<signal_cue_instantly cue="md.Conquer_Mod.ShipyardResourceConsume_cue" param="[$fleetFaction, $Enemy_Ship]" chance="if $Enemy_Ship.isclass.[class.ship_l,class.ship_xl] then if $Consume? then $Consume else 100 else 0"/>
+				<add_effect object="$Enemy_Ship" effect="if $Enemy_Ship.isclass.[class.ship_l,class.ship_xl] then 'jump_jumpin_xl' else 'jump_jumpin_l'" chance="if $Enemy_Ship.zone == player.zone and $station? and $station then 0 else 100"/>
+-->
+				<set_object_name object="$Enemy_Ship" name="(if $jobTitle? and $jobTitle then $jobTitle else {40001,4}) + ' ' + $Enemy_Ship.name" />
+
+				<do_if value="$Enemy_Ship.pilot.$end_of_work?" negate="true">
+					<set_value name="$Enemy_Ship.pilot.$end_of_work" exact="if $defineEOL? and $defineEOL gt player.age then $defineEOL else player.age + 12h" />
+				</do_if>
+
+				<remove_value name="$ref"/>
+			</actions>
+		</library>
+
+		<!--
+		<include_actions ref="CWIR_CR_INVfleet_list" />
+		
+		<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+		<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+		<set_value name="$data" exact="$fleetulator.{$key}.{2}.random"/>
+		<set_value name="$random" exact="100"/>
+
+		<include_actions ref="CWIR_CR_INVfleet_squadconstruct" />
+		-->
+		<library name="CWIR_CR_INVfleet_squadconstruct">
+			<actions>
+				<!--do_all exact="if $data.{2}.{1}? then if $data.{4}? and $data.{4} != null then $data.{4} else if $MainShip.isclass.ship_xl then ($Num_Enemy_Squads_For_Capship *2) else if $MainShip.isclass.ship_l then $Num_Enemy_Squads_For_Capship else $Num_Enemy_Squad_Wingmen else 0" counter="$cnt"-->
+				<do_all exact="if $data.{2}.{1}? then if $data.{4}? and $data.{4} != null then $data.{4} else if $MainShip.isclass.[class.ship_l,class.ship_xl] then $Num_Enemy_Squads_For_Capship else $Num_Enemy_Squad_Wingmen else 0" counter="$cnt">
+					<do_if value="$Follower? and $Follower.isclass.[class.ship_l,class.ship_xl] and $cnt gt $Num_Enemy_Squads_For_Capship">
+						<continue />
+					</do_if>
+
+					<set_value name="$data" exact="$fleetulator.{$key}.{2}.random" chance="if $random? and $random then $random else 0"/>
+					<do_any>
+						<set_value name="$ref" exact="if $data.{2}.{1}? then $data.{2}.{1}.{1} else null" weight="if $data.{2}.{1}.{2}? then $data.{2}.{1}.{2} else if $data.{2}.{1}? then 100/$data.{2}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{2}.{2}? then $data.{2}.{2}.{1} else null" weight="if $data.{2}.{2}.{2}? then $data.{2}.{2}.{2} else if $data.{2}.{2}? then 100/$data.{2}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{2}.{3}? then $data.{2}.{3}.{1} else null" weight="if $data.{2}.{3}.{2}? then $data.{2}.{3}.{2} else if $data.{2}.{3}? then 100/$data.{2}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{2}.{4}? then $data.{2}.{4}.{1} else null" weight="if $data.{2}.{4}.{2}? then $data.{2}.{4}.{2} else if $data.{2}.{4}? then 100/$data.{2}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{2}.{5}? then $data.{2}.{5}.{1} else null" weight="if $data.{2}.{5}.{2}? then $data.{2}.{5}.{2} else if $data.{2}.{5}? then 100/$data.{2}.count else 0"/>
+					</do_any>
+
+					<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_create" />
+					<set_value name="$Follower" exact="$Enemy_Ship" />
+
+					<set_object_commander object="$Follower" commander="$MainShip" />
+					<do_if value="$Follower.isclass.[class.ship_l,class.ship_xl] or $MainShip.isclass.[class.ship_l,class.ship_xl]">
+						<start_script object="$Follower.pilot" name="if $moveEscort? and $moveEscort then $moveEscort else 'BR.move.escort'">
+							<param name="target" value="'commander'" />
+						</start_script>
+					</do_if>
+					<do_else>
+						<start_script object="$Follower.pilot" name="if $moveEscort? and $moveEscort then $moveEscort else 'BR.move.escort'">
+							<param name="target" value="'commander'" />
+							<param name="formation" value="formationshape.eagle"/>
+							<param name="rollformation" value="if $data.{3}.{1}? then false else true"/>
+						</start_script>
+					</do_else>
+
+					<!-- Squad -->
+					<!--do_all exact="if $data.{3}.{1}? then if $data.{5}? and $data.{5} != null then $data.{5} else if $Follower.isclass.[class.ship_l,class.ship_xl] then $Num_Enemy_Squads_For_Capship else if $MainShip.isclass.ship_xl and $Num_Enemy_Squad_Wingmen then ($Num_Enemy_Squad_Wingmen /2) else $Num_Enemy_Squad_Wingmen else 0"-->
+					<do_all exact="if $data.{3}.{1}? then if $data.{5}? and $data.{5} != null then $data.{5} else if $Follower.isclass.[class.ship_l,class.ship_xl] then $Num_Enemy_Squads_For_Capship else $Num_Enemy_Squad_Wingmen else 0">
+
+						<do_any>
+							<set_value name="$ref" exact="if $data.{3}.{1}? then $data.{3}.{1}.{1} else null" weight="if $data.{3}.{1}.{2}? then $data.{3}.{1}.{2} else if $data.{3}.{1}? then 100/$data.{3}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{3}.{2}? then $data.{3}.{2}.{1} else null" weight="if $data.{3}.{2}.{2}? then $data.{3}.{2}.{2} else if $data.{3}.{2}? then 100/$data.{3}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{3}.{3}? then $data.{3}.{3}.{1} else null" weight="if $data.{3}.{3}.{2}? then $data.{3}.{3}.{2} else if $data.{3}.{3}? then 100/$data.{3}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{3}.{4}? then $data.{3}.{4}.{1} else null" weight="if $data.{3}.{4}.{2}? then $data.{3}.{4}.{2} else if $data.{3}.{4}? then 100/$data.{3}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{3}.{5}? then $data.{3}.{5}.{1} else null" weight="if $data.{3}.{5}.{2}? then $data.{3}.{5}.{2} else if $data.{3}.{5}? then 100/$data.{3}.count else 0"/>
+						</do_any>
+	
+						<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_create" />
+						<set_value name="$Squad" exact="$Enemy_Ship" />
+
+						<set_object_commander object="$Squad" commander="$Follower" />
+						<start_script object="$Squad.pilot" name="if $moveEscort? and $moveEscort then $moveEscort else 'BR.move.escort'">
+							<param name="target" value="'commander'" />
+							<param name="formation" value="formationshape.eagle"/>
+							<param name="rollformation" value="if $Follower.isclass.[class.ship_l,class.ship_xl] then false else true"/>
+						</start_script>
+
+					</do_all>
+
+				</do_all>
+				<remove_value name="$ref"/>
+				<remove_value name="$Squad"/>
+				<remove_value name="$Follower"/>
+				<remove_value name="$MainShip"/>
+				<do_if value="$noCleanup? and $noCleanup" negate="true">
+					<remove_value name="$station"/>
+					<remove_value name="$data"/>
+					<remove_value name="$key"/>
+					<remove_value name="$fleetulator"/>
+				</do_if>
+				<remove_value name="$noCleanup"/>
+			</actions>
+		</library>
+		<!--
+		<include_actions ref="CWIR_CR_INVfleet_list" />
+		
+		<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+		<set_value name="$data" exact="$fleetulator.{$key}.{2}.random"/>
+		<set_value name="$random" exact="100"/>
+
+		<include_actions ref="CWIR_CR_INVfleet_construct" />
+		-->
+		<library name="CWIR_CR_INVfleet_construct">
+			<actions>
+				<do_all exact="if $Num_Enemy_Capships then $Num_Enemy_Capships else 0">
+
+					<set_value name="$data" exact="$fleetulator.{$key}.{2}.random" chance="if $random? and $random then $random else 0"/>
+
+					<!-- Leader -->
+					<do_any>
+						<set_value name="$ref" exact="if $data.{1}.{1}? then $data.{1}.{1}.{1} else null" weight="if $data.{1}.{1}.{2}? then $data.{1}.{1}.{2} else if $data.{1}.{1}? then 100/$data.{1}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{1}.{2}? then $data.{1}.{2}.{1} else null" weight="if $data.{1}.{2}.{2}? then $data.{1}.{2}.{2} else if $data.{1}.{2}? then 100/$data.{1}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{1}.{3}? then $data.{1}.{3}.{1} else null" weight="if $data.{1}.{3}.{2}? then $data.{1}.{3}.{2} else if $data.{1}.{3}? then 100/$data.{1}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{1}.{4}? then $data.{1}.{4}.{1} else null" weight="if $data.{1}.{4}.{2}? then $data.{1}.{4}.{2} else if $data.{1}.{4}? then 100/$data.{1}.count else 0"/>
+						<set_value name="$ref" exact="if $data.{1}.{5}? then $data.{1}.{5}.{1} else null" weight="if $data.{1}.{5}.{2}? then $data.{1}.{5}.{2} else if $data.{1}.{5}? then 100/$data.{1}.count else 0"/>
+					</do_any>
+
+					<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_create" />
+					<set_value name="$MainShip" exact="$Enemy_Ship" />
+
+					<!-- Follower -->
+					<!--do_all exact="if $data.{2}.{1}? then if $data.{4}? and $data.{4} != null then $data.{4} else if $MainShip.isclass.ship_xl then ($Num_Enemy_Squads_For_Capship *2) else if $MainShip.isclass.ship_l then $Num_Enemy_Squads_For_Capship else $Num_Enemy_Squad_Wingmen else 0" counter="$cnt"-->
+					<do_all exact="if $data.{2}.{1}? then if $data.{4}? and $data.{4} != null then $data.{4} else if $MainShip.isclass.[class.ship_l,class.ship_xl] then $Num_Enemy_Squads_For_Capship else $Num_Enemy_Squad_Wingmen else 0" counter="$cnt">
+						<do_if value="$Follower? and $Follower.isclass.[class.ship_l,class.ship_xl] and $cnt gt $Num_Enemy_Squads_For_Capship">
+							<continue />
+						</do_if>
+
+						<do_any>
+							<set_value name="$ref" exact="if $data.{2}.{1}? then $data.{2}.{1}.{1} else null" weight="if $data.{2}.{1}.{2}? then $data.{2}.{1}.{2} else if $data.{2}.{1}? then 100/$data.{2}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{2}.{2}? then $data.{2}.{2}.{1} else null" weight="if $data.{2}.{2}.{2}? then $data.{2}.{2}.{2} else if $data.{2}.{2}? then 100/$data.{2}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{2}.{3}? then $data.{2}.{3}.{1} else null" weight="if $data.{2}.{3}.{2}? then $data.{2}.{3}.{2} else if $data.{2}.{3}? then 100/$data.{2}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{2}.{4}? then $data.{2}.{4}.{1} else null" weight="if $data.{2}.{4}.{2}? then $data.{2}.{4}.{2} else if $data.{2}.{4}? then 100/$data.{2}.count else 0"/>
+							<set_value name="$ref" exact="if $data.{2}.{5}? then $data.{2}.{5}.{1} else null" weight="if $data.{2}.{5}.{2}? then $data.{2}.{5}.{2} else if $data.{2}.{5}? then 100/$data.{2}.count else 0"/>
+						</do_any>
+
+						<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_create" />
+						<set_value name="$Follower" exact="$Enemy_Ship" />
+
+						<set_object_commander object="$Follower" commander="$MainShip" />
+						<start_script object="$Follower.pilot" name="if $moveEscort? and $moveEscort then $moveEscort else 'BR.move.escort'">
+							<param name="target" value="'commander'" />
+						</start_script>
+
+						<!-- Squad -->
+						<!--do_all exact="if $data.{3}.{1}? then if $data.{5}? and $data.{5} != null then $data.{5} else if $Follower.isclass.[class.ship_l,class.ship_xl] then $Num_Enemy_Squads_For_Capship else if $MainShip.isclass.ship_xl and $Num_Enemy_Squad_Wingmen then ($Num_Enemy_Squad_Wingmen /2) else $Num_Enemy_Squad_Wingmen else 0"-->
+						<do_all exact="if $data.{3}.{1}? then if $data.{5}? and $data.{5} != null then $data.{5} else if $Follower.isclass.[class.ship_l,class.ship_xl] then $Num_Enemy_Squads_For_Capship else $Num_Enemy_Squad_Wingmen else 0">
+
+							<do_any>
+								<set_value name="$ref" exact="if $data.{3}.{1}? then $data.{3}.{1}.{1} else null" weight="if $data.{3}.{1}.{2}? then $data.{3}.{1}.{2} else if $data.{3}.{1}? then 100/$data.{3}.count else 0"/>
+								<set_value name="$ref" exact="if $data.{3}.{2}? then $data.{3}.{2}.{1} else null" weight="if $data.{3}.{2}.{2}? then $data.{3}.{2}.{2} else if $data.{3}.{2}? then 100/$data.{3}.count else 0"/>
+								<set_value name="$ref" exact="if $data.{3}.{3}? then $data.{3}.{3}.{1} else null" weight="if $data.{3}.{3}.{2}? then $data.{3}.{3}.{2} else if $data.{3}.{3}? then 100/$data.{3}.count else 0"/>
+								<set_value name="$ref" exact="if $data.{3}.{4}? then $data.{3}.{4}.{1} else null" weight="if $data.{3}.{4}.{2}? then $data.{3}.{4}.{2} else if $data.{3}.{4}? then 100/$data.{3}.count else 0"/>
+								<set_value name="$ref" exact="if $data.{3}.{5}? then $data.{3}.{5}.{1} else null" weight="if $data.{3}.{5}.{2}? then $data.{3}.{5}.{2} else if $data.{3}.{5}? then 100/$data.{3}.count else 0"/>
+							</do_any>
+		
+							<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_create" />
+							<set_value name="$Squad" exact="$Enemy_Ship" />
+
+							<set_object_commander object="$Squad" commander="$Follower" />
+							<start_script object="$Squad.pilot" name="if $moveEscort? and $moveEscort then $moveEscort else 'BR.move.escort'">
+								<param name="target" value="'commander'" />
+							</start_script>
+
+						</do_all>
+	
+					</do_all>
+					<!-- Mainship Job -->
+					<do_if value="$targetZoneStation? and $targetZoneStation">
+						<start_script object="$MainShip.pilot" name="'BR.move.patrol'">
+							<param name="patrolobject" value="$targetZoneStation" />
+						</start_script>
+					</do_if>
+					<do_else>
+						<start_script object="$MainShip.pilot" name="'BR.move.patrol'">
+							<param name="range" value="if $MainShip.isclass.[class.ship_l,class.ship_xl] then 'cluster' else 'sector'" />
+						</start_script>
+					</do_else>
+
+				</do_all>
+
+				<remove_value name="$ref"/>
+				<remove_value name="$Squad"/>
+				<remove_value name="$Follower"/>
+				<remove_value name="$MainShip"/>
+				<do_if value="$noCleanup? and $noCleanup" negate="true">
+					<remove_value name="$station"/>
+					<remove_value name="$data"/>
+					<remove_value name="$key"/>
+					<remove_value name="$fleetulator"/>
+					<signal_cue_instantly cue="md.Conquer_Mod.ShipyardResourceConsume_cue" param="[$fleetFaction]" chance="if $Num_Enemy_Capships then if $Consume? then $Consume else 100 else 0"/>
+				</do_if>
+				<remove_value name="$noCleanup"/>
+			</actions>
+		</library>
+
+		<library name="CWIR_CR_INVfleet_simplelist">
+			<actions>
+				<set_value name="$fleetulator" exact="table[
+					$ship_xl = [ $fleetFaction, [
+												  [
+													  [
+														  [ class.ship_xl ]
+													  ],
+													  [
+														  [ class.ship_l, 80],
+														  [ class.ship_s, 20]
+													  ],
+													  [
+														  [ class.ship_s ]
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$ship_l = [ $fleetFaction, [
+												  [
+													  [
+														  [ class.ship_l ]
+													  ],
+													  [
+														  [ class.ship_s ]
+													  ],
+													  [
+														  [ class.ship_s ]
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$ship_m = [ $fleetFaction, [
+												  [
+													  [
+														  [ class.ship_m ]
+													  ],
+													  [
+														  [ class.ship_s ]
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$ship_s = [ $fleetFaction, [
+												  [
+													  [
+														  [ class.ship_s ]
+													  ],
+													  [
+														  [ class.ship_s ]
+													  ]
+												  ]
+											  ]
+					]
+				]"/>
+			</actions>
+		</library>
+
+		<library name="CWIR_CR_INVfleet_list">
+			<actions>
+				<set_value name="$fleetulator" exact="table[
+					$xenon = [ faction.xenon, [
+												  [
+													  [
+														  [ 'xen_destroyer', 90],
+														  [ 'xen_destroyer_xl', 10]
+													  ],
+													  [
+														  [ 'xen_m_fighter', 20],
+														  [ 'xen_light_fighter', 20],
+														  [ 'xen_heavy_fighter', 60]
+													  ],
+													  [
+														  [ 'xen_light_fighter']
+													  ]
+													  , 6, 2
+												  ]
+												  ,
+												  [
+													  [
+														  [ 'xen_destroyer', 70],
+														  [ 'xen_destroyer_xl', 30]
+													  ],
+													  [
+														  [ 'xen_destroyer']
+													  ],
+													  [
+														  [ 'xen_m_fighter', 20],
+														  [ 'xen_light_fighter', 20],
+														  [ 'xen_heavy_fighter', 60]
+													  ]
+													  , 2, 6
+												  ]
+											  ]
+					]
+					,
+					$sovereignsyndicate = [ faction.sovereignsyndicate, [
+												  [
+													  [
+														  [ macro.units_size_xl_capital_destroyer_2_macro ]
+													  ],
+													  [
+														  [ 'sos_heavy_fighter', 60],
+														  [ 'sos_light_fighter', 40]
+													  ]
+												  ],
+												  [
+													  [
+														  [ 'sos_light_bomber' ]
+													  ],
+													  [
+														  [ 'sos_heavy_fighter', 60],
+														  [ 'sos_light_fighter', 40]
+													  ],
+													  [
+														  [ 'sos_heavy_fighter', 20],
+														  [ 'sos_light_fighter', 80]
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$reivers = [ faction.reivers, [
+												  [
+													  [
+														  [ macro.units_size_xl_cargo_hauler_2_macro ]
+													  ],
+													  [
+														  [ 'rei_light_fighter', 10],
+														  [ 'rei_frigates', 80],
+														  [ 'rei_heavy_fighter', 10]
+													  ]
+													  ,null, 18
+												  ],
+												  [
+													  [
+														  [ 'rei_heavy_fighter' ]
+													  ],
+													  [
+														  [ 'rei_light_fighter']
+													  ],
+													  [
+														  [ 'rei_light_fighter']
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$argongovernment = [ faction.argongovernment, [
+												  [
+													  [
+														  [ 'arg_destroyer_light', 40],
+														  [ class.ship_xl, 20],
+														  [ 'arg_destroyer', 40]
+													  ],
+													  [
+														  [ 'arg_destroyerolm', 80],
+														  [ 'arg_heavy_fighter', 20]
+													  ],
+													  [
+														  [ 'arg_light_fighter']
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$familyryak = [ faction.familyryak, [
+												  [
+													  [
+														  [ class.ship_xl ]
+													  ],
+													  [
+														  [ 'rya_heavy_fighter', 60],
+														  [ 'rya_light_fighter', 40]
+													  ]
+													  ,null, 18
+												  ]
+											  ]
+					]
+					,
+					$hereticvanguards = [ faction.hereticvanguards, [
+												  [
+													  [
+														  [ class.ship_xl ]
+													  ],
+													  [
+														  [ 'hev_heavy_fighter', 10],
+														  [ 'hv_new_mcruiser', 20],
+														  [ 'hv_new_lcruiser', 50],
+														  [ 'hv_new_battlecruiser', 20]
+													  ],
+													  [
+														  [ 'hev_heavy_fighter']
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$canteran = [ faction.canteran, [
+												  [
+													  [
+														  [ class.ship_l, 60],
+														  [ class.ship_xl, 40 ]
+													  ],
+													  [
+														  [ 'can_heavy_fighter', 20],
+														  [ class.ship_l, 80]
+													  ],
+													  [
+														  [ 'can_light_fighter']
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$heartofalbion = [ faction.heartofalbion, [
+												  [
+													  [
+														  [ class.ship_l],
+														  [ class.ship_xl]
+													  ],
+													  [
+														  [ 'hoa_heavy_fighter', 20],
+														  [ class.ship_l, 80]
+													  ],
+													  [
+														  [ 'hoa_light_fighter']
+													  ]
+												  ]
+											  ]
+					]
+					,
+					$plutarch = [ faction.plutarch, [
+												  [
+													  [
+														  [ class.ship_xl]
+													  ],
+													  [
+														  [ 'pmc_heavy_fighter', 10],
+														  [ 'pmc_light_fighter', 10],
+														  [ class.ship_l, 80]
+													  ],
+													  [
+														  [ 'pmc_light_fighter']
+													  ]
+												  ]
+											  ]
+					]
+
+				]"/>
+			</actions>
+		</library>
+
+	</cues>
+</mdscript>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<mdscript name="WWX_CarrierCompat" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
+   <cues> 
+      <cue name="WWX_CheckCarriers"> 
+         <conditions> 
+           <check_any> 
+              <event_cue_signalled cue="md.Setup.GameStart"/> 
+              <event_game_loaded/> 
+           </check_any> 
+         </conditions> 
+         <delay min="3s" max="9s"/> 
+         <actions> 
+            <!-- Checks for presence of Marvin Martian's Carriers mod.  Thanks to Marvin for this. --> 
+            <set_value name="global.$WWX_mmcarrier_is_active" exact="false"/> 
+            <do_if value="@md.$mmcarrierversion" min="142"> 
+               <do_if value="md.$mmcarrier_on ge player.age - 10s"> 
+                  <set_value name="global.$WWX_mmcarrier_is_active" exact="true"/> 
+               </do_if> 
+            </do_if> 
+            <reset_cue cue="this"/> 
+         </actions> 
+      </cue> 
+      <cue name="WWX_MICT"> 
+         <conditions> 
+           <check_any> 
+              <event_cue_signalled cue="md.Setup.GameStart"/> 
+              <event_game_loaded/> 
+           </check_any> 
+         </conditions>
+		 <delay min="500ms"/> 
+         <actions> 
+			<do_if value="global.$MICT_LR_Ships?" negate="true">
+				<create_list name="global.$MICT_LR_Ships"/>
+				<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_red_destroyer_macro"/>
+				<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_l_single_attack_ship_macro"/>
+				<do_if value="md.$FieldsOfOpportunity?">
+					<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_te_kit_none_01_macro"/>
+					<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_te_kit_none_02_macro"/>
+					<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_te_kit_none_03_macro"/>
+				</do_if>
+				<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_van_destroyer_macro"/>
+			</do_if>
+			<do_elseif value="global.$MICT_LR_Ships? and global.$MICT_LR_Ships.indexof.{macro.units_size_xl_van_destroyer_macro} == 0">
+				<append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_van_destroyer_macro"/>
+			</do_elseif>
+         </actions> 
+      </cue> 
+   </cues> 
+</mdscript>

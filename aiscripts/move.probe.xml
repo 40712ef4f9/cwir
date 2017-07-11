@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<aiscript name="move.probe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="aiscripts.xsd" version="5">
+<!-- Conquer_mod v019s -->
+<!-- CWIR -->
+<!-- Move and Jump Probe script-->
+  <params>
+    <param name="destination" />
+    <param name="position" default="null" />
+    <param name="jumpto" default="null" />
+  </params>
+  <interrupts>
+    <handler ref="TargetInvalidHandler" />
+  </interrupts>
+  <attention min="unknown">
+    <actions>
+	    <wait exact="3s" />
+		
+	<do_if value="(player.ship) and (player.ship == player.primaryship)" >
+		<move_to object="this.ship" destination="$destination" abortpath="true" forcesteering="false" forceposition="false" finishonapproach="true" sinceversion="5" >
+           <position object="player.ship" y="1m" z="-75m"/>
+        </move_to>
+	    <move_to object="this.ship" destination="$destination" abortpath="true" forcesteering="false" forceposition="false" finishonapproach="true" sinceversion="5" >
+           <position object="player.ship" y="-40m" z="-30m"/>
+        </move_to>
+	</do_if>	
+	
+		<set_command_action commandaction="commandaction.calculating" />
+        <set_value name="$targetzone" exact="$destination"/>
+        <get_safe_pos result="$safepos" zone="$targetzone" radius="this.ship.size" object="$destination" value="$position" ignored="this.ship" />
+		
+	<do_if value="(player.ship) and (player.ship == player.primaryship) and $jumpto != player.ship.zone" >
+		
+		<set_value name="$sx" exact="$safepos.x" />
+		<set_value name="$sy" exact="$safepos.y" />
+		<set_value name="$sz" exact="$safepos.z" />
+
+		<set_value name="$aX" exact="$safepos.x - player.primaryship.position.x" />
+		<set_value name="$aY" exact="$safepos.y - player.primaryship.position.y" />
+		<set_value name="$aZ" exact="$safepos.z - player.primaryship.position.z" />
+		<do_if value="$aX gt 850m">
+			<set_value name="$sx" exact="player.primaryship.position.x + 400m" />
+		</do_if>
+		<do_if value="$aX lt -850m">
+			<set_value name="$sx" exact="player.primaryship.position.x - 400m" />
+		</do_if>
+		<do_if value="$aY gt 850m">
+			<set_value name="$sy" exact="player.primaryship.position.y + 400m" />
+		</do_if>
+		<do_if value="$aY lt -850m">
+			<set_value name="$sy" exact="player.primaryship.position.y - 400m" />
+		</do_if>
+		<do_if value="$aZ gt 850m">
+			<set_value name="$sz" exact="player.primaryship.position.z + 400m" />
+		</do_if>
+		<do_if value="$aZ lt -850m">
+			<set_value name="$sz" exact="player.primaryship.position.z - 400m" />
+		</do_if>
+		<set_value name="$safepos" exact="position.[$sx, $sy, $sz]"/>
+
+		<move_to object="this.ship" destination="$targetzone" abortpath="true" forcesteering="false" forceposition="false" finishonapproach="true" sinceversion="5" >
+			<position value="$safepos" max="this.ship.size" />
+		</move_to>
+		
+	</do_if>
+	<do_else>
+		<move_to object="this.ship" destination="$targetzone" abortpath="false" forcesteering="false" forceposition="false" finishonapproach="true" sinceversion="5" >
+			<!--<position object="player.ship" y="-200m" z="1500m"/>-->
+			<position object="player.ship" y="-500m" z="-1000m"/>
+		</move_to>
+	</do_else>
+	<do_if value="$jumpto != player.ship.zone" >
+		<wait exact="5s" />
+		<play_sound object="this.ship" sound="'anim_jumpdrive_l_activation'" />
+		<add_effect object="this.ship" effect="'jump_jumpout_l'"/>
+		<wait exact="3.4s" />
+		<warp object="this.ship" zone="$jumpto" >
+			<safepos radius="8km"/>
+		</warp>	  
+		<wait exact="8s" />
+		<set_value name="$Loc" exact="$jumpto.name + ', ' + $jumpto.sector.knownname + ', ' + $jumpto.cluster.knownname"/>
+
+		<!--<show_notification caption="'=== Probe Activation Report ==='" details="'\n Probe destination successful acquired.'.[]" timeout="12s" queued="true" priority="50" sound="notification_generic">-->
+		<show_notification caption="{40002,1}" details="{40002,2}" timeout="12s" queued="true" priority="50" sound="notification_generic">
+		<interaction text="''" param="$jumpto" param2="'GiveMeTheMap'" />
+		</show_notification>
+		<write_to_logbook category="general" text="({40002,3} + {40002,4}).[$Loc]"/>
+	</do_if>
+		<run_script name="'move.idle'">
+          <param name="MaxDistance" value="20km" />
+        </run_script>
+	  	  
+    </actions>
+  </attention>
+</aiscript>

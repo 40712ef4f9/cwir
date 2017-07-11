@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+  <add sel="/macros/macro/properties/builder">
+<!-- Titurel -->
+    
+  </add>
+  <add sel="/macros/macro/properties/builder">
+  <macro ref="units_size_xl_van_destroyer_macro" />
+  <!--<macro ref="units_size_xl_builder_outpost_macro" />-->
+  </add>
+  
+  
+</diff>

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="ShipSafeMove" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\MODS_JSGME\libraries\md.xsd">
+  <cues>
+     
+	<!-- X:R Conquer mod version 0.19s - mod by Rubini - X:R 3.53 compatible -->
+ 
+<cue name="TradeShipSafeMove_cue" checktime="20s" checkinterval="40s" version="1">
+	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1" />
+		<check_value value="md.CM_Config.Settings.$TradeShipJump == 1" />
+   	</conditions>
+	<delay min ="35s" max="40s" />
+	<actions>
+ 
+       	<find_ship name="$TradeShip" class="[class.ship_l, class.ship_xl]" functional="true" space="player.galaxy" multiple="true">
+				<match_any>
+ 					<match primarypurpose="objectpurpose.trade"/>
+                    <match primarypurpose="objectpurpose.mine"/>
+				</match_any>
+				<match_content class="class.jumpdrive" min="1" functional="true"/>
+              	<match macro="macro.units_size_xl_cargo_hauler_2_macro" negate ="true"/>
+				<match macro="macro.units_size_l_pir_container_03_macro"/>				
+		</find_ship>
+
+		<do_if value="@$TradeShip.count gt 0" >
+			<do_all exact="$TradeShip.count" counter="$j">
+			
+			<find_object_component name="$jumpdrive" object="$TradeShip.{$j}" class="class.jumpdrive"/>
+			<do_if value="$jumpdrive.isoperational">
+	
+        	 <set_value name="$flag" exact="1" />
+			 <do_if value="$TradeShip.{$j}.dockslot != null or $TradeShip.{$j}.docklink or $TradeShip.{$j}.parkedat or @$TradeShip.{$j}.pilot.command.value == command.attackobject or @$TradeShip.{$j}.pilot.command.value == command.attackenemies">
+        		<set_value name="$flag" exact="0" />
+			 </do_if>
+			 <do_if value="$flag" >
+
+				<find_object name="$EnemyMilitaryShip" class="[class.ship_l, class.ship_xl, class.station]" functional="true" space="$TradeShip.{$j}.zone" multiple="true">
+					<match_relation faction="$TradeShip.{$j}.owner" relation="kill"/>
+					<!--<match_relation faction="$TradeShip.{$j}.owner" relation="enemy"/>-->
+					<match_distance object="$TradeShip.{$j}" max="13km"/>
+					<match_any>
+						<match class="class.station"/>
+ 						<match primarypurpose="objectpurpose.fight"/>
+                    	<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+						<match macro="macro.units_size_l_pir_container_03_macro"/>
+					</match_any>
+				</find_object>
+
+			<do_if value="@$EnemyMilitaryShip.count gt 0" >
+				<create_list name="$EnemyShip"/>
+				<create_list name="$Distance"/>
+				<do_all exact="$EnemyMilitaryShip.count" counter="$k">
+					<append_to_list name="$EnemyShip" exact="$EnemyMilitaryShip.{$k}" />
+					<append_to_list name="$Distance" exact="$TradeShip.{$j}.distanceto.{$EnemyMilitaryShip.{$k}}" />
+				</do_all>
+				<do_if value="$TradeShip.{$j}.hasrelation.enemy.{faction.player} and $TradeShip.{$j}.zone == player.primaryship.zone" >
+					<append_to_list name="$EnemyShip" exact="player.primaryship" />
+					<append_to_list name="$Distance" exact="$TradeShip.{$j}.distanceto.{player.primaryship}" />
+				</do_if>
+
+        		<set_value name="$hull" exact="$TradeShip.{$j}.hullpercentage" />
+        		<set_value name="$shield" exact="$TradeShip.{$j}.shieldpercentage" />
+        		<set_value name="$distance" exact="$Distance.min" />
+        		<set_value name="$enemyship" exact="$EnemyShip.{$Distance.indexof.{$Distance.min}}" />
+				<clear_list list="$EnemyShip"/>
+				<clear_list list="$Distance"/>				
+				<do_if value="($distance lt 6km and $shield lt 90) or ($distance lt 12km and $shield lt 75)" >
+					<get_safe_pos object="$enemyship" zone="$TradeShip.{$j}.zone" min="30km" max="35km" radius="4000m" result="$safepos" allowyaxis="true"/>
+<!-- TO DO: find a safe nearby zone could be better but it works very well as it is now -->
+<!-- because the idea is not to intervene that much, i want to be sure that ship orders will be not affected -->
+
+					<set_value name="$chance" exact="100 - @$TradeShip.{$j}.shieldpercentage" />
+					<do_if value="$chance le 10">
+						<set_value name="$chance" exact="0" />
+					</do_if>
+					
+					<do_if value="$enemyship and $TradeShip.{$j}.zone != player.primaryship.zone and not $TradeShip.{$j}.isjobship" chance="$chance" >
+					
+				<!-- microjump issue possible fix -->													
+					<do_if value="$TradeShip.{$j}.commander == player.primaryship or $TradeShip.{$j}.commander == null">
+						<signal_objects object="$TradeShip.{$j}" param="'stop order'" />
+					</do_if>
+					
+					<set_value name="$Object" exact="$TradeShip.{$j}" />
+        			<set_value name="$Jumpdrive" exact="$jumpdrive" />
+					<set_value name="$Zone" exact="$TradeShip.{$j}.zone" />
+        			<set_value name="$Safepos" exact="$safepos" />
+        			<set_value name="$Effect_in" exact="'jump_jumpin_xl'" />
+						
+					<signal_cue_instantly cue="JumpforSafe" param="[$Object, $Jumpdrive, $Zone, $Safepos, $Effect_in]"/> 
+					
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 						
+		<write_to_logbook category="general" text="'=== SafeMove_cue SUCCESS OOZ=== \n Ship: %1 \n Ship owner: %2 \n Zone: %3 \n  Zone Owner: %4 \n NEAREST EnemyMilitaryCapShips count: %5 \n  %6 \n %7 %8 '.[$TradeShip.{$j}.name, $TradeShip.{$j}.owner, $TradeShip.{$j}.zone.name, $TradeShip.{$j}.zone.owner, $EnemyMilitaryShip.count, $distance, $shield, $hull]"/>
+</do_if>
+					</do_if>
+					<!--<do_elseif value="$enemyship and $TradeShip.{$j}.zone == player.primaryship.zone" chance="75 + $chance" >-->
+					<do_elseif value="$enemyship and $TradeShip.{$j}.zone == player.primaryship.zone" chance="$chance" >
+
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== SafeMove_cue SUCCESS==='" details="' \n Ship: %1 \n Ship owner: %2 \n Zone: %3 \n  Zone Owner: %4 \n NEAREST EnemyMilitaryCapShips count: %5 \n  %6 \n  %7  %8 '.[$TradeShip.{$j}.name, $TradeShip.{$j}.owner, $TradeShip.{$j}.zone.name, $TradeShip.{$j}.zone.owner, $EnemyMilitaryShip.count, $distance, $shield, $hull]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== SafeMove_cue SUCCESS=== \n Ship: %1 \n Ship owner: %2 \n Zone: %3 \n  Zone Owner: %4 \n NEAREST EnemyMilitaryCapShips count: %5 \n  %6 \n %7 %8 '.[$TradeShip.{$j}.name, $TradeShip.{$j}.owner, $TradeShip.{$j}.zone.name, $TradeShip.{$j}.zone.owner, $EnemyMilitaryShip.count, $distance, $shield, $hull]"/>
+</do_if>
+
+				<!-- microjump issue possible fix -->
+					<do_if value="$TradeShip.{$j}.commander == player.primaryship or $TradeShip.{$j}.commander == null">
+						<signal_objects object="$TradeShip.{$j}" param="'stop order'" />
+					</do_if>
+
+        				<set_value name="$fx" exact="'jump_activation_jumpdrive'" />
+        				<set_value name="$fx_in" exact="'jump_jumpin_xl'" />
+	    				<!--<do_if value="$TradeShip.{$j}.isclass.ship_l">
+        					<set_value name="$fx" exact="'jump_activation_jumpdrive_l'" />
+        					<set_value name="$fx_in" exact="'jump_jumpin_l'" />
+						</do_if>-->
+
+        				<set_value name="$Object" exact="$TradeShip.{$j}" />
+        				<set_value name="$Jumpdrive" exact="$jumpdrive" />
+						<set_value name="$Zone" exact="player.primaryship.zone" />
+        				<set_value name="$Safepos" exact="$safepos" />
+        				<set_value name="$Effect_in" exact="$fx_in" />
+
+						<add_effect object="$jumpdrive" effect="$fx" >
+							<position x="0m" y="-6m" z="0" />
+						</add_effect>
+						
+						<signal_cue_instantly cue="JumpforSafe" param="[$Object, $Jumpdrive, $Zone, $Safepos, $Effect_in]"/> 
+
+					</do_elseif>
+					<do_elseif value="$TradeShip.{$j}.zone == player.primaryship.zone">
+						<!--<play_sound object="player.primaryship" sound="'fx_jump_fail_CM'" />-->
+						<add_effect object="$jumpdrive" effect="'jump_deactivation_jumpdrive'" >
+							<position x="0m" y="-6m" z="0" />
+						</add_effect>
+					</do_elseif>
+				</do_if>
+				<do_elseif value="$distance lt 12km and $TradeShip.{$j}.zone == player.primaryship.zone" chance="75" >
+						<!--<play_sound object="player.primaryship" sound="'fx_jump_fail_CM'" />-->
+						<add_effect object="$jumpdrive" effect="'jump_deactivation_jumpdrive'" >
+							<position x="0m" y="-6m" z="0" />
+						</add_effect>
+				</do_elseif>
+				</do_if>														
+			</do_if>
+		</do_if>		
+ 			</do_all>
+		</do_if>
+	<reset_cue cue="TradeShipSafeMove_cue"/>
+	</actions>
+  </cue>
+
+
+	<cue name="JumpforSafe" instantiate="true" namespace="this"> 
+      <conditions>
+        <event_cue_signalled/>
+      </conditions>
+			<delay exact="20s"/>
+      <actions>
+
+	  
+	  
+            	<set_value name="$object" exact="event.param.{1}" />
+            	<set_value name="$jumpdrive" exact="event.param.{2}" />
+			    <set_value name="$zone" exact="event.param.{3}" />
+            	<set_value name="$safepos" exact="event.param.{4}" />
+        		<set_value name="$effect_in" exact="event.param.{5}" />
+		
+		<do_if value="not $jumpdrive.isoperational">
+		<!-- abort jump -->
+			<add_effect object="$jumpdrive" effect="'jump_deactivation_jumpdrive'" >
+				<position x="0m" y="-6m" z="0" />
+			</add_effect>
+		</do_if>
+		<do_else>
+				<add_effect object="$jumpdrive" effect="$effect_in" >
+					<position x="0m" y="-6m" z="0" />
+				</add_effect>
+
+				<warp object="$object" zone="$zone" >
+					<position value="$safepos"/>
+			    </warp>
+		<!-- microjump issue possible fix -->
+		<!-- job ships -->
+				<do_if value="$object.isjobship">
+					<start_script object="$object.pilot" name="'move.die'">
+						<param name="byjump" value="true"/>
+					</start_script>
+				</do_if>				
+		<!-- player squad ships and player ships without commander -->
+				<do_if value="$object.commander == player.primaryship or ($object.isplayerowned and  $object.commander == null)">
+					<create_list name="$Zone"/>
+					<create_list name="$ZoneDist"/>
+					<find_zone name="$zones" space="player.galaxy" tempzone="false" multiple="true" >
+						<match class="class.highway" negate="true"/>
+					</find_zone>
+					<do_all exact="$zones.count" counter="$i">		
+						<do_if value="not $zones.{$i}.istemporaryzone and $zones.{$i}.name != {20005,200} and $zones.{$i}.name != {20006,301}" >
+							<set_value name="$Flag" exact="1" />
+							<find_station name="$stations" space="$zones.{$i}" functional="true" multiple="true">
+								<match_relation faction="$object.owner" relation="enemy"/>
+							</find_station>							
+							<do_if value="@$stations.count gt 0" >								
+								<set_value name="$Flag" exact="0" />
+							</do_if>
+							<find_ship name="$zoneShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$zones.{$i}" multiple="true">
+								<match_relation faction="$object.owner" relation="enemy"/>
+								<match_any>
+									<match primarypurpose="objectpurpose.fight"/>
+									<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+									<match macro="macro.units_size_l_pir_container_03_macro"/>
+								</match_any>
+							</find_ship>
+							<do_if value="@$zoneShips.count" >
+								<set_value name="$Flag" exact="0" />
+							</do_if>
+							<do_if value="$Flag" >
+								<append_to_list name="$Zone" exact="$zones.{$i}" />
+								<append_to_list name="$ZoneDist" exact="$object.distanceto.{$zones.{$i}}"/>
+							</do_if>	
+						</do_if>
+					</do_all>
+					<set_value name="$SafeZone" exact="@$Zone.{$ZoneDist.indexof.{$ZoneDist.min}}"/>
+					<do_if value="not @$SafeZone.exists">
+						<set_value name="$SafeZone" exact="player.primaryship.zone"/>
+					</do_if>				
+					<set_value name="$Loc" exact="$object.zone.knownname + ', ' + $object.zone.sector.knownname + ', ' + $object.zone.cluster.knownname"/>
+					<set_value name="$Locfinal" exact="$SafeZone.knownname + ', ' + $SafeZone.sector.knownname + ', ' + $SafeZone.cluster.knownname"/>
+					<do_if value="$SafeZone == player.primaryship.zone">
+						<set_value name="$Locfinal" exact="'your position'"/>
+					</do_if>
+					<!--<show_help position="12" duration="12s" custom="'Ship %1 met a dangerous enemy presence in %2 and is retreating to %3, waiting for new orders.'.[$object.name, $Loc, $Locfinal]" />-->
+					<show_help position="12" duration="12s" custom="{40002,57}.[$object.name, $Loc, $Locfinal]" />
+					<!--<write_to_logbook category="general" text="'Ship %1 met a dangerous enemy presence in %2. Retreating and waiting for new orders at %3.'.[$object.name, $Loc, $Locfinal]" />-->
+					<signal_objects object="$object" param="'fly to'" param2="$SafeZone" delay="1s" />
+					<clear_list list="$Zone"/>
+					<clear_list list="$ZoneDist"/>
+				</do_if>
+		</do_else>
+	  </actions>
+    </cue>
+
+
+	
+</cues>
+
+</mdscript>

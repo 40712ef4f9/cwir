@@ -1,0 +1,2785 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+  <!-- Good -->
+  <replace sel="/macros/macro[@name='tzoneCluster_C_Sector10_Zone68_macro']">
+   <macro name="tzoneCluster_C_Sector10_Zone68_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="-6582.03125" y="0" z="1647.4609375" />
+        </offset>
+      </connection>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="34496.09375" y="0" z="-9319.3359375" />
+        </offset>
+      </connection>
+      <connection name="struct_bt_ol_medical_supplies_macro2" ref="stations">
+        <offset>
+          <position x="28046.875" y="210.9375" z="18687.5" />
+          <quaternion qx="0" qy="-0.9895218015" qz="0" qw="0.1443833411" />
+        </offset>
+        <macro ref="struct_bt_ol_medical_supplies_macro" connection="space">
+          <properties>
+            <identification owner="frantonpharma" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.2" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.4" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="4" />
+              <plan sequence="C" stage="4" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_ol_water_destillery_macro2" ref="stations">
+        <offset>
+          <position x="16712.890625" y="3875" z="5992.1875" />
+          <quaternion qx="0" qy="0.0795060843" qz="0" qw="0.9968343973" />
+        </offset>
+        <macro ref="struct_bt_ol_water_destillery_macro" connection="space">
+          <properties>
+            <identification owner="aquarius" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.6" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.6" />
+              </upgrade>
+              <plan sequence="A" stage="3" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="3" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_ol_spacefuel_production_macro" ref="stations">
+        <offset>
+          <position x="-37779.1875" y="9094" z="-24395.375" />
+        </offset>
+        <macro ref="struct_bt_ol_spacefuel_production_macro" connection="space">
+          <properties>
+            <identification owner="frantonpharma" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="1.0" />
+                <upgrade upgrade="turret_midrange" level="1.0" />
+                <upgrade upgrade="turret_missile" level="1.0" />
+                <upgrade upgrade="shieldgenerator" level="1.0" />
+                <upgrade upgrade="flak" level="1.0" />
+              </upgrade>
+              <plan sequence="A" stage="4" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,68}" />
+      <area />
+      <icon map="tzoneCluster_C_Sector10_Zone68_macro_icon" />
+      <map index="2" />
+    </properties>
+  </macro>
+  </replace>
+  
+  <replace sel="/macros/macro[@name='tzoneCluster_B_Sector04_Zone32_macro']">
+	<macro name="tzoneCluster_B_Sector04_Zone32_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="-13447.265625" y="0" z="-11785.15625" />
+        </offset>
+      </connection>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-10359.375" y="0" z="25265.625" />
+        </offset>
+      </connection>
+      <connection ref="Highway09Connection01_gate">
+        <offset>
+          <position x="1787.109375" y="420.8984375" z="582.03125" />
+        </offset>
+      </connection>
+      <connection name="struct_bt_alb_fuelstation_macro" ref="stations">
+        <offset>
+          <position x="-5980.46875" y="0" z="4734.375" />
+          <quaternion qx="0" qy="-0.9238795638" qz="0" qw="-0.3826834559" />
+        </offset>
+        <macro ref="struct_bt_alb_fuelstation_macro" connection="space">
+          <properties>
+            <identification owner="heartofalbion" />
+            <build>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="2" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_alb_food_production_plant_macro" ref="stations">
+        <offset>
+          <position x="12746.09375" y="-1437.5" z="3937.5" />
+          <quaternion qx="0" qy="-0.9659257531" qz="0" qw="0.2588192821" />
+        </offset>
+        <macro ref="struct_bt_alb_food_production_plant_macro" connection="space">
+          <properties>
+            <identification owner="wholesomefoods" />
+            <build>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_alb_food_production_plant_macro2" ref="stations">
+        <offset>
+          <position x="12746.09375" y="-1437.5" z="-9625" />
+          <quaternion qx="0" qy="-0.9659257531" qz="0" qw="0.2588192821" />
+        </offset>
+        <macro ref="struct_bt_alb_food_production_plant_macro" connection="space">
+          <properties>
+            <identification owner="wholesomefoods" />
+            <build>
+              <plan sequence="A" stage="3" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="props_gates_jumpbeacon_macro" ref="anything">
+        <offset>
+          <position x="8859.375" y="0" z="13937.5" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="props_gates_jumpbeacon_macro" connection="space" />
+      </connection>
+      <connection name="struct_bt_hoa_shipyard_macro" ref="stations">
+        <offset>
+          <position x="30068.484375" y="3000" z="12726.279296875" />
+          <quaternion qx="0" qy="-0.4226182401" qz="0" qw="0.9063078165" />
+        </offset>
+        <macro ref="struct_bt_hoa_shipyard_macro" connection="space">
+          <properties>
+            <identification owner="heartofalbion" />
+            <build>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="3" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,32}" owner="heartofalbion" />
+      <area />
+      <icon map="tzoneCluster_B_Sector04_Zone32_macro_icon" />
+      <map index="6" />
+    </properties>
+  </macro>
+  </replace>
+  <replace sel="/macros/macro[@name='tzoneCluster_B_Sector05_Zone19_macro']">
+  <macro name="tzoneCluster_B_Sector05_Zone19_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="-7935.546875" y="-6999.8168945312" z="-23838.37890625" />
+        </offset>
+      </connection>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="21700.1953125" y="5326.3549804688" z="-309.326171875" />
+        </offset>
+      </connection>
+      <connection ref="Highway02Connection02_gate">
+        <offset>
+          <position x="285.15625" y="-232.2998046875" z="13847.2900390625" />
+        </offset>
+      </connection>
+      <connection name="struct_bt_alb_cell_refinery_macro" ref="stations">
+        <offset>
+          <position x="1791.015625" y="5209.4375" z="18121.826171875" />
+          <quaternion qx="-4.768e-07" qy="-1" qz="0" qw="7.55e-08" />
+        </offset>
+        <macro ref="struct_bt_alb_cell_refinery_macro" connection="space">
+          <properties>
+            <identification owner="albionenergy" />
+            <build>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_alb_drone_complex_macro" ref="stations">
+        <offset>
+          <position x="-31436.5234375" y="1255.4931640625" z="-728.02734375" />
+          <quaternion qx="1.92e-07" qy="-0.3420201242" qz="6.99e-08" qw="0.9396926165" />
+        </offset>
+        <macro ref="struct_bt_alb_drone_complex_macro" connection="space">
+          <properties>
+            <identification owner="plutarch" />
+            <build>
+              <plan sequence="A" stage="1" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="2" />
+              <plan sequence="F" stage="2" />
+              <plan sequence="G" stage="1" />
+              <plan sequence="H" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_alb_shipyard_2_macro" ref="stations">
+        <offset>
+          <position x="-12396.484375" y="1000" z="14561.279296875" />
+          <quaternion qx="0" qy="-0.4226182401" qz="0" qw="0.9063078165" />
+        </offset>
+        <macro ref="struct_bt_alb_shipyard_2_macro" connection="space">
+          <properties>
+            <identification owner="plutarch" />
+            <build>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="3" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,19}" owner="plutarch" />
+      <area />
+      <icon map="tzoneCluster_B_Sector05_Zone19_macro_icon" />
+      <map index="2" />
+    </properties>
+  </macro>
+  </replace>
+  <!--<replace sel="/macros/macro[@name='tzoneCluster_C_Sector08_Zone92_macro']">
+  <macro name="tzoneCluster_C_Sector08_Zone92_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-13923.828125" y="0" z="20794.921875" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="10328.125" y="0" z="-29861.328125" />
+        </offset>
+      </connection>
+      <connection name="struct_bt_ol_shipyard_2_macro" ref="stations">
+        <offset>
+          <position x="-10537.109375" y="-3273.4375" z="-12626.953125" />
+          <quaternion qx="0" qy="-0.2651140988" qz="0" qw="0.9642170668" />
+        </offset>
+        <macro ref="struct_bt_ol_shipyard_2_macro" connection="space">
+          <properties>
+            <identification owner="jonferson" />
+            <build>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_ol_small_ships_complex_macro" ref="stations">
+        <offset>
+          <position x="-11587.890625" y="648.4375" z="5525.390625" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_small_ships_complex_macro" connection="space">
+          <properties>
+            <identification owner="jonferson" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.4" />
+                <upgrade upgrade="shieldgenerator" level="0.4" />
+                <upgrade upgrade="flak" level="0.4" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="props_gates_jumpbeacon_macro" ref="anything">
+        <offset>
+          <position x="3271.484375" y="0" z="8720.703125" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="props_gates_jumpbeacon_macro" connection="space" />
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,92}" />
+      <area />
+      <icon map="tzoneCluster_C_Sector08_Zone92_macro_icon" />
+      <map index="3" />
+    </properties>
+  </macro>
+  </replace>-->
+  
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone95_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone95_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-1992" y="13000" z="20484" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="3539" y="-10000" z="-17973" />
+        </offset>
+      </connection>
+      <connection ref="Highway11Connection01_gate">
+        <offset>
+          <position x="-5113.28125" y="-191.40625" z="4591.796875" />
+        </offset>
+      </connection>
+      <connection ref="Highway12Connection02_gate">
+        <offset>
+          <position x="-4925.78125" y="-191.40625" z="-229.98046875" />
+        </offset>
+      </connection>
+      <connection ref="Highway04Connection01_gate">
+        <offset>
+          <position x="5468.75" y="-191.40625" z="-1010.7421875" />
+        </offset>
+      </connection>
+      <connection ref="Highway02Connection02_gate">
+        <offset>
+          <position x="5863.28125" y="-191.40625" z="3744.62890625" />
+        </offset>
+      </connection>
+      <connection name="props_gates_jumpbeacon_macro" ref="anything">
+        <offset>
+          <position x="0" y="3441.40625" z="0" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="props_gates_jumpbeacon_macro" connection="space" />
+      </connection>
+	  <connection name="struct_bt_ol_water_destillery_macro2" ref="stations">
+        <offset>
+          <position x="16712.890625" y="3875" z="5992.1875" />
+          <quaternion qx="0" qy="0.0795060843" qz="0" qw="0.9968343973" />
+        </offset>
+        <macro ref="struct_bt_ol_water_destillery1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.6" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.6" />
+              </upgrade>
+              <plan sequence="A" stage="3" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="3" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_crystal_refinement_macro" ref="stations">
+        <offset>
+          <position x="5344.7265625" y="0" z="-7554.6875" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_crystal_refinement1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.6" />
+                <upgrade upgrade="turret_midrange" level="0" />
+                <upgrade upgrade="turret_missile" level="0" />
+                <upgrade upgrade="shieldgenerator" level="0.4" />
+                <upgrade upgrade="flak" level="0.2" />
+              </upgrade>
+              <plan sequence="A" stage="3" />
+              <plan sequence="B" stage="4" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,95}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone95_macro_icon" />
+      <map index="6" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- GOOD -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone96_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone96_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="13910" y="14000" z="20484" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="2507" y="-12000" z="-17973" />
+        </offset>
+      </connection>
+	  <connection ref="buildcon3">
+			<offset>
+				<position x="-12900" y="5000" z="20500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-10300" y="-16000" z="-6800" />
+			</offset>
+		</connection>	
+      <connection ref="Highway05Connection02_gate">
+        <offset>
+          <position x="-3234.375" y="-1320.3125" z="15482.91015625" />
+        </offset>
+      </connection>
+      <connection ref="Highway09Connection01_gate">
+        <offset>
+          <position x="-5921.875" y="-1320.3125" z="6208.984375" />
+        </offset>
+      </connection>
+      <connection ref="Highway10Connection02_gate">
+        <offset>
+          <position x="-5695.3125" y="-1320.3125" z="1583.984375" />
+        </offset>
+      </connection>
+      <connection ref="Highway12Connection01_gate">
+        <offset>
+          <position x="4625" y="-1320.3125" z="29.78515625" />
+        </offset>
+      </connection>
+      <connection ref="Highway11Connection02_gate">
+        <offset>
+          <position x="4835.9375" y="-1320.3125" z="5142.08984375" />
+        </offset>
+      </connection>
+	  <connection name="struct_bt_ol_cell_refinery_macro" ref="stations">
+        <offset>
+          <position x="506.25" y="-10.9375" z="-91.796875" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_cell_refinery1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.2" />
+                <upgrade upgrade="shieldgenerator" level="0.2" />
+                <upgrade upgrade="flak" level="0.2" />
+              </upgrade>
+              <plan sequence="A" stage="3" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="4" />
+              <plan sequence="D" stage="3" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	   <connection name="struct_bt_ol_solar_power_plant_macro2" ref="stations">
+        <offset>
+          <position x="-11242.1875" y="100" z="-10.9765625" />
+          <quaternion qx="0" qy="0.3889108598" qz="0" qw="0.9212753773" />
+        </offset>
+        <macro ref="struct_bt_ol_solar_power_plant1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.8" />
+                <upgrade upgrade="turret_midrange" level="0.2" />
+                <upgrade upgrade="turret_missile" level="0" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.2" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+      <connection name="struct_bt_ol_solar_power_plant_macro" ref="stations">
+        <offset>
+          <position x="-24025.390625" y="-24722.65625" z="-2244.140625" />
+          <quaternion qx="0" qy="0.3889108598" qz="0" qw="0.9212753773" />
+        </offset>
+        <macro ref="struct_bt_ol_solar_power_plant1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.8" />
+                <upgrade upgrade="turret_midrange" level="0.2" />
+                <upgrade upgrade="turret_missile" level="0" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.2" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,96}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone96_macro_icon" />
+      <map index="5" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- Good -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone97_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone97_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6980.047" y="13000" z="20484.90" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="22664.1" y="-12000" z="-14562.0" />
+        </offset>
+      </connection>
+      <connection ref="Highway09Connection02_gate">
+        <offset>
+          <position x="2746.09375" y="-884.765625" z="7560.05859375" />
+        </offset>
+      </connection>
+      <connection ref="Highway10Connection01_gate">
+        <offset>
+          <position x="2750" y="-884.765625" z="2235.83984375" />
+        </offset>
+      </connection>
+      <connection ref="Highway08Connection02_gate">
+        <offset>
+          <position x="-750" y="-884.765625" z="-1525.390625" />
+        </offset>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_bofu_plant_macro" ref="stations">
+        <offset>
+          <position x="-17798.431640625" y="-4500" z="-6909.4505615234" />
+          <quaternion qx="0" qy="-0.7010110617" qz="0" qw="0.713150382" />
+        </offset>
+        <macro ref="struct_bt_ol_bofu_plant1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="1" />
+                <upgrade upgrade="turret_midrange" level="1" />
+                <upgrade upgrade="turret_missile" level="1" />
+                <upgrade upgrade="shieldgenerator" level="1" />
+                <upgrade upgrade="flak" level="1" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="0" />
+            </build>
+          </properties>
+        </macro>
+      </connection>	  
+	  
+	  <connection name="struct_bt_ol_farm_complex_macro" ref="stations">
+        <offset>
+          <position x="-5500.9765625" y="10570.3125" z="21534.1796875" />
+          <quaternion qx="0" qy="0.039122846" qz="0" qw="0.9992344379" />
+        </offset>
+        <macro ref="struct_bt_ol_farm_complex1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.5" />
+                <upgrade upgrade="turret_midrange" level="0.5" />
+                <upgrade upgrade="turret_missile" level="0.5" />
+                <upgrade upgrade="shieldgenerator" level="0.5" />
+                <upgrade upgrade="flak" level="0.5" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="3" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_soy_farm_macro" ref="stations">
+        <offset>
+          <position x="456.0546875" y="-8027.34375" z="12907.2265625" />
+          <quaternion qx="0" qy="-0.7051326036" qz="0" qw="0.7090754509" />
+        </offset>
+        <macro ref="struct_bt_ol_soy_farm1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.5" />
+                <upgrade upgrade="turret_midrange" level="0.5" />
+                <upgrade upgrade="turret_missile" level="0.5" />
+                <upgrade upgrade="shieldgenerator" level="0.5" />
+                <upgrade upgrade="flak" level="0.5" />
+              </upgrade>
+              <plan sequence="A" stage="3" />
+              <plan sequence="B" stage="4" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="0" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,97}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone97_macro_icon" />
+      <map index="4" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- GOOD -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone98_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone98_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-2699" y="13500" z="18833" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="2832" y="-11340" z="-19624" />
+        </offset>
+      </connection>
+      <connection ref="Highway05Connection01_gate">
+        <offset>
+          <position x="-6378.90625" y="-916.015625" z="144.04296875" />
+        </offset>
+      </connection>
+      <connection ref="Highway01Connection02_gate">
+        <offset>
+          <position x="6511.71875" y="-916.015625" z="-167.96875" />
+        </offset>
+      </connection>
+	  <connection name="struct_bt_ol_construction_material_macro" ref="stations">
+        <offset>
+          <position x="5867.1875" y="0" z="-8109.375" />
+          <quaternion qx="0" qy="0.8343624473" qz="0" qw="0.5512161851" />
+        </offset>
+        <macro ref="struct_bt_ol_construction_material1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.6" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.6" />
+              </upgrade>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="4" />
+              <plan sequence="C" stage="3" />
+			  <plan sequence="D" stage="2" />
+			  <plan sequence="E" stage="2" />
+			  <plan sequence="F" stage="1" />
+			  <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  <connection name="struct_bt_ol_construction_material2_macro" ref="stations">
+        <offset>
+          <position x="15867.1875" y="0" z="8109.375" />
+          <quaternion qx="0" qy="0.8343624473" qz="0" qw="0.5512161851" />
+        </offset>
+        <macro ref="struct_bt_ol_construction_material1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.6" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.6" />
+              </upgrade>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="4" />
+              <plan sequence="C" stage="3" />
+			  <plan sequence="D" stage="2" />
+			  <plan sequence="E" stage="2" />
+			  <plan sequence="F" stage="1" />
+			  <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_hightec_construction_macro" ref="stations">
+        <offset>
+          <position x="49.0234375" y="-3898.4375" z="-15092.7734375" />
+          <quaternion qx="0" qy="-0.9999999404" qz="0" qw="-0.0003495654" />
+        </offset>
+        <macro ref="struct_bt_ol_hightec_construction1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.5" />
+                <upgrade upgrade="turret_midrange" level="0.5" />
+                <upgrade upgrade="turret_missile" level="0.5" />
+                <upgrade upgrade="shieldgenerator" level="0.5" />
+                <upgrade upgrade="flak" level="0.5" />
+              </upgrade>
+              <plan sequence="A" stage="0" />
+              <plan sequence="B" stage="3" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection> 
+	  
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,98}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone98_macro_icon" />
+      <map index="3" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- Good -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone99_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone99_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-14843" y="12000" z="8268" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="14113" y="-6000" z="-6846" />
+        </offset>
+      </connection>
+      <connection ref="Highway06Connection01_gate">
+        <offset>
+          <position x="-6398.4375" y="1054.6875" z="-8280.2734375" />
+        </offset>
+      </connection>
+      <connection ref="Highway03Connection02_gate">
+        <offset>
+          <position x="3992.1875" y="1054.6875" z="7202.1484375" />
+        </offset>
+      </connection>
+      <connection name="clustergate_connection7476" ref="gates">
+        <offset>
+          <position x="6277.34375" y="3031.25" z="-625.48828125" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="props_gates_anc_gate_b_macro" connection="space" />
+      </connection>
+	  
+	  <connection name="struct_bt_ol_metalworks_macro" ref="stations">
+        <offset>
+          <position x="1913.0859375" y="-3847.65625" z="6808.59375" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_metalworks1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <plan sequence="A" stage="4" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+      <connection name="struct_bt_ol_metalworks_macro2" ref="stations">
+        <offset>
+          <position x="16081.0546875" y="-1978.515625" z="11454.1015625" />
+          <quaternion qx="0" qy="-0.1408264339" qz="0" qw="0.9900342822" />
+        </offset>
+        <macro ref="struct_bt_ol_metalworks1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.2" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.4" />
+              </upgrade>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="5" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,99}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone99_macro_icon" />
+      <map index="10" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- RELOCATE CANT BUILD -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone100_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone100_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="953" y="8500" z="12706" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="851" y="-10000" z="-14417" />
+        </offset>
+      </connection>
+      <connection ref="Highway07Connection01_gate">
+        <offset>
+          <position x="-5210.9375" y="1052.734375" z="132.8125" />
+        </offset>
+      </connection>
+      <connection ref="Highway06Connection02_gate">
+        <offset>
+          <position x="5730.46875" y="1052.734375" z="478.515625" />
+        </offset>
+      </connection>
+	  
+     </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,100}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone100_macro_icon" />
+      <map index="9" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- Good -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone101_macro']">
+		<macro name="tzoneCluster_A_Sector01_Zone101_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="13265" y="8000" z="8342" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="-15316" y="-9000" z="-9079" />
+        </offset>
+      </connection>
+      <connection ref="Highway07Connection02_gate">
+        <offset>
+          <position x="4945.3125" y="-833.984375" z="-3393.06640625" />
+        </offset>
+      </connection>
+      <connection ref="Highway08Connection01_gate">
+        <offset>
+          <position x="-2187.5" y="-833.984375" z="3611.81640625" />
+        </offset>
+      </connection>
+	  <!--<connection name="struct_bt_ol_shipyard_macro" ref="stations">
+        <offset>
+          <position x="2877.9296875" y="1141.11328125" z="2421.875" />          
+        </offset>
+        <macro ref="struct_bt_ol_shipyard_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />              
+            </build>
+          </properties>
+        </macro>
+      </connection>-->
+	  
+	  <connection name="struct_bt_ol_fuelstation_macro" ref="stations">
+        <offset>
+          <position x="27877.9296875" y="2141.11328125" z="-12421.875" />          
+        </offset>
+        <macro ref="struct_bt_ol_fuelstation_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="1" />
+                <upgrade upgrade="turret_midrange" level="1" />
+                <upgrade upgrade="turret_missile" level="1" />
+                <upgrade upgrade="shieldgenerator" level="1" />
+                <upgrade upgrade="flak" level="1" />
+              </upgrade>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="2" />
+            </build>
+          </properties>
+        </macro>
+      </connection>	  
+	  
+	  <connection name="struct_bt_ol_small_ships_complex_macro" ref="stations">
+        <offset>
+          <position x="-13587.890625" y="5648.4375" z="1525.390625" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_small_ships_complex1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.4" />
+                <upgrade upgrade="shieldgenerator" level="0.4" />
+                <upgrade upgrade="flak" level="0.4" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,101}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone101_macro_icon" />
+      <map index="8" />
+    </properties>
+  </macro>
+  </replace>
+  <!-- GOOD -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone102_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone102_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+	
+	<connection name="struct_bt_ol_weaponryproduction_macro" ref="stations">
+        <offset>
+          <position x="-2369.140625" y="-2146.484375" z="-12560.546875" />
+          <quaternion qx="0" qy="-0.176483199" qz="0" qw="0.9843036532" />
+        </offset>
+        <macro ref="struct_bt_ol_weaponryproduction1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.8" />
+                <upgrade upgrade="turret_midrange" level="0.2" />
+                <upgrade upgrade="turret_missile" level="0" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.2" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="3" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	
+	<connection name="struct_bt_ol_drone_complex_macro" ref="stations">
+        <offset>
+          <position x="-12032.2265625" y="943.359375" z="-8173.828125" />
+          <quaternion qx="0" qy="0.5271795988" qz="0" qw="0.8497538567" />
+        </offset>
+        <macro ref="struct_bt_ol_drone_complex1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.6" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.2" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.4" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="2" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_tech_complex_macro" ref="stations">
+        <offset>
+          <position x="6757.8125" y="-1320.3125" z="-25592.7734375" />
+          <quaternion qx="0" qy="-0.5334932208" qz="0" qw="0.8458043337" />
+        </offset>
+        <macro ref="struct_bt_ol_tech_complex1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.6" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0.6" />
+              </upgrade>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="2" />
+              <plan sequence="F" stage="2" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,102}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone102_macro_icon" />
+      <map index="1" />
+    </properties>
+  </macro>
+  
+  </replace>
+  <!-- GOOD -->
+  <replace sel="/macros/macro[@name='tzoneCluster_A_Sector01_Zone103_macro']">
+  <macro name="tzoneCluster_A_Sector01_Zone103_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-18031" y="16300" z="739" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="1812" y="-4600" z="-19691" />
+        </offset>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_laboratory_macro" ref="stations">
+        <offset>
+          <position x="7843.75" y="0" z="10787.109375" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_laboratory1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.5" />
+                <upgrade upgrade="turret_midrange" level="0.5" />
+                <upgrade upgrade="turret_missile" level="0.5" />
+                <upgrade upgrade="shieldgenerator" level="0.5" />
+                <upgrade upgrade="flak" level="0.5" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="3" />
+              <plan sequence="C" stage="3" />
+              <plan sequence="D" stage="3" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+              <plan sequence="G" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_high_energy_construction_macro" ref="stations">
+        <offset>
+          <position x="-1050.78125" y="0" z="-1447.265625" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_ol_high_energy_construction1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.4" />
+                <upgrade upgrade="turret_midrange" level="1" />
+                <upgrade upgrade="turret_missile" level="0" />
+                <upgrade upgrade="shieldgenerator" level="0.4" />
+                <upgrade upgrade="flak" level="0.2" />
+              </upgrade>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="3" />
+              <plan sequence="C" stage="3" />
+              <plan sequence="D" stage="1" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="0" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection name="struct_bt_ol_medical_supplies_macro2" ref="stations">
+        <offset>
+          <position x="28046.875" y="1010.9375" z="18687.5" />
+          <quaternion qx="0" qy="-0.9895218015" qz="0" qw="0.1443833411" />
+        </offset>
+        <macro ref="struct_bt_ol_medical_supplies1_macro" connection="space">
+          <properties>
+            <identification owner="hereticvanguards" />
+            <build>
+              <upgrade>
+                <upgrade upgrade="turret_shortrange" level="0.2" />
+                <upgrade upgrade="turret_midrange" level="0.4" />
+                <upgrade upgrade="turret_missile" level="0.4" />
+                <upgrade upgrade="shieldgenerator" level="0.6" />
+                <upgrade upgrade="flak" level="0" />
+              </upgrade>
+              <plan sequence="A" stage="2" />
+              <plan sequence="B" stage="4" />
+              <plan sequence="C" stage="4" />
+              <plan sequence="D" stage="2" />
+              <plan sequence="E" stage="1" />
+              <plan sequence="F" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,103}" />
+      <area />
+      <icon map="tzoneCluster_A_Sector01_Zone103_macro_icon" />
+      <map index="2" />
+    </properties>
+  </macro>
+  
+  </replace>
+  
+  <!--<replace sel="/macros/macro[@name='tzoneCluster_B_Sector07_Zone08_macro']">
+  <macro name="tzoneCluster_B_Sector07_Zone08_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="Highway08Connection02_gate">
+        <offset>
+          <position x="13413.57421875" y="1252.44140625" z="-2863.28125" />
+        </offset>
+      </connection>
+      <connection name="argon_minea_ore_s_macro" ref="asteroids">
+        <offset>
+          <position x="-6700.1953125" y="1252.685546875" z="-1320.3125" />
+          <quaternion qx="0" qy="-0.9238795638" qz="0" qw="-0.3826834559" />
+        </offset>
+        <macro ref="argon_minea_ore_s_macro" connection="space" />
+      </connection>
+      <connection name="landmarks_unique_ar_badlands_colony_macro" ref="stations">
+        <offset>
+          <position x="6151.3671875" y="0.48828125" z="-3367.1875" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="landmarks_unique_ar_badlands_colony_macro" connection="space">
+          <properties>
+            <identification owner="plutarch" />
+            <build>
+              <plan sequence="A" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  <connection ref="buildconnpc1">
+			<offset>
+				<position x="-6700" y="0" z="15500" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="-6700" y="0" z="-17500" />
+			</offset>
+		</connection>		
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,8}"  owner="plutarch"  />
+      <area />
+      <icon map="tzoneCluster_B_Sector07_Zone08_macro_icon" />
+      <map index="1" />
+    </properties>
+  </macro>
+  </replace>
+  
+  
+   <replace sel="/macros/macro[@name='tzoneCluster_B_Sector07_Zone10_macro']">
+  <macro name="tzoneCluster_B_Sector07_Zone10_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection name="struct_bt_alb_warehouse_macro" ref="stations">
+        <offset>
+          <position x="-1049.896" y="-4879.11328125" z="32304.875" />
+        </offset>
+        <macro ref="struct_bt_alb_warehouse_macro" connection="space">
+          <properties>
+            <identification owner="sovereignsyndicate" />
+            <build>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="3" />
+              <plan sequence="C" stage="2" />
+              <plan sequence="D" stage="3" />
+              <plan sequence="E" stage="2" />
+              <plan sequence="F" stage="3" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+	  
+	  <connection ref="buildconnpc1">
+			<offset>
+				<position x="-16300" y="0" z="19900" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="16300" y="0" z="-19900" />
+			</offset>
+		</connection>
+		
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,10}"  owner="plutarch"  />
+      <area />
+      <icon map="tzoneCluster_B_Sector07_Zone10_macro_icon" />
+      <map index="2" />
+    </properties>
+  </macro>
+  
+  </replace>-->
+  <add sel="//macro[@name='tzoneCluster_A_Sector03_Zone111_macro']/connections">
+      <connection name="xenon_asteroid_shipyard_macro" ref="stations">
+        <offset>
+          <position x="-6700" y="12500" z="2000" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="xenon_asteroid_shipyard_macro" connection="space">
+          <properties>
+            <identification owner="xenon" />
+            <build>
+              <plan sequence="A" stage="1" />
+              <plan sequence="B" stage="1" />
+              <plan sequence="C" stage="1" />
+              <plan sequence="D" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+  </add>
+   
+  
+  <add sel="//macro[@name='tzoneCluster_C_Sector08_Zone93_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-23000" y="20000" z="-17100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="11100" y="-20000" z="17300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector08_Zone92_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="12300" y="20000" z="20800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="14800" y="-20000" z="1100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector08_Zone91_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-12300" y="20000" z="15700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-14800" y="-20000" z="-30000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector08_Zone90_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="6300" y="20000" z="-11200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="17800" y="-20000" z="-11200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector08_Zone89_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-24500" y="20000" z="16400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-24500" y="-20000" z="-8900" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector08_Zone88_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="19800" y="20000" z="18400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19800" y="-20000" z="-24900" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector08_Zone87_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-11100" y="20000" z="-4000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-13200" y="-20000" z="-20400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone82_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-11400" y="20000" z="22900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-20800" y="-20000" z="-25800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone81_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-12100" y="20000" z="23100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-13200" y="-20000" z="-20900" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone80_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-10000" y="20000" z="-19700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="12400" y="-20000" z="14000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone79_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-16500" y="20000" z="16500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-16500" y="-20000" z="-22400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone78_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="16400" y="20000" z="16400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="20800" y="-20000" z="-21500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone77_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="15900" y="20000" z="16600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="15800" y="-20000" z="-17600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone76_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-30700" y="20000" z="-14100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-19000" y="-20000" z="-15800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector11_Zone75_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="6700" y="20000" z="22800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="7200" y="-20000" z="-12800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone74_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="27200" y="20000" z="23100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="21400" y="-20000" z="-20000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone73_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="19100" y="20000" z="25200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19100" y="-20000" z="-25200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone72_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="0" y="20000" z="-15400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="14100" y="-20000" z="-20700" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone71_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="5100" y="20000" z="-20100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="18600" y="-20000" z="-20100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone70_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-21100" y="20000" z="-12100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-4200" y="-20000" z="-14500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone69_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="10100" y="20000" z="-20900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="14700" y="-20000" z="14700" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone68_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="4200" y="20000" z="22500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="22700" y="-20000" z="25500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone67_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-10200" y="20000" z="-20400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="7500" y="-20000" z="-24200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector10_Zone66_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-22400" y="20000" z="-11500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-9600" y="-20000" z="-16100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone65_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="16500" y="20000" z="11800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="16500" y="-20000" z="-16300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone64_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-23400" y="20000" z="0" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-19400" y="-20000" z="-22300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone63_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-27600" y="20000" z="-15300" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19800" y="-20000" z="-15300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone62_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-24500" y="20000" z="-3200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-18200" y="-20000" z="-26800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone61_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-16800" y="20000" z="15200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="10200" y="-20000" z="25100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone60_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="11900" y="20000" z="23600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="22300" y="-20000" z="-29600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_C_Sector09_Zone59_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="1200" y="20000" z="36600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="15900" y="-20000" z="-25600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone53_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="16900" y="20000" z="30700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-16900" y="-18000" z="-30700" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone52_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-19800" y="20000" z="22500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="12200" y="-20000" z="-18700" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone51_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-12300" y="20000" z="23500" />
+			</offset>
+		</connection>	
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-16900" y="-20000" z="-30700" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone50_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-12000" y="20000" z="-18500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="14800" y="-20000" z="-18500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone49_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-4000" y="20000" z="-6900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="17400" y="-20000" z="9300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone48_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="9200" y="20400" z="9300" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-12000" y="-20000" z="-18500" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone47_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-27600" y="20000" z="1100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="9600" y="-20000" z="1100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone46_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-22900" y="20000" z="-19100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="7700" y="-20000" z="-19100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector18_Zone45_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-39800" y="20000" z="-8400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="11000" y="-20000" z="-4200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone33_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-3500" y="20000" z="20200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-10500" y="-20000" z="-18300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone32_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="12700" y="20000" z="25300" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="26900" y="-20000" z="-14600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone31_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-9800" y="20000" z="14600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-10300" y="-20000" z="-17100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone30_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-19900" y="20000" z="14600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19300" y="-20000" z="16700" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone29_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="20300" y="20000" z="18700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-30100" y="-20000" z="-7900" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone28_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-15800" y="20000" z="27500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="16400" y="-20000" z="27500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector04_Zone27_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-8300" y="20000" z="18900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-9800" y="-20000" z="-28500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone26_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-18100" y="20000" z="12700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-20200" y="-20000" z="-11700" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone25_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-16300" y="20000" z="-13600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="15300" y="-20000" z="-13800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone24_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-20400" y="20000" z="-11200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="20400" y="-20000" z="-12100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone23_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="9100" y="20000" z="16100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="9100" y="-20000" z="-17300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone22_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-9800" y="20000" z="17900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19100" y="-20000" z="-17000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone21_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-24300" y="20000" z="-13800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="28600" y="-20000" z="-14400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone20_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-24100" y="20000" z="-17000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="4700" y="-20000" z="-17000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector05_Zone19_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-31400" y="20000" z="18100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="21700" y="-20000" z="-23800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone18_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="16200" y="20000" z="6500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="16200" y="-20000" z="-7800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone17_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="13600" y="20000" z="-16700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-10500" y="-20000" z="-17000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone16_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-16700" y="20000" z="10700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-16700" y="-20000" z="-11000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone15_macro']/connections">
+		<connection ref="buildconnpc1">
+			<offset>
+				<position x="-15700" y="20000" z="19700" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="-14500" y="-20000" z="-12200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone14_macro']/connections">
+		<connection ref="buildconnpc1">
+			<offset>
+				<position x="-14600" y="20000" z="3700" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="-14600" y="-20000" z="-22400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone13_macro']/connections">
+		<connection ref="buildconnpc1">
+			<offset>
+				<position x="-27300" y="20000" z="-13500" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="15100" y="-20000" z="-20300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone12_macro']/connections">
+		<connection ref="buildconnpc1">
+			<offset>
+				<position x="-18800" y="20000" z="-24600" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="15800" y="-20000" z="-23400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector06_Zone11_macro']/connections">
+		<connection ref="buildconnpc1">
+			<offset>
+				<position x="-25700" y="20000" z="-19500" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="-27700" y="-20000" z="16500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone10_macro']/connections">
+		<connection ref="buildcon1">
+			<offset>
+				<position x="-16300" y="20000" z="19900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon2">
+			<offset>
+				<position x="16300" y="-20000" z="-19900" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone09_macro']/connections">
+		<connection ref="buildconnpc1">
+			<offset>
+				<position x="-16300" y="20000" z="-9500" />
+			</offset>
+		</connection>
+		<connection ref="buildconnpc2">
+			<offset>
+				<position x="2900" y="-20000" z="12800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone08_macro']/connections">
+		<connection ref="buildcon1">
+			<offset>
+				<position x="-6700" y="20000" z="15500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon2">
+			<offset>
+				<position x="-6700" y="-20000" z="-17500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone07_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="16300" y="20000" z="17500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19800" y="-20000" z="-18500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone06_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-15400" y="20000" z="-2500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="17100" y="-20000" z="-10100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone05_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-20500" y="20000" z="-15400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="20500" y="-20000" z="7200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone04_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-19600" y="20000" z="-17000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="2000" y="-20000" z="-19000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone03_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-14800" y="20000" z="-18500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="18400" y="-20000" z="-12300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone02_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="9700" y="20000" z="11800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="16500" y="-20000" z="19800" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_B_Sector07_Zone01_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-17400" y="20000" z="16600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="14400" y="-20000" z="25700" />
+			</offset>
+		</connection>		
+	</add>
+
+	<add sel="//macro[@name='tzoneCluster_D_Sector17_Zone34_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="13700" y="20000" z="-15000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-18800" y="-20000" z="15000" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector17_Zone35_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-18800" y="20000" z="15000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="18800" y="-20000" z="-15000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector17_Zone36_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-15900" y="20000" z="-18000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="22100" y="-20000" z="-18000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector17_Zone37_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-20500" y="20000" z="17500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-20500" y="-20000" z="-29400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector17_Zone38_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-18300" y="20000" z="-19500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="10200" y="-20000" z="-19500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector17_Zone39_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-25100" y="20000" z="12300" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="16700" y="-20000" z="12300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector19_Zone40_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-10000" y="10000" z="10800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-1000" y="-10000" z="-29300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector19_Zone41_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-15900" y="-5000" z="-15800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="13800" y="-5000" z="-10400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector19_Zone42_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-31800" y="20000" z="22800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="26900" y="-20000" z="-28700" />
+			</offset>
+		</connection>		
+	</add>
+	<replace sel="//macro[@name='tzoneCluster_D_Sector19_Zone43_macro']/connections">
+	<macro name="tzoneCluster_D_Sector19_Zone43_macro" class="zone">
+    <component ref="standardzone" />
+    <connections>
+      <connection ref="buildcon1">
+        <offset>
+          <position x="-34285.15625" y="0" z="30830.078125" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="19378.90625" y="0" z="22972.65625" />
+        </offset>
+      </connection>
+      <connection ref="buildcon3">
+        <offset>
+          <position x="24062.90625" y="3246" z="9772.65625" />
+        </offset>
+      </connection>
+	  <connection ref="buildcon4">
+			<offset>
+				<position x="14100" y="5000" z="-17300" />
+			</offset>
+		</connection>
+		<connection ref="buildcon5">
+			<offset>
+				<position x="-19000" y="-5000" z="-6000" />
+			</offset>
+		</connection>
+      <connection ref="Highway08Connection02_gate">
+        <offset>
+          <position x="-11355.46875" y="117.1875" z="37385.7421875" />
+        </offset>
+      </connection>
+      <connection ref="Highway05Connection02_gate">
+        <offset>
+          <position x="-902.34375" y="117.1875" z="36870.1171875" />
+        </offset>
+      </connection>
+      <connection ref="Highway06Connection01_gate">
+        <offset>
+          <position x="3410.15625" y="117.1875" z="36937.5" />
+        </offset>
+      </connection>
+      <connection name="argon_m_solarpowerplant_macro" ref="asteroids">
+        <offset>
+          <position x="18488.28125" y="117.1875" z="22904.296875" />
+          <quaternion qx="0.2243097723" qy="-0.2693570852" qz="-0.0646670982" qw="0.9343179464" />
+        </offset>
+        <macro ref="argon_m_solarpowerplant_macro" connection="space" />
+      </connection>
+      <connection name="struct_bt_dv_canteran_outpost_02_macro" ref="stations">
+        <offset>
+          <position x="367.1875" y="-898.4375" z="39025.390625" />
+          <quaternion qx="0" qy="0" qz="0" qw="1" />
+        </offset>
+        <macro ref="struct_bt_dv_canteran_outpost_02_macro" connection="space">
+          <properties>
+            <identification owner="canteran" />
+            <build>
+              <plan sequence="A" stage="1" />
+            </build>
+          </properties>
+        </macro>
+      </connection>
+    </connections>
+    <properties>
+      <boundaries priority="1" />
+      <identification name="{20005,43}" owner="canteran"/>
+      <area />
+      <icon map="tzoneCluster_D_Sector19_Zone43_macro_icon" />
+      <map index="1" />
+    </properties>
+  </macro>
+		
+	</replace>
+	<add sel="//macro[@name='tzoneCluster_D_Sector19_Zone44_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-18900" y="20000" z="-6000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19500" y="-20000" z="-6000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector20_Zone54_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-19200" y="20000" z="10900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="19500" y="-15000" z="-6000" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector20_Zone55_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-13400" y="16000" z="18500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-18000" y="-20000" z="-21100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector20_Zone56_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="9900" y="20000" z="-27200" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-11000" y="-20000" z="-26100" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector20_Zone57_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="21200" y="20000" z="-17100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-21000" y="-20000" z="-26100" />
+			</offset>
+		</connection>
+	</add>
+	<add sel="//macro[@name='tzoneCluster_D_Sector20_Zone58_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="7800" y="20000" z="30000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="7800" y="-20000" z="-20500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone103_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="0" y="20000" z="19700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="18000" y="-20000" z="0" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone102_macro']/connections">
+		<connection ref="buildcon1">
+			<offset>
+				<position x="-17500" y="20000" z="7500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon2">
+			<offset>
+				<position x="17500" y="-20000" z="-7500" />
+			</offset>		
+		</connection>
+		<connection ref="buildcon3">
+			<offset>
+				<position x="2369.140625" y="20146.484375" z="12560.546875" />
+			</offset>		
+		</connection>	
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-6757.8125" y="-15320.3125" z="25592.7734375" />
+			</offset>		
+		</connection>			
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone101_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-15300" y="20000" z="10100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="4900" y="-20000" z="-10100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone100_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-7500" y="20000" z="12700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-7500" y="-20000" z="-14400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone99_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="2000" y="20000" z="-9700" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="14100" y="-20000" z="7300" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone98_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-10100" y="20000" z="18800" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="11000" y="-20000" z="-19600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone97_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="19900" y="20000" z="20500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-7300" y="-20000" z="-14600" />
+			</offset>
+		</connection>		
+	</add>
+	
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone95_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-9600" y="20000" z="-18000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="9700" y="-20000" z="20500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector01_Zone94_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="12700" y="20000" z="19400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="13400" y="-20000" z="-14100" />
+			</offset>
+		</connection>		
+	</add>
+	
+	<add sel="//macro[@name='tzoneCluster_A_Sector02_Zone104_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-18700" y="20000" z="17100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-15100" y="-20000" z="-17200" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector02_Zone105_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="17800" y="20000" z="19000" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-16400" y="-20000" z="-12600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector02_Zone106_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="16400" y="20000" z="20100" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="9500" y="-20000" z="-21100" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector02_Zone107_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-13600" y="20000" z="17600" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="17100" y="-20000" z="17600" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector03_Zone109_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-15500" y="20000" z="21900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-17500" y="-20000" z="-19400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector03_Zone110_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-20500" y="20000" z="22400" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-20500" y="-20000" z="-22400" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector03_Zone111_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-12500" y="20000" z="17500" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-12500" y="-20000" z="-17500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector03_Zone112_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-9900" y="20000" z="8900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="13300" y="-20000" z="-20000" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector03_Zone113_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-14200" y="20000" z="7900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="16500" y="-20000" z="-18500" />
+			</offset>
+		</connection>		
+	</add>
+	<add sel="//macro[@name='tzoneCluster_A_Sector03_Zone114_macro']/connections">
+		<connection ref="buildcon3">
+			<offset>
+				<position x="-26700" y="20000" z="23900" />
+			</offset>
+		</connection>
+		<connection ref="buildcon4">
+			<offset>
+				<position x="-26700" y="-20000" z="-22800" />
+			</offset>
+		</connection>		
+	</add>
+  
+</diff>

@@ -1,0 +1,3536 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<mdscript name="Boarding_PlayerFleet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+	<!-- Conquer_mod v020 -->
+
+	<cues>
+
+		<cue name="GlobalInit">
+			<actions>
+				<set_value name="Start.$PageID" exact="30401"/>
+			</actions>
+		</cue>
+
+		<cue name="Start" namespace="this" instantiate="true" version="2">
+			<documentation>
+				<todo>
+					<item author="Owen" description="Un-playerise this script"/>
+					<item author="Owen" description="Improve cleanup marines which were on their way to the target when it was destroyed. Make them return?"/>
+				</todo>
+			</documentation>
+			<conditions>
+				<event_boarding_triggered />
+				<!-- Sanity checks -->
+				<check_value value="event.param.isclass.{class.entity}" />
+				<check_value value="event.param2.isclass.{class.defensible}" />
+				<check_value value="typeof event.param3 == datatype.faction" />
+
+
+				<!--MEU-->
+				<check_value value="event.param.ship == player.primaryship" />
+				<check_value value="@md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 1" />
+				<!--<check_value value="not global.$fleetplayerboardtarget? or not global.$fleetplayerboardtarget" />-->
+				<!--MEU-->
+
+
+			</conditions>
+			<actions>
+
+				<!-- BF-->
+				<!-- debug only-->
+				<!--<add sel="/mdscript/cues/cue[@name='Start']/actions" pos="prepend">-->
+
+				<!--<show_notification caption="'=== Boarding FLEET PLAYER Param check ==='" details="'\n EP %1 \n EPname  %2 \n EPship %3 \n EPship name %4 \n EP2 %5 \n EP3 %6 \n EP owner %7 \n true %8\n true %9.'.[event.param, event.param.name, event.param.ship, event.param.ship.name,  event.param2.name, event.param3, event.param.owner, event.param.ship == player.primaryship, event.param3 == faction.player]" timeout="12s" queued="true" priority="8" />
+								
+<write_to_logbook category="general" text="'=== Boarding FLEET PLAYER Param check === \n EP %1 \n EPname  %2 \n EPship %3 \n EPship name %4 \n EP2 %5 \n EP3 %6 \n EP owner %7 \n true %8 \n true %9.'.[event.param, event.param.name, event.param.ship, event.param.ship.name,  event.param2.name, event.param3, event.param.owner, event.param.ship == player.primaryship, event.param3 == faction.player]"/>-->
+
+				<!--</add> -->
+
+
+				<!--<!{1}**MEU**{1}>
+  <set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="0" />
+  <!{1}**MEU**{1}>-->
+				<set_value name="global.$fleetplayerboardhacker" exact="false" />
+				<set_value name="global.$fleetplayerboardtarget" exact="event.param2" />
+
+
+				<set_value name="$debugoutputchance" exact="0" />
+				<!-- Save event data -->
+				<set_value name="$commander" exact="event.param" />
+				<set_value name="$target" exact="event.param2" />
+				<set_value name="$faction" exact="event.param3" />
+				<!-- init some stuff -->
+				<set_value name="$boardership" exact="$commander.ship" />
+				<set_value name="$training" exact="false" />
+				<set_value name="$hitchance" exact="0.25" />
+				<set_value name="$progress" exact="0" />
+				<set_value name="$nummarines" exact="0" />
+				<set_value name="$attackstrength" exact="0.0f" />
+				<set_value name="$defencestrength" exact="0.0f" />
+				<set_value name="$mindefencestrength" exact="4" />
+				<set_value name="$retreating" exact="false" />
+				<set_value name="$scannerdroneexists" exact="false" />
+				<set_value name="$hackerdroneexists" exact="false" />
+				<set_value name="$playerdrones" exact="$boardership.drones" />
+
+				<set_object_boarder object="$target" boarder="$boardership"/>
+
+				<!-- Mission objectives will be set below, depending on situation -->
+				<!--<debug_text text="'Creating boarding mission'" />
+        <debug_text text="Start.static.$PageID" chance="$debugoutputchance"/>-->
+				<create_mission cue="Start" name="readtext.{static.$PageID}.{1}" description="readtext.{static.$PageID}.{2}" difficulty="level.medium" faction="faction.player" type="missiontype.fight" />
+				<do_if value="not $training">
+					<set_value name="stat.boarding_attempts" operation="add" />
+				</do_if>
+				<create_list name="$ArrivedMarines" exact="unitcategory.marine.maxmk" comment="Used to list of marine macros by MK so they can be killed/promoted and then returned to unit storage"/>
+				<do_all exact="unitcategory.marine.maxmk" counter="$i">
+					<set_value name="$ArrivedMarines.{$i}" exact="[]"/>
+				</do_all>
+				<create_group groupname="$boardingpodsinflight"/>
+
+				<!--Promotion lists-->
+				<!--[ [[MK1macro, promotionchance], [MK2macro, promotionchance], [MK3macro, promotionchance]], [[MK1macro, promotionchance], [MK2macro, promotionchance], [MK3macro, promotionchance]] ]-->
+				<set_value name="$PromotionLists" exact="[[[macro.character_argon_male_marine_mk1_macro, 25], [macro.character_argon_male_marine_mk2_macro, 2], [macro.character_argon_male_marine_mk3_macro, 0]]]"/>
+
+
+
+				<!-- MR -->
+				<!--<add sel="//cue[@name='Start']/actions/set_object_boarder" pos="before">-->
+				<!--<add sel="//cue[@name='Start']/actions/start_conversation" pos="before">-->
+
+				<set_value name="$cprescan" exact="false"/>
+				<set_value name="$prescaninit" exact="false"/>
+				<set_value name="$PreScanDone" exact="false"/>
+				<set_value name="$PreScanFailed" exact="false"/>
+				<set_value name="$NewAttStr" exact="0.0f"/>
+				<create_list name="$NewAttUnits" exact="unitcategory.marine.maxmk" />
+				<create_list name="$NewCasPost" exact="unitcategory.marine.maxmk" />
+				<create_list name="$NewCasPre" exact="unitcategory.marine.maxmk" />
+
+				<!--BF	-->
+				<!--<add sel="//set_value[@name='$boardership']" pos="after">-->
+				<!--<do_if value="$boardership?">-->
+				<set_value name="$isplayerprocess" exact="$commander.owner == faction.player" comment="to be deleted"/>
+				<set_value name="$isplayerinvolved" exact="$commander.owner == faction.player" comment="to be deleted"/>
+				<create_group groupname="$BoardingFleet"/>
+				<add_to_group groupname="$BoardingFleet" object="$boardership" />
+				<do_all exact="$boardership.subordinates.count" counter="$i">
+					<do_if value="$boardership.subordinates.{$i}.availableunits.{unitcategory.marine}.count and $boardership.zone == $boardership.subordinates.{$i}.zone"> 
+						<add_to_group groupname="$BoardingFleet" object="$boardership.subordinates.{$i}" /> 
+					</do_if> 
+				</do_all>
+
+				<do_all exact="unitcategory.marine.maxmk" counter="$i">
+					<set_value name="$NewCasPre.{$i}" exact="[]"/>
+					<do_all exact="$BoardingFleet.count" counter="$b"> 
+
+						<do_all exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.count" counter="$c"> 
+							<append_to_list name="$NewCasPre.{$i}" exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.list.{$c}"/>
+						</do_all>
+
+					</do_all>
+				</do_all>
+				<set_value name="$preboardstrength" exact="((((@$NewCasPre.{1}.count * 0.5f) + (@$NewCasPre.{2}.count * 1.5f) + (@$NewCasPre.{3}.count * 5.0f)) * ($commander.combinedskill + 1.0f)* 1.25)i / 100.0f)"/>
+
+
+
+
+
+				<!--</do_if> -->
+				<!--</add>-->
+
+
+
+				<!--<do_all exact="unitcategory.marine.maxmk" counter="$i">
+			<set_value name="$NewCasPre.{$i}" exact="$commander.ship.availableunits.{unitcategory.marine}.mk.{$i}.list"/>
+		</do_all>-->
+
+				<!--<do_if value="$BoardingFleet?">
+			
+		</do_if>-->
+
+				<!--<write_to_logbook category="general" text="' list 4: \n %1 \n %2 \n %3 \n %4 \n %5 \n %6.'.[unitcategory.marine.maxmk, $NewCasPre.count, $NewCasPre.count, $NewCasPre.{1}.count, $BoardingFleet.{1}.name,  $BoardingFleet.{2}.name]"/>-->			
+
+				<!--<show_notification caption="'=== Boarding operation underway ==='" details="' Initializing Assault: \n Marine Attack Strength (presumed): %1 \n Target Boarding Resistance: %2 \n BoardingFleet ships: %6 \n\n %3 Recruits \n %4 Veterans, and \n %5 Elite Marines \n\n Standing by and awaiting orders.'.[((((@$NewCasPre.{1}.count * 0.5f) + (@$NewCasPre.{2}.count * 1.5f) + (@$NewCasPre.{3}.count * 5.0f)) * ($commander.combinedskill + 1.0f)* 1.25)i / 100.0f), $target.boardingresistance, $NewCasPre.{1}.count, $NewCasPre.{2}.count, $NewCasPre.{3}.count, $BoardingFleet.count]" timeout="30s" queued="false" priority="7" sound="notification_generic"/>-->
+				<write_to_logbook category="tips" text="' Boarding operation underway: \n Marine Attack Strength (presumed): %1 \n Target Boarding Resistance: %2 \n BoardingFleet ships: %6 \n\n %3 Recruits \n %4 Veterans, and \n %5 Elite Marines \n\n Standing by and awaiting orders.'.[((((@$NewCasPre.{1}.count * 0.5f) + (@$NewCasPre.{2}.count * 1.5f) + (@$NewCasPre.{3}.count * 5.0f)) * ($commander.combinedskill + 1.0f) * 1.25)i / 100.0f), $target.boardingresistance, $NewCasPre.{1}.count, $NewCasPre.{2}.count, $NewCasPre.{3}.count, $BoardingFleet.count]"/>		
+				<!--</add>-->
+
+
+				<!-- BO-->
+				<!--<add sel="//cue[@name='Start']/actions/start_conversation" pos="before">-->
+				<set_value name="$startoption" exact="'undecided'"/>
+				<set_value name="$destroyoption" exact="'undecided'"/>		
+				<set_value name="$hackoption" exact="'undecided'"/>
+				<set_value name="$checkresistance" exact="true"/>
+				<!--<set_value name="$checkpreboardstrength" exact="true"/>-->		
+				<set_value name="$checkattackstrength" exact="false"/>
+				<!--<set_value name="$preboardstrength" exact="0.0f"/>
+		<create_list name="$PreboardUnits" exact="unitcategory.marine.maxmk" />-->
+				<!--</add>	-->
+
+
+				<start_conversation actor="player.copilot" conversation="BoardingSupport_Started_ConversationF" convparam="$target.isclass.station" /> 
+
+			</actions>
+			<patch sinceversion="2" state="complete">
+				<set_value name="$ArrivedMarinesClone" exact="$ArrivedMarines.clone"/>
+
+				<create_list name="$ArrivedMarines" exact="unitcategory.marine.maxmk" comment="Used to list of marine macros by MK so they can be killed/promoted and then returned to unit storage"/>
+				<do_all exact="unitcategory.marine.maxmk" counter="$i">
+					<set_value name="$ArrivedMarines.{$i}" exact="[]"/>
+				</do_all>
+
+				<do_all exact="$ArrivedMarinesClone.count" counter="$k">
+					<do_all exact="unitcategory.marine.maxmk" counter="$i" comment="Loop thorough the number of Marks marine units have">		  
+						<set_value name="$UnitList" exact="unitcategory.marine.mk.{$i}.list"/>
+						<!-- <set_value name="$UnitList" exact="$NewCasPre.{$i}.list"/>  -->	   
+						<do_if value="$UnitList.indexof.{$ArrivedMarinesClone.{$k}}">
+							<append_to_list name="$ArrivedMarines.{$i}" exact="$ArrivedMarinesClone.{$k}"/>
+							<break/>
+						</do_if>
+					</do_all>
+					<remove_value name="$UnitList"/>
+
+					<set_value name="$PromotionLists" exact="[[[macro.character_argon_male_marine_mk1_macro, 25], [macro.character_argon_male_marine_mk2_macro, 2], [macro.character_argon_male_marine_mk3_macro, 0]]]"/>
+				</do_all>
+			</patch>
+			<cues>
+
+				<library name="ClearOnFail">
+					<actions>
+
+						<!--MEU ClearOnFail-->
+						<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="0" />
+						<!--<set_value name="global.$fleetplayerboardtarget" exact="0" />-->
+						<!--MEU-->	
+
+						<debug_text text="'ClearOnFail ' + md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel"/>
+						<remove_object_boarder object="$target"/>
+
+						<!--Commander is on the boarding operation and is lost-->
+						<do_if value="$commander and (not @$commander.parent)">
+							<destroy_object object="$commander"/>
+						</do_if>
+
+						<do_all exact="$boardingpodsinflight.count" counter="$Counter">
+
+							<!--BF-->
+							<!--<add sel="//library[@name='ClearOnFail']/actions/do_all/do_if[@value='$boardingpodsinflight.{$Counter}.pilot']/remove_units" type="@chance" >0</add>-->
+
+							<!--<do_if value="$boardingpodsinflight.{$Counter}.pilot">
+                <remove_units object="$boardership" macro="$boardingpodsinflight.{$Counter}.pilot.macro" exact="1" unavailable="true"/>
+                <debug_text text="'Travelling marines: Removing 1 unit of ' + $boardingpodsinflight.{$Counter}.pilot.macro + ' to ' + $boardership.knownname"/>
+                <!{1}**TODO: More debug info when we can get a count of how many units of a certain macro are on an object**{1}>
+              </do_if>-->
+							<!-- ABOVE-->
+
+
+							<!--BF-->		  
+							<!--<add sel="//library[@name='ClearOnFail']/actions/do_all/do_if[@value='$boardingpodsinflight.{$Counter}.pilot']/remove_units" pos="after">-->
+							<do_if value="$boardingpodsinflight.{$Counter}.pilot.macro?"> 
+								<set_value name="$objectmacro" exact="$boardingpodsinflight.{$Counter}.pilot.macro" />
+								<include_actions ref="DeleteUnitFleet"/>
+							</do_if> 
+							<!--</add>-->		  
+
+
+
+						</do_all>
+						<destroy_group group="$boardingpodsinflight"/>		
+						<do_all exact="$ArrivedMarines.count" counter="$Counter">
+							<do_all exact="$ArrivedMarines.{$Counter}.count" counter="$i">
+
+
+								<!--BF-->	  
+								<!--<add sel="//library[@name='ClearOnFail']/actions/do_all/do_all[@exact='$ArrivedMarines.{$Counter}.count']/remove_units" type="@chance" >0</add>-->
+								<!--<remove_units object="$boardership" macro="$ArrivedMarines.{$Counter}.{$i}" exact="1" unavailable="true"/>-->
+								<!--ABOVE-->	
+								<!--<add sel="//library[@name='ClearOnFail']/actions/do_all/do_all[@exact='$ArrivedMarines.{$Counter}.count']/remove_units" pos="after">-->
+								<do_if value="$ArrivedMarines.{$Counter}.{$i}?"> 
+									<set_value name="$objectmacro" exact="$ArrivedMarines.{$Counter}.{$i}" />
+									<include_actions ref="DeleteUnitFleet"/>
+								</do_if> 
+								<!--</add>	-->			  
+
+
+								<debug_text text="'Arrived marines: Removing 1 unit of ' + $ArrivedMarines.{$Counter}.{$i} + ' to ' + $boardership.knownname"/>
+							</do_all>
+						</do_all>
+
+						<remove_value name="$ArrivedMarines"/>
+						<debug_text text="$boardership.knownname + ' has Total Marine Units: ' + $boardership.units.{unitcategory.marine}.count + ' - Available Marine Units: ' + $boardership.availableunits.{unitcategory.marine}.count"/>
+
+						<do_if value="@$ArrivedBoardingpods.count"> 	
+
+
+							<destroy_group group="$ArrivedBoardingpods" explosion="false" />
+						</do_if> 
+
+
+						<!--BO-->		
+						<!--<add sel="//library[@name='ClearOnFail']/actions">-->
+						<!--<remove_value name="$PreboardUnits"/>-->
+						<remove_help all="true" />
+						<set_value name="$checkresistance" exact="false"/>
+						<!--</add>-->
+
+					</actions>
+				</library>
+
+				<!-- BF-->
+				<!--<add sel="//library[@name='ClearOnFail']" pos="after">-->
+				<!--
+		<set_value name="$objectmacro" exact="macro.character_argon_male_marine_mk1_macro" />
+		<include_actions ref="DeleteUnitFleet"/>
+		-->
+				<library name="DeleteUnitFleet">
+					<actions>
+						<do_all exact="unitcategory.marine.maxmk" counter="$xi">
+							<do_if value="unitcategory.marine.mk.{$xi}.list.indexof.{$objectmacro}"> 
+								<set_value name="$mk" exact="$xi" />
+								<break />
+							</do_if>
+						</do_all>
+						<do_all exact="$BoardingFleet.count" counter="$xi"> 
+							<do_if value="$BoardingFleet.{$xi}.units.{unitcategory.marine}.mk.{$mk}.count" negate="true"> 
+								<continue />
+							</do_if> 
+							<do_if value="$BoardingFleet.{$xi}.units.{unitcategory.marine}.mk.{$mk}.count - $BoardingFleet.{$xi}.availableunits.{unitcategory.marine}.mk.{$mk}.count"> 
+								<remove_units object="$BoardingFleet.{$xi}" macro="$objectmacro" exact="1" unavailable="true"/> 
+								<break />
+							</do_if> 
+						</do_all>
+						<remove_value name="$objectmacro"/>
+						<remove_value name="$xi"/>
+						<remove_value name="$mk"/>
+					</actions>
+				</library>
+				<library name="AddUnitFleet">
+					<actions>
+						<do_all exact="unitcategory.marine.maxmk" counter="$xi">
+							<do_if value="unitcategory.marine.mk.{$xi}.list.indexof.{$objectmacro}"> 
+								<set_value name="$mk" exact="$xi" />
+								<break />
+							</do_if> 
+						</do_all>
+						<do_all exact="$BoardingFleet.count" counter="$xi"> 
+							<do_if value="$BoardingFleet.{$xi}.units.maxcount - $BoardingFleet.{$xi}.units.count" negate="true"> 
+								<continue />
+							</do_if> 
+							<add_units object="$BoardingFleet.{$xi}" macro="$objectmacro" exact="1"/> 
+							<break />
+						</do_all>
+						<remove_value name="$objectmacro"/>
+						<remove_value name="$xi"/>
+						<remove_value name="$mk"/>
+					</actions>
+				</library>
+				<library name="ReturnUnitFleet">
+					<actions>
+						<set_value name="$RUF_undone" exact="true" />
+						<do_all exact="unitcategory.marine.maxmk" counter="$xi">
+							<do_if value="unitcategory.marine.mk.{$xi}.list.indexof.{$objectmacro}"> 
+								<set_value name="$mk" exact="$xi" />
+								<break />
+							</do_if> 
+						</do_all>
+						<do_all exact="$BoardingFleet.count" counter="$xi"> 
+							<do_if value="$BoardingFleet.{$xi}.units.{unitcategory.marine}.mk.{$mk}.count" negate="true"> 
+								<continue />
+							</do_if> 
+							<do_if value="$BoardingFleet.{$xi}.units.{unitcategory.marine}.mk.{$mk}.count - $BoardingFleet.{$xi}.availableunits.{unitcategory.marine}.mk.{$mk}.count"> 
+								<return_units object="$BoardingFleet.{$xi}" macro="$objectmacro" exact="1"/>
+								<set_value name="$RUF_undone" exact="false" />
+								<break />
+							</do_if> 
+						</do_all>
+						<!-- all Boardingships gone? So convert Marine to Welderdrone / or Pocketmarines -->
+
+
+						<!--MEU  If not ship space for returning marines then put them on the Reserve-->
+						<!--<do_if value="$RUF_undone and $target.exists and $target.units.maxcount - $target.units.count" chance="0""> 
+					<add_units object="$target" category="unitcategory.welder" mk="1" exact="1" />
+				</do_if> 
+				<do_elseif value="$RUF_undone and $commander.exists">
+					<set_value name="$wares" exact="[ware.spe_unit_marine_mk1, ware.spe_unit_marine_mk2, ware.spe_unit_marine_mk3]" />
+					<do_if value="$wares.{$mk}?"> 
+						<add_inventory entity="$commander" ware="$wares.{$mk}" exact="1" />
+					</do_if> 
+					<remove_value name="$wares"/>
+				</do_elseif>-->
+
+						<!--<do_if value="$RUF_undone and $target.exists and $target.units.maxcount - $target.units.count" chance="0""> 
+					<add_units object="$target" category="unitcategory.welder" mk="1" exact="1" />
+				</do_if> -->
+						<!--<do_elseif value="$RUF_undone and $commander.exists">-->
+						<do_if value="$RUF_undone">
+							<set_value name="$wares" exact="[ware.spe_unit_marine_mk1, ware.spe_unit_marine_mk2, ware.spe_unit_marine_mk3]" />
+							<do_if value="$wares.{$mk}?"> 
+								<add_inventory entity="player.copilot" ware="$wares.{$mk}" exact="1" />
+							</do_if> 
+							<remove_value name="$wares"/>
+						</do_if>
+						<!--MEU-->
+
+						<remove_value name="$objectmacro"/>
+						<remove_value name="$RUF_undone"/>
+						<remove_value name="$xi"/>
+						<remove_value name="$mk"/>
+					</actions>
+				</library>
+				<!--</add>-->
+
+
+
+				<cue name="CommanderKilled">
+					<conditions>
+						<event_object_destroyed object="$commander" />
+					</conditions>
+					<actions>
+						<debug_text text="'Boarding commander killed. Ending boarding mission - commander: %1, target: %2, faction: %3'.[$commander, $target, $faction]" />
+
+
+						<set_value name="$commander" exact="null"/>
+						<!--<include_actions ref="ClearOnFail"/>
+            <!{1}** TODO: Fail notification **{1}>
+            <remove_mission cue="Start" />
+            <cancel_cue cue="Start" />-->
+					</actions>
+				</cue>
+
+				<cue name="TargetKilled">
+					<conditions>
+						<event_object_destroyed object="$target" />
+					</conditions>
+					<actions>
+						<debug_text text="'Boarding target destroyed. Ending boarding mission - commander: %1, target: %2, faction: %3'.[$commander, $target, $faction]" />
+
+						<include_actions ref="ClearOnFail"/>
+
+						<!-- TODO: Notification -->
+						<remove_mission cue="Start" type="failed"/>
+						<cancel_cue cue="Start" />
+					</actions>
+				</cue>
+
+				<cue name="TargetDocked">
+					<conditions>
+						<event_object_docked object="$target" />
+					</conditions>
+					<actions>
+						<debug_text text="'Boarding target docked. Ending boarding mission - commander: %1, target: %2, faction: %3'.[$commander, $target, $faction]" />
+
+						<include_actions ref="ClearOnFail"/>
+
+						<!-- TODO: Notification -->
+						<remove_mission cue="Start" type="aborted"/>
+						<cancel_cue cue="Start" />
+					</actions>
+				</cue>
+
+				<cue name="MissionAborted">
+					<conditions>
+						<event_mission_aborted cue="Start"/>
+					</conditions>
+					<actions>
+						<debug_text text="'Boarding target docked. Ending boarding mission - commander: %1, target: %2, faction: %3'.[$commander, $target, $faction]" />
+
+						<include_actions ref="ClearOnFail"/>
+
+						<!-- TODO: Notification -->
+						<remove_mission cue="Start" type="aborted"/>
+						<cancel_cue cue="Start" />
+					</actions>
+				</cue>
+
+
+
+
+				<!--BO-->
+				<!--<add sel="//cue[@name='CheckTargetState']" pos="before">-->	
+				<cue name="BoardingSupport_Started_Options" instantiate="true">
+					<conditions>
+						<event_conversation_next_section sectionprefix="BoardingSupport_Started_ConversationF_" />
+					</conditions>
+					<actions>
+
+						<!--MEU-->
+						<do_if value="event.param == 'BoardingSupport_Started_ConversationF_hackdisablestation'">
+							<set_value name="$startoption" exact="'hackdisablestation'"/>
+							<reset_cue cue="CheckTargetState"/>
+							<!--<write_to_logbook category="general" text="' list X2 \n %1 \n %2'.[event.param, event.param2]"/>-->	
+						</do_if>
+						<!--MEU-->	
+
+						<do_if value="event.param == 'BoardingSupport_Started_ConversationF_disableship'">
+							<set_value name="$startoption" exact="'disableship'"/>
+							<reset_cue cue="CheckTargetState"/>
+						</do_if>
+						<do_elseif value="event.param == 'BoardingSupport_Started_ConversationF_disarmship'">
+							<set_value name="$startoption" exact="'disarmship'"/>
+							<reset_cue cue="CheckTargetState"/>
+						</do_elseif>			
+						<do_elseif value="event.param == 'BoardingSupport_Started_ConversationF_launchpods'">
+							<set_value name="$startoption" exact="'launchpods'"/>
+							<reset_cue cue="CheckTargetState"/>
+						</do_elseif>
+						<do_elseif value="event.param == 'BoardingSupport_Started_ConversationF_abort'">		
+							<include_actions ref="ClearOnFail"/>
+							<remove_mission cue="Start" />
+							<cancel_cue cue="Start" />
+						</do_elseif>
+					</actions>
+				</cue>
+				<cue name="BoardingSupport_TargetTooFast_Options" instantiate="true">
+					<conditions>
+						<event_conversation_next_section sectionprefix="BoardingSupport_TargetTooFast_ConversationF_" />
+					</conditions>
+					<actions>
+						<do_if value="event.param == 'BoardingSupport_TargetTooFast_ConversationF_disableengines'">
+							<set_value name="$startoption" exact="'disableengines'"/>
+						</do_if>
+						<do_elseif value="event.param == 'BoardingSupport_TargetTooFast_ConversationF_attemptlaunchpods'">
+							<set_value name="$startoption" exact="'attemptlaunchpods'"/>
+						</do_elseif>
+						<do_elseif value="event.param == 'BoardingSupport_TargetTooFast_ConversationF_abort'">				
+							<include_actions ref="ClearOnFail"/>
+							<remove_mission cue="Start" />
+							<cancel_cue cue="Start" />
+						</do_elseif>			
+					</actions>
+				</cue>		
+				<cue name="WaitForStartOption">
+					<actions>
+						<complete_cue cue="CheckTargetState"/>
+					</actions>
+				</cue>
+				<cue name="CheckResistance" instantiate="true" checkinterval="1s">
+					<conditions>
+						<check_value value="$checkresistance" />
+					</conditions>	
+					<actions>
+						<remove_help all="true" />
+						<!--<remove_help/>-->
+						<do_if value="$checkattackstrength">
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 1" >
+								<show_help position="12" duration="5s" custom="'Boarding started: \n Target Resistance: %1\n Marine Strength: %2'.[$target.boardingresistance, $attackstrength]" />
+							</do_if>
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 2" >
+								<show_help position="12" duration="5s" custom="'Boarding started: \n Target Resistance: %1\n Marine Strength: %2\nHack operation success.'.[$target.boardingresistance, $attackstrength]" />
+							</do_if>
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 3" >
+								<show_help position="12" duration="5s" custom="'Boarding started: \n Target Resistance: %1\n Marine Strength: %2\nHack operation fail.'.[$target.boardingresistance, $attackstrength]" />
+							</do_if>
+						</do_if>	
+
+
+
+						<do_else>
+
+							<!--MEU-->
+							<!--<do_if value="$checkpreboardstrength">					
+						<do_all exact="unitcategory.marine.maxmk" counter="$i">
+							<set_value name="$PreboardUnits.{$i}" exact="$boardership.availableunits.{unitcategory.marine}.mk.{$i}.list"/>
+						</do_all>
+						<set_value name="$preboardstrength" exact="0.0f"/>
+						<set_value name="$preboardstrength" operation="add" exact="$PreboardUnits.{1}.count * 0.5f" />
+						<set_value name="$preboardstrength" operation="add" exact="$PreboardUnits.{2}.count * 1.5f" />
+						<set_value name="$preboardstrength" operation="add" exact="$PreboardUnits.{3}.count * 5.0f" />
+						<do_if value="$commander">
+							<set_value name="$preboardstrength" exact="($preboardstrength * ($commander.combinedskill + 1) * 1.25)i / 100.0f" />
+						</do_if>
+					</do_if>-->
+
+							<!--<do_if value="$BoardingFleet?">	
+						<set_value name="$preboardstrength" exact="$Boardfleet_fix_BO"/>
+					</do_if>-->
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 1" >					
+								<show_help position="12" duration="5s" custom="'Operation in progress: \n Target Resistance: %1\n Marine Strength: %2'.[$target.boardingresistance, $preboardstrength]" />
+							</do_if>
+
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 2 and ($timeout - player.age) gt 100ms" >
+								<show_help position="12" duration="5s" custom="'Operation in progress: \n Target Resistance: %1\n Marine Strength: %2\nTime limit to Hack: %3'.[$target.boardingresistance, $preboardstrength, ($timeout - player.age).formatted.default ]" />
+							</do_if>					
+							<do_elseif value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 2 and ($timeout - player.age) lt 100ms" >
+								<show_help position="12" duration="5s" custom="'Operation in progress: \n Target Resistance: %1\n Marine Strength: %2\nHack operation fail.'.[$target.boardingresistance, $preboardstrength]" />
+
+								<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="3" />
+								<start_conversation actor="player.primaryship.subordinates.{1}.pilot" conversation="ReadytoLaunchPods" convparam="[1,0]" />		
+							</do_elseif>
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 3" >
+								<show_help position="12" duration="5s" custom="'Operation in progress: \n Target Resistance: %1\n Marine Strength: %2\nHack operation fail.'.[$target.boardingresistance, $preboardstrength]" />
+							</do_if>
+
+							<do_if value="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 4" >
+								<show_help position="12" duration="5s" custom="'Operation in progress: \n Target Resistance: %1\n Marine Strength: %2'.[$target.boardingresistance, $preboardstrength]" />
+							</do_if>
+
+							<!--(151s).formatted.{'%T'} ? '00:02:31'
+(151s).formatted.default ? '00:02:31' (same as {'%T'})
+(151s).formatted.{'%.3T'} ? '00:02:31.000'
+(151s).formatted.{'%h:%M'} ? '0:02'-->
+
+						</do_else>
+					</actions>
+				</cue>
+				<cue name="ResetCheckResistance" instantiate="true">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay exact="5s" />
+					<actions>
+						<set_value name="$checkresistance" exact="true"/>
+					</actions>
+				</cue>	
+				<!--</add>-->
+
+				<!--MR-->
+				<!--<add sel="//cue[@name='CheckTargetState']" pos="before">-->
+				<cue name="Confirm_PreScan" instantiate="true">
+					<conditions>
+						<event_conversation_next_section sectionprefix="gPreScan" />
+					</conditions>
+					<actions>
+						<set_value name="$cprescan" exact="true"/>
+						<set_value name="$prescaninit" exact="true"/>
+						<reset_cue cue="CheckTargetState"/>
+						<show_notification caption="'=== Boarding operation underway ==='" details="' Initializing Beholder URV. \n PreScan initialized.'" timeout="10s" queued="false" sound="notification_generic"/>
+						<!--<write_to_logbook category="general" text="'CPRESCAN SET cprescan is: %1'.[$cprescan]"/>-->
+					</actions>
+				</cue>
+				<cue name="Skip_PreScan" instantiate="true">
+					<conditions>
+						<event_conversation_next_section sectionprefix="gSkipPreScan" />
+					</conditions>
+					<actions>
+						<set_value name="$prescaninit" exact="true"/>
+						<reset_cue cue="CheckTargetState"/>
+						<!--<write_to_logbook category="general" text="'Skipping PreScan'.[]"/>-->
+					</actions>
+				</cue>
+				<cue name="MR_Abort" instantiate="true">
+					<conditions>
+						<event_conversation_next_section sectionprefix="gAbortOp" />
+					</conditions>
+					<actions>
+						<include_actions ref="ClearOnFail"/>
+						<remove_mission cue="Start" />
+						<cancel_cue cue="Start" />
+						<show_notification caption="'=== Boarding operation ended ==='" details="' Tactical withdraw initiated. \n Boarding operation aborted.'" timeout="15s" queued="false" sound="notification_generic"/>
+					</actions>
+				</cue>
+				<cue name="BlockforConfirmation">
+					<actions>
+						<complete_cue cue="CheckTargetState"/>
+						<!--<write_to_logbook category="general" text="'Blocking CheckTargetState'.[]"/>-->
+					</actions>
+				</cue>
+				<!--</add>	-->
+
+
+				<cue name="CheckTargetState">
+					<actions>
+
+						<!-- re-evaluate if we have scanner/hacker drones every time - in case we lose drones -->
+
+
+
+
+						<!--MR	-->	
+						<!--<remove sel="//cue[@name='CheckTargetState']/actions/set_value[@name='$skipscannerdrone']"/>-->
+
+						<!--<set_value name="$scannerdroneexists" exact="false" />-->
+						<!--ABOVE-->
+
+
+
+
+						<set_value name="$hackerdroneexists" exact="false" />
+						<do_all exact="$playerdrones.count" counter="$i">
+							<!--debug_text text="'- ' + $playerdrones.{$i}.macro.id" /-->
+							<do_if value="$playerdrones.{$i}.scanner">
+								<set_value name="$scannerdroneexists" exact="true" />
+							</do_if>
+							<do_if value="$playerdrones.{$i}.hackerprobe">
+								<set_value name="$hackerdroneexists" exact="true" />
+							</do_if>
+						</do_all>
+
+						<set_value name="$skipscannerdrone" exact="true" comment="TODO: For the moment, we disable scannning-goal"/>
+
+						<!-- NOTE: jumpdrive and engine groups may already exist when this cue restarts - groups will be merged with newly found objects (i.e. repaired ones) -->
+
+
+						<!--MR	-->
+						<!--<add sel="//cue[@name='CheckTargetState']/actions/find_object_component[@groupname='$jumpdrives']" pos="before">-->
+						<do_if value="(@$startoption == 'disableship' or @$startoption == 'disarmship' or @$startoption == 'hackdisablestation') and not $cprescan">
+							<show_notification caption="'=== Boarding operation underway ==='" details="' Preparing target for assault. \n Target disable routine activated.'" timeout="7s" queued="false" sound="notification_generic"/>
+							<!--<write_to_logbook category="general" text="'Boarding Options pre-board disabling initiated.'.[]"/>-->
+						</do_if>
+						<!--</add>-->	
+
+
+
+						<find_object_component groupname="$jumpdrives" object="$target" class="class.jumpdrive" multiple="true" integrated="false" />
+						<find_object_component groupname="$engines" object="$target" class="class.engine" multiple="true" integrated="false" />
+
+
+						<!--BO-->		
+						<!--<add sel="//cue[@name='CheckTargetState']/actions/find_object_component[@groupname='$engines']" pos="after">-->
+						<find_object_component groupname="$weapons" object="$target" class="class.weapon" surfaceelement="true" multiple="true" integrated="false" />
+						<!--</add>-->
+
+
+
+						<!-- NOTE: The signalled cue (except for LaunchBoardingPods) is supposed to signal CheckTargetState when it's done -->
+
+
+						<!--BO	-->
+						<!--<replace sel="//cue[@name='CheckTargetState']/actions/do_if[@value='$jumpdrives.count']">-->
+						<do_if value="$jumpdrives.count and $startoption == 'disableship'">
+							<signal_cue cue="DisableJumpdrive" />
+						</do_if>
+						<!--</replace>-->
+
+						<!--<do_if value="$jumpdrives.count">
+              <signal_cue cue="DisableJumpdrive" />
+            </do_if>-->
+						<!--ABOVE-->
+
+
+
+						<!--BO	-->		
+						<!--<replace sel="//cue[@name='CheckTargetState']/actions/do_elseif[@value='$engines.count']">-->
+						<do_elseif value="$engines.count and $startoption == 'disableship'">
+							<signal_cue cue="DisableEngines" />
+						</do_elseif>
+						<!--</replace>-->
+
+						<!--<do_elseif value="$engines.count">
+              <signal_cue cue="DisableEngines" />
+            </do_elseif>-->
+						<!--ABOVE-->
+
+						<!--MR-->	
+						<!--Activate PreScan.  Trigger ONLY dependent on conversation option-->
+						<!--<replace sel="//cue[@name='CheckTargetState']/actions/do_elseif[@value='PreScan.state == cuestate.waiting and $scannerdroneexists and not $skipscannerdrone']/@value">$cprescan and $scannerdroneexists and not $PreScanDone and not $PreScanFailed</replace>-->	
+
+						<!--AQUI: corrigir de acordo acima-->
+						<!-- <do_elseif value="PreScan.state == cuestate.waiting and $scannerdroneexists and not $skipscannerdrone">-->
+						<!--ABOVE-->
+						<do_elseif value="$cprescan and $scannerdroneexists and not $PreScanDone and not $PreScanFailed">
+
+
+							<!-- Only scan once, and only if player has scanner drone -->
+							<signal_cue cue="PreScan" />
+						</do_elseif>
+
+						<!--BO	-->
+						<!--<add sel="//cue[@name='CheckTargetState']/actions/do_elseif[@value='$target.speed gt 50']" pos="before">-->
+						<do_elseif value="$weapons.count and $startoption == 'disarmship'">
+							<signal_cue cue="DisableWeapons" />
+						</do_elseif>
+						<do_elseif value="$engines.count and $startoption == 'disableengines'">
+							<signal_cue cue="DisableEngines" />
+						</do_elseif>
+
+						<!--MEU-->
+						<do_elseif value="$startoption == 'hackdisablestation'">
+							<signal_cue cue="HackDisableStation" />
+							<!--<write_to_logbook category="general" text="' list X3 \n %1 \n %2'.[event.param, event.param2]"/>-->
+						</do_elseif>
+						<!--MEU-->
+
+
+						<!--</add>	-->
+
+
+						<!--BO	-->
+						<!--<replace sel="//cue[@name='CheckTargetState']/actions/do_elseif[@value='$target.speed gt 50']">-->
+						<do_elseif value="$target.speed gt 50 and $startoption != 'attemptlaunchpods'">
+							<do_if value="$startoption == 'launchpods' or $startoption == 'disarmship'">
+								<set_value name="$startoption" exact="'undecided'"/>
+								<set_value name="$checkresistance" exact="false"/>
+								<signal_cue cue="ResetCheckResistance" />
+								<remove_help all="true" />
+								<show_help custom="'Target moving too fast!'" position="0"/>
+								<start_conversation actor="player.copilot" conversation="BoardingSupport_TargetTooFast_ConversationF" />			
+							</do_if>
+							<signal_cue cue="WaitForLaunch"/>
+						</do_elseif>
+						<!--</replace>-->		
+
+						<!--<do_elseif value="$target.speed gt 50">
+              <!{1}**Going too fast, wait a few seconds**{1}>
+              <signal_cue cue="WaitForLaunch"/>
+            </do_elseif>-->
+						<!--ABOVE-->
+
+
+						<!--MR-->
+						<!--For compatibility with mods such as Boarding Options that give options other than PreScan?  Y/N-->
+						<!--<remove sel="//cue[@name='CheckTargetState']/actions/do_else"/>-->
+
+						<!--<do_else>
+              <!{1}** No scanner-drones, skip to next boarding-objective **{1}>
+              <do_if value="PreScan.state == cuestate.waiting and not $scannerdroneexists and not $skipscannerdrone">
+                <start_conversation actor="player.copilot" conversation="BoardingFeedback_No_Scanner_Drone_ConversationF" />
+              </do_if>
+			  
+	<!{1}**BO**{1}>
+	<!{1}**<add sel="//cue[@name='CheckTargetState']/actions/do_else/cancel_cue[@cue='this']" pos="before">**{1}>
+		<cancel_conversation actor="player.copilot" conversation="BoardingSupport_TargetTooFast_ConversationF" />			
+	<!{1}**</add>**{1}>		  
+			  
+			  
+              <cancel_cue cue="this" />
+              <cancel_cue cue="DisableJumpdrive" />
+              <cancel_cue cue="DisableEngines" />
+              <cancel_cue cue="PreScan" />
+              <signal_cue cue="LaunchBoardingPods"/>
+            </do_else>-->
+						<!--ABOVE-->
+
+
+						<!--MR-->
+						<!--<add sel="//cue[@name='CheckTargetState']/actions">-->
+						<do_elseif value="$prescaninit or (@$startoption == 'launchpods')">
+							<!--<do_if value="$scannerdroneexists" exact="false">-->
+							<do_if value="(@$startoption == 'launchpods') or not $scannerdroneexists">
+								<do_any>
+									<start_conversation actor="player.copilot" conversation="BoardingFeedback_No_Scanner_Drone_ConversationF" />
+									<start_conversation actor="$commander" conversation="BoardingSupport_ProtectPods_Started_ConversationF" />
+								</do_any>
+							</do_if>
+
+							<!-- The below is a doubt... -->
+							<!--<!{1}**BO**{1}>
+	<!{1}**<add sel="//cue[@name='CheckTargetState']/actions/do_else/cancel_cue[@cue='this']" pos="before">**{1}>
+		<cancel_conversation actor="player.copilot" conversation="BoardingSupport_TargetTooFast_ConversationF" />			
+	<!{1}**</add>**{1}>-->
+
+							<cancel_cue cue="this" />
+							<cancel_cue cue="DisableJumpdrive" />
+							<cancel_cue cue="DisableEngines" />
+							<cancel_cue cue="PreScan" />
+							<signal_cue cue="LaunchBoardingPods"/>
+							<show_notification caption="'=== Boarding operation underway ==='" details="' Assault pods launched.'" timeout="10s" queued="true" priority="8" sound="notification_generic"/>
+							<!--<write_to_logbook category="general" text="'Assault pods are away.'.[]"/>-->
+						</do_elseif>
+						<do_else>
+							<start_conversation actor="player.copilot" conversation="BoardingSupport_Started_ConversationF" />
+						</do_else>
+						<!--</add>-->
+
+
+
+					</actions>
+					<cues>
+						<!-- This cue basically keeps the parent cue alive until it's not needed any more -->
+						<cue name="ResetCheckTargetState">
+							<conditions>
+								<event_cue_signalled cue="CheckTargetState" />
+							</conditions>
+							<actions>
+								<reset_cue cue="CheckTargetState" />
+							</actions>
+						</cue>
+					</cues>
+				</cue>
+
+				<cue name="DisableJumpdrive" instantiate="true">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay min="1s" max="2s" />
+					<actions>
+						<!-- Prevent target from jumping to safety -->
+						<debug_text text="'Setting objective: Destroy jumpdrives'" />
+						<!-- <set_objective cue="Start" action="objective.destroy" group="$jumpdrives" /> -->
+						<start_conversation actor="player.copilot" conversation="BoardingSupport_DestroyJumpdrive_Started_ConversationF" />
+					</actions>
+					<cues>
+						<cue name="StartDestroyJumpdrives">
+							<conditions>
+								<event_cue_completed cue="parent" />
+							</conditions>
+							<cues>
+								<cue name="DestroyJumpdrives" ref="md.RML_Destroy_Components.DestroyComponents">
+									<param name="EndSignalCue" value="CheckTargetState" />
+									<param name="MissionCue" value="Start" />
+									<param name="Targets_Param" value="$jumpdrives" />
+									<param name="DebugChance" value="$debugoutputchance"/>
+								</cue>
+							</cues>
+						</cue>
+					</cues>
+				</cue>
+
+				<cue name="DisableEngines" instantiate="true">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay min="1s" max="2s" />
+					<actions>
+						<!-- Disable target's maneuvering abilities -->
+						<debug_text text="'Setting objective: Destroy engines'" />
+						<!-- <set_objective cue="Start" action="objective.destroy" group="$engines" /> -->
+						<start_conversation actor="player.copilot" conversation="BoardingSupport_DestroyJumpdrive_Started_ConversationF" />
+					</actions>
+					<cues>
+						<cue name="StartDestroyEngines">
+							<conditions>
+								<event_cue_completed cue="parent" />
+							</conditions>
+							<cues>
+								<cue name="DestroyEngines" ref="md.RML_Destroy_Components.DestroyComponents">
+									<param name="EndSignalCue" value="CheckTargetState" />
+									<param name="MissionCue" value="Start" />
+									<param name="Targets_Param" value="$engines" />
+									<param name="DebugChance" value="$debugoutputchance"/>
+								</cue>
+							</cues>
+						</cue>
+					</cues>
+				</cue>
+
+
+
+				<!--MEU-->
+				<cue name="HackDisableStation" instantiate="true">
+					<conditions>
+						<check_any>
+							<event_cue_signalled />
+							<event_object_signalled object="player.entity" param="'board ship'" />
+						</check_any>	
+					</conditions>
+					<delay min="1s" max="2s" />
+					<actions>
+
+
+						<!--<write_to_logbook category="general" text="' list X1 \n %1 \n %2'.[$target.zone.name, $target.name]"/>-->			
+
+
+						<set_value name="$player_subordinate" exact="player.primaryship.subordinates" />
+						<do_all exact="$player_subordinate.count" counter="$i">	
+
+							<do_if value="($target.isclass.station and $player_subordinate.{$i}.zone == player.primaryship.zone and $player_subordinate.{$i}.isclass.[class.ship_l, class.ship_xl] and ($player_subordinate.{$i}.primarypurpose == objectpurpose.fight or $player_subordinate.{$i}.macro.ismacro.units_size_xl_cargo_hauler_2_macro or ($player_subordinate.{$i}.primarypurpose == objectpurpose.trade and $player_subordinate.{$i}.availableunits.{unitcategory.marine}.count))) or ($target.isclass.ship and $player_subordinate.{$i}.availableunits.{unitcategory.marine}.count and $player_subordinate.{$i}.zone == player.primaryship.zone)">
+
+								<do_if value="$player_subordinate.{$i}.defencenpc.exists">
+									<set_value name="$player_subordinate.{$i}.defencenpc.$config_attackenemies" exact="0" />
+								</do_if>
+
+
+								<!--<write_to_logbook category="general" text="' list X2 \n %1 \n %2'.[$player_subordinate.{$i}.name, $target.name]"/>-->					
+
+
+								<!-- add a exception for player ships that have already an attack order? (board fleet x station only)-->
+								<!-- and (@$player_subordinate.{$i}.pilot.command.value != command.attackobject or @$player_subordinate.{$i}.pilot.command.param == $target)-->
+
+
+
+								<do_if value="not $player_subordinate.{$i}.parkedat and not $player_subordinate.{$i}.dockslot and not $player_subordinate.{$i}.docklink">
+									<!--<include_actions ref="StopCurrentTask" />-->
+									<signal_objects object="$player_subordinate.{$i}" param="'board fleet hack'" param2="[$target, 1, 1]" delay="100ms" />
+
+								</do_if>
+
+							</do_if>
+						</do_all>	
+
+
+
+
+
+						<start_conversation actor="player.primaryship.subordinates.{1}.pilot" conversation="ReadytoLaunchPods" convparam="[0,0]" />
+
+
+						<!--MEU for sectionhandlermenu -->
+						<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="if $target.isclass.station then 2 else md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" />
+						<set_value name="$timeout" exact="player.age + 5min" />
+						<!--MEU-->	
+
+						<!--<write_to_logbook category="general" text="' list X3 \n %1 \n %2'.[$boardership.name, $target.name]"/>-->
+
+					</actions>
+				</cue>	
+				<!--MEU-->
+
+
+				<!--BO-->
+				<!--<add sel="//cue[@name='DisableEngines']" pos="after">-->
+				<cue name="DisableWeapons" instantiate="true">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay min="1s" max="2s" />
+					<actions>
+						<start_conversation actor="player.copilot" conversation="BoardingSupport_DestroyWeapons_Started_ConversationF" />
+					</actions>
+					<cues>
+						<cue name="StartDestroyWeapons">
+							<conditions>
+								<event_cue_completed cue="parent" />
+							</conditions>
+							<cues>
+								<cue name="DestroyWeapons" ref="md.RML_Destroy_Components.DestroyComponents">
+									<param name="EndSignalCue" value="CheckTargetState" />
+									<param name="MissionCue" value="Start" />
+									<param name="Targets_Param" value="$weapons" />
+									<param name="DebugChance" value="$debugoutputchance"/>
+								</cue>
+							</cues>
+						</cue>
+					</cues>
+				</cue>	
+				<!--</add>-->
+
+
+
+				<!--Cue to be signalled if it is not a suitable time to launch boarding pods but the player can't do anything about it e.g. ship decelerating from boosting-->
+				<cue name="WaitForLaunch" instantiate="true">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay exact="5s"/>
+					<actions>
+						<signal_cue cue="CheckTargetState"/>
+					</actions>
+				</cue>
+
+				<cue name="PreScan">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay min="1s" max="2s" />
+					<actions>
+						<!-- Scan the layout of the ship so that the boarding crew can plan an attack route -->
+						<debug_text text="'Setting objective: Scan'" />
+						<!-- <set_objective cue="Start" action="objective.scan" object="$target" /> -->
+						<start_conversation actor="player.copilot" conversation="BoardingSupport_Scan_Started_ConversationF" />
+
+						<!--MEU	-->	
+						<!--		
+	<!{1}**MR**{1}>		
+		<!{1}**set PreScan parameters depending on difficulty**{1}>
+	<!{1}**<add sel="//cue[@name='PreScan']/actions">**{1}>
+		<do_if value="player.difficulty" min="level.hard">
+			<signal_cue cue="StartPreScanTargetPoints_Hard" />
+		</do_if>
+		<do_elseif value="player.difficulty" min="level.medium">
+			<signal_cue cue="StartPreScanTargetPoints_Normal" />
+		</do_elseif>
+		<do_else>
+			<signal_cue cue="StartPreScanTargetPoints_Easy" />
+		</do_else>
+	<!{1}**</add>**{1}>-->	
+
+						<signal_cue cue="StartPreScanTargetPoints_Normal" />
+						<!--MEU-->
+
+
+					</actions>
+					<cues>
+						<cue name="StartPreScanTargetPoints">
+							<conditions>
+								<event_cue_completed cue="parent" />
+							</conditions>
+							<cues>
+
+
+								<!-- MR-->
+								<!--<remove sel="//cue[@name='PreScanTargetPoints']"/>-->
+
+								<!--<cue name="PreScanTargetPoints" ref="md.RML_Scan_TargetPoints.ScanTargetPoints">
+                  <param name="EndSignalCue" value="CheckTargetState"/>
+                  <param name="MissionCue" value="Start"/>
+                  <param name="Object" value="$target"/>
+                  <param name="TagList" value="[tag.ship_xs, tag.scan]"/>
+                  <param name="InteractionType" value="1"/>
+                  <param name="SequenceType" value="1" comment="1: points need to be processed in the defined sequence; 2: points need to be processed in a randomized sequence; 3: points can be processed in any order (using multiple simultaneous objectives)"/>
+                  <param name="FailOnReturn" value="true" comment="If we lose our scannerdrone, recheck our objecive (which might be to scan again, if we have more drones)"/>
+                  <param name="InitialTargetCount" value="1" />
+                </cue>-->
+								<!--ABOVE-->
+
+
+
+
+							</cues>
+						</cue>
+
+
+						<!--MR-->
+						<!--<add sel="//cue[@name='PreScan']/cues">-->
+						<!--<cue name="StartPreScanTargetPoints_Hard">
+			<conditions>
+				<check_all>
+					<event_cue_signalled />
+				</check_all>
+			</conditions>
+			<cues>
+				<cue name="PreScanTargetPoints_Hard" ref="md.RML_Scan_TargetPoints.ScanTargetPoints">
+					<param name="EndSignalCue" value="PreScanSuccess"/>
+					<!{1}**<param name="EndSignalCue" value="CheckTargetState"/>**{1}>
+					<param name="MissionCue" value="Start"/>
+					<param name="Object" value="$target"/>
+					<param name="TagList" value="[tag.ship_xs, tag.scan]"/>
+					<param name="InteractionType" value="1"/>
+					<param name="SequenceType" value="1" comment="1: points need to be processed in the defined sequence; 2: points need to be processed in a randomized sequence; 3: points can be processed in any order (using multiple simultaneous objectives)"/>
+					<param name="FailOnReturn" value="true" comment="If we lose our scannerdrone, recheck our objecive (which might be to scan again, if we have more drones)"/>
+					<param name="Component" value="$target"/>
+					<!{1}**<param name="InitialTargetCountPercent" value="25" />**{1}>
+					<!{1}**<param name="MinInitialTargetCount" value="10" />**{1}>
+					<!{1}**<param name="MaxInitialTargetCount" value="3" />**{1}>
+				</cue>
+			</cues>
+		</cue>-->
+						<cue name="StartPreScanTargetPoints_Normal">
+							<conditions>
+								<check_all>
+									<event_cue_signalled />
+								</check_all>
+							</conditions>
+							<cues>
+								<cue name="PreScanTargetPoints_Normal" ref="md.RML_Scan_TargetPoints.ScanTargetPoints">
+									<param name="EndSignalCue" value="PreScanSuccess"/>
+									<!--<param name="EndSignalCue" value="CheckTargetState"/>-->
+									<param name="MissionCue" value="Start"/>
+									<param name="Object" value="$target"/>
+									<param name="TagList" value="[tag.ship_xs, tag.scan]"/>
+									<param name="InteractionType" value="1"/>
+									<param name="SequenceType" value="2" comment="1: points need to be processed in the defined sequence; 2: points need to be processed in a randomized sequence; 3: points can be processed in any order (using multiple simultaneous objectives)"/>
+									<param name="FailOnReturn" value="true" comment="If we lose our scannerdrone, recheck our objecive (which might be to scan again, if we have more drones)"/>
+									<param name="Component" value="$target"/>
+									<param name="InitialTargetCountPercent" value="50" />
+									<param name="MinInitialTargetCount" value="2" />
+									<param name="MaxInitialTargetCount" value="10" />
+								</cue>
+							</cues>
+						</cue>
+						<!--<cue name="StartPreScanTargetPoints_Easy">
+			<conditions>
+				<check_all>
+					<event_cue_signalled />
+				</check_all>
+			</conditions>
+			<cues>
+				<cue name="PreScanTargetPoints_Easy" ref="md.RML_Scan_TargetPoints.ScanTargetPoints">
+					<param name="EndSignalCue" value="PreScanSuccess"/>
+					<!{1}**<param name="EndSignalCue" value="CheckTargetState"/>**{1}>
+					<param name="MissionCue" value="Start"/>
+					<param name="Object" value="$target"/>
+					<param name="TagList" value="[tag.ship_xs, tag.scan]"/>
+					<param name="InteractionType" value="1"/>
+					<param name="SequenceType" value="1" comment="1: points need to be processed in the defined sequence; 2: points need to be processed in a randomized sequence; 3: points can be processed in any order (using multiple simultaneous objectives)"/>
+					<param name="FailOnReturn" value="true" comment="If we lose our scannerdrone, recheck our objecive (which might be to scan again, if we have more drones)"/>
+					<param name="Component" value="$target"/>
+					<param name="InitialTargetCountPercent" value="25" />
+					<!{1}**<param name="MinInitialTargetCount" value="10" />**{1}>
+					<param name="MaxInitialTargetCount" value="3" />
+				</cue>
+			</cues>
+		</cue>-->
+						<cue name="PreScanSuccess">
+							<conditions>
+								<event_cue_signalled />
+							</conditions>
+							<actions>
+								<do_if value="this.$EndFeedbackValue == 1">
+									<set_value name="$PreScanDone" exact="true"/>
+									<show_notification caption="'=== Boarding operation underway ==='" details="' Target was successfully scanned. \n Launching pods.'.[]" timeout="6s" queued="false" sound="notification_generic"/>
+								</do_if>
+								<do_else>
+									<set_value name="$PreScanFailed" exact="true"/>
+									<show_notification caption="'=== Boarding operation underway ==='" details="'PreScan NOT done.'" timeout="6s" queued="false" sound="notification_generic"/>
+									<!--<write_to_logbook category="general" text="'PreScan NOT done.'"/>-->
+								</do_else>
+								<reset_cue cue="CheckTargetState"/>
+							</actions>
+						</cue>
+						<!--</add>-->	
+
+
+
+					</cues>
+				</cue>
+
+				<cue name="LaunchBoardingPods">
+					<conditions>
+						<event_cue_signalled />
+					</conditions>
+					<delay exact="4s" comment="wait for yisha's scanner-drone dialog to finish"/>
+
+					<!--BF--> 
+					<!--<replace sel="//cue[@name='LaunchBoardingPods']/actions">-->
+					<actions>
+
+						<!--MEU for sectionhandlermenu-->
+						<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="1" />
+						<!--MEU-->	
+
+
+						<!--MEU-->
+						<!--BO-->
+						<!--<add sel="//cue[@name='LaunchBoardingPods']/actions" pos="prepend">-->
+						<!--<set_value name="$checkpreboardstrength" exact="false"/>-->
+						<!--</add>-->
+
+						<!--TODO: Should this be $boardership, not player.primaryship-->
+						<!-- remove marine commander from playership-->
+						<dismiss_control_entity object="$boardership" actor="$commander"/>
+						<remove_actor_from_room actor="$commander" comment="remove marine-commander from playership"/>
+						<create_cue_actor actor="$commander" cue="Start" comment="Commander has to be 'somewhere' or we have savegame problems"/>
+
+						<!-- ABAIXO -->	
+
+						<do_if value="not $training">
+							<signal_cue_instantly cue="md.Notifications.PlayerBoarding" param="[$target, 'boarding started']" chance="$isplayerprocess * 100"/>
+						</do_if>
+
+						<!-- create boarding pods and send towards target -->
+						<create_list name="$BoardingPodsList"/>
+						<set_value name="$commander_on_pod" exact="false"/>
+
+						<create_group groupname="$MarinePilots"/>
+						<debug_text text="'marine.maxmk ' + unitcategory.marine.maxmk" chance="$debugoutputchance"/>
+						<do_all exact="unitcategory.marine.maxmk" counter="$i" comment="Loop thorough the number of Marks marine units have">
+
+							<append_to_list name="$BoardingPodsList" exact="[]" comment="... create a new list for this Mk"/>
+
+							<do_all exact="$BoardingFleet.count" counter="$b"> 
+								<set_value name="$UnitList" exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.list"/>
+								<debug_text text="$UnitList" chance="$debugoutputchance"/>
+								<do_all exact="$UnitList.count" counter="$j" comment="#marines of this Mk">
+
+									<!-- This also marks the marine as "unavailable" on the playership, they can be made available again with "return_units" -->
+									<request_units object="$BoardingFleet.{$b}" macro="$UnitList.{$j}" exact="1" comment="marks the marine as 'unavailable' on the playership"/>
+
+									<set_value name="$randompos" min="-20" max="50"/>
+									<create_ship name="$boardingpod" groupname="$boardingpodsinflight" group="boardingpods" zone="$BoardingFleet.{$b}.zone">
+										<pilot macro="$UnitList.{$j}">
+											<owner exact="$BoardingFleet.{$b}.trueowner"/>
+										</pilot>
+										<!--<position object="$BoardingFleet.{$b}" x="$i * 40m" y="$j*20m" z="-200m + $i*10" max="10m"/>-->
+										<!--position object="$BoardingFleet.{$b}" x="$i * 1m" y="$j*1m" z="-200m + $i*1" comment="all together - for testing"/-->
+										<position object="$BoardingFleet.{$b}" y="-300" z="+600m + $randompos + $i*10" min="150m" max="500m"/>
+										<!--<position object="$boardership" z="-200m + $randompos + $i*10" min="50m" max="300m"/>-->
+
+									</create_ship>
+
+									<add_to_group groupname="$MarinePilots" object="$boardingpod.pilot"/>
+
+									<append_to_list name="$BoardingPodsList.{$i}" exact="$boardingpod" comment="End up with a list per Mk"/>
+
+									<find_object_surface posname="$targetpos" rotname="$targetrot" object="$target" />
+
+									<set_value name="$randomdelay" min="2" max="5"/>
+
+									<!--do_if value="$commander_on_pod == false" comment="Alternative savegame-solution">
+					<debug_text text="'Putting commander on board of pod' + $i + ':' + $j"/>
+					<set_value name="$commander_on_pod" exact="true"/>
+					<assign_boarding_commander object="$boardingpod" actor="$commander"/>
+				  </do_if>
+				  <do_else>
+					<debug_text text="'Set object commander of pod' + $i + ':' + $j"/>
+					<set_object_commander object="$boardingpod" commander="$boardingpods.{1}" />
+				  </do_else-->
+
+									<start_script name="'boarding.pod'" object="$boardingpod.pilot">
+										<param name="target" value="$target" />
+										<param name="targetpos" value="$targetpos" />
+										<param name="targetrot" value="$targetrot" />
+										<param name="initialwaittime" value="$randomdelay + $i * 2s" />
+										<param name="debugoutputchance" value="$debugoutputchance"/>
+									</start_script>
+								</do_all>
+							</do_all>
+						</do_all>
+						<remove_value name="$UnitList"/>
+
+						<set_value name="$FirstArrived" exact="false" />
+						<set_value name="$EarliestAttackedConvTime" exact="player.age" />
+
+						<!-- Ensure that the boarding pods arrive at their target -->
+						<debug_text text="'Setting objective: Protect boarding pods'" />
+						<set_objective cue="Start" action="objective.protect" group="$boardingpodsinflight" />
+
+
+						<!--MEU-->
+						<!--MR	-->	
+						<!--<remove sel="//cue[@name='LaunchBoardingPods']/actions/start_conversation[@actor='$commander']"/>-->		
+
+						<!--<start_conversation actor="$commander" conversation="BoardingSupport_ProtectPods_Started_ConversationF" chance="$isplayerprocess * 100"/>-->
+						<!--ABOVE-->
+
+
+					</actions>
+					<!--</replace> --> 
+
+
+
+
+					<!-- <actions>
+		  
+		  
+	<!{1}**BO**{1}>
+	<!{1}**<add sel="//cue[@name='LaunchBoardingPods']/actions" pos="prepend">**{1}>
+		<set_value name="$checkpreboardstrength" exact="false"/>
+	<!{1}**</add>**{1}>
+
+            <!{1}**TODO: Should this be $boardership, not player.primaryship**{1}>
+            <!{1}** remove marine commander from playership**{1}>
+            <dismiss_control_entity object="player.primaryship" actor="$commander"/>
+            <remove_actor_from_room actor="$commander" comment="remove marine-commander from playership"/>
+            <create_cue_actor actor="$commander" cue="Start" comment="Commander has to be 'somewhere' or we have savegame problems"/>
+
+            <do_if value="not $training">
+              <signal_cue_instantly cue="md.Notifications.PlayerBoarding" param="[$target, 'boarding started']"/>
+            </do_if>
+
+            <!{1}** create boarding pods and send towards target **{1}>
+            <create_list name="$BoardingPodsList"/>
+            <set_value name="$commander_on_pod" exact="false"/>
+
+            <create_group groupname="$MarinePilots"/>
+            <debug_text text="'marine.maxmk ' + unitcategory.marine.maxmk" chance="$debugoutputchance"/>
+            <do_all exact="unitcategory.marine.maxmk" counter="$i" comment="Loop thorough the number of Marks marine units have">
+
+              <append_to_list name="$BoardingPodsList" exact="[]" comment="... create a new list for this Mk"/>
+
+              <set_value name="$UnitList" exact="$boardership.availableunits.{unitcategory.marine}.mk.{$i}.list"/>
+              <debug_text text="$UnitList" chance="$debugoutputchance"/>
+              <do_all exact="$UnitList.count" counter="$j" comment="#marines of this Mk">
+
+                <!{1}** This also marks the marine as "unavailable" on the playership, they can be made available again with "return_units" **{1}>
+                <request_units object="$boardership" macro="$UnitList.{$j}" exact="1" comment="marks the marine as 'unavailable' on the playership"/>
+
+                <create_ship name="$boardingpod" groupname="$boardingpodsinflight" group="boardingpods" zone="$boardership.zone">
+                  <pilot macro="$UnitList.{$j}">
+                    <owner exact="faction.player"/>
+                  </pilot>
+                  <position object="$boardership" x="$i * 40m" y="$j*20m" z="-200m + $i*10" max="10m"/>
+                  <!{1}**position object="$boardership" x="$i * 1m" y="$j*1m" z="-200m + $i*1" comment="all together - for testing"/**{1}>
+                </create_ship>
+
+                <add_to_group groupname="$MarinePilots" object="$boardingpod.pilot"/>
+
+                <append_to_list name="$BoardingPodsList.{$i}" exact="$boardingpod" comment="End up with a list per Mk"/>
+
+                <find_object_surface posname="$targetpos" rotname="$targetrot" object="$target" />
+
+                <set_value name="$randomdelay" min="2" max="5"/>
+
+                <!{1}**do_if value="$commander_on_pod == false" comment="Alternative savegame-solution">
+                  <debug_text text="'Putting commander on board of pod' + $i + ':' + $j"/>
+                  <set_value name="$commander_on_pod" exact="true"/>
+                  <assign_boarding_commander object="$boardingpod" actor="$commander"/>
+                </do_if>
+                <do_else>
+                  <debug_text text="'Set object commander of pod' + $i + ':' + $j"/>
+                  <set_object_commander object="$boardingpod" commander="$boardingpods.{1}" />
+                </do_else**{1}>
+
+                <start_script name="'boarding.pod'" object="$boardingpod.pilot">
+                  <param name="target" value="$target" />
+                  <param name="targetpos" value="$targetpos" />
+                  <param name="targetrot" value="$targetrot" />
+                  <param name="initialwaittime" value="$randomdelay + $i * 2s" />
+                  <param name="debugoutputchance" value="$debugoutputchance"/>
+                </start_script>
+              </do_all>
+            </do_all>
+            <remove_value name="$UnitList"/>
+
+            <set_value name="$FirstArrived" exact="false" />
+            <set_value name="$EarliestAttackedConvTime" exact="player.age" />
+
+            <!{1}** Ensure that the boarding pods arrive at their target **{1}>
+            <debug_text text="'Setting objective: Protect boarding pods'" />
+            <set_objective cue="Start" action="objective.protect" group="$boardingpodsinflight" />
+			
+			
+			
+	<!{1}**MR	**{1}>	
+	<remove sel="//cue[@name='LaunchBoardingPods']/actions/start_conversation[@actor='$commander']"/>		
+					
+            <!{1}**<start_conversation actor="$commander" conversation="BoardingSupport_ProtectPods_Started_ConversationF" />**{1}>
+			<!{1}**ABOVE**{1}>
+			
+			
+			
+          </actions>-->
+					<!--ABOVE-->
+
+
+
+
+					<cues>
+						<cue name="LaunchBoardingPods_Wait">
+							<conditions>
+								<event_cue_completed cue="LaunchBoardingPods"/>
+							</conditions>
+							<actions>
+								<create_group groupname="$ArrivedBoardingpods" comment="Used to keep track of boarding pods which will be cleaned up at the end"/>
+							</actions>
+							<cues>
+								<cue name="MarinePilotKilled" instantiate="true">
+									<conditions>
+										<event_object_destroyed group="$MarinePilots"/>
+									</conditions>
+									<actions>
+										<debug_text text="'Boardpod pilot ' + event.object.macro + '(' + event.object.knownname + ') was killed. Removing from boardership units.'"/>
+
+
+
+										<!--BF-->			
+										<!--<add sel="//cue[@name='MarinePilotKilled']/actions/remove_units" type="@chance" >0</add>-->
+
+										<!--<remove_units object="$boardership" macro="event.object.macro" exact="1" unavailable="true"/>-->
+										<!--ABOVE-->
+
+										<!--<add sel="//cue[@name='MarinePilotKilled']/actions/remove_units" pos="after">-->
+										<do_if value="event.object.macro?"> 
+											<set_value name="$objectmacro" exact="event.object.macro" />
+											<include_actions ref="DeleteUnitFleet"/>
+										</do_if> 
+										<!--</add>	-->		
+
+
+
+
+									</actions>
+								</cue>
+
+								<cue name="BoardingPodAttacked" instantiate="true">
+									<conditions>
+										<event_object_attacked group="$boardingpodsinflight" />
+									</conditions>
+									<actions>
+										<debug_text text="'Boardingpods.count = ' + $boardingpodsinflight.count"/>
+
+										<do_if value="player.age ge $EarliestAttackedConvTime">
+											<start_conversation actor="player.copilot" type="unqueued" conversation="BoardingSupport_ProtectPods_Attacked_ConversationF" />
+											<set_value name="$EarliestAttackedConvTime" exact="player.age + 10s" />
+										</do_if>
+
+										<include_actions ref="CheckBoardingArrivalState"/>
+									</actions>
+								</cue>
+
+								<cue name="BoardingPodDestroyed" instantiate="true">
+									<conditions>
+										<event_object_destroyed group="$boardingpodsinflight" />
+									</conditions>
+									<actions>
+										<debug_text text="'Boardingpods.count = ' + $boardingpodsinflight.count"/>
+
+										<!-- Figure out what the Mk-type is of the object which triggered the event -->
+										<set_value name="$marine_type" exact="0"/>
+										<do_all exact="$BoardingPodsList.count" counter="$i">
+											<set_value name="$Index" exact="$BoardingPodsList.{$i}.indexof.{event.object}"/>
+											<do_if value="$Index" comment="Is the object which fired the event in this list?">
+												<set_value name="$marine_type" exact="$i"/>
+												<break/>
+											</do_if>
+										</do_all>
+
+										<remove_from_group object="event.object" group="$boardingpodsinflight"/>
+
+										<do_if value="$boardingpodsinflight.count">
+											<start_conversation actor="player.copilot" type="unqueued" conversation="BoardingSupport_ProtectPods_Destroyed_ConversationF" />
+										</do_if>
+
+										<do_if value="$marine_type">
+											<remove_value name="$BoardingPodsList.{$marine_type}.{$Index}" comment="Update our list"/>
+										</do_if>
+
+										<include_actions ref="CheckBoardingArrivalState"/>
+									</actions>
+								</cue>
+
+								<cue name="BoardingPodArrived" instantiate="true">
+									<conditions>
+										<event_object_signalled group="$boardingpodsinflight" param="'boarding.pod'" param2="'attached'"/>
+									</conditions>
+									<actions>
+										<debug_text text="'Boardingpods.count = ' + $boardingpodsinflight.count" chance="$debugoutputchance"/>
+										<set_value name="$podpilot" exact="event.object.pilot"/>
+
+										<!--Boarding pod has arrived. Add it to $ArrivedBoardingpods and remove it from $boardingpodsinflight-->
+										<add_to_group object="event.object" groupname="$ArrivedBoardingpods"/>
+										<remove_from_group object="event.object" group="$boardingpodsinflight"/>
+
+										<!--Remove the marine pilot from $MarinePilots and destroy them. They now only exist as macros in the $BoardingPodsList map-->
+										<remove_from_group object="$podpilot" group="$MarinePilots"/>
+										<debug_text text="'boarding pod pilot: ' + $podpilot + ' ' + $podpilot.knownname + ' destroyed as it has arrived.'" chance="$debugoutputchance"/>
+										<do_if value="not $FirstArrived">
+											<start_conversation actor="player.copilot" type="unqueued" conversation="BoardingSupport_ProtectPods_FirstArrived_ConversationF" />
+											<set_value name="$FirstArrived" exact="true" />
+										</do_if>
+
+										<do_all exact="unitcategory.marine.maxmk" counter="$i" comment="Loop thorough the number of Marks marine units have">
+											<set_value name="$UnitList" exact="unitcategory.marine.mk.{$i}.list"/>
+											<do_if value="$UnitList.indexof.{$podpilot.macro}">
+												<append_to_list name="$ArrivedMarines.{$i}" exact="$podpilot.macro"/>
+												<break/>
+											</do_if>
+										</do_all>
+										<remove_value name="$UnitList"/>
+
+										<include_actions ref="CheckBoardingArrivalState"/>
+									</actions>
+									<cues>
+										<cue name="BoardingPodArrived_delayed">
+											<delay exact="1s"/>
+											<actions>
+												<!-- Bug work-around: Cannot be destroyes instantly, that causes a crash (Klaus is aware) -->
+												<destroy_object object="$podpilot" />
+											</actions>
+										</cue>
+									</cues>
+
+								</cue>
+
+								<library name="CheckBoardingArrivalState">
+									<actions>
+										<include_actions ref="CalculateNumMarines"/>
+										<do_if value="$boardingpodsinflight.count == 0">
+											<do_if value="$ArrivedMarines.count" comment="How many marines successfully arrived?">
+												<start_conversation actor="player.copilot" conversation="BoardingSupport_ProtectPods_AllArrived_ConversationF" />
+												<cancel_cue cue="static" />
+												<signal_cue cue="BeginBoardingCycle" />
+											</do_if>
+											<do_else>
+												<start_conversation actor="$commander" conversation="BoardingSupport_ProtectPods_AllDestroyed_ConversationF" />
+												<!-- TODO: Fail notification -->
+												<remove_mission cue="Start" />
+												<cancel_cue cue="Start" />
+											</do_else>
+										</do_if>
+									</actions>
+								</library>
+
+								<library name="CalculateAttackStrength">
+
+									<!--MR	-->		
+									<!--<replace sel="//library[@name='CalculateAttackStrength']/actions">-->
+									<actions>
+										<set_value name="$attackstrength" exact="0.0f"/>
+
+										<do_if value="player.difficulty" min="level.hard">
+											<set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{1}.count * 0.5f" />
+											<set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{2}.count * 1.5f" />
+											<set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{3}.count * 5.0f" />
+										</do_if>
+
+										<do_else>
+											<set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{1}.count * 0.5f" />
+											<set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{2}.count * 1.5f" />
+											<set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{3}.count * 5.0f" />
+										</do_else>
+
+										<do_if value="$commander">
+
+											<do_if value="player.difficulty" min="level.hard">
+												<set_value name="$attackstrength" exact="($attackstrength * ($commander.combinedskill + 1.0f)) / 100.0f" />
+											</do_if>
+
+											<do_elseif value="player.difficulty" min="level.medium">
+												<set_value name="$attackstrength" exact="($attackstrength * ($commander.combinedskill + 1.0f)* 1.25)i / 100.0f" />
+											</do_elseif>
+
+											<do_else>
+												<!--<set_value name="$attackstrength" exact="$attackstrength * (1.0f + $commander.combinedskill)" />-->
+												<set_value name="$attackstrength" exact="$attackstrength * (1.4f + ($commander.combinedskill / 100.0f))" />
+											</do_else>
+
+										</do_if>
+									</actions>
+									<!--</replace>-->			
+
+									<!--<actions>
+                    <set_value name="$attackstrength" exact="0.0f"/>
+                    <set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{1}.count * param.boarding.recruitstrength" />
+                    <set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{2}.count * param.boarding.veteranstrength" />
+                    <set_value name="$attackstrength" operation="add" exact="$ArrivedMarines.{3}.count * param.boarding.elitestrength" />
+                    <assert value="unitcategory.marine.maxmk == 3" text="'Max marine is no longer 3. Update'"/>
+
+                    <debug_text text="'marine $attackstrength: ' + $attackstrength" chance="$debugoutputchance"/>
+                    <do_if value="$commander">
+                      <debug_text text="'Marine Commander skill is: ' + $commander.combinedskill" chance="$debugoutputchance"/>
+                      <set_value name="$attackstrength" exact="($attackstrength * ($commander.combinedskill + 1)) / 100" />
+                    </do_if>
+                  </actions>-->
+									<!--ABOVE-->
+
+								</library>
+
+								<library name="CalculateNumMarines">
+									<actions>
+										<set_value name="$nummarines" exact="0"/>
+										<do_all exact="$ArrivedMarines.count" counter="$i">
+											<set_value name="$nummarines" operation="add" exact="$ArrivedMarines.{$i}.count"/>
+										</do_all>
+										<debug_text text="'$nummarines is now: ' + $nummarines" chance="$debugoutputchance"/>
+									</actions>
+								</library>
+
+								<cue name="BeginBoardingCycle">
+									<conditions>
+										<event_cue_signalled />
+									</conditions>
+									<actions>
+										<debug_text text="'Boarding cycle begins'" chance="$debugoutputchance" />
+
+										<include_actions ref="CalculateAttackStrength"/>
+										<include_actions ref="CalculateNumMarines"/>
+
+										<!-- get target's defence strength -->
+										<do_if value="$target == @md.$PlotBoardingShip">
+											<set_value name="$defencestrength" exact="10"/>
+										</do_if>
+										<do_elseif value="$target.owner == faction.ownerless">
+											<set_value name="$defencestrength" exact="1"/>
+										</do_elseif>
+										<do_else>
+											<set_value name="$defencestrength" exact="$target.boardingresistance"/>
+										</do_else>
+										<debug_text text="'Initial defence strength: ' + $defencestrength"/>
+
+										<debug_text text="'Boarding - attack: '+ $attackstrength + ' vs defense: ' + $defencestrength"/>
+
+										<!--BO	-->		
+										<!--<add sel="//cue[@name='BeginBoardingCycle']/actions">-->
+										<set_value name="$checkattackstrength" exact="true"/>
+										<!--</add>-->				
+
+
+
+									</actions>
+									<cues>
+										<cue name="BoardingCycle" checktime="player.age + 5s" onfail="cancel" version="2">
+											<actions>
+
+
+												<!--BO-->
+												<!--<add sel="//cue[@name='BoardingCycle']/actions" pos="prepend">-->
+												<do_all exact="player.primaryship.drones.count" counter="$i">
+													<do_if value="player.primaryship.drones.{$i}.hackerprobe">
+														<set_value name="$hackerdroneexists" exact="true" />
+													</do_if>
+												</do_all>
+												<!--</add>	-->		  
+
+
+												<!-- TODO: 'retreat' case? (with negative progress) -->
+												<!-- check if we want to offer a support mission this round -->
+												<!-- TEMP? give a mission every round -->
+												<set_value name="$SupportMissionCue" exact="null"/>
+												<!--MR-->					
+												<!--<replace sel="//cue[@name='BoardingCycle']/actions/set_value[@name='$SupportTimeout']/@exact">5min</replace>-->						
+												<!--<set_value name="$SupportTimeout" exact="2min"/>-->
+												<!--RESULT ABOVE-->
+												<set_value name="$SupportTimeout" exact="5min"/>
+
+
+
+
+												<!--MR-->					
+												<!--Initializes $fightoutcome a bit earlier than in the vanilla script-->
+												<!--<add sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$target.owner == faction.ownerless']" pos="before">-->
+												<include_actions ref="CalculateAttackStrength"/>
+												<do_if value="$target == @md.$PlotBoardingShip">
+													<set_value name="$defencestrength" exact="10"/>
+												</do_if>
+												<do_elseif value="$target.owner == faction.ownerless">
+													<set_value name="$defencestrength" exact="1"/>
+												</do_elseif>
+												<do_else>
+													<set_value name="$defencestrength" exact="$target.boardingresistance"/>
+												</do_else>
+												<set_value name="$fightoutcome" exact="$defencestrength - $attackstrength"/>
+												<!--</add>-->					
+
+
+
+
+												<!--BF-->				
+												<!--<replace sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$target.owner == faction.ownerless']">-->
+												<do_if value="$target.owner == faction.ownerless or $target.isclass.station">
+													<set_value name="$missiontype" exact="1" />
+													<set_value name="$destroyoption" exact="'not_allowed'"/>	
+												</do_if>
+												<!--</replace>-->					
+												<!--<do_if value="$target.owner == faction.ownerless">
+                          <set_value name="$missiontype" exact="1" />
+                        </do_if>-->
+												<!--ABOVE-->
+
+
+
+
+												<!--MR	-->				
+												<!--Shut up, Yisha.  I know what I'm doing.-->
+												<!--<add sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$target.owner == faction.ownerless']" pos="after">-->
+												<do_elseif value="$fightoutcome lt -10">
+													<set_value name="$missiontype" exact="1" />
+												</do_elseif>
+												<!--</add>-->					
+
+
+
+
+
+												<do_else>
+													<do_any>
+														<!--<set_value name="$missiontype" exact="1" comment="skip (treat as success)" weight="1"/>-->
+														<set_value name="$missiontype" exact="2" comment="Hack mission" weight="20 * $hackerdroneexists"/>
+														<set_value name="$missiontype" exact="3" comment="Destroy surface element" weight="80"/>
+													</do_any>
+												</do_else>
+
+
+												<!--BO-->		
+												<!--<add sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$missiontype == 3']" pos="before">-->
+												<do_if value="$destroyoption == 'undecided'">
+													<start_conversation actor="player.copilot" conversation="BoardingSupport_Destroy_Options_ConversationF" />		
+													<set_value name="$missiontype" exact="99"/>	
+												</do_if>
+												<do_elseif value="$destroyoption == 'weaponsonly'">
+													<set_value name="$missiontype" exact="3"/>
+												</do_elseif>		
+												<do_elseif value="$hackoption == 'always' and $hackerdroneexists">
+													<set_value name="$missiontype" exact="2"/>
+												</do_elseif>	
+												<do_elseif value="$hackoption == 'yes' and $hackerdroneexists">
+													<set_value name="$missiontype" exact="2"/>
+													<set_value name="$hackoption" exact="'undecided'"/>	
+												</do_elseif>
+												<do_elseif value="$hackoption == 'no'">
+													<set_value name="$missiontype" exact="3"/>
+													<set_value name="$hackoption" exact="'undecided'"/>
+												</do_elseif>		
+												<do_elseif value="$hackoption == 'never'">
+													<do_any>
+														<set_value name="$missiontype" exact="1" comment="skip (treat as success)" weight="1"/>
+														<set_value name="$missiontype" exact="3" comment="Destroy surface element" weight="80"/>
+													</do_any>
+												</do_elseif>
+												<do_elseif value="$missiontype == 2 and $hackoption == 'undecided' and $hackerdroneexists">
+													<remove_help all="true" />	
+													<set_value name="$checkresistance" exact="false"/>
+													<signal_cue cue="ResetCheckResistance" />
+													<start_conversation actor="player.copilot" conversation="BoardingSupport_Hack_Started_ConversationF" />		
+													<set_value name="$missiontype" exact="99"/>
+												</do_elseif>		
+												<!--</add>-->
+
+
+
+
+												<do_if value="$missiontype == 3">
+													<!-- Only use mission to destroy a surface element if that exists! -->
+													<find_object_component name="$surfaceelem" object="$target" class="class.destructible" surfaceelement="true" integrated="false" />
+
+
+													<!--BO	-->		  
+													<!--<add sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$missiontype == 3']/find_object_component[@name='$surfaceelem']" pos="after">-->
+													<do_if value="$destroyoption == 'weaponsonly'">
+														<find_object_component name="$surfaceelem" object="$target" class="class.weapon" surfaceelement="true" integrated="false" />
+													</do_if>
+													<!--</add>-->				  
+
+
+
+
+													<do_if value="$surfaceelem">
+														<do_if value="$surfaceelem.shield gt 100000">
+															<!--MR-->					
+															<!--<replace sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$missiontype == 3']/do_if[@value='$surfaceelem']/do_if[@value='$surfaceelem.shield gt 100000']/set_value[@name='$SupportTimeout']/@exact">8min</replace>-->					
+
+															<!--<set_value name="$SupportTimeout" exact="3min"/>-->
+															<!-- RESULT ABOVE-->
+															<set_value name="$SupportTimeout" exact="8min"/>
+
+
+
+														</do_if>
+													</do_if>
+													<do_else>
+														<set_value name="$missiontype" exact="1" />
+													</do_else>
+												</do_if>
+
+												<!--MR-->					
+												<!--Blitz!-->
+												<!--<replace sel="//cue[@name='BoardingCycle']/actions/do_if[@value='$missiontype == 1']">-->
+												<do_if value="$missiontype == 1">
+													<do_if value="$fightoutcome lt -100">
+														<set_value name="$SupportTimeout" exact="0.2s"/>
+													</do_if>
+													<do_else>
+														<set_value name="$SupportTimeout" exact="20s"/>
+													</do_else>
+												</do_if>
+												<!--</replace>	-->			
+
+												<!--<do_if value="$missiontype == 1">
+                          <set_value name="$SupportTimeout" exact="20s"/>
+                        </do_if>-->
+												<!--ABOVE-->
+
+
+
+												<!--The more cycle missions taken part in, the more annoyed the object and factions get-->
+												<signal_cue_instantly cue="md.Notifications.PlayerBoarding" param="[$target, 'boarding started']"/>
+											</actions>
+											<patch sinceversion="2" state="complete">
+
+
+												<!--MR-->	
+												<!--Additional time to accomplish support objectives-->
+												<!--<replace sel="//cue[@name='BoardingCycle']/patch[@sinceversion='2']/set_value[@name='$SupportTimeout']/@exact">5min</replace>-->
+
+												<!--<set_value name="$SupportTimeout" exact="2min"/>-->
+												<!--RESULT ABOVE-->
+												<set_value name="$SupportTimeout" exact="5min"/>
+
+											</patch>
+											<cues>
+												<!-- Mission types: 
+                      0 = skip (treat as failure)
+                      1 = skip (treat as success)
+                      2 = Hack mission
+                      3 = Destroy surface element
+                    -->
+
+
+												<!--BO-->			
+												<!--<add sel="//cue[@name='BoardingCycle']/cues" pos="prepend">	-->
+												<cue name="BoardingSupport_Hack_Options" instantiate="true">
+													<conditions>
+														<event_conversation_next_section sectionprefix="BoardingSupport_Hack_Started_ConversationF_" />
+													</conditions>
+													<actions>
+														<do_if value="event.param == 'BoardingSupport_Hack_Started_ConversationF_yes'">
+															<set_value name="$hackoption" exact="'yes'"/>
+														</do_if>	
+														<do_elseif value="event.param == 'BoardingSupport_Hack_Started_ConversationF_no'">
+															<set_value name="$hackoption" exact="'no'"/>				
+														</do_elseif>	
+														<do_elseif value="event.param == 'BoardingSupport_Hack_Started_ConversationF_never'">
+															<set_value name="$hackoption" exact="'never'"/>			
+														</do_elseif>
+														<reset_cue cue="BoardingCycle"/>
+													</actions>
+												</cue>
+												<cue name="BoardingSupport_Destroy_Options" instantiate="true">
+													<conditions>
+														<event_conversation_next_section sectionprefix="BoardingSupport_Destroy_Options_ConversationF_" />
+													</conditions>
+													<actions>
+														<do_if value="event.param == 'BoardingSupport_Destroy_Options_ConversationF_normalsupport'">
+															<set_value name="$destroyoption" exact="'normal'"/>
+														</do_if>	
+														<do_elseif value="event.param == 'BoardingSupport_Destroy_Options_ConversationF_weaponsonly'">
+															<set_value name="$destroyoption" exact="'weaponsonly'"/>				
+														</do_elseif>
+														<do_elseif value="event.param == 'BoardingSupport_Destroy_Options_ConversationF_hackingonly'">
+															<set_value name="$destroyoption" exact="'hackingonly'"/>
+															<set_value name="$hackoption" exact="'always'"/>				
+														</do_elseif>	
+														<reset_cue cue="BoardingCycle"/>
+													</actions>
+												</cue>		
+												<!--</add>-->
+
+
+
+
+
+												<cue name="SupportMission_Hack" onfail="cancel">
+													<conditions>
+														<check_value value="$missiontype == 2" />
+													</conditions>
+													<actions>
+														<set_value name="$SupportMissionCue" exact="this"/>
+														<!-- Assist the boarding crew by hacking into key systems -->
+														<debug_text text="'Setting objective: Hack'" />
+														<!-- <set_objective cue="Start" action="objective.hack" object="$target" /> -->
+
+
+
+														<!--BO	-->			
+														<!--<remove sel="//cue[@name='SupportMission_Hack']/actions/start_conversation"/>	-->					
+
+														<!--<start_conversation actor="player.copilot" conversation="BoardingSupport_Hack_Started_ConversationF" />-->
+														<!--ABOVE-->
+
+
+
+													</actions>
+													<cues>
+														<cue name="HackTargetPoints" ref="md.RML_Scan_TargetPoints.ScanTargetPoints">
+															<param name="EndSignalCue" value="SupportMissionDone" />
+															<param name="MissionCue" value="Start" />
+															<param name="Object" value="$target" />
+															<param name="TagList" value="[tag.ship_xs, tag.scan]" />
+															<param name="InteractionType" value="2" />
+
+															<!--MR-->						  
+															<!--Randomize hacking points-->
+															<!--<replace sel="//cue[@name='HackTargetPoints']/param[@name='SequenceType']/@value">2</replace>-->					  
+															<!--<param name="SequenceType" value="3" comment="1: points need to be processed in the defined sequence; 2: points need to be processed in a randomized sequence; 3: points can be processed in any order (using multiple simultaneous objectives)" />-->
+															<!--ABOVE-->
+															<param name="SequenceType" value="2" comment="1: points need to be processed in the defined sequence; 2: points need to be processed in a randomized sequence; 3: points can be processed in any order (using multiple simultaneous objectives)" />
+
+
+
+
+															<!--MR-->						  
+															<!--Adding more hacking points-->
+															<!--<replace sel="//cue[@name='HackTargetPoints']/param[@name='InitialTargetCount']/@value">1</replace>-->
+															<!--<remove sel="//cue[@name='HackTargetPoints']/param[@name='InitialTargetCount']"/> -->	
+
+															<!--<param name="InitialTargetCount" value="1" />-->
+															<!--ABOVE-->
+
+															<!--<add sel="//cue[@name='HackTargetPoints']">-->
+															<param name="InitialTargetCountPercent" value="25" />
+															<param name="MinInitialTargetCount" value="1" /> 
+															<param name="MaxInitialTargetCount" value="3" />
+															<!--</add>-->					  						  
+
+
+														</cue>
+													</cues>
+												</cue>
+
+												<cue name="SupportMission_DestroySurfaceElement" onfail="cancel">
+													<conditions>
+														<check_value value="$missiontype == 3" />
+													</conditions>
+													<actions>
+														<set_value name="$SupportMissionCue" exact="this"/>
+														<add_to_group groupname="$surfaceelems" object="$surfaceelem" />
+														<!-- Cause destruction to draw enemies away from marines -->
+														<debug_text text="'Setting objective: Destroy surface element'" />
+														<!-- <set_objective cue="Start" action="objective.destroy" object="$surfaceelem" /> -->
+														<start_conversation actor="player.copilot" conversation="BoardingSupport_DestroyRandomSurfaceElement_Started_ConversationF" />
+													</actions>
+													<cues>
+														<cue name="DestroySurfaceElement" ref="md.RML_Destroy_Components.DestroyComponents">
+															<param name="EndSignalCue" value="SupportMissionDone"/>
+															<param name="MissionCue" value="Start"/>
+															<param name="Targets_Param" value="$surfaceelems" comment="Group to destroy"/>
+															<param name="DebugChance" value="$debugoutputchance"/>
+														</cue>
+													</cues>
+												</cue>
+
+												<cue name="SupportMissionTimeout">
+													<delay exact="$SupportTimeout" />
+													<actions>
+														<do_if value="$SupportMissionCue">
+															<cancel_cue cue="$SupportMissionCue" />
+														</do_if>
+
+														<do_if value="$missiontype == 1">
+															<set_value name="SupportMissionDone.$EndFeedbackValue" exact="1" />
+															<signal_cue cue="SupportMissionDone" />
+														</do_if>
+														<do_else>
+															<set_value name="SupportMissionDone.$EndFeedbackValue" exact="0" />
+														</do_else>
+														<signal_cue cue="SupportMissionDone" />
+													</actions>
+												</cue>
+
+												<cue name="SupportMissionDone">
+													<conditions>
+														<event_cue_signalled />
+													</conditions>
+													<actions>
+
+
+														<!--BO-->				  
+														<!--<add sel="//cue[@name='SupportMissionDone']/actions" pos="prepend">-->
+														<cancel_conversation actor="player.copilot" conversation="BoardingSupport_Hack_Started_ConversationF" />	
+														<cancel_conversation actor="player.copilot" conversation="BoardingSupport_Destroy_Options_ConversationF" />
+														<!--</add>-->				  
+
+
+
+
+														<set_objective cue="Start" action="objective.board" object="$target" silent="true"/>
+														<do_if value="SupportMissionTimeout.isinstance">
+															<cancel_cue cue="SupportMissionTimeout" />
+														</do_if>
+														<do_if value="$missiontype == 2 and this.$EndFeedbackValue?">
+															<!--success even if failed as the component was destroyed by non-player-->
+															<set_value name="$SupportSuccess" exact="true"/>
+														</do_if>
+														<do_elseif value="this.$EndFeedbackValue gt 0">
+															<set_value name="$SupportSuccess" exact="true"/>
+															<debug_text text="'Support successful'" chance="$debugoutputchance" />
+														</do_elseif>
+														<do_else>
+															<set_value name="$SupportSuccess" exact="false"/>
+															<debug_text text="'Support failed'" chance="$debugoutputchance" />
+														</do_else>
+													</actions>
+													<cues>
+														<!--set value $losschancemin and $losschancemax between 0-100 -->
+														<library name="LoseMarines">
+															<actions>
+																<do_if value="$nummarines" min="4">
+																	<do_if value="$losschancemax" min="1">
+																		<set_value name="$InjuredAmount" min="$nummarines / (100.0f / $losschancemin)" max="$nummarines / (100.0f / $losschancemax)"/>
+																		<debug_text text="'Player will lose ' + $InjuredAmount + ' marines'"/>
+																		<do_all exact="$InjuredAmount">
+																			<set_value name="$PossibleMarines" exact="[]"/>
+																			<do_all exact="$ArrivedMarines.count" counter="$i">
+																				<do_if value="$ArrivedMarines.{$i}.count">
+																					<append_to_list name="$PossibleMarines" exact="$i"/>
+																				</do_if>
+																			</do_all>
+
+																			<do_if value="$PossibleMarines.count">
+																				<set_value name="$KilledMarineMKIndex" min="1" max="$PossibleMarines.count" profile="decreasing" scale="2"/>
+																				<set_value name="$KilledMarineMK" exact="$PossibleMarines.{$KilledMarineMKIndex}"/>
+																				<set_value name="$KilledMarineIndex" min="1" max="$ArrivedMarines.{$KilledMarineMK}.count"/>
+																				<debug_text text="$ArrivedMarines.{$KilledMarineMK}.{$KilledMarineIndex} + ' was killed'"/>
+																				<!--BF-->									
+																				<!--<add sel="//library[@name='LoseMarines']/actions/do_if/do_if/do_all/do_if/remove_units" type="@chance" >0</add>-->
+
+																				<!--<remove_units object="$boardership" macro="$ArrivedMarines.{$KilledMarineMK}.{$KilledMarineIndex}" exact="1" unavailable="true"/>-->
+																				<!--ABOVE-->
+
+																				<!--<add sel="//library[@name='LoseMarines']/actions/do_if/do_if/do_all/do_if/remove_units" pos="after">-->
+																				<do_if value="$ArrivedMarines.{$KilledMarineMK}.{$KilledMarineIndex}?"> 
+																					<set_value name="$objectmacro" exact="$ArrivedMarines.{$KilledMarineMK}.{$KilledMarineIndex}" />
+																					<include_actions ref="DeleteUnitFleet"/>
+																				</do_if> 
+																				<!--</add>	-->	
+
+
+
+
+																				<remove_value name="$ArrivedMarines.{$KilledMarineMK}.{$KilledMarineIndex}"/>
+																			</do_if>
+																		</do_all>
+																	</do_if>
+																</do_if>
+																<do_else>
+																	<!--Marine count too low. All of them lost.-->
+																	<do_all exact="$ArrivedMarines.count" counter="$i">
+																		<do_all exact="$ArrivedMarines.{$i}.count" counter="$o">
+
+																			<!--BF-->							
+																			<!--<add sel="//library[@name='LoseMarines']/actions/do_else/do_all/do_all/remove_units" type="@chance" >0</add>-->
+
+																			<!--<remove_units object="$boardership" macro="$ArrivedMarines.{$i}.{$o}" exact="1" unavailable="true"/>-->
+																			<!--  ABOVE-->
+
+																			<!--<add sel="//library[@name='LoseMarines']/actions/do_else/do_all/do_all/remove_units" pos="after">-->
+																			<do_if value="$ArrivedMarines.{$i}.{$o}?"> 
+																				<set_value name="$objectmacro" exact="$ArrivedMarines.{$i}.{$o}" />
+																				<include_actions ref="DeleteUnitFleet"/>
+																			</do_if> 
+																			<!--</add>	-->								  
+
+
+																		</do_all>
+																		<set_value name="$ArrivedMarines.{$i}" exact="[]"/>
+																		<debug_text text="'All marines killed'"/>
+																	</do_all>
+																</do_else>
+
+																<include_actions ref="CalculateNumMarines"/>
+															</actions>
+														</library>
+
+														<cue name="MarineFight">
+															<delay min="3s" max="5s"/>
+															<actions>
+																<!--Injure some marines if player was not successful-->
+
+																<!--MR-->							
+																<!--Failed Support Objectives-->
+																<!--<replace sel="//cue[@name='MarineFight']/actions/do_if[@value='not $SupportSuccess']">-->
+																<do_if value="not $SupportSuccess">
+																	<do_if value="$fightoutcome gt 10">
+																		<set_value name="$losschancemin" exact="45"/>
+																		<set_value name="$losschancemax" exact="80"/>
+																		<include_actions ref="LoseMarines"/>
+																	</do_if>
+																	<do_elseif value="$fightoutcome lt -10">
+																		<!-- Player Wins -->
+																	</do_elseif>
+																	<do_else>
+																		<set_value name="$losschancemin" exact="5"/>
+																		<set_value name="$losschancemax" exact="10"/>
+																		<include_actions ref="LoseMarines"/>
+																	</do_else> 
+																</do_if>
+																<!--</replace>-->							
+
+																<!--<do_if value="not $SupportSuccess">
+                                  <set_value name="$losschancemin" exact="15"/>
+                                  <set_value name="$losschancemax" exact="25"/>
+                                  <include_actions ref="LoseMarines"/>
+                                </do_if>-->
+																<!--ABOVE-->
+
+
+																<do_else>
+																	<include_actions ref="CalculateNumMarines"/>
+																	<signal_cue_instantly cue="md.Boarding_PlayerFleet.Fight_sound" param="2s"/>
+																</do_else>
+
+																<do_if value="$nummarines" min="1">
+																	<include_actions ref="CalculateAttackStrength"/>
+																	<do_if value="$target == @md.$PlotBoardingShip">
+																		<set_value name="$defencestrength" exact="10"/>
+																	</do_if>
+																	<do_elseif value="$target.owner == faction.ownerless">
+																		<set_value name="$defencestrength" exact="1"/>
+																	</do_elseif>
+																	<do_else>
+																		<set_value name="$defencestrength" exact="$target.boardingresistance"/>
+																	</do_else>
+																	<set_value name="$fightoutcome" exact="$defencestrength - $attackstrength"/>
+																	<debug_text text="'$defencestrength ' + $defencestrength"/>
+																	<debug_text text="'$attackstrength ' + $attackstrength"/>
+
+
+																	<!--MR	-->					  
+																	<!--Fight Outcome-->
+																	<!--<replace sel="//cue[@name='MarineFight']/actions/do_if[@value='$nummarines']/do_if[@value='$fightoutcome gt 10']">-->
+																	<do_if value="$fightoutcome gt 10">
+																		<set_value name="$losschancemin" exact="(($defencestrength)f / ((($attackstrength)f) / 4)) * 2"/>
+																		<set_value name="$losschancemax" exact="(($defencestrength)f / ((($attackstrength)f) / 5)) * 2"/>
+																		<include_actions ref="LoseMarines"/>
+																		<!--<show_notification caption="'=== Boarding operation underway ==='" details="'Taking heavy losses!\nYou lost %1 marines.'.[($InjuredAmount)i]" timeout="10s" queued="false" sound="notification_generic"/>-->
+																		<!--<show_help position="0" duration="5s" custom="'Taking heavy losses!\nYou lost %1 marines.'.[($InjuredAmount)i]" />-->
+																	</do_if>
+																	<!--</replace>-->							  
+
+																	<!--<do_if value="$fightoutcome gt 10">
+                                    <!{1}**player loss**{1}>
+                                    <!{1}**<set_value name="$losschancemin" exact="20"/>
+                                    <set_value name="$losschancemax" exact="30"/>**{1}>
+                                    <set_value name="$losschancemin" exact="(($defencestrength)f / ((($attackstrength)f) / 8)) * 2"/>
+                                    <set_value name="$losschancemax" exact="(($defencestrength)f / ((($attackstrength)f) / 9)) * 2"/>
+                                    <debug_text text="'$losschancemin ' + $losschancemin"/>
+                                    <debug_text text="'$losschancemax ' + $losschancemax"/>
+                                    <include_actions ref="LoseMarines"/>
+                                  </do_if>-->
+																	<!--ABOVE-->
+
+
+																	<!--MR-->
+																	<!--<replace sel="//cue[@name='MarineFight']/actions/do_if[@value='$nummarines']/do_elseif[@value='$fightoutcome lt -10']">-->
+																	<do_elseif value="$fightoutcome lt -100">
+																		<!--<show_notification caption="'=== Boarding operation underway ==='" details="'Rolling them up.\nIt will all be over in a minute.'" timeout="10s" queued="false" sound="notification_generic"/>-->
+																		<!--<write_to_logbook category="general" text="'WE ARE UNSTOPPABLE!  BWAHAHAHAHA!  Fight Outcome = %1.'.[$fightoutcome]"/>-->
+																		<!--<show_help position="0" duration="5s" custom="'Rolling them up.\nIt will all be over in a minute.'.[]" />-->
+																	</do_elseif>
+																	<!--</replace>-->
+
+																	<!--<do_elseif value="$fightoutcome lt -10">
+                                    <!{1}**Player wins**{1}>
+                                  </do_elseif>-->
+																	<!--ABOVE-->
+
+
+
+																	<do_else>
+
+
+
+																		<!--MR-->							  
+																		<!--<replace sel="//set_value[@name='$outcomedecider']/@min">$fightoutcome + 50</replace>
+	<replace sel="//set_value[@name='$outcomedecider']/@max">$fightoutcome + 100</replace>-->						  
+
+																		<!--<set_value name="$outcomedecider" min="$fightoutcome" max="$fightoutcome + 10"/>-->
+																		<!--RESULT ABOVE-->
+																		<set_value name="$outcomedecider" min="$fightoutcome + 50" max="$fightoutcome + 100"/>
+
+
+
+																		<do_if value="$outcomedecider gt 10">
+																			<debug_text text="'marines to be lost due to close fight'"/>
+																			<!--player loss-->
+																			<set_value name="$losschancemin" exact="5"/>
+																			<set_value name="$losschancemax" exact="10"/>
+																			<include_actions ref="LoseMarines"/>
+																		</do_if>
+																		<do_else>
+																			<!--Player wins-->
+																		</do_else>
+																	</do_else>
+																</do_if>
+
+																<do_if value="$nummarines" min="1">
+																	<!-- evaluate outcome: depending on mission result and 'caution level', advance or retry current step, or go back one step -->
+																	<!-- TEMP: constant progress after each step -->
+
+																	<!--MR	-->							  
+																	<!--Progress-->
+																	<!--Ideally, Retreat would be more dynamic.  So it should trigger earlier, but reduce less progress.  Retreat is rather abrupt at the moment.-->
+																	<!--<remove sel="//cue[@name='MarineFight']/actions/do_if[3]/set_value[@name='$addedprogress']"/>-->
+
+																	<!--  <set_value name="$addedprogress" exact="20"/>-->
+																	<!--ABOVE-->
+
+
+
+
+																	<!--do_if value="$Debug" comment="developer cheat, so boarding goes quicker">
+                                  <set_value name="$addedprogress" exact="100" comment="TODO: DEBUGGING ONLY"/>
+                                  </do_if-->
+
+																	<!--MR	-->					  
+																	<!--<add sel="//cue[@name='MarineFight']/actions/do_if[3]/set_value[@name='$progress']" pos="before">-->
+																	<set_value name="$retreating" exact="false"/>
+																	<do_if value="(($fightoutcome gt 10) and ((@$InjuredAmount * 2) ge $nummarines)) and ($progress lt 75)">
+																		<set_value name="$addedprogress" min="-35" max="-50"/>
+																		<set_value name="$retreating" exact="true"/>
+																		<show_notification caption="'=== Boarding operation underway ==='" details="'This is a trap!  Retreating! \n\n We lost any control over the ship. \n\n More %2 Marines lost. \n %3 Marines remaining.'.[($progress + $addedprogress)i, ($InjuredAmount)i, $nummarines]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+																		<!--<show_notification caption="'=== Boarding operation underway ==='" details="'Progress: RUN AWAY!  RUN AWAY!  Assault Progress = %1'.[$progress + $addedprogress]" queued="false" priority="8" sound="notification_generic"/>-->
+																		<!--<write_to_logbook category="general" text="'Progress: RUN AWAY! RUN AWAY!\nAssault Progress = %1.'.[$progress + $addedprogress]" />-->
+																	</do_if>
+																	<do_elseif value="$PreScanDone" exact="true">
+																		<set_value name="$addedprogress" exact="[20, 25].random"/>
+
+																		<do_if value="($progress + $addedprogress) lt 100">
+																			<show_notification caption="'=== Boarding operation underway ==='" details="'All clear!  They are falling back! \n\n We now control almost %1 of the %4. \n\n %2 Marines lost this round. \n %3 Marines remaining.'.[[($progress + $addedprogress), 90].min + '%', (@$InjuredAmount)i, $nummarines, (if $target.isclass.station then 'station' else 'ship') ]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+																			<!--<show_notification caption="'=== Boarding operation underway ==='" details="'WE ARE UNSTOPPABLE!  BWAHAHAHAHA!  Assault Progress = %1'.[$progress + $addedprogress]" queued="false" priority="8" sound="notification_generic"/>-->
+																			<!--<write_to_logbook category="general" text="'Progress: Once more into the breach, dear friends!  Assault Progress = %1'.[$progress + $addedprogress]"/>-->
+																		</do_if>		
+
+																	</do_elseif>
+																	<do_else>
+																		<set_value name="$addedprogress" exact="if global.$fleetplayerboardhacker then [16, 17, 18, 19, 20, 21, 23].random else [10, 11, 12, 13, 14, 15, 17].random"/>
+
+																		<!--<write_to_logbook category="general" text="' list X fleethacker \n %1 \n %2 .'.[global.$fleetplayerboardhacker, $addedprogress]"/>-->
+
+																		<do_if value="($progress + $addedprogress) lt 100">
+																			<show_notification caption="'=== Boarding operation underway ==='" details="'We are meeting heavy resistance.  The progress is very slow. \n\n We are controlling almost %1 of the %4. \n\n %2 Marines lost this round. \n %3 Marines remaining.'.[[((($progress + $addedprogress - 1)/20.0f)i + 1)*20, 90].min + '%', (@$InjuredAmount)i, $nummarines, (if $target.isclass.station then 'station' else 'ship')]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+																			<!--<show_notification caption="'=== Boarding operation underway ==='" details="'Progress: Meeting resistance.  Assault Progress = %1'.[$progress + $addedprogress]" queued="false" priority="8" sound="notification_generic"/>-->
+																			<!--<write_to_logbook category="general" text="'Progress: Meeting resistance.  Assault Progress = %1'.[$progress + $addedprogress]"/>-->
+																		</do_if>	
+																	</do_else>
+																	<!--</add>-->
+
+
+																	<!--MEU-->
+																	<set_value name="$InjuredAmount" exact="0"/>
+																	<!--MEU-->
+
+																	<set_value name="$progress" operation="add" exact="$addedprogress" />
+																	<debug_text text="'Progress is now ' + $progress + ' percent'" chance="$debugoutputchance" />
+
+																	<!--Should this be 100?-->
+																	<do_if value="$retreating and $progress lt 0">
+																		<!-- Retreat was successful -->
+																		<debug_text text="'Retreat was successful'" chance="$debugoutputchance" />
+																		<signal_cue cue="Retreat" />
+																	</do_if>
+																	<do_elseif value="not $retreating and $progress ge 100">
+																		<!-- Boarding was successful -->
+																		<debug_text text="'Boarding was successful'" chance="$debugoutputchance" />
+																		<add_experience_progress entity="$commander" exact="3"/>
+																		<signal_cue cue="Success" />
+																	</do_elseif>
+																	<do_else>
+																		<!-- Another round -->
+																		<debug_text text="'Continuing boarding process'" chance="$debugoutputchance" />
+																		<do_if value="$addedprogress gt 0">
+																			<start_conversation actor="$commander" conversation="BoardingProgress_Advance_ConversationF" />
+																		</do_if>
+																		<do_elseif value="$addedprogress == 0">
+																			<start_conversation actor="$commander" conversation="BoardingProgress_Stalemate_ConversationF" />
+																		</do_elseif>
+																		<do_else>
+																			<start_conversation actor="$commander" conversation="BoardingProgress_Retreat_ConversationF" />
+																		</do_else>
+																		<reset_cue cue="BoardingCycle" />
+																	</do_else>
+
+																</do_if>
+																<do_else>
+																	<!-- Failure: all the marines are down, they and the commander will now die -->
+																	<debug_text text="'All marines are out of the fight, they and the commander are now all dead'" chance="$debugoutputchance" />
+																	<signal_cue cue="Failure" />
+																</do_else>
+
+															</actions>
+														</cue>
+
+														<cue name="Retreat">
+															<conditions>
+																<event_cue_signalled />
+															</conditions>
+															<actions>
+																<start_conversation actor="$commander" conversation="BoardingResult_Retreat_Success_ConversationF" />
+																<!-- increase experience, depending on mission progress -->
+																<debug_text text="'Retreating, adding a small amount of experience'" chance="$debugoutputchance" />
+																<!-- TODO -->
+
+
+																<!--MR-->							
+																<!--Retreat Function-->
+																<!--<remove sel="//cue[@name='Retreat']/actions/signal_cue[@cue='ReturnBoardingPods']"/>-->																
+																<!--<signal_cue cue="ReturnBoardingPods" />-->
+																<!--ABOVE-->
+
+
+
+																<!--MR	-->						
+																<!--<add sel="//cue[@name='Retreat']/actions">-->
+																<remove_object_boarder object="$target"/>
+
+																<signal_cue_instantly cue="md.Notifications.PlayerBoarding" param="[$target, 'boarding ended']"/>
+
+																<do_if value="$commander.skill.boarding lt 5">
+																	<set_value name="$addedexperience" min="1" max="5" />
+																	<set_value name="$expneededforlvl" exact="$commander.neededexperience"/>
+																	<add_experience_progress entity="$commander" exact="$addedexperience" />
+																	<do_if value="$commander.experienceprogress" min="$expneededforlvl" comment="Make next level-up more difficult to reach">
+																		<add_skill entity="$commander" type="boarding" exact="1" />
+																		<set_value name="stat.max_boarding_skill" exact="$commander.skill.boarding" comment="highest value is stored" />
+																		<set_experience_progress entity="$commander" exact="$commander.experienceprogress % $expneededforlvl" />
+																	</do_if>
+																</do_if>
+																<do_if value="$commander.skill.morale ge 1">
+																	<set_skill entity="$commander" type="morale" exact="$commander.skill.morale - 1" />
+																</do_if>
+
+
+																<!--MEU-->
+																<!--<do_all exact="unitcategory.marine.maxmk" counter="$i">
+			<set_value name="$NewCasPost.{$i}" exact="$boardership.units.{unitcategory.marine}.mk.{$i}.list"/>
+		</do_all>-->
+
+																<do_all exact="unitcategory.marine.maxmk" counter="$i">
+																	<set_value name="$NewCasPost.{$i}" exact="[]"/>
+																	<do_all exact="$BoardingFleet.count" counter="$b"> 
+																		<do_all exact="$BoardingFleet.{$b}.units.{unitcategory.marine}.mk.{$i}.count" counter="$c"> 
+																			<append_to_list name="$NewCasPost.{$i}" exact="$BoardingFleet.{$b}.units.{unitcategory.marine}.mk.{$i}.list.{$c}"/>
+																		</do_all>		
+																	</do_all>
+																</do_all>
+																<!--MEU-->
+
+
+																<set_value name="$ReturningMarines" exact="[]"/>
+																<do_all exact="$ArrivedMarines.count" counter="$Counter">
+																	<do_all exact="$ArrivedMarines.{$Counter}.count" counter="$i">
+																		<append_to_list name="$ReturningMarines" exact="$ArrivedMarines.{$Counter}.{$i}"/>
+																	</do_all>
+																</do_all>
+
+																<set_value name="$PromotedMarines" exact="[]"/>
+																<do_all exact="$ReturningMarines.count" counter="$i" reverse="true">
+																	<set_value name="$ReturnedMarine" exact="$ReturningMarines.{$i}"/>
+																	<do_all exact="$PromotionLists.count" counter="$j">
+																		<do_all exact="$PromotionLists.{$j}.count" counter="$k">
+																			<do_if value="$k != $PromotionLists.{$j}.count">
+																				<do_if value="$PromotionLists.{$j}.{$k}.{1} == $ReturnedMarine">
+																					<do_if value="true" chance="$PromotionLists.{$j}.{$k}.{2}">
+																						<set_value name="$PromotionMarine" exact="$PromotionLists.{$j}.{$k + 1}.{1}"/>
+																						<append_to_list name="$PromotedMarines" exact="$PromotionMarine"/>
+																						<remove_value name="$ReturningMarines.{$i}"/>
+																						<remove_units object="$boardership" macro="$ReturnedMarine" exact="1" unavailable="true"/>
+																						<debug_text text="'Marine: ' + $ReturnedMarine + ' was promoted to ' + $PromotionMarine" chance="$debugoutputchance"/>
+																					</do_if>
+																				</do_if>
+																			</do_if>
+																		</do_all>
+																	</do_all>
+																</do_all>
+
+																<do_all exact="$PromotedMarines.count" counter="$i">
+																	<!--<add_units object="$boardership" macro="$PromotedMarines.{$i}" exact="1"/>
+			<debug_text text="'Adding 1 unit of newly promoted ' + $PromotedMarines.{$i} + ' to ' + $boardership.knownname" chance="$debugoutputchance"/>-->
+																	<do_if value="$BoardingFleet?">
+																		<set_value name="$objectmacro" exact="$PromotedMarines.{$i}" />
+																		<include_actions ref="AddUnitFleet"/>
+																	</do_if>
+																	<do_else>
+																		<add_units object="$boardership" macro="$PromotedMarines.{$i}" exact="1"/>
+																		<debug_text text="'Adding 1 unit of newly promoted ' + $PromotedMarines.{$i} + ' to ' + $boardership.knownname" chance="$debugoutputchance"/>
+																	</do_else> 
+																</do_all>
+																<do_all exact="$ReturningMarines.count" counter="$i">
+																	<!--<return_units object="$boardership" macro="$ReturningMarines.{$i}" exact="1"/>
+			<debug_text text="'Returning 1 unit of ' + $ReturningMarines.{$i} + ' to ' + $boardership.knownname" chance="$debugoutputchance"/>-->
+																	<do_if value="$BoardingFleet?">
+																		<set_value name="$objectmacro" exact="$ReturningMarines.{$i}" />
+																		<include_actions ref="ReturnUnitFleet"/>
+																	</do_if>
+																	<do_else>
+																		<return_units object="$boardership" macro="$ReturningMarines.{$i}" exact="1"/>
+																		<debug_text text="'Returning 1 unit of ' + $ReturningMarines.{$i} + ' to ' + $boardership.knownname" chance="$debugoutputchance"/>
+																	</do_else>
+																</do_all>		
+
+																<do_all exact="unitcategory.marine.maxmk" counter="$i">
+																	<set_value name="$NewAttUnits.{$i}" exact="[]"/>
+																	<do_all exact="$BoardingFleet.count" counter="$b"> 
+																		<do_all exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.count" counter="$c"> 
+																			<append_to_list name="$NewAttUnits.{$i}" exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.list.{$c}"/>
+																		</do_all>
+																		<debug_text text="$BoardingFleet.{$b}.knownname + ' has Total Marine Units: ' + $BoardingFleet.{$b}.units.{unitcategory.marine}.count + ' - Available Marine Units: ' + $BoardingFleet.{$b}.availableunits.{unitcategory.marine}.count"/>				
+																	</do_all>
+																</do_all>
+																<set_value name="$NewAttStr" exact="0.0f"/>
+
+																<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{1}.count * 0.5f" />
+																<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{2}.count * 1.5f" />
+																<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{3}.count * 5.0f" />
+
+
+																<remove_value name="$ArrivedMarines"/>
+
+																<!--<set_value name="$MOChance" exact="5"/>-->
+																<set_value name="$MOChance" min="1" max="10"/>
+																<do_if value="$MOChance lt 8">
+																	<destroy_object object="$commander" />
+																	<set_value name="$NewAttStr" exact="($NewAttStr * (25)* 1.25)i / 100.0f" />
+																	<show_notification caption="'=== Boarding operation ended ==='" details="'Your Marine Officer died covering the retreat.\n  Please hire a new Marine Officer and new marines.\n\n Survivors:  %1 marines.\n Casualties: %3 recs, %4 vets and %5 elite marines.\n\n This Fleet have now %6 recs, %7 vets and %8 elite marines.\n This Fleet attack strength is now : %2.'.[$nummarines, $NewAttStr, ($NewCasPre.{1}.count - $NewCasPost.{1}.count), ($NewCasPre.{2}.count - $NewCasPost.{2}.count), ($NewCasPre.{3}.count - $NewCasPost.{3}.count), $NewAttUnits.{1}.count, $NewAttUnits.{2}.count, $NewAttUnits.{3}.count]" timeout="15s" queued="true" sound="notification_generic"/>
+																	<write_to_logbook category="general" text="'Your Marine Officer was shot in the knee while covering the retreat.\n  Please hire a new Marine Officer.\n\n  %1 marines survived.\n Fleet attack strength is now : %2.\n You lost %3 recruits, %4 veterans, and %5 elite marines.\n\n Fleet have now %6 recruits \n %7 veterans \n and %8 elite marines.'.[$nummarines, $NewAttStr, ($NewCasPre.{1}.count - $NewCasPost.{1}.count), ($NewCasPre.{2}.count - $NewCasPost.{2}.count), ($NewCasPre.{3}.count - $NewCasPost.{3}.count), $NewAttUnits.{1}.count, $NewAttUnits.{2}.count, $NewAttUnits.{3}.count]"/>
+																</do_if>
+																<do_else>
+
+																	<do_if value="player.difficulty" min="level.hard">
+																		<set_value name="$NewAttStr" exact="($NewAttStr * ($commander.combinedskill + 1.0f)) / 100.0f" />
+																	</do_if>
+
+																	<do_elseif value="player.difficulty" min="level.medium">
+																		<set_value name="$NewAttStr" exact="($NewAttStr * ($commander.combinedskill + 1.0f)* 1.25)i / 100.0f" />
+																	</do_elseif>
+
+																	<do_else>
+																		<!--<set_value name="$NewAttStr" exact="$NewAttStr * (1.0f + $commander.combinedskill)" />-->
+																		<set_value name="$NewAttStr" exact="$NewAttStr * (1.4f + ($commander.combinedskill / 100.0f))" />
+																	</do_else>
+
+																	<add_actor_to_playership actor="$commander" />
+																	<assign_boarding_commander object="player.primaryship" actor="$commander"/>
+
+																	<show_notification caption="'=== Boarding operation ended ==='" details="'Your Marine Officer successfully led the retreat.\n\n Survivors:  %1 marines.\n Casualties: %3 recs, %4 vets and %5 elite marines.\n\n This Fleet have now %6 recs, %7 vets and %8 elite marines.\n This Fleet attack strength is now : %2.'.[$nummarines, $NewAttStr, ($NewCasPre.{1}.count - $NewCasPost.{1}.count), ($NewCasPre.{2}.count - $NewCasPost.{2}.count), ($NewCasPre.{3}.count - $NewCasPost.{3}.count), $NewAttUnits.{1}.count, $NewAttUnits.{2}.count, $NewAttUnits.{3}.count]" timeout="15s" queued="true" sound="notification_generic"/>
+																	<write_to_logbook category="general" text="'Your Marine Officer successfully led the retreat.\n\n  %1 marines survived. \n This Fleet attack strength is now : %2.\n You lost %3 recruits, %4 veterans, and %5 elite marines.\n\n This Fleet have now %6 recruits \n %7 veterans \n and %8 elite marines.'.[$nummarines, $NewAttStr, ($NewCasPre.{1}.count - $NewCasPost.{1}.count), ($NewCasPre.{2}.count - $NewCasPost.{2}.count), ($NewCasPre.{3}.count - $NewCasPost.{3}.count), $NewAttUnits.{1}.count, $NewAttUnits.{2}.count, $NewAttUnits.{3}.count]"/>
+																</do_else>
+
+																<cease_fire object="$target"/>
+
+																<destroy_group group="$ArrivedBoardingpods" explosion="true" />
+																<remove_mission cue="Start" type="failed"/>
+
+																<signal_cue cue="Finish" />
+																<!--</add>-->							
+
+
+															</actions>
+														</cue>
+
+														<cue name="Success">
+															<conditions>
+																<event_cue_signalled />
+															</conditions>
+															<actions>
+
+																<do_if value="$target.isclass.station">
+																	<signal_cue_instantly cue="md.Conquer_Mod.Retaliation_Patrol_cue" param="[$target, ($target.owner != faction.player), $target]"/>
+																</do_if> 
+
+																<remove_object_boarder object="$target"/>
+
+																<do_if value="not $training">
+																	<set_value name="stat.ships_boarded" operation="add" />
+
+																	<signal_cue_instantly cue="md.Notifications.PlayerBoarding" param="[$target, 'boarding ended']"/>
+																</do_if>						
+																<!-- increase experience, depending on difficulty of mission -->
+																<do_if value="$commander.skill.boarding lt 5">
+																	<!-- TEMP: dummy added experience -->
+
+																	<!--MR-->							  
+																	<!--Marine Officer exp gain tweaks-->
+																	<!--<remove sel="//cue[@name='Success']/actions/do_if[@value='$commander.skill.boarding lt 5']/set_value[@name='$addedexperience']/@exact"/>-->
+
+																	<!--<set_value name="$addedexperience" exact="10" />-->
+
+																	<!--MR-->							  
+																	<!--<add sel="//cue[@name='Success']/actions/do_if[@value='$commander.skill.boarding lt 5']/set_value[@name='$addedexperience']" type="@min">5</add>
+	<add sel="//cue[@name='Success']/actions/do_if[@value='$commander.skill.boarding lt 5']/set_value[@name='$addedexperience']" type="@max">15</add>-->
+
+																	<!--RESULT ABOVE-->
+																	<set_value name="$addedexperience" min="5" max="15" />
+
+
+
+																	<set_value name="$expneededforlvl" exact="$commander.neededexperience"/>
+																	<add_experience_progress entity="$commander" exact="$addedexperience" />
+																	<do_if value="$commander.experienceprogress" min="$expneededforlvl" comment="Make next level-up more difficult to reach">
+																		<add_skill entity="$commander" type="boarding" exact="1" />
+																		<set_value name="stat.max_boarding_skill" exact="$commander.skill.boarding" comment="highest value is stored" />
+																		<set_experience_progress entity="$commander" exact="$commander.experienceprogress % $expneededforlvl" />
+																	</do_if>
+																</do_if>
+
+																<!--MR-->							
+																<!--Attack strength and outcome in log-->
+																<!--<add sel="//cue[@name='Success']/actions/set_value[@name='$ReturningMarines']" pos="before">-->
+
+																<!--MEU-->
+																<!--<do_all exact="unitcategory.marine.maxmk" counter="$i">
+			<set_value name="$NewCasPost.{$i}" exact="$boardership.units.{unitcategory.marine}.mk.{$i}.list"/>
+		</do_all>-->
+
+																<do_all exact="unitcategory.marine.maxmk" counter="$i">
+																	<set_value name="$NewCasPost.{$i}" exact="[]"/>
+																	<do_all exact="$BoardingFleet.count" counter="$b"> 
+																		<!--<do_all exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.count" counter="$c"> -->
+																		<do_all exact="$BoardingFleet.{$b}.units.{unitcategory.marine}.mk.{$i}.count" counter="$c"> 
+																			<append_to_list name="$NewCasPost.{$i}" exact="$BoardingFleet.{$b}.units.{unitcategory.marine}.mk.{$i}.list.{$c}"/>
+																		</do_all>		
+																	</do_all>
+																</do_all>
+																<!--MEU-->
+
+																<!--</add>	-->						
+
+
+
+																<set_value name="$ReturningMarines" exact="[]"/>
+																<do_all exact="$ArrivedMarines.count" counter="$Counter">
+																	<do_all exact="$ArrivedMarines.{$Counter}.count" counter="$i">
+																		<append_to_list name="$ReturningMarines" exact="$ArrivedMarines.{$Counter}.{$i}"/>
+																	</do_all>
+																</do_all>
+
+																<set_value name="$PromotedMarines" exact="[]"/>
+																<do_all exact="$ReturningMarines.count" counter="$i" reverse="true">
+																	<set_value name="$ReturnedMarine" exact="$ReturningMarines.{$i}"/>
+																	<do_all exact="$PromotionLists.count" counter="$j">
+																		<do_all exact="$PromotionLists.{$j}.count" counter="$k">
+																			<do_if value="$k != $PromotionLists.{$j}.count">
+																				<do_if value="$PromotionLists.{$j}.{$k}.{1} == $ReturnedMarine">
+																					<do_if value="true" chance="$PromotionLists.{$j}.{$k}.{2}">
+																						<set_value name="$PromotionMarine" exact="$PromotionLists.{$j}.{$k + 1}.{1}"/>
+																						<append_to_list name="$PromotedMarines" exact="$PromotionMarine"/>
+																						<remove_value name="$ReturningMarines.{$i}"/>
+
+																						<!--BF	-->										
+																						<!--<add sel="//cue[@name='Success']/actions/do_all/do_all/do_all/do_if/do_if/do_if[@value='true']/remove_units" type="@chance" >0</add>-->
+
+																						<!-- <remove_units object="$boardership" macro="$ReturnedMarine" exact="1" unavailable="true"/>-->
+																						<!--ABOVE-->
+																						<!--<add sel="//cue[@name='Success']/actions/do_all/do_all/do_all/do_if/do_if/do_if[@value='true']/remove_units" pos="after">-->
+																						<do_if value="$ReturnedMarine?"> 
+																							<set_value name="$objectmacro" exact="$ReturnedMarine" />
+																							<include_actions ref="DeleteUnitFleet"/>
+																						</do_if> 
+																						<!--</add>-->		
+
+
+
+																						<debug_text text="'Marine: ' + $ReturnedMarine + ' was promoted to ' + $PromotionMarine" chance="$debugoutputchance"/>
+																					</do_if>
+																				</do_if>
+																			</do_if>
+																		</do_all>
+																	</do_all>
+																</do_all>
+
+																<do_all exact="$PromotedMarines.count" counter="$i">
+
+																	<!--BF-->					
+																	<!--<add sel="//cue[@name='Success']/actions/do_all[@exact='$PromotedMarines.count']/add_units" type="@chance" >0</add>-->
+
+																	<!--<add_units object="$boardership" macro="$PromotedMarines.{$i}" exact="1"/>-->
+																	<!--ABOVE --> 
+
+																	<!--<add sel="//cue[@name='Success']/actions/do_all[@exact='$PromotedMarines.count']/add_units" pos="after">-->
+																	<do_if value="$PromotedMarines.{$i}?"> 
+																		<set_value name="$objectmacro" exact="$PromotedMarines.{$i}" />
+																		<include_actions ref="AddUnitFleet"/>
+																	</do_if> 
+																	<!--</add>-->									
+
+
+
+																	<debug_text text="'Adding 1 unit of newly promoted ' + $PromotedMarines.{$i} + ' to ' + $boardership.knownname" chance="$debugoutputchance"/>
+																</do_all>
+																<do_all exact="$ReturningMarines.count" counter="$i">
+
+
+																	<!--BF-->							 
+																	<!--<add sel="//cue[@name='Success']/actions/do_all[@exact='$ReturningMarines.count']/return_units" type="@chance" >0</add>-->
+
+																	<!--<return_units object="$boardership" macro="$ReturningMarines.{$i}" exact="1"/>-->
+																	<!--ABOVE-->
+
+																	<!--<add sel="//cue[@name='Success']/actions/do_all[@exact='$ReturningMarines.count']/return_units" pos="after">-->
+																	<do_if value="$ReturningMarines.{$i}?"> 
+																		<set_value name="$objectmacro" exact="$ReturningMarines.{$i}" />
+																		<include_actions ref="ReturnUnitFleet"/>
+																	</do_if> 
+																	<!--</add>-->							
+
+
+
+
+
+																	<debug_text text="'Returning 1 unit of ' + $ReturningMarines.{$i} + ' to ' + $boardership.knownname" chance="$debugoutputchance"/>
+																</do_all>
+
+																<!--MR	-->						
+																<!--<add sel="//cue[@name='Success']/actions/remove_value[@name='$ArrivedMarines']" pos="before">-->
+
+																<!--MEU-->
+																<!--<do_all exact="unitcategory.marine.maxmk" counter="$i">
+			<set_value name="$NewAttUnits.{$i}" exact="$boardership.availableunits.{unitcategory.marine}.mk.{$i}.list"/>
+		</do_all>-->
+
+																<do_all exact="unitcategory.marine.maxmk" counter="$i">
+																	<set_value name="$NewAttUnits.{$i}" exact="[]"/>
+																	<do_all exact="$BoardingFleet.count" counter="$b"> 
+																		<do_all exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.count" counter="$c"> 
+																			<append_to_list name="$NewAttUnits.{$i}" exact="$BoardingFleet.{$b}.availableunits.{unitcategory.marine}.mk.{$i}.list.{$c}"/>
+																		</do_all>
+																		<debug_text text="$BoardingFleet.{$b}.knownname + ' has Total Marine Units: ' + $BoardingFleet.{$b}.units.{unitcategory.marine}.count + ' - Available Marine Units: ' + $BoardingFleet.{$b}.availableunits.{unitcategory.marine}.count"/>				
+																	</do_all>
+																</do_all>
+																<!--MEU-->
+
+																<set_value name="$NewAttStr" exact="0.0f"/>
+
+																<!--<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{1}.count * param.boarding.recruitstrength" />
+		<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{2}.count * param.boarding.veteranstrength" />
+		<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{3}.count * param.boarding.elitestrength" />-->
+
+
+																<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{1}.count * 0.5f" />
+																<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{2}.count * 1.5f" />
+																<set_value name="$NewAttStr" operation="add" exact="$NewAttUnits.{3}.count * 5.0f" />
+
+
+																<do_if value="$commander">
+
+																	<do_if value="player.difficulty" min="level.hard">
+																		<set_value name="$NewAttStr" exact="($NewAttStr * ($commander.combinedskill + 1.0f)) / 100.0f" />
+																	</do_if>
+
+																	<do_elseif value="player.difficulty" min="level.medium">
+																		<set_value name="$NewAttStr" exact="($NewAttStr * ($commander.combinedskill + 1.0f)* 1.25)i / 100.0f" />
+																	</do_elseif>
+
+																	<do_else>
+																		<!--<set_value name="$NewAttStr" exact="$NewAttStr * (1.0f + $commander.combinedskill)" />-->
+																		<set_value name="$NewAttStr" exact="$NewAttStr * (1.4f + ($commander.combinedskill / 100.0f))" />
+																	</do_else>
+
+																</do_if>
+																<show_notification caption="'=== Boarding operation concluded ==='" details="'The assault was a success!\n  This Fleet attack strength is now : %1.\n  %2 Marines salute your tactical brilliance.\n\n You lost %3 recs, %4 vets and %5 elite marines.\n\n This Fleet have now %6 recs, %7 vets and %8 elite marines.'.[$NewAttStr, $nummarines, ($NewCasPre.{1}.count - $NewCasPost.{1}.count), ($NewCasPre.{2}.count - $NewCasPost.{2}.count), ($NewCasPre.{3}.count - $NewCasPost.{3}.count), $NewAttUnits.{1}.count, $NewAttUnits.{2}.count, $NewAttUnits.{3}.count]" timeout="15s" queued="true" sound="notification_generic"/>
+																<write_to_logbook category="general" text="'The assault was a success!\n  This Fleet attack strength is now : %1.\n  %2 Marines salute your tactical brilliance.\n You lost %3 recruits, %4 veterans, and %5 elite marines.\n This Fleet have now %6 recruits \n %7 veterans \n and %8 elite marines.'.[$NewAttStr, $nummarines, ($NewCasPre.{1}.count - $NewCasPost.{1}.count), ($NewCasPre.{2}.count - $NewCasPost.{2}.count), ($NewCasPre.{3}.count - $NewCasPost.{3}.count), $NewAttUnits.{1}.count, $NewAttUnits.{2}.count, $NewAttUnits.{3}.count]"/>
+																<!--<show_help position="0" duration="5s" custom="'The assault was a success!\n  Your attack strength is now: %1.'.[$NewAttStr]" />-->
+																<!--</add>-->							
+
+
+
+
+																<remove_value name="$ArrivedMarines"/>
+																<debug_text text="$boardership.knownname + ' has Total Marine Units: ' + $boardership.units.{unitcategory.marine}.count + ' - Available Marine Units: ' + $boardership.availableunits.{unitcategory.marine}.count"/>
+
+																<do_if value="$training">
+																	<start_conversation actor="$commander" conversation="BoardingResult_Training_Success_ConversationF" />
+																	<debug_text text="'Training mission successful'" chance="$debugoutputchance" />
+																	<signal_cue cue="ReturnBoardingPods" />
+																</do_if>
+																<do_else>
+																	<start_conversation actor="$commander" conversation="BoardingResult_Success_ConversationF" />
+																	<debug_text text="'Boarding successful, taking over target'" chance="$debugoutputchance" />
+
+																	<!-- perform takeover of target -->
+																	<signal_objects object="$target" param="'boarded'" param2="$faction"/>
+																	<set_owner object="$target" faction="$faction" />
+																	<remove_object_commander object="$target" comment="Free capship from control of previous owner (which can be a station)"/>
+
+																	<set_value name="$subordinates" exact="$target.subordinates"/>
+
+
+
+
+																	<!--BF	-->
+																	<!--<add sel="//cue[@name='Success']/actions/do_else/do_all[@exact='$subordinates.count']" pos="before">-->
+																	<do_if value="$target.isclass.station and $target.owner != faction.player">
+																		<do_all exact="$subordinates.count" counter="$i" reverse="true">
+																			<do_all exact="unitcategory.police.maxmk" counter="$xi">
+																				<do_if value="unitcategory.police.mk.{$xi}.list.indexof.{$subordinates.{$i}.macro}">
+																					<remove_units object="$target" macro="$subordinates.{$i}.macro" exact="1" unavailable="true"/>
+																					<destroy_object object="$subordinates.{$i}"/>
+																				</do_if> 
+																			</do_all>
+																		</do_all>
+																		<set_value name="$subordinates" exact="$target.subordinates"/>
+																	</do_if> 
+																	<!--</add>-->							  
+
+
+
+
+																	<do_all exact="$subordinates.count" counter="$i">
+																		<remove_object_commander object="$subordinates.{$i}"/>
+																	</do_all>
+
+																	<!-- change faction of personel on-board the seized ship -->
+																	<!-- TODO: Kill control-entities -->
+																	<get_control_entities object="$target" groupname="$ControlEntities"/>
+																	<do_all exact="$ControlEntities.count" counter="$Counter">
+																		<!--set_owner object="$ControlEntities.{$Counter}" faction="$faction" /-->
+																		<abort_scripts entity="$ControlEntities.{$Counter}"/>
+																		<destroy_object object="$ControlEntities.{$Counter}"/>
+																	</do_all>
+																	<cease_fire object="$target"/>
+																	<do_if value="$target.canbuildships">
+																		<find_object_component name="$ControlEntities" entitytype="entitytype.shiptrader" object="$target" multiple="true" />
+																		<do_all exact="$ControlEntities.count" counter="$Counter">
+																			<destroy_object object="$ControlEntities.{$Counter}"/>
+																		</do_all>
+																	</do_if>
+																	<do_if value="$target.canproduceships">
+																		<find_object_component name="$ControlEntities" entitytype="entitytype.smallshiptrader" object="$target" multiple="true" />
+																		<do_all exact="$ControlEntities.count" counter="$Counter">
+																			<destroy_object object="$ControlEntities.{$Counter}"/>
+																		</do_all>
+																	</do_if>
+
+																	<!-- TODO: Change ownership of docked ships on carriers?-->
+
+																	<!-- Move boarding commander to correct location (requires all capships to have docks) -->
+																	<do_if value="true" comment="TODO: Wait for GUI-fix (return-to-my-ship)">
+																		<find_dock_location name="$target_dock" container="$target" size="tag.dock_p"/>
+
+																		<find_dock_location name="$boardership_dock" container="$boardership" size="tag.dock_p"/>
+
+																		<assert value="$target_dock" text="'Target ship ' + $target.macro.name + ' has no platform dock. Unable to place boarding commander.'"/>
+
+																		<do_if value="$target_dock" chance="if $isplayerprocess and not $target.isclass.station then 100 else 0">
+																			<restore_object object="$target_dock" hull="50" recursive="true" />
+																			<add_actor_to_platform actor="$commander" dockingbay="$target_dock.component"/>
+																		</do_if>
+																		<do_elseif value="$boardership_dock">
+																			<add_actor_to_platform actor="$commander" dockingbay="$boardership_dock.component"/>
+																			<do_if value="not $boardership.boardingnpc.exists or $boardership.boardingnpc != $commander">
+																				<assign_boarding_commander object="$boardership" actor="$commander"/>
+																			</do_if> 
+																		</do_elseif>
+																		<do_elseif value="player.primaryship.numfreeactorslots">
+																			<add_actor_to_playership actor="$commander"/>
+																			<assign_boarding_commander object="player.primaryship" actor="$commander"/>								  
+																		</do_elseif>
+																		<do_else>
+																			<destroy_object object="$commander"/>
+																		</do_else>
+																		<!-- TODO: Marines are 'unavailable' on playership - they return together with the boarding commander -->							
+																	</do_if>
+																	<do_else comment="HACK">
+																		<add_actor_to_playership actor="$commander" />
+																		<assign_boarding_commander object="player.primaryship" actor="$commander"/>
+																		<!-- TODO: Make SURVIVING marines available again on playership (-->
+																	</do_else>
+
+																	<do_if value="$faction == faction.player">
+																		<signal_cue_instantly cue="md.Upkeep_Management.TriggerObjectCheck" param="[$target, 3s]"/>
+																	</do_if>
+																	<!-- clean up boarding pods (which are attached to capship as 'wrecks' -->
+
+																	<do_if value="$target.owner != faction.player">
+																		<do_if value="$target.isclass.station">
+																			<signal_objects object="player.galaxy" param="'init station'" param2="$target"/>
+																			<find_object_component entitytype="entitytype.shiptrader" name="$shiptrader" object="$target" multiple="true" />
+																			<do_all exact="$shiptrader.count" counter="$xi">
+																				<do_if value="$shiptrader.{$xi}.owner != $target.owner">
+																					<set_owner object="$shiptrader.{$xi}" faction="$target.owner" />
+																				</do_if> 
+																			</do_all>
+																			<remove_value name="$shiptrader"/>
+																			<!-- ABAIXO -->
+
+																			<find_dock_location name="$DockingBay" container="$target" multiple="true" />
+																			<reward_player money="(($DockingBay.count / 2)i + 1) * 2500000Cr"/>
+																		</do_if> 
+																		<do_else>
+																			<reward_player money="[$target.value, 10000Cr].max"/>
+																			<restore_object object="$target" hull="10" recursive="true" />
+																			<do_if value="$target.units.maxcount">
+																				<set_value name="$Unitcapacity" exact="$target.units.maxcount - $target.units.count" />
+																				<do_if value="$target.cargo.{ware.ore}.max and $target.cargo.{ware.plasma}.max and $target.primarypurpose == objectpurpose.mine">
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/6/2" max="$Unitcapacity/6"/>
+																					<add_units object="$target" macro="macro.units_size_drone_rubble_collector_mk2_macro" min="3" max="$Unitcapacity/6"/>
+																					<add_units object="$target" macro="macro.units_size_drone_rubble_collector_mk1_macro" min="3" max="$Unitcapacity/6"/>
+																					<add_units object="$target" macro="macro.units_size_drone_liquid_collector_mk2_macro" min="3" max="$Unitcapacity/6"/>
+																					<add_units object="$target" macro="macro.units_size_drone_liquid_collector_mk1_macro" min="3" max="$Unitcapacity/6"/>
+																					<add_units object="$target" macro="macro.units_size_xs_transp_empty_macro" min="1" max="$Unitcapacity/6/2"/>
+																					<add_units object="$target" macro="macro.units_size_xs_welder_drone_macro" min="1" max="$Unitcapacity/6/2"/>
+																				</do_if>
+																				<do_elseif value="$target.cargo.{ware.ore}.max and $target.primarypurpose == objectpurpose.mine">
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/4/2" max="$Unitcapacity/4"/>
+																					<add_units object="$target" macro="macro.units_size_drone_rubble_collector_mk2_macro" min="3" max="$Unitcapacity/4"/>
+																					<add_units object="$target" macro="macro.units_size_drone_rubble_collector_mk1_macro" min="3" max="$Unitcapacity/4"/>
+																					<add_units object="$target" macro="macro.units_size_xs_transp_empty_macro" min="1" max="$Unitcapacity/4/2"/>
+																					<add_units object="$target" macro="macro.units_size_xs_welder_drone_macro" min="1" max="$Unitcapacity/4/2"/>
+																				</do_elseif>
+																				<do_elseif value="$target.cargo.{ware.plasma}.max and $target.primarypurpose == objectpurpose.mine">
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/4/2" max="$Unitcapacity/4"/>
+																					<add_units object="$target" macro="macro.units_size_drone_liquid_collector_mk2_macro" min="3" max="$Unitcapacity/4"/>
+																					<add_units object="$target" macro="macro.units_size_drone_liquid_collector_mk1_macro" min="3" max="$Unitcapacity/4"/>
+																					<add_units object="$target" macro="macro.units_size_xs_transp_empty_macro" min="1" max="$Unitcapacity/4/2"/>
+																					<add_units object="$target" macro="macro.units_size_xs_welder_drone_macro" min="1" max="$Unitcapacity/4/2"/>
+																				</do_elseif>
+																				<do_elseif value="$target.cargo.{ware.fusionreactor}.max or $target.cargo.{ware.water}.max or $target.cargo.{ware.energycells}.max or $target.cargo.{ware.ore}.max">													
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="5" max="$Unitcapacity/2/3"/>
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="5" max="$Unitcapacity/2/3"/>
+																					<add_units object="$target" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="5" max="$Unitcapacity/2/3"/>
+																					<add_units object="$target" macro="macro.units_size_xs_welder_drone_macro" min="3" max="$Unitcapacity/2/2"/>
+																					<add_units object="$target" macro="macro.units_size_xs_transp_empty_macro" min="5" max="$Unitcapacity/2/2"/>
+																				</do_elseif>
+																				<do_elseif value="$target.primarypurpose == objectpurpose.fight or (not $target.cargo.{ware.water}.max and not $target.cargo.{ware.energycells}.max and not $target.cargo.{ware.fusionreactor}.max and not $target.cargo.{ware.ore}.max)">
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_impulse_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+																					<add_units object="$target" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+																					<add_units object="$target" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+																					<add_units object="$target" macro="macro.units_size_drone_missiledrone_dumbfire_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>							
+																					<add_units object="$target" macro="macro.units_size_xs_welder_drone_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+																				</do_elseif>
+																				<remove_value name="$Unitcapacity" />
+																			</do_if>
+
+																			<create_cue_actor name="$actor" cue="this">
+																				<select ref="manager_omicron_lyrae_random"/>
+																				<owner exact="$faction" />
+																			</create_cue_actor>
+
+																			<set_value name="$soldship2" exact="$target"/>
+																			<include_actions ref="md.NPC_Shiptrader.SellShipActions" />
+
+																			<remove_cue_actor actor="$actor" cue="this" />
+
+																		</do_else> 
+																	</do_if> 
+
+																	<do_if value="$target.isclass.station and $isplayerprocess">
+																		<signal_cue_instantly cue="md.Guidance.NewTarget" param="[$commander, false, player.platform and player.platform == $commander.room]" />
+																		<find_dock_location container="$target" name="$ShiptraderDocks" dockpopulationtype="dockpopulationtype.ships" multiple="true" />
+																		<do_if value="$ShiptraderDocks.count">
+																			<do_all exact="$ShiptraderDocks.count" counter="$j" >
+																				<restore_object object="$ShiptraderDocks.{$j}" hull="50" recursive="true" />
+																				<set_value name="$DockHasShipTrader" exact="false" />
+																				<do_all exact="$ShiptraderDocks.{$j}.actors.count" counter="$k" >
+																					<do_if value="$ShiptraderDocks.{$j}.actors.{$k}.type == entitytype.shiptrader or $ShiptraderDocks.{$j}.actors.{$k}.type == entitytype.smallshiptrader">
+																						<set_remote_commable actor="$ShiptraderDocks.{$j}.actors.{$k}" remote="true" />
+																						<set_value name="$DockHasShipTrader" exact="true" />
+																					</do_if>
+																				</do_all>
+																				<do_if value="$DockHasShipTrader" negate="true">
+																					<do_if value="$target.tradenpc" negate="true">
+																						<!-- add manager -->
+																						<create_cue_actor name="$manager" cue="this">
+																							<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.manager"/>
+																							<owner exact="$faction"/>
+																						</create_cue_actor>
+																						<set_entity_type entity="$manager" type="entitytype.manager" />
+																						<assign_trade_manager object="$target" actor="$manager"/>
+																						<do_if value="$target.canbuildships">
+																							<start_script object="$manager" name="'trade.shipyard'"/>
+																						</do_if>
+																						<do_elseif value="$target.canproduceships">
+																							<start_script object="$manager" name="'trade.shipyard.small'"/>
+																						</do_elseif>
+																						<do_elseif value="$target.isplayerowned">
+																							<start_script object="$manager" name="'trade.station.player'"/>
+																						</do_elseif>
+																						<do_else>
+																							<start_script object="$manager" name="'trade.station'"/>
+																						</do_else>	
+																					</do_if>
+																					<!-- shiptrader / smallshiptrader -->
+																					<find_object_component name="$buildmodule" object="$target" class="class.buildmodule" checkoperational="false">
+																						<match_buildsource sequence="$ShiptraderDocks.{$j}.component.sequence" stage="$ShiptraderDocks.{$j}.component.stage" />
+																					</find_object_component>
+																					<do_if value="$buildmodule">
+																						<create_platform_actor name="$Shiptrader" dockingbay="$ShiptraderDocks.{$j}.component" type="entitytype.shiptrader">
+																							<select race="race.argon" tags="tag.shiptrader"/>
+																							<owner exact="$faction"/>
+																						</create_platform_actor>
+																					</do_if>
+																					<do_else>
+																						<create_platform_actor name="$Shiptrader" dockingbay="$ShiptraderDocks.{$j}.component" type="entitytype.smallshiptrader">
+																							<select race="race.argon" tags="tag.smallshiptrader"/>
+																							<owner exact="$faction"/>
+																						</create_platform_actor>
+																					</do_else>
+																					<set_remote_commable actor="$Shiptrader" remote="true" />
+																					<share_actor_account actor="$Shiptrader" otherobject="$manager" chance="if $faction == faction.player then 100 else 0" /> <!-- Share account of Manager -->
+																					<set_comm_handler actor="$Shiptrader" customhandler="true" />
+																					<remove_value name="$Shiptrader"/>		  
+																				</do_if>
+																				<remove_value name="$buildmodule"/>		  
+																				<remove_value name="$DockHasShipTrader"/>		  
+																			</do_all>
+																		</do_if>
+																	</do_if> 
+
+																	<destroy_group group="$ArrivedBoardingpods" explosion="false" />
+																	<remove_mission cue="Start" type="completed"/>
+																	<signal_cue cue="Finish" />
+																</do_else>
+															</actions>
+														</cue>
+
+														<cue name="Failure">
+															<conditions>
+																<event_cue_signalled />
+															</conditions>
+															<actions>
+
+																<signal_objects object="player.primaryship" param="'RML_Board_Objects'" param2="'board-failed'" param3="$target"  comment="send signal to RML_board_objects - so it can abort active (sub)goals (like hack a list of locations)"/>
+																<do_if value="$training">
+																	<start_conversation actor="$commander" conversation="BoardingResult_Training_Failure_ConversationF" />
+																	<debug_text text="'Training mission failed'" chance="$debugoutputchance" />
+																	<signal_cue cue="ReturnBoardingPods" />
+																</do_if>
+																<do_else>
+																	<debug_text text="'Boarding failed, everyone is dead!'" chance="$debugoutputchance" />
+
+																	<!--TODO: Check that the commander can actually speak this when dead-->
+																	<start_conversation actor="player.copilot" conversation="BoardingResult_Failure_ConversationF" />
+																	<!--<destroy_object object="$commander" />-->
+
+																	<include_actions ref="ClearOnFail"/>
+
+																	<!-- TODO: Destroy Marines ( which are still on playership but 'unavailable' ) -->
+																	<!--MR-->
+																	<!--<add sel="//cue[@name='Failure']/actions/signal_cue[@cue='Finish']" pos="before">-->
+																	<show_notification caption="'=== Boarding operation ended ==='" details="'Assault faltered in the face of overwhelming opposition.\n  All of the marines were lost.'" timeout="15s" queued="true" sound="notification_generic"/>
+																	<write_to_logbook category="general" text="'Assault faltered in the face of overwhelming opposition.\n  All of the marines were lost.'.[]"/>
+																	<!--<show_help position="0" duration="5s" custom="'Assault faltered in the face of overwhelming opposition.\n  All of the marines were lost.'.[]" />-->
+																	<!--</add>-->							  
+
+																	<!-- MEU-->
+																	<!--<signal_cue cue="Finish" />-->
+																	<!-- MEU-->
+																</do_else>
+																<!-- TODO -->
+																<remove_mission cue="Start" type="failed"/>
+																<signal_cue cue="Finish" />
+
+															</actions>
+														</cue>
+
+														<cue name="ReturnBoardingPods">
+															<conditions>
+																<event_cue_signalled />
+															</conditions>
+															<actions>
+																<!-- embark boarding pods -->
+																<debug_text text="'ReturnBoardingPods'" chance="$debugoutputchance" />
+
+
+																<!-- TODO -->
+																<!-- fly pods towards player ship -->
+																<!-- TODO -->
+																<!-- dock pods at player ship -->
+																<!-- TODO -->
+																<!-- disembark, move to player ship -->
+																<!-- TODO -->
+																<remove_mission cue="Start" />
+																<signal_cue cue="Finish" />
+															</actions>
+														</cue>
+
+														<cue name="Finish">
+															<conditions>
+																<event_cue_signalled />
+															</conditions>
+															<actions>
+																<!-- TODO: Determine fatalities -->
+
+
+
+																<!--BF-->							
+																<!--<add sel="//cue[@name='Finish']/actions" pos="prepend">-->
+																<remove_value name="$BoardingFleet"/>
+																<remove_value name="$isplayerprocess"/>
+																<remove_value name="$isplayerinvolved"/>
+																<!--</add>	-->						
+
+
+
+																<!--BO-->
+																<!--<add sel="//cue[@name='Finish']/actions" pos="prepend">-->
+																<remove_help all="true" />
+																<set_value name="$checkresistance" exact="false"/>
+																<!--</add>-->
+
+																<!--MEU finish-->
+																<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="0" />
+																<!--<set_value name="global.$fleetplayerboardhacker" exact="false" />-->
+																<!--<set_value name="global.$fleetplayerboardtarget" exact="0" />-->
+																<!--<remove_value name="global.$fleetplayerboardtarget" />-->
+																<!--MEU-->							
+
+
+																<remove_cue_actor actor="$commander" cue="Start" comment="remove commander from cue"/>
+
+
+
+																<!--<signal_cue_instantly cue="md.NPC_Staff.LogAssignedToObject" param="[$actor, player.primaryship]" />
+ <assign_boarding_commander actor="$actor" object="player.primaryship" />	-->							
+
+
+
+																<cancel_cue cue="Start" />
+															</actions>
+														</cue>
+													</cues>
+													<!-- end SupportMissionDone -->
+												</cue>
+
+											</cues>
+											<!-- end BoardingCycle -->
+										</cue>
+									</cues>
+								</cue>
+							</cues>
+						</cue>
+						<!-- end LaunchBoardingPods_Wait -->
+					</cues>
+				</cue>
+				<!-- end LaunchBoardingPods -->
+			</cues>
+		</cue>
+
+
+		<cue name="SectionHandler_BoardingLaunchAbort" instantiate="true" >
+			<conditions>
+				<check_any>
+					<event_conversation_next_section section="gOrders_attack" />
+					<event_conversation_returned_to_section section="gOrders_attack" />
+				</check_any>
+				<!--<check_value value="event.object.trueowner" exact="faction.player" />-->
+				<!--<check_any>
+					<check_value value="event.object.type" exact="entitytype.pilot" />
+					<check_value value="event.object.type" exact="entitytype.commander" />
+				</check_any>-->
+				<!--<check_value value="event.object.iscontrolentity" />-->
+				<check_value value="event.object.container.availableunits.{unitcategory.marine}.count" />
+				<check_value value="event.object.container.commander" exact="player.primaryship" />
+				<!--<check_value value="event.object.container.commander.boardingnpc" />-->
+				<check_value value="@md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel == 2" />
+			</conditions>
+			<actions>
+
+				<!--<add_player_choice text="'Hack/Disable the Station first'" position="top_left" section="BoardingSupport_Started_ConversationF_hackdisablestation"/>-->
+
+				<add_player_choice text="'Launch Pods'" position="top_right"  section="BoardingSupport_Started_ConversationF_launchpods" />
+
+				<add_player_choice text="'Abort'" position="right"  section="BoardingSupport_Started_ConversationF_abort" />
+
+				<add_player_choice_return text="{1002,20}" position="bottom_right" comment="Back"/>
+
+
+				<!--<add_player_choice_sub text="'Squad attack stance'" section="gOrders_stance" position="top_right" choiceparam="1" selectable="$flag" comment="Attack stance" />
+		
+		<add_player_choice_sub text="'Squad defence stance'" section="gOrders_stance" position="right" choiceparam="0" selectable="$flag" comment="Defence stance" />-->
+
+			</actions>
+		</cue>
+
+
+
+
+		<cue name="Fight_sound" instantiate="true">
+			<conditions>
+				<event_cue_signalled />
+			</conditions>
+			<delay exact="event.param"/>
+			<actions>
+				<play_sound object="player.room" sound="'boarding_fighting'" />
+			</actions>
+		</cue>
+
+		<!-- Conversations -->
+
+
+		<cue name="ReadytoLaunchPods" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="ReadytoLaunchPods" />
+			</conditions>
+			<actions>
+
+				<!--<add_npc_line speaker="this.ship.pilot" line="11168" comment="Target hacked. Nice job!."/>
+		<add_npc_line speaker="this.ship.pilot" line="4107" comment="We are ready."/>-->
+
+				<!--<add_npc_line speaker="player.copilot" line="event.param2" comment="Let's stick around, see if we can help."/>-->
+
+				<!-- <add_npc_line speaker="player.copilot" line="102221" comment="Alright! Let's go!"/>
+		 
+		<add_npc_line speaker="player.primaryship.subordinates.{1}.pilot" line="[1012, 1013, 1018, 1019].random" comment="Confirmation" />
+		
+		<add_npc_line speaker="player.primaryship.subordinates.{1}.pilot" line="102221" comment="Alright! Let's go!"/>
+		
+		<add_npc_line speaker="player.copilot" line="[1012, 1013, 1018, 1019].random" comment="Confirmation" />-->
+
+				<!--<add_npc_line speaker="event.object" line="event.param2" />-->
+
+
+
+				<do_if value="event.param2.{1}" >	
+					<do_if value="event.param2.{2}" >
+						<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="4" />
+						<add_npc_line speaker="player.copilot" line="11168" comment="Target hacked. Nice job!."/>
+						<add_npc_line speaker="player.primaryship.subordinates.{1}.pilot" line="4107" comment="We are ready."/>
+					</do_if>
+					<do_elseif value="not event.param2.{1}" >
+						<!--<add_npc_line speaker="player.copilot" line="11168" comment="Target hacked. Nice job!."/>-->
+						<add_npc_line speaker="player.primaryship.subordinates.{1}.pilot" line="4107" comment="We are ready."/>
+					</do_elseif>	
+
+
+					<add_player_choice text="'Launch Pods'" position="left" section="BoardingSupport_Started_ConversationF_launchpods" />
+					<add_player_choice text="'Abort'" position="bottom_left" section="BoardingSupport_Started_ConversationF_abort" />
+					<allow_conversation_escape enabled="false" />
+
+					<set_value name="global.$fleetplayerboardhacker" exact="true" />
+
+				</do_if>
+				<do_elseif value="not event.param2.{1}" >
+
+					<!--<do_any></do_any>-->
+					<add_npc_line speaker="player.primaryship.subordinates.{1}.pilot" line="[1012, 1013, 1018, 1019].random" comment="Confirmation" />
+					<!--<add_npc_line speaker="player.copilot" line="102221" comment="Alright! Let's go!"/>-->
+					<add_npc_line speaker="player.copilot" line="10628" comment="Let's stick around, see if we can help."/>
+
+
+				</do_elseif>
+
+				<!--<write_to_logbook category="general" text="' list Z speak test\n %1 \n %2 \n %3 \n %4'.[event.param2.{1}, event.param2.{2}, event.param2, event.param]"/>-->
+
+			</actions>
+		</cue>
+
+
+
+
+		<cue name="BoardingSupport_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_Started_ConversationF" />
+			</conditions>
+			<actions>
+
+				<add_npc_line speaker="player.copilot" line="10600" comment="Let's make sure there are no nasty surprises first..." />
+
+				<!--<write_to_logbook category="general" text="' list X \n %1 \n %2 \n %3 \n %4'.[event.param2, event.param2, event.param, event.param2]"/>	-->
+
+				<!--MEU-->
+				<!--<set_value name="md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" exact="2" />-->
+				<!--<do_if value="event.param == 'BoardingSupport_Started_ConversationS'" >	-->
+				<do_if value="event.param2" >	
+					<add_player_choice text="'Hack/Disable the Station first'" position="top_left" section="BoardingSupport_Started_ConversationF_hackdisablestation"/>
+					<add_player_choice text="'Launch Pods'" position="left" section="BoardingSupport_Started_ConversationF_launchpods" />
+					<add_player_choice text="'Abort'" position="bottom_left" section="BoardingSupport_Started_ConversationF_abort" />
+					<allow_conversation_escape enabled="false" />
+				</do_if>
+
+
+				<do_else>
+
+					<signal_objects object="player.entity" param="'board ship'"/>
+
+					<!--BO-->
+					<!--<add sel="//cue[@name='BoardingSupport_Started_ConversationF']/actions">-->
+					<add_player_choice text="'Disable Engines/Jumpdrive'" position="top_left" section="BoardingSupport_Started_ConversationF_disableship" />
+					<add_player_choice text="'Disable Weapons'" position="top_right" section="BoardingSupport_Started_ConversationF_disarmship" />		
+					<add_player_choice text="'Launch Pods'" position="left" section="BoardingSupport_Started_ConversationF_launchpods" />
+					<add_player_choice text="'Abort'" position="bottom_left" section="BoardingSupport_Started_ConversationF_abort" />
+					<allow_conversation_escape enabled="false" />
+					<!--</add>-->
+
+					<!--MR-->	
+					<!--Confirm PreScan-->
+					<!--<add sel="//cue[@name='BoardingSupport_Started_ConversationF']/actions">-->
+
+					<do_if value="player.primaryship.drones.count ge 1">
+						<do_all exact="player.primaryship.drones.count" counter="$i">
+							<do_if value="player.primaryship.drones.{$i}.scanner">
+								<set_value name="$scannerdroneexists" exact="true" />
+								<add_player_choice text="'Scan Ship first.'" position="right" section="gPreScan" />
+								<!--<add_player_choice text="'Do not scan the ship.'" position="left" section="gSkipPreScan" />-->
+							</do_if>
+							<!--<do_else>
+					<add_player_choice text="'Just get on with it.'" position="left" section="gSkipPreScan" />
+				</do_else>-->
+						</do_all>
+					</do_if>
+					<!--<do_else>
+			<add_player_choice text="'Just get on with it.'" position="left" section="gSkipPreScan" />
+		</do_else>
+		<add_player_choice text="'Withdraw from combat.'" position="bottom_left" section="gAbortOp" />-->
+					<!--</add>-->
+
+				</do_else>
+
+
+
+			</actions>
+		</cue>
+
+		<cue name="BoardingFeedback_No_Scanner_Drone_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingFeedback_No_Scanner_Drone_ConversationF" />
+			</conditions>
+			<actions>
+
+				<do_if value="not global.$fleetplayerboardtarget.isclass.station">
+					<do_any>
+						<add_npc_line speaker="player.copilot" line="10606" comment="Let's bring a scanner drone next time, I don't like sending them in blind like this." />
+						<add_npc_line speaker="player.copilot" line="10607" comment="We should really start bringing scanner drones." />
+					</do_any>
+				</do_if>
+
+			</actions>
+		</cue>
+		<cue name="BoardingFeedback_No_Hacker_Drone_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingFeedback_No_Hacker_Drone_ConversationF" />
+			</conditions>
+			<actions>
+				<do_if value="not global.$fleetplayerboardtarget.isclass.station">
+					<do_any>
+						<add_npc_line speaker="player.copilot" line="10647" comment="Wish we had a hacker drone right now." />
+						<add_npc_line speaker="player.copilot" line="10648" comment="You should think about getting a hacker drone, it would make this way easier." />
+					</do_any>
+				</do_if>
+			</actions>
+		</cue>
+		<cue name="BoardingProgress_Advance_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingProgress_Advance_ConversationF" />
+			</conditions>
+			<actions>
+				<!--<delay exact="20s" />-->	  
+				<do_any>
+					<add_npc_line speaker="event.object" line="1320" comment="Go go go!" />
+					<add_npc_line speaker="event.object" line="1318" comment="Keep going!" />
+				</do_any>
+			</actions>
+		</cue>
+		<cue name="BoardingProgress_Stalemate_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingProgress_Stalemate_ConversationF" />
+			</conditions>
+			<actions>
+				<do_any>
+					<add_npc_line speaker="event.object" line="1317" comment="Hold position!" />
+					<add_npc_line speaker="event.object" line="1323" comment="(assist mission failed/timed out)They're not going anywhere. We'll have to fight through them." />
+				</do_any>
+			</actions>
+		</cue>
+		<cue name="BoardingProgress_Retreat_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingProgress_Retreat_ConversationF" />
+			</conditions>
+			<actions>
+				<do_any>
+					<add_npc_line speaker="event.object" line="1316" comment="We're taking heavy casualties!" />
+					<add_npc_line speaker="event.object" line="1413" comment="(assist mission failed/timed out)We need to take the long way around." />
+				</do_any>
+			</actions>
+		</cue>
+		<cue name="BoardingResult_Training_Failure_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingResult_Training_Failure_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="event.object" line="1318" comment="Argh" />
+			</actions>
+		</cue>
+		<cue name="BoardingResult_Failure_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingResult_Failure_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.copilot" line="10670" comment="No!" />
+				<add_npc_line speaker="player.copilot" line="10671" comment="We've lost our whole boarding squad!" />
+			</actions>
+		</cue>
+		<cue name="BoardingResult_Training_Success_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingResult_Training_Success_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="event.object" line="1417" comment="I confirm that we have control of the target. Great work!" />
+			</actions>
+		</cue>
+		<cue name="BoardingResult_Success_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingResult_Success_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.primaryship.subordinates.{1}.pilot" line="1417" comment="I confirm that we have control of the target. Great work!" />	
+				<do_if value="not global.$fleetplayerboardtarget.isclass.station">
+					<do_any>
+						<add_npc_line speaker="player.copilot" line="10660" comment="Well done! Watch it for us until we bring a replacement captain." />
+						<add_npc_line speaker="player.copilot" line="10661" comment="Great job! Keep it safe for a bit, we're bringing in a new commander." />
+					</do_any>
+				</do_if>
+				<do_else>
+					<add_npc_line speaker="player.copilot" line="10661" comment="Great job! Keep it safe for a bit, we're bringing in a new commander." />
+				</do_else>  
+				<play_sound object="player.room" sound="'boarding_sir_yes_sir'" /> 
+			</actions>
+		</cue>
+		<cue name="BoardingResult_Retreat_Success_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingResult_Retreat_Success_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="event.object" line="1253" comment="The boarding team is on their way back." />
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_DestroyJumpdrive_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_DestroyJumpdrive_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.copilot" line="10601" comment="We should start by taking out the jump drive" />
+			</actions>
+		</cue>
+
+		<cue name="BoardingSupport_DestroyEngine_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_DestroyEngine_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.copilot" line="10602" comment="Now let's blow up the engines" />
+			</actions>
+		</cue>
+
+		<!--MEU-->
+		<cue name="BoardingSupport_HackDisableStation_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_HackDisableStation_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10628" comment="Let's stick around, see if we can help." />
+				</do_any>
+			</actions>
+		</cue>
+		<!--MEU-->	
+
+		<!--BO-->
+		<!--<add sel="//cue[@name='BoardingSupport_DestroyJumpdrive_Started_ConversationF']" pos="after">-->
+		<cue name="BoardingSupport_DestroyWeapons_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_DestroyWeapons_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10642" comment="Hang on, let me mark some suitable targets." />
+					<add_npc_line speaker="player.copilot" line="10643" comment="There. Just start shooting these." />
+				</do_any>
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_TargetTooFast_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_TargetTooFast_ConversationF" />
+			</conditions>
+			<actions>
+				<add_player_choice text="'Disable Engines'" position="top_left" section="BoardingSupport_TargetTooFast_ConversationF_disableengines" />
+				<add_player_choice text="'Attempt Boarding'" position="left" section="BoardingSupport_TargetTooFast_ConversationF_attemptlaunchpods" />
+				<add_player_choice text="'Abort'" position="bottom_left" section="BoardingSupport_TargetTooFast_ConversationF_abort" />
+				<allow_conversation_escape enabled="false" />				
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_Destroy_Options_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_Destroy_Options_ConversationF" />
+			</conditions>
+			<actions>
+				<add_player_choice text="'Normal Support'" position="top_left" section="BoardingSupport_Destroy_Options_ConversationF_normalsupport" />
+				<add_player_choice text="'Target Weapons Only'" position="top_right" section="BoardingSupport_Destroy_Options_ConversationF_weaponsonly" />				
+				<do_all exact="player.primaryship.drones.count" counter="$i">
+					<do_if value="player.primaryship.drones.{$i}.hackerprobe">
+						<add_player_choice text="'Use Hacking Only'" position="left" section="BoardingSupport_Destroy_Options_ConversationF_hackingonly" />
+					</do_if>
+				</do_all>
+				<allow_conversation_escape enabled="false" />				
+			</actions>
+		</cue>		
+		<!--</add>-->
+
+
+		<cue name="BoardingSupport_DestroyRandomSurfaceElement_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_DestroyRandomSurfaceElement_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10640" comment="We should try to stage a diversion." />
+					<add_npc_line speaker="player.copilot" line="10641" comment="Maybe we can lure some guards away?" />
+				</do_any>
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10642" comment="Hang on, let me mark some suitable targets." />
+					<add_npc_line speaker="player.copilot" line="10643" comment="There. Just start shooting these." />
+				</do_any>
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_DestroyEngine_Success_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_DestroySurfaceElement_EngineDestroyed_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.copilot" line="10603" comment="All right, they're sitting ducks now!" />
+			</actions>
+		</cue>
+		<!-- Conversations -->
+		<cue name="BoardingSupport_ProtectPods_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_Started_ConversationF" />
+			</conditions>
+			<actions>
+
+				<do_if value="PreScan.state == cuestate.complete" comment="If the prescan cue completed, then we finished the scanning mission">
+					<add_npc_line speaker="event.object" line="1302" comment="(scan successful)Data received - analyzing for optimal attack vector..."/>
+				</do_if>
+				<do_else>
+					<add_npc_line speaker="event.object" line="1304" comment="(not scanned)That spot looks as good as any."/>
+				</do_else>
+
+				<add_npc_line speaker="player.copilot" line="10672" comment="Launching pods."/>
+				<add_npc_line speaker="player.copilot" line="10620" comment="Let's make sure they get there in one piece" />
+				<add_npc_line line="1305" delay="1s" comment="Launching towards target."/>
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_ProtectPods_Attacked_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_Attacked_ConversationF" />
+			</conditions>
+			<actions>
+				<!-- TODO: "boarding pod has been damaged" -->
+				<add_npc_line speaker="player.computer" line="361" comment="One of your ships has been damaged." />
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10621" comment="Damnit, we have to help them!" />
+					<add_npc_line speaker="player.copilot" line="10622" comment="Do something, these things are made out of cardboard!" />
+				</do_any>
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_ProtectPods_Destroyed_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_Destroyed_ConversationF" />
+			</conditions>
+			<actions>
+				<!-- TODO: "boarding pod has been destroyed" -->
+				<add_npc_line speaker="player.computer" line="316" comment="One of your ships has been destroyed." />
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_ProtectPods_FirstArrived_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_FirstArrived_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.copilot" line="10623" comment="The first one has arrived." />
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_ProtectPods_HalfArrived_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_HalfArrived_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="player.copilot" line="10624" comment="Half of the pods have arrived." />
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_ProtectPods_AllArrived_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_AllArrived_ConversationF" />
+			</conditions>
+			<actions>
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10625" comment="No more pods in flight." />
+					<add_npc_line speaker="player.copilot" line="10626" comment="That's the last of them." />
+				</do_any>
+				<do_any>
+					<add_npc_line speaker="player.copilot" line="10627" comment="All right, now for the fun part." />
+					<add_npc_line speaker="player.copilot" line="10628" comment="Let's stick around, see if we can help." />
+				</do_any>
+				<signal_cue_instantly cue="md.Boarding_PlayerFleet.Fight_sound" param="10s"/>
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_ProtectPods_AllDestroyed_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_ProtectPods_AllDestroyed_ConversationF" />
+			</conditions>
+			<actions>
+				<add_npc_line speaker="event.object" line="1320" comment="We're taking heavy casualties!" />
+				<add_npc_line speaker="event.object" line="1318" comment="Argh" />
+				<add_npc_line speaker="player.copilot" line="10670" comment="No!" />
+				<add_npc_line speaker="player.copilot" line="10671" comment="We've lost our whole squad!" />
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_Scan_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_Scan_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<do_if value="not global.$fleetplayerboardtarget.isclass.station">
+					<do_any>
+						<add_npc_line speaker="player.copilot" line="10604" comment="If you use the scanner drone we'll be able to make a much better attack plan." />
+						<add_npc_line speaker="player.copilot" line="10605" comment="The scanner drone should be able to get us some intel." />
+					</do_any>
+				</do_if>
+				<show_help log="true" line="192" comment="Open the ability menu and launch a scanner drone."/>
+			</actions>
+		</cue>
+		<cue name="BoardingSupport_Hack_Started_ConversationF" instantiate="true">
+			<conditions>
+				<event_conversation_started conversation="BoardingSupport_Hack_Started_ConversationF" />
+			</conditions>
+			<actions>
+				<do_if value="not global.$fleetplayerboardtarget.isclass.station">
+					<do_any>
+						<add_npc_line speaker="player.copilot" line="10644" comment="We should be able to hack that with our drone." />
+						<add_npc_line speaker="player.copilot" line="10645" comment="If you use the hacker drone we can speed up the process." />
+						<add_npc_line speaker="player.copilot" line="10646" comment="Your hacker drone will be able to help - just use it and I'll direct you." />
+					</do_any>
+				</do_if>
+
+				<!--BO-->
+				<!--<add sel="//cue[@name='BoardingSupport_Hack_Started_ConversationF']/actions/show_help" pos="before">-->
+				<add_player_choice text="'Start/Continue Hacking'" position="top_left" section="BoardingSupport_Hack_Started_ConversationF_yes" />
+				<add_player_choice text="'Find A New Target'" position="left" section="BoardingSupport_Hack_Started_ConversationF_no" />
+				<add_player_choice text="'Disable Hacking'" position="bottom_left" section="BoardingSupport_Hack_Started_ConversationF_never" />
+				<!--</add>-->
+
+
+
+
+				<show_help log="true" line="193" comment="Open the ability menu and launch a hacker drone."/>
+
+			</actions>
+		</cue>
+	</cues>
+</mdscript>

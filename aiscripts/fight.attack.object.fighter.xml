@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!-- Conquer_mod v020 -->
+<diff>
+	<add sel="/aiscript/params" pos="after">
+		<interrupts>
+			<handler>
+				<conditions>
+					<event_object_changed_zone object="$target" check="false" />
+					<check_value value="$pursuetargets" negate="true"/>
+					<check_value value="event.param.isclass.highway" />
+					<check_value value="$target? and $target.isoperational" />
+				</conditions>
+				<actions>
+					<do_if value="this.$attacktarget? and this.$attacktarget == $target">
+						<remove_value name="this.$attacktarget" />
+					</do_if>
+					<set_value name="$target" exact="null" />
+					<abort_called_scripts resume="selecttarget"/>
+				</actions>
+			</handler>
+		</interrupts>
+		<init>
+			<set_value name="$target" exact="null" />
+		</init>
+	</add>
+	<add sel="/aiscript/attention[@min='visible']/actions/do_if[@value='$BigTarget']" pos="before" > 		
+		<set_value name="$BigTarget" exact="if $target.isoperational and @target.boarder and @this.ship.relationto.{$target.boarder} ge 0 and $target.hullpercentage le 70 then 0 else $BigTarget" />			
+	</add>
+</diff>
+  

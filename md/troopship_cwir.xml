@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="TroopShip" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\MODS_JSGME\libraries\md.xsd">
+<!-- Conquer_mod v020 -->
+<!-- CWIR -->
+ <cues>			 		
+	<cue name="TroopShip_G" instantiate="true" namespace="this">
+		<conditions>
+			<check_any>
+				<check_all>
+					<event_object_signalled object="player.entity" param="'TroopShips'" />
+					<check_value value="true" chance="md.CM_Config.Settings.$TS_InvFChance" />
+				</check_all>
+				<event_object_signalled object="player.galaxy" param="'TS_invade_now'" />
+			</check_any>
+		</conditions>
+		<actions>						
+			<do_if value="event.param == 'TS_invade_now' and event.param2.isclass.station" >
+				<set_value name="$BoardZone" exact="event.param2.zone" />		
+				<set_value name="$KSt_Faction" exact="event.param3" />
+				<set_value name="$ZoneEnemyStations" exact="[event.param2]" />
+			</do_if>
+			<do_else>
+				<set_value name="$BoardZone" exact="event.param2" />		
+				<set_value name="$KSt_Faction" exact="event.param3" />
+	
+				<!-- conditions: zone is elegible, zone have enemy stations, attacker faction have a necessary place to create the TS, target station have not a TS already sent,  target station is not being boarded-->			
+				<find_station name="$ZoneEnemyStations" space="$BoardZone" functional="true" multiple="true">
+					<match_any>
+						<match_relation faction="$KSt_Faction" relation="enemy"/>
+						<match owner="faction.ownerless"/>	
+					</match_any>	
+					<match owner="faction.xenon" negate="true" />
+					<match macro="macro.struct_bt_alb_outpost_macro" negate="true"/>
+					<match macro="macro.struct_at_xen_xenon_outpost_macro" negate="true"/>
+				</find_station>
+			</do_else>
+			
+			
+			<do_if value="$ZoneEnemyStations.count and not $BoardZone.istemporaryzone and $BoardZone.name != {20005,200} and $BoardZone.name != {20006,301}" >
+			<!-- look for best zone to generate the TS -->
+				<set_value name="$RefShipyard" exact="null" />
+				<set_value name="$CreateTSZone" exact="null" />
+				<create_list name="$Shipyards"/>
+				<create_list name="$ShipyardDist"/>
+				<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+					<match_content class="class.buildmodule" />
+					<match owner="$KSt_Faction"/>
+				</find_station>
+				
+				<do_if value="@$shipyard.count gt 0" >
+					<do_all exact="$shipyard.count" counter="$k">		
+						<append_to_list name="$Shipyards" exact="$shipyard.{$k}" />
+						<append_to_list name="$ShipyardDist" exact="$shipyard.{$k}.distanceto.{$BoardZone}"/>
+					</do_all>
+					<set_value name="$RefShipyard" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}" />
+					<set_value name="$CreateTSZone" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}.zone" />
+				</do_if>
+				
+				<clear_list list="$Shipyards"/>
+				<clear_list list="$ShipyardDist"/>
+				<do_if value="not $CreateTSZone">
+					<find_zone name="$TSZone" space="player.galaxy" tempzone="false" multiple="true">
+						<match class="class.highway" negate="true"/>
+						<match macro="$BoardZone.macro" negate="true" />
+						<match owner="$KSt_Faction"/>
+					</find_zone>			
+					<do_all exact="$TSZone.count" counter="$k">
+						<do_if value="$TSZone.{$k}.cluster == $BoardZone.cluster">
+							<set_value name="$CreateTSZone" exact="$TSZone.{$k}" />
+							<break />
+						</do_if>
+						<do_else>
+							<set_value name="$CreateTSZone" exact="$TSZone.{$k}" />
+						</do_else>	
+					</do_all>
+				</do_if>
+				<do_if value="not $CreateTSZone">
+					<find_station name="$shipyard" space="player.galaxy" functional="true" multiple="true">
+						<match_content class="class.buildmodule" />
+						<match_relation faction="$KSt_Faction" relation="neutral" comparison="ge"/>
+					</find_station>
+					
+					<do_if value="@$shipyard.count gt 0" >
+						<do_all exact="$shipyard.count" counter="$k">		
+							<append_to_list name="$Shipyards" exact="$shipyard.{$k}" />
+							<append_to_list name="$ShipyardDist" exact="$shipyard.{$k}.distanceto.{$BoardZone}"/>
+						</do_all>				
+						<set_value name="$RefShipyard" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}" />
+						<set_value name="$CreateTSZone" exact="$Shipyards.{$ShipyardDist.indexof.{$ShipyardDist.min}}.zone" />
+					</do_if>		
+				</do_if>
+			
+				<do_if value="$CreateTSZone" >
+				
+					<find_ship name="$TroopShip" functional="true" space="player.galaxy" owner="$KSt_Faction" multiple="true">
+						<match_any>
+							<match macro="macro.units_size_l_troop_transporter1_macro"/>
+							<match macro="macro.units_size_l_troop_transporter5_macro"/>
+						</match_any>
+					</find_ship>
+
+					<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_list" />
+					<set_value name="$fleetFaction" exact="$KSt_Faction"/>
+					<set_value name="$key" exact="'$%1'.[$fleetFaction.id]"/>
+					<set_value name="$jobTitle" exact="'Troopship Support '"/>
+
+					<do_all exact="$ZoneEnemyStations.count" counter="$j">	
+					
+						<!-- check all already in game this faction TS pilot command targets-->
+						<set_value name="$Flag" exact="1"/>
+						<do_all exact="$TroopShip.count" counter="$i">
+							<set_value name="$Flag" exact="if @$TroopShip.{$i}.pilot.command.param == @$ZoneEnemyStations.{$j} then 0 else $Flag"/>
+						</do_all>
+					
+						<do_if value="$Flag and not @$ZoneEnemyStations.{$j}.boarder" >
+
+							<!-- Invasion Force Spawn routine -->
+							<set_value name="$KSt_Zone" exact="$CreateTSZone" />	
+							<!--<set_value name="$KSt_Faction" exact="event.param2.{2}" />-->
+							<set_value name="$Num_Enemy_Squad_Wingmen" exact="md.CM_Config.Settings.$Wing" />
+							<set_value name="$Min" exact="1" />
+							<set_value name="$Max" exact="1" />
+							<set_value name="$Max" exact="2" chance="25" />
+							<set_value name="$Num_Enemy_Squads_For_Capship" exact="md.CM_Config.Settings.$Squad" />
+							<set_value name="$Num_Enemy_Capships" min="$Min" max="$Max" />
+							
+							<set_value name="$Main_Factions_Fighters" exact="['hoa_heavy_fighter', 'pmc_heavy_fighter', 'can_heavy_fighter', 'arg_heavy_fighter', 'xen_heavy_fighter', 'rya_heavy_fighter', 'sos_heavy_fighter', 'rei_heavy_fighter', 'hev_heavy_fighter']"/>	
+							<set_value name="$FighterGroup" exact="$Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}}" />
+							<set_value name="$Loc" exact="$KSt_Zone.knownname + ', ' + $KSt_Zone.sector.knownname + ', ' + $KSt_Zone.cluster.knownname"/>
+
+
+								
+							<get_safe_pos result="$Safepos" zone="$KSt_Zone"  radius="1km" min="10km" max="15km" allowyaxis="false"/>
+							<create_orientation name="$Orientation" orientation="look_at" refposition="position.[0, 0, 0]">
+								<position value="$Safepos" />
+							</create_orientation>
+						
+								
+		
+							<do_if value="$fleetulator.{$key}? and $fleetulator.{$key}.{2}.count">
+								<set_value name="$targetZoneStation" exact="$ZoneEnemyStations.{$j}"/>
+								<set_value name="$data" exact="$fleetulator.{$key}.{2}.random"/>
+								<set_value name="$noCleanup" exact="true" chance="if $ZoneEnemyStations.count == $j then 0 else 100"/>
+								<include_actions ref="md.CWIR_CREATOR.CWIR_CR_INVfleet_construct" />
+							</do_if>
+							<do_else>
+								<!--DEBUG MESSAGE: unsupported faction!!-->	
+							</do_else>	
+				
+							<!-- here the TroopShips will be created and will follow to their targets using boarding.npc.xml aiscript just few minutes after the vanguard fleet -->
+							<!-- config settings chance applied -->
+							
+							<get_safe_pos result="$Safepos" zone="$CreateTSZone" radius="1km"/>  
+							<do_if value="@$RefShipyard">
+								<get_safe_pos result="$Safepos" zone="$CreateTSZone" radius="1km" object="$RefShipyard"/>
+							</do_if>
+
+							<write_to_logbook category="missions" text="{40002,89}.[$KSt_Faction.name, $CreateTSZone.name, $BoardZone.owner, $BoardZone.name, $ZoneEnemyStations.{$j}.name]"/>
+							<signal_cue_instantly cue="md.Conquer_Mod.TroopShips" param="[$Safepos, $CreateTSZone, $KSt_Faction, $FighterGroup, $ZoneEnemyStations.{$j}]" chance="100" />
+							
+						</do_if>
+						<do_else>
+							<!--DEBUG MESSAGE: a TS already sent to this station or this station is already being boarded-->	
+							<!--<write_to_logbook category="general" text="'TS already sent or this station is being boarded \n %1 \n %2 \n %3.'.[$ZoneEnemyStations.{$j}.name, $ZoneEnemyStations.{$j}.owner.name, $ZoneEnemyStations.{$j}.zone.name]"/>
+							<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />-->
+						</do_else>
+						
+					</do_all>
+					<!-- clean vars -->
+					<remove_value name="$max"/>
+					<remove_value name="$Num_Enemy_Capships"/>
+					<remove_value name="$Num_Enemy_Squads_For_Capship"/>
+					<remove_value name="$Num_Enemy_Squad_Wingmen"/>
+					<remove_value name="$targetZoneStation"/>
+					<remove_value name="$KSt_Faction"/>
+					<remove_value name="$fleetFaction"/>
+					<remove_value name="$targetFaction"/>
+					<remove_value name="$ZoneEnemyStations"/>
+					<remove_value name="$shipyard"/>
+					<remove_value name="$CreateTSZone"/>
+					<remove_value name="$Orientation"/>
+					<remove_value name="$Safepos"/>
+					<remove_value name="$Main_Factions_Fighters"/>
+					<remove_value name="$FighterGroup"/>
+					<remove_value name="$jobTitle"/>
+				</do_if>
+				<do_else>
+					<!--DEBUG MESSAGE: Not found a shipyard or an elegible zone to create a TS -->
+					<!--<write_to_logbook category="general" text="'Shipyard or an elegible zone to create a TS was not found .'.[]"/>
+					<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />-->
+				</do_else>	
+		
+			</do_if>		
+			<do_else>
+					<!--DEBUG MESSAGE: no enemy stations to board	-->
+					<!--<write_to_logbook category="general" text="'No enemy stations to board or its a temporary zone.\n %1'.[$BoardZone.name]"/>
+					<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />-->
+			</do_else>			
+		
+		
+		</actions>			
+	</cue>					
+ </cues>
+</mdscript>

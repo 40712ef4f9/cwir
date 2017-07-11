@@ -1,0 +1,1643 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="Conquer_Mod" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+     
+	<!-- X:R Conquer mod Short version beta 0.18s - mod by Rubini - X:R 3.53 compatible-->
+ 	<!-- Credits to Van-Fim that made the initial code to destroy stations and -->
+	<!-- zones ownership change, this was the start point of this mod, so thanks to him --> 
+
+	<!-- Changes can be made on CM_Config.xml file on the mod md folder--> 
+
+   <cue name="Start" instantiate="false" version="1">
+		<conditions>
+	  		<check_any>
+				<event_player_created />
+				<event_cue_signalled cue="md.Setup.GameStart" />
+	  		</check_any>
+      	</conditions>
+		<actions>
+   <!-- starting the mod for the first time -->
+			<create_list name="md.Conquer_Mod.Start.$TheListStations"/>
+			<create_list name="md.Conquer_Mod.Start.$TheListPos"/>
+			<create_list name="md.Conquer_Mod.Start.$TheListMacro"/>
+   <!-- for short version make the correct allegiances -->
+			<set_value name="md.Conquer_Mod.Start.$Main_Factions" exact="[faction.heartofalbion, faction.plutarch, faction.canteran, faction.argongovernment, faction.xenon, faction.familyryak, faction.sovereignsyndicate, faction.reivers, faction.hereticvanguards]"/>
+			<set_value name="md.Conquer_Mod.Start.$Main_FactionsShort" exact="[faction.canteran, faction.xenon, faction.plutarch, faction.sovereignsyndicate, faction.reivers, faction.hereticvanguards]"/>
+			
+        	<set_faction_relation faction="faction.canteran" otherfaction="faction.player" value="faction.canteran.relation.friend.max"/>
+			<set_faction_relation faction="faction.player" otherfaction="faction.canteran" value="faction.player.relation.friend.max"/>
+
+			<set_faction_relation faction="faction.player" otherfaction="faction.plutarch" value="faction.player.relation.kill.max"/>
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.player" value="faction.plutarch.relation.kill.max"/>
+
+        	<set_faction_relation faction="faction.canteran" otherfaction="faction.plutarch" value="faction.canteran.relation.kill.max"/>
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.canteran" value="faction.plutarch.relation.kill.max"/>
+
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.reivers" value="faction.plutarch.relation.friend.max"/>
+			<set_faction_relation faction="faction.reivers" otherfaction="faction.plutarch" value="faction.reivers.relation.friend.max"/>
+
+			<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="false"/>
+			<set_faction_relation_locked faction="faction.hereticvanguards" locked="false"/>
+			
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.sovereignsyndicate" value="faction.plutarch.relation.friend.max"/>
+			<set_faction_relation faction="faction.sovereignsyndicate" otherfaction="faction.plutarch" value="faction.sovereignsyndicate.relation.friend.max"/>
+
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.hereticvanguards" value="faction.plutarch.relation.friend.max"/>
+			<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.plutarch" value="faction.hereticvanguards.relation.friend.max"/>
+
+			<set_faction_relation faction="faction.sovereignsyndicate" otherfaction="faction.reivers" value="faction.sovereignsyndicate.relation.friend.max"/>
+			<set_faction_relation faction="faction.reivers" otherfaction="faction.sovereignsyndicate" value="faction.reivers.relation.friend.max"/>
+
+			<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.reivers" value="faction.hereticvanguards.relation.friend.max"/>
+			<set_faction_relation faction="faction.reivers" otherfaction="faction.hereticvanguards" value="faction.reivers.relation.friend.max"/>
+
+			<set_faction_relation faction="faction.sovereignsyndicate" otherfaction="faction.hereticvanguards" value="faction.sovereignsyndicate.relation.friend.max"/>
+			<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.sovereignsyndicate" value="faction.hereticvanguards.relation.friend.max"/>
+			
+			<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="true"/>
+			<set_faction_relation_locked faction="faction.hereticvanguards" locked="true"/>
+			
+			<add_inventory entity="player.entity" ware="ware.inv_probe" min="1" max="3"/>
+	
+<!-- create builder player ship to speed thing up -->
+						<find_cluster name="$DeVries" macro="macro.cluster_d_macro"/>
+						<find_zone name="$StartPlot" macro="macro.tzonecluster_d_sector18_zone48_macro" />
+						<create_ship name="$Player_Builder_Ship" macro="macro.units_size_xl_builder_ship_macro" zone="$StartPlot">
+                          <owner exact="faction.player" overridenpc="true"/>
+                          <pilot>
+                          <select faction="faction.heartofalbion" tags="tag.commander"/>
+                          </pilot>
+                          <defence>
+                          <select faction="faction.heartofalbion" tags="tag.defencecontrol"/>
+                          </defence>
+                          <engineer>
+                          <select faction="faction.heartofalbion" tags="tag.engineer"/>
+                          </engineer>
+						  
+                          <units>
+                            <unit category="unitcategory.transport" mk="1" exact="75" />
+							<unit category="unitcategory.welder" mk="1" exact="50" />
+                          </units>
+                          <cargo>
+                            <wares list="[ware.fuelcells]">
+                              <fillpercent min="65" max="70"/>
+                            </wares>
+							 <wares list="[ware.fusionreactor]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.bioopticwiring]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.reinforcedmetalplating]">
+                              <fillpercent min="95" max="99"/>
+                            </wares>
+                          </cargo>
+						  <drop ref="ship_large_civilian"/>
+						  <safepos  max="6km" radius="2km"/>
+                        </create_ship>
+						
+   <!-- create pirate stations and give to them one ship to protect their new stations -->
+					<find_zone name="$EpiLow" macro="macro.tzonecluster_b_sector07_zone10_macro" />
+					<create_station name="$SS_pirateA" macro="macro.struct_bt_dv_reivers_outpost_01_macro" zone="$EpiLow" owner="faction.sovereignsyndicate">
+               			<safepos x="1500m" y="-100m"/>
+              			<buildsequence sequence="'a'" stage="1"/>
+                	</create_station>					
+					<!--<add_units object="$SS_pirateA" category="unitcategory.welder" mk="1" exact="10" />-->			
+					<create_cue_actor name="$defencemanager" cue="this">
+						<select faction="faction.sovereignsyndicate" tags="tag.defencecontrol"/>
+						<owner exact="faction.sovereignsyndicate" />
+            		</create_cue_actor>
+            		<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+            		<assign_defence_manager object="$SS_pirateA" actor="$defencemanager"/>
+            		<start_script object="$defencemanager" name="'fight.attack.object.station'" />					
+					<create_cue_actor name="$engineer" cue="this">
+						<select faction="faction.sovereignsyndicate" tags="tag.engineer"/>
+						<owner exact="faction.sovereignsyndicate" />
+					</create_cue_actor>
+					<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+					<assign_engineer object="$SS_pirateA" actor="$engineer" />            
+					<start_script object="$engineer" name="'engineer.ai'" />										
+					<signal_objects param2="$SS_pirateA" param="'init station'" object="player.galaxy"/>
+					
+					<create_station name="$SS_pirateB" macro="macro.struct_bt_dv_reivers_outpost_03_macro" zone="$EpiLow" owner="faction.sovereignsyndicate">
+               			<safepos x="-1500m" y="-500m"/>
+              			<buildsequence sequence="'a'" stage="1"/>
+                	</create_station>
+					<create_cue_actor name="$defencemanager" cue="this">
+						<select faction="faction.sovereignsyndicate" tags="tag.defencecontrol"/>
+						<owner exact="faction.sovereignsyndicate" />
+            		</create_cue_actor>
+            		<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+            		<assign_defence_manager object="$SS_pirateB" actor="$defencemanager"/>
+            		<start_script object="$defencemanager" name="'fight.attack.object.station'" />					
+					<create_cue_actor name="$engineer" cue="this">
+						<select faction="faction.sovereignsyndicate" tags="tag.engineer"/>
+						<owner exact="faction.sovereignsyndicate" />
+					</create_cue_actor>
+					<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+					<assign_engineer object="$SS_pirateB" actor="$engineer" />            
+					<start_script object="$engineer" name="'engineer.ai'" />					
+					<signal_objects param2="$SS_pirateB" param="'init station'" object="player.galaxy"/>
+					<create_ship name="$Enemy_Ship" zone="$EpiLow" macro="units_size_xl_cargo_hauler_2_macro">
+                		<owner exact="faction.sovereignsyndicate" overridenpc="true"/>
+			  			<pilot>
+                			<select faction="faction.sovereignsyndicate" tags="[tag.commander]"/>
+              			</pilot>
+              			<defence>
+                			<select faction="faction.sovereignsyndicate" tags="[tag.defencecontrol]"/>
+              			</defence>
+              			<engineer>
+                			<select faction="faction.sovereignsyndicate" tags="[tag.engineer]"/>
+			  			</engineer>
+						<units>
+							<unit category="unitcategory.marine" mk="1" min="10" max="15"/>
+		  					<unit category="unitcategory.marine" mk="2" min="10" max="15"/>
+                 			<unit category="unitcategory.defence" min="15" max="25" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="10" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+						<safepos max="5km"/>
+              		</create_ship>
+					<start_script object="$Enemy_Ship.pilot" name="'move.patrol'" />
+
+					<find_zone name="$EpiLow" macro="macro.tzonecluster_a_sector01_zone101_macro" />
+					<create_station name="$HV_pirateA" macro="macro.struct_bt_dv_reivers_outpost_02_macro" zone="$EpiLow" owner="faction.hereticvanguards">
+               			<safepos x="1500m" y="-100m"/>
+              			<buildsequence sequence="'a'" stage="1"/>
+                	</create_station>
+					<create_cue_actor name="$defencemanager" cue="this">
+						<select faction="faction.hereticvanguards" tags="tag.defencecontrol"/>
+						<owner exact="faction.hereticvanguards" />
+            		</create_cue_actor>
+            		<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+            		<assign_defence_manager object="$HV_pirateA" actor="$defencemanager"/>
+            		<start_script object="$defencemanager" name="'fight.attack.object.station'" />					
+					<create_cue_actor name="$engineer" cue="this">
+						<select faction="faction.hereticvanguards" tags="tag.engineer"/>
+						<owner exact="faction.hereticvanguards" />
+					</create_cue_actor>
+					<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+					<assign_engineer object="$HV_pirateA" actor="$engineer" />            
+					<start_script object="$engineer" name="'engineer.ai'" />					
+					<signal_objects param2="$HV_pirateA" param="'init station'" object="player.galaxy"/>
+					
+					<create_station name="$HV_pirateB" macro="macro.struct_bt_dv_reivers_outpost_01_macro" zone="$EpiLow" owner="faction.hereticvanguards">
+               			<safepos x="-1800m" y="-800m"/>
+              			<buildsequence sequence="'a'" stage="1"/>
+                	</create_station>
+					<create_cue_actor name="$defencemanager" cue="this">
+						<select faction="faction.hereticvanguards" tags="tag.defencecontrol"/>
+						<owner exact="faction.hereticvanguards" />
+            		</create_cue_actor>
+            		<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+            		<assign_defence_manager object="$HV_pirateB" actor="$defencemanager"/>
+            		<start_script object="$defencemanager" name="'fight.attack.object.station'" />					
+					<create_cue_actor name="$engineer" cue="this">
+						<select faction="faction.hereticvanguards" tags="tag.engineer"/>
+						<owner exact="faction.hereticvanguards" />
+					</create_cue_actor>
+					<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+					<assign_engineer object="$HV_pirateB" actor="$engineer" />            
+					<start_script object="$engineer" name="'engineer.ai'" />					
+					<signal_objects param2="$HV_pirateB" param="'init station'" object="player.galaxy"/>
+
+						<create_ship name="$Enemy_Ship" zone="$EpiLow" macro="units_size_xl_cargo_hauler_2_macro">
+                		<owner exact="faction.hereticvanguards" overridenpc="true"/>
+			  			<pilot>
+                			<select faction="faction.hereticvanguards" tags="[tag.commander]"/>
+              			</pilot>
+              			<defence>
+                			<select faction="faction.hereticvanguards" tags="[tag.defencecontrol]"/>
+              			</defence>
+              			<engineer>
+                			<select faction="faction.hereticvanguards" tags="[tag.engineer]"/>
+			  			</engineer>
+						<units>
+							<unit category="unitcategory.marine" mk="1" min="10" max="15"/>
+		  					<unit category="unitcategory.marine" mk="2" min="10" max="15"/>
+                 			<unit category="unitcategory.defence" min="15" max="25" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="10" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+						<safepos max="5km"/>
+              		</create_ship>
+					<start_script object="$Enemy_Ship.pilot" name="'move.patrol'" />
+
+			<write_to_logbook category="general" text="'=== Conquer Mod First Run Check === \n Status: Ok.'.[]"/>
+			<signal_cue cue="md.CM_Config.Settings"/>
+		</actions>
+   </cue>
+
+
+	<!--<========================================================================>-->
+
+
+   <!--<cue name="Kill_Stations_cue" instantiate="true" version="1">-->
+   <cue name="Kill_Stations_cue" version="1">
+  	<conditions>	
+		<event_cue_signalled/>	
+ 	</conditions>
+  	<actions>
+			<show_notification caption="'=== Conquer Mod Main Code Check ==='" details="' \n\n Status: %1 '.[md.CM_Config.Settings.$StartMessage]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+			<write_to_logbook category="general" text="'=== Conquer Mod Main Code Check === \n Status: %1 '.[md.CM_Config.Settings.$StartMessage]"/>
+		<!-- settings some global variables at each game load  -->
+		<set_value name="md.Conquer_Mod.Start.$Debug" exact="0" />
+		<do_if value="not md.Conquer_Mod.Start.$RetakeFlag_Zone?" > 
+			<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Zone" exact="0" />
+			<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Faction" exact="0" />
+		</do_if>
+		<do_if value="not md.$JunkDealerLists.{1}.indexof.{[ware.inv_probe, 1, 2, 45]}">
+			<append_to_list name="md.$JunkDealerLists.{1}" exact="[ware.inv_probe, 1, 2, 45]" />
+		</do_if>
+		<do_if value="not md.$EquipmentLists.{1}.indexof.{[ware.inv_probe, 2, 5, 85]}">
+			<append_to_list name="md.$EquipmentLists.{1}" exact="[ware.inv_probe, 2, 5, 85]" />
+		</do_if>
+		<!-- add engineer for strongholds that don´t have it for old saved games -->
+		<find_station name="$Outpost" space="player.galaxy" macro="macro.struct_bt_alb_warehouse_macro" functional="true" multiple="true"/>
+ 		<do_all exact="@$Outpost.count" counter="$i">
+			<!--<do_if value=" not $Outpost.{$i}.units.{unitcategory.welder}.exists">
+				<add_units object="$Outpost.{$i}" category="unitcategory.welder" mk="1" exact="10" />				
+			</do_if>-->			
+			<do_if value="not $Outpost.{$i}.engineer.exists">
+				<create_cue_actor name="$engineer" cue="this">
+              		<select faction="faction.xenon" tags="tag.engineer"/>
+              		<owner exact="$Outpost.{$i}.owner" />
+            	</create_cue_actor>
+				<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+				<assign_engineer object="$Outpost.{$i}" actor="$engineer" />            
+				<start_script object="$engineer" name="'engineer.ai'" />			
+				<destroy_object object="$Outpost.{$i}.defencenpc"/>
+				<create_cue_actor name="$defencemanager" cue="this">
+					<select faction="faction.xenon" tags="tag.defencecontrol"/>
+					<owner exact="$Outpost.{$i}.owner" />
+				</create_cue_actor>
+				<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+				<assign_defence_manager object="$Outpost.{$i}" actor="$defencemanager"/>
+				<start_script object="$defencemanager" name="'fight.attack.object.station'" />
+			</do_if>			
+		</do_all>
+		<!-- settings PMC&Pirates allegiance again to fix it for old saved games -->
+			<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="false"/>
+			<set_faction_relation_locked faction="faction.hereticvanguards" locked="false"/>
+			
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.sovereignsyndicate" value="1.0"/>
+			<set_faction_relation faction="faction.sovereignsyndicate" otherfaction="faction.plutarch" value="1.0"/>
+
+			<set_faction_relation faction="faction.plutarch" otherfaction="faction.hereticvanguards" value="1.0"/>
+			<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.plutarch" value="1.0"/>
+
+			<set_faction_relation faction="faction.sovereignsyndicate" otherfaction="faction.reivers" value="1.0"/>
+			<set_faction_relation faction="faction.reivers" otherfaction="faction.sovereignsyndicate" value="1.0"/>
+
+			<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.reivers" value="1.0"/>
+			<set_faction_relation faction="faction.reivers" otherfaction="faction.hereticvanguards" value="1.0"/>
+
+			<set_faction_relation faction="faction.sovereignsyndicate" otherfaction="faction.hereticvanguards" value="1.0"/>
+			<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.sovereignsyndicate" value="1.0"/>
+			
+			<set_faction_relation_locked faction="faction.sovereignsyndicate" locked="true"/>
+			<set_faction_relation_locked faction="faction.hereticvanguards" locked="true"/>
+		
+		<!-- start to find destroyed stations -->				
+		<do_if value="md.Conquer_Mod.Start.$TheListStations.count gt 0" >
+	 		<create_list name="$StationsToClear"/>
+	 		<create_list name="$StationsToClearName"/>
+	 		<do_all exact="md.Conquer_Mod.Start.$TheListStations.count" counter="$k">
+				<find_station name="$EStations" space="md.Conquer_Mod.Start.$TheListStations.{$k}" multiple="true"/>
+				<do_all exact="$EStations.count" counter="$k1">
+					<set_value name="$aX" exact="md.Conquer_Mod.Start.$TheListPos.{$k}.x - $EStations.{$k1}.position.x" />
+		   			<set_value name="$aY" exact="md.Conquer_Mod.Start.$TheListPos.{$k}.y - $EStations.{$k1}.position.y" />
+		   			<set_value name="$aZ" exact="md.Conquer_Mod.Start.$TheListPos.{$k}.z - $EStations.{$k1}.position.z" />
+					<do_if value="$aX lt 50m and $aX gt -50m and $aY lt 50m and $aY gt -50m and $aZ lt 50m and $aZ gt -50m" >
+						<!-- ok, destroyed station detected, now see if it can be rebuild: no ship or enemy stations in the zone  -->				
+						<find_ship name="$Ship" space="md.Conquer_Mod.Start.$TheListStations.{$k}" multiple="true"/>
+						<set_value name="$Flag1" exact="1" />
+							<do_if value="@$Ship.count gt 0" >
+								<do_all exact="$Ship.count" counter="$k2">
+									<do_if value="$Ship.{$k2}.owner.hasrelation.enemy.{$EStations.{$k1}.owner}">
+	      								<set_value name="$Flag1" exact="0" />
+									</do_if>						
+								</do_all>
+							</do_if>
+						<find_station name="$Stations" space="md.Conquer_Mod.Start.$TheListStations.{$k}" multiple="true"/>
+						<set_value name="$Flag2" exact="1" />
+			 			<do_if value="@$Stations.count gt 0" >
+							<do_all exact="$Stations.count" counter="$j">
+								<do_if value="$Stations.{$j}.owner.hasrelation.enemy.{$EStations.{$k1}.owner}">
+									<set_value name="$Flag2" exact="0" />
+								</do_if>
+							</do_all>
+			 			</do_if>
+						<do_if value="$Flag1 and $Flag2 and player.primaryship.zone != $EStations.{$k1}.zone">
+							<append_to_list name="$StationsToClear" exact="$k"/>
+							<append_to_list name="$StationsToClearName" exact="$EStations.{$k1}.knownname"/>
+							<signal_objects param2="$EStations.{$k1}" param="'init station'" object="player.galaxy"/>
+						</do_if>
+						<do_else>
+
+<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" > 
+							<show_notification caption="'=== Conquer Mod Kill_Stations ==='" details="' \n EStations: %1 \n EStation.name: %2 \n md.TheListStations space: %3 \n %4 \n %5 '.[$EStations.{$k1}, $EStations.{$k1}.knownname, md.Conquer_Mod.Start.$TheListStations.{$k}, md.Conquer_Mod.Start.$TheListStations.count, md.Conquer_Mod.Start.$TheListStations.{$k}.name]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 							<write_to_logbook category="general" text="'=== Conquer Mod Kill_Stations === \n EStations: %1 \n EStation.name: %2 \n md.TheListStations space: %3 \n %4\n %5 '.[$EStations.{$k1}, $EStations.{$k1}.knownname,  md.Conquer_Mod.Start.$TheListStations.{$k}, md.Conquer_Mod.Start.$TheListStations.count, md.Conquer_Mod.Start.$TheListStations.{$k}.name]"/>
+</do_if>
+							<destroy_object object="$EStations.{$k1}" explosion="false"/>
+						</do_else>
+					</do_if>
+				</do_all>
+	 		</do_all>
+	 		<do_if value="@$StationsToClear.count gt 0" >
+				<do_all exact="$StationsToClear.count" counter="$k3">
+
+<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" > 
+			<show_notification caption="'=== Conquer Mod StationsToClear ==='" details="' \n Total Entries to clear %1 \n This Station Name: %2 ( %3)\n This Zone: %4 '.[$StationsToClear.count, $StationsToClearName.{$k3}, $k3, md.Conquer_Mod.Start.$TheListStations.{$k3}.name]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 			<write_to_logbook category="general" text="'=== Conquer Mod StationsToClear === \n Total Entries to clear %1 \n This Station Name: %2 ( %3)\n This Zone: %4 '.[$StationsToClear.count, $StationsToClearName.{$k3}, $k3, md.Conquer_Mod.Start.$TheListStations.{$k3}.name]"/>
+</do_if>
+					<remove_value name="md.Conquer_Mod.Start.$TheListStations.{$StationsToClear.{$k3}}" />
+					<remove_value name="md.Conquer_Mod.Start.$TheListPos.{$StationsToClear.{$k3}}" />		
+				</do_all>
+			</do_if>
+			<clear_list list="$StationsToClear"/>
+			<clear_list list="$StationsToClearName"/>
+		</do_if>
+		<set_value name="md.CM_Config.Settings.$Check" exact="1" />
+		<reset_cue cue="Kill_Stations_cue"/>
+      </actions>
+   </cue>
+   
+
+	<!--<========================================================================>-->
+
+
+   <cue name="EWS_cue" checktime="10s" checkinterval="10s" version="1">
+	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1" />
+   	</conditions>
+	<delay exact="md.CM_Config.Settings.$EWS_Delay"/>
+	<!--<delay exact="120s" />-->
+	<actions>		
+	   <create_list name="$Zones"/>
+       <find_object name="$PlayerObject" owner="faction.player" class="[class.ship_l, class.ship_xl, class.station]" functional="true" space="player.galaxy" multiple="true"/>
+<!-- check zero-->
+	   	<do_if value="@$PlayerObject.count gt 0" >
+        <do_all exact="$PlayerObject.count" counter="$i">			
+			<find_ship name="$EnemyShip" class="[class.ship_l, class.ship_xl]" functional="true" space="$PlayerObject.{$i}.zone" multiple="true">
+				<match_relation faction="faction.player" relation="enemy"/>
+				<match_distance object="$PlayerObject.{$i}" max="30km"/>
+				<match_any>
+ 					<match primarypurpose="objectpurpose.fight"/>
+                    <match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+				</match_any>
+			</find_ship>
+<!-- check zero-->
+			<do_if value="@$EnemyShip.count gt 0" >
+				<do_if value="not $Zones.indexof.{$PlayerObject.{$i}.zone}">
+					<append_to_list name="$Zones" exact="$PlayerObject.{$i}.zone" />
+					<do_if value="md.CM_Config.Settings.$EWS_Level lt 1">
+						<set_value name="md.CM_Config.Settings.$EWS_Level" exact="1" />
+					</do_if>
+					<do_if value="(@$EnemyShip.count gt md.CM_Config.Settings.$EWS_Level_cutoff) and ($PlayerObject.{$i}.zone != player.primaryship.zone)" chance="((@$EnemyShip.count / (md.CM_Config.Settings.$EWS_Level * 1.0f)) * 100)i" >		  
+						<set_value name="$Loc" exact="$PlayerObject.{$i}.zone.name + ', ' + $PlayerObject.{$i}.zone.sector.knownname + ', ' + $PlayerObject.{$i}.zone.cluster.knownname"/>
+						<show_notification caption="'=== Early Warning System ==='" details="' \n\n Unknown Enemy Force at \n %1.\n We have units there. \n Please assist if you can.'.[$Loc]" timeout="20s" queued="true" priority="8" sound="ews">
+							<interaction text="''" param="$PlayerObject.{$i}.zone" param2="'GiveMeTheMap'" />
+						</show_notification>						
+						<write_to_logbook category="general" text="'=== Early Warning System === \n Unknown Enemy Force at \n %1.\n We have units there.'.[$Loc]"/>
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 	
+			<write_to_logbook category="general" text="'=== Early Warning System === \n Unknown Enemy Force at \n %1.\n We have units there. \n %2 \n%3'.[$Loc, $EnemyShip.count, $EnemyShip.{1}.name]"/>
+</do_if>		
+					</do_if>
+          		</do_if>
+			</do_if>
+		</do_all>
+		</do_if>
+		<clear_list list="$Zones"/>
+		<reset_cue cue="EWS_cue"/>
+	</actions>
+   </cue>
+
+   
+<!--<========================================================================>-->
+
+   
+    <cue name="MapInteract_cue" instantiate="true">
+		<conditions>
+			<event_player_interaction param2="'GiveMeTheMap'"/>
+			<check_value value="event.param.isclass.zone" />
+		</conditions>
+		<!--<delay exact="10ms"/>-->
+		<actions>          
+			<set_value name="$ZoneMap" exact="event.param" />			
+			<start_conversation actor="player.copilot" conversation="OpenMap"/>
+		</actions> 
+		<cues>
+			<cue name="OpenMap_cue">
+				<conditions>
+					<event_conversation_started conversation="OpenMap" /> 
+				</conditions>
+				<actions>
+					<add_npc_line speaker="player.entity" line="1300" comment="give me the map"  />
+					<do_if value="md.CM_Config.Settings.$MapSector" > 
+						<open_conversation_menu menu="MapMenu" param="[0, 0, 'sector', $ZoneMap.sector, null, $ZoneMap]" />
+					</do_if>
+					<do_elseif value="not md.CM_Config.Settings.$MapSector">
+						<open_conversation_menu menu="MapMenu" param="[0, 0, 'zone', $ZoneMap]" />
+					</do_elseif>
+					<add_conversation_view view="closeupdetailmonitor" />
+				</actions>										
+			</cue>
+      </cues>
+	</cue>
+      
+   
+<!--<========================================================================>-->
+
+
+   <cue name="ShipyardResourceConsume_cue" instantiate="true" version="1">
+	<conditions>
+		<event_cue_signalled/>	
+   	</conditions>
+	<actions>
+		<set_value name="$ShipOwner" exact="md.Conquer_Mod.Start.$Owner" />
+		<set_value name="$Factor" exact="0" />
+		<find_station name="$Shipyards" space="player.galaxy" owner="$ShipOwner" functional="true" multiple="true">
+ 			<match_any>
+				<match_content class="class.buildmodule" />
+				<match macro="macro.struct_bt_ol_small_ships_yard_macro" />
+				<match macro="macro.struct_bt_alb_small_ships_yard_macro" />
+ 			</match_any>
+        </find_station>
+		<do_if value="not $Shipyards.count">
+			<find_station name="$Shipyards" space="player.galaxy" owner="$ShipOwner" productsize="ship"  functional="true" multiple="true"/>
+		</do_if>
+		<do_if value="not $Shipyards.count">
+			<do_any>
+				<set_value name="$ShipOwner" exact="faction.leddaindustrial" />
+				<set_value name="$ShipOwner" exact="faction.jonferson" />
+			</do_any>
+			<set_value name="$Factor" min="0.02f" max="0.04f" />
+			<find_station name="$Shipyards" space="player.galaxy" owner="$ShipOwner" functional="true" multiple="true">
+ 				<match_any>
+					<match macro="macro.struct_bt_alb_small_ships_yard_macro" />
+					<match_content class="class.buildmodule" />
+				</match_any>
+        	</find_station>
+		</do_if>
+		<do_if value="$Shipyards.count">
+        	<do_all exact="$Shipyards.count" counter="$k">
+				<set_value name="$Resources" exact="$Shipyards.{$k}.cargo.list" />
+        	 	<do_all exact="$Resources.count" counter="$j">
+					<do_if value="not $Factor">
+						<set_value name="$Factor" min="0.04f" max="0.07f" />
+					</do_if>
+					<set_value name="$WareAmount" exact="$Shipyards.{$k}.cargo.{$Resources.{$j}}.count" />
+   <!-- limit the min amount to between 3 to 6 units with a threshold of 2 units-->
+					<do_if value="$WareAmount gt 2">
+						<remove_cargo object="$Shipyards.{$k}" ware="$Resources.{$j}" exact="(($WareAmount * $Factor * md.CM_Config.Settings.$ResourcesFactor)f + 0.75f)i" />
+					</do_if>
+				</do_all>
+
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+			<show_notification caption="'=== Resource_consume ==='" details="' \n Shypyard: %1 \n Faction: %2 \n Number of resources %3 \n Last resource name: %4 \n Last resource initial: %5 \n Last resource final : %6 \n Faction: %7 '.[$Shipyards.{$k}.name, $ShipOwner.name, $Resources.count, $Resources.{$Resources.count}.name, $WareAmount, $Shipyards.{$k}.cargo.{$Resources.{$Resources.count}}.count, md.Conquer_Mod.Start.$Owner]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 			<write_to_logbook category="general" text="'=== Resource_consume === \n Shypyard: %1 \n Faction: %2 \n Number of resources %3 \n Last resource name: %4 \n Last resource initial: %5 \n Last resource final : %6 \n Faction: %7'.[$Shipyards.{$k}.name, $ShipOwner.name, $Resources.count, $Resources.{$Resources.count}.name, $WareAmount, $Shipyards.{$k}.cargo.{$Resources.{$Resources.count}}.count, md.Conquer_Mod.Start.$Owner]"/>
+</do_if>
+
+			</do_all>
+		</do_if>
+	</actions>
+   </cue>
+
+
+	<!--<========================================================================>-->
+
+
+   <cue name="Destroy_Stations_cue" checktime="5s" checkinterval="10s" version="1">
+	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1" />
+   	</conditions>
+	<delay exact="5s"/>
+	<actions>
+		<find_station name="$Stations" space="player.galaxy" functional="true" multiple="true"/>
+       	<do_all exact="$Stations.count" counter="$i">
+		
+			<set_value name="$s_owner" exact="$Stations.{$i}.owner" />
+<!-- short version player -->				
+			<do_if value="$s_owner == faction.player" >
+				<set_value name="$s_owner" exact="faction.canteran" />
+			</do_if>
+<!-- short version player -->			
+			<!--<do_if value="$Stations.{$i}.hullpercentage lt md.CM_Config.Settings.$OozHull">-->
+			<do_if value="$Stations.{$i}.hullpercentage lt md.CM_Config.Settings.$OozHull and md.Conquer_Mod.Start.$Main_Factions.indexof.{$s_owner}">
+		  			<set_value name="$Flag1" exact="0" />
+					<find_object_component object="$Stations.{$i}" name="$Cmpnent" multiple="true" hullinvulnerable="false" surfaceelement="false" class="class.destructible" indestructible="false"/>
+					<do_all exact="$Cmpnent.count" counter="$j">
+						<do_if value="$Cmpnent.{$j}.hull gt 1" >
+							<set_value name="$Flag1" operation="add" exact="$Cmpnent.{$j}.hull" />
+						</do_if>
+					</do_all>
+<!-- OOZ intervention to avoid small pirates and general stations ooz hull issues -->
+<!-- can be made pirates specific but seems that all vanilla OOZ capshipsxstation combat isnt good -->
+<!-- since v0.15 it is active only on fight.attack.object.capital.xml -->
+				<!--<do_if value="@Stations.{$i}.zone and ($Stations.{$i}.hullpercentage lt md.CM_Config.Settings.$OozHull) and (@Stations.{$i}.zone != player.primaryship.zone)">-->
+		  			<!--<set_value name="$Flag1" exact="0" chance="md.CM_Config.Settings.$OozChance"/>-->
+				<!--</do_if>-->
+<!-- OOZ intervention end -->
+				<do_if value="$Flag1 lt 1" >
+					<do_if value="not md.Conquer_Mod.Start.$StDest?">
+					<do_if value="$Stations.{$i}.macro != macro.struct_bt_alb_warehouse_macro">
+						<append_to_list name="md.Conquer_Mod.Start.$TheListStations" exact="$Stations.{$i}.zone"/>
+			 			<append_to_list name="md.Conquer_Mod.Start.$TheListPos" exact="$Stations.{$i}.position"/>
+			 			<append_to_list name="md.Conquer_Mod.Start.$TheListMacro" exact="$Stations.{$i}.macro"/>
+					</do_if>	
+						<set_value name="md.Conquer_Mod.Start.$Explos_Delay" exact="25s" />
+						<do_if value="$Stations.{$i}.zone != player.primaryship.zone">
+							<set_value name="md.Conquer_Mod.Start.$Explos_Delay" exact="1s" />
+						</do_if>
+						<set_value name="md.Conquer_Mod.Start.$StDest" exact="$Stations.{$i}" />
+						<do_if value="@md.Conquer_Mod.Start.$Main_Factions.indexof.{$s_owner}">
+							<signal_cue cue="Retaliation_Patrol_cue"/>
+						</do_if>
+						<add_effect object="$Stations.{$i}" effect="'capital_explosion'"/>
+						<signal_cue cue="ExplosionTimer_cue"/>
+				 	  </do_if>
+				</do_if>
+			</do_if>
+		</do_all>
+		<reset_cue cue="Destroy_Stations_cue"/>
+	</actions>
+   </cue>
+
+
+	<!--<========================================================================>-->
+
+
+	<cue name="ExplosionTimer_cue" instantiate="true" version="1">
+      <conditions>
+		<event_cue_signalled/>	
+      </conditions>
+      <actions>
+		<set_value name="$KilledStation" exact="md.Conquer_Mod.Start.$StDest" />	
+		<set_value name="$Loc" exact="$KilledStation.zone.name + ', ' + $KilledStation.zone.sector.knownname + ', ' + $KilledStation.zone.cluster.knownname"/>
+ 	  </actions>
+
+	  <cues>
+		<cue name="ExplosionTimer_cue_Timer" version="1">
+	  		<delay exact="md.Conquer_Mod.Start.$Explos_Delay"/>
+			<actions>
+
+ 				<write_to_logbook category="general" text="'=== Spy Net Report === \n %1 was destroyed in \n %2.'.[$KilledStation.name, $Loc]"/>
+				<do_if value="$KilledStation.zone == player.primaryship.zone">
+					<show_notification caption="'=== Spy Net Report ==='" details="' \n\n Spy Net report that a \n %1 was destroyed in \n %2.'.[$KilledStation.name, $Loc]" timeout="15s" queued="true" priority="8" sound="spy_net_near"/>
+				</do_if>
+				<do_else>
+				
+<!-- Map / Probe intervention start -->
+			 <find_object name="$Object" class="[class.ship, class.station]" functional="true" space="$KilledStation.zone" owner="faction.player" multiple="true"/>
+			 <do_if value="@$Object.count le 0" chance="60" >
+				<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="$KilledStation.zone">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot>
+						<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+					</pilot>
+					<safepos radius="5km"/>
+				</create_ship>
+				<start_script object="$Probe.pilot" name="'move.idle'">
+					<param name="MaxDistance" value="20km" />
+                </start_script>
+			 </do_if>
+<!-- Map / Probe intervention end -->
+								
+					<show_notification caption="'=== Spy Net Report ==='" details="' \n\n Spy Net report that a \n %1 was destroyed in \n %2.'.[$KilledStation.name, $Loc]" timeout="15s" queued="true" priority="8" sound="spy_net">
+						<interaction text="''" param="$KilledStation.zone" param2="'GiveMeTheMap'" />
+					</show_notification>	
+				</do_else>
+
+				<destroy_object object="$KilledStation" explosion="false"/>
+
+				<do_all min="7" max="18">
+					<set_value name="$Yw" min="1deg" max="360deg"/>
+					<set_value name="$Pt" min="1deg" max="360deg"/>
+					<set_value name="$Rl" min="1deg" max="360deg"/>
+					<do_any>
+						<create_object name="$Debri1" macro="macro.env_debris_debris_m_01_macro" zone="$KilledStation.zone" weight="48">
+							<position object="$KilledStation" min="80m" max="600m"/>
+							<rotation yaw="$Yw" pitch="$Pt" roll="$Rl"/>
+              			</create_object>
+
+						<create_object name="$Debri2" macro="macro.env_debris_debris_xl_07_macro" zone="$KilledStation.zone" weight="4">
+							<position object="$KilledStation" min="15m" max="200m"/>
+							<rotation yaw="$Yw" pitch="$Pt" roll="$Rl"/>
+              			</create_object>
+
+						<create_object name="$Debri3" macro="macro.env_debris_debris_s_01_macro" zone="$KilledStation.zone" weight="48">
+							<position object="$KilledStation" min="100m" max="800m"/>
+							<rotation yaw="$Yw" pitch="$Pt" roll="$Rl"/>
+              			</create_object>
+					</do_any>              			
+			  </do_all>
+			<remove_value name="md.Conquer_Mod.Start.$StDest"/>
+		   </actions>
+		</cue>
+	  </cues>			
+	</cue>
+
+	<!--<========================================================================>-->
+
+
+   <cue name="Retaliation_Patrol_cue" instantiate="true" namespace="this" version="1">
+	<conditions>
+		<event_cue_signalled/>
+    </conditions>
+	<!--<delay exact="5s"/>-->
+	<actions>
+		<set_value name="$KSt" exact="md.Conquer_Mod.Start.$StDest" />
+		<set_value name="$KSt_Name" exact="md.Conquer_Mod.Start.$StDest.name" />
+		<set_value name="$KSt_pos" exact="md.Conquer_Mod.Start.$StDest.position" />
+		<set_value name="$KSt_Zone" exact="md.Conquer_Mod.Start.$StDest.zone" />
+		<set_value name="$KSt_Faction" exact="md.Conquer_Mod.Start.$StDest.owner" />
+		<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Zone" exact="$KSt_Zone" />
+		<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Faction" exact="$KSt_Faction" /> 
+		<set_value name="$Loc" exact="$KSt_Zone.knownname + ', ' + $KSt_Zone.sector.knownname + ', ' + $KSt_Zone.cluster.knownname"/>
+	</actions>
+	<cues>
+		<cue name="Retaliation_Patrol_cue_Spawn">
+      		<delay min="md.CM_Config.Settings.$RFDelay_Min + 25s" max="md.CM_Config.Settings.$RFDelay_Max + 25s"/>
+			<actions>
+			
+<!-- short version player -->
+				<do_if value="$KSt_Faction == faction.player" >
+					<set_value name="$KSt_Faction" exact="faction.canteran" chance="md.CM_Config.Settings.$Can_RFChance"/>
+				</do_if>
+<!-- short version player -->
+			
+   <!-- check this faction stations amount -->
+				<find_station name="$ThisFactionStations" space="player.galaxy" functional="true" multiple="true">
+					<match owner="$KSt_Faction"/>
+ 					<match macro="macro.struct_bt_alb_warehouse_macro" negate="true"/>
+				</find_station>
+<!-- check zero-->
+   <!-- if zero the faction will have no more conditions to build Retaliation Forces, will "die" sometime ahead -->
+   <!-- note that the vanilla jobs.xml will continue eventually to spawn ships from this faction, but will be not a threat anymore -->
+			<do_if value="@$ThisFactionStations.count gt 0" >
+			<do_if value="md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}" chance="md.CM_Config.Settings.$RFChance">
+				<set_value name="$Main_Factions_Fighters" exact="['hoa_heavy_fighter', 'pmc_heavy_fighter', 'can_heavy_fighter', 'arg_heavy_fighter', 'xen_heavy_fighter', 'rya_heavy_fighter', 'sos_heavy_fighter', 'rei_heavy_fighter', 'hev_heavy_fighter']"/>	
+				<set_value name="$FighterGroup" exact="$Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}}" />
+           		<set_value name="$Num_Enemy_Squad_Wingmen" exact="md.CM_Config.Settings.$Wing" />
+            	<set_value name="$Num_Enemy_Squads_For_Capship" exact="md.CM_Config.Settings.$Squad" />
+            	<set_value name="$max" exact="2"/>
+            	<set_value name="$max" exact="3" chance="15"/>
+            	<set_value name="$Num_Enemy_Capships" min="1" max="$max"/>
+				<do_if value="$KSt_Faction == faction.xenon">
+            		<set_value name="$Num_Enemy_Capships" exact="1"/>
+				</do_if>
+				
+				<do_if value="player.primaryship.zone == $KSt_Zone and @$KSt_Faction.hasrelation.enemy.{faction.player}" >
+					<show_notification caption="'=== ALERT ==='" details="' \n\n Enemy Force class %1 jumping in.\n\n Prepar to Battle!'.[$Num_Enemy_Capships]" timeout="15s" queued="false" priority="8" sound="notification_generic"/>
+ 					<write_to_logbook category="general" text="'=== ALERT === \n Enemy Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>
+					<play_sound object="player.primaryship" sound="'enemy_jump'" />
+				</do_if>
+				<do_elseif value="player.primaryship.zone == $KSt_Zone and @$KSt_Faction.hasrelation.friend.{faction.player}" >
+					<show_notification caption="'=== ALERT ==='" details="' \n\n Allied Force class %1 jumping in.\n\n They ask for help!'.[$Num_Enemy_Capships]" timeout="15s" queued="false" priority="8" sound="notification_generic"/>
+ 					<write_to_logbook category="general" text="'=== ALERT === \n Allied Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>
+					<play_sound object="player.primaryship" sound="'allied_jump'" />
+				</do_elseif>
+				<do_elseif value="player.primaryship.zone == $KSt_Zone" >
+					<show_notification caption="'=== ALERT ==='" details="' \n\n Unknown Force class %1 jumping in.\n\n Prepar to Battle!'.[$Num_Enemy_Capships]" timeout="15s" queued="false" priority="8" sound="notification_generic"/>
+ 					<write_to_logbook category="general" text="'=== ALERT === \n Unknown Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>
+					<play_sound object="player.primaryship" sound="'unknown_jump'" />
+				</do_elseif>				
+				<do_elseif value="player.primaryship.zone != $KSt_Zone and @$KSt_Faction == faction.canteran" >
+					<show_notification caption="'=== ATTENTION ==='" details="' \n\n War Command Center inform that a Canteran fleet is counter attacking at %1. \n\n They ask us to join the force.'.[$Loc]" timeout="12s" queued="true" priority="8" sound="canteran_counterattack">
+						<interaction text="''" param="$KSt_Zone" param2="'GiveMeTheMap'" />
+					</show_notification>	
+ 					<write_to_logbook category="general" text="'=== ATTENTION === \n Canteran fleet is counter attacking at %1.'.[$Loc]"/>
+				</do_elseif>	
+				<do_elseif value="player.primaryship.zone != $KSt_Zone and (@$KSt_Zone.owner == faction.player or @$KSt_Zone.owner == faction.canteran)" >
+					<show_notification caption="'=== EWS ALERT ==='" details="' \n\n Unknown Force class %1 jumping at \n %2.\n\n Recon says that they are in attack formation. \n Please assist if you can.'.[$Num_Enemy_Capships, $Loc]" timeout="12s" queued="true" priority="8" sound="unknown_inv">
+						<interaction text="''" param="$KSt_Zone" param2="'GiveMeTheMap'" />
+					</show_notification>	
+ 					<write_to_logbook category="general" text="'=== EWS ALERT === \n Unknown Force class %1 jumping at \n %2.'.[$Num_Enemy_Capships, $Loc]"/>
+				</do_elseif>
+				
+				<get_safe_pos result="$Safepos" zone="$KSt_Zone" value="$KSt_pos" radius="400m" min="10km" max="15km" allowyaxis="false"/>
+				<create_orientation name="$Orientation" orientation="look_at" refposition="$KSt_pos">
+                	<position value="$Safepos" />
+             	</create_orientation>
+
+<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" > 
+		<!--<show_notification caption="'=== Retaliation_Patrol_cue ==='" details="' \n KilledStation: %1 \n KilledStation.name: %2 \n KilledStations.zone: %3 \n KilledStation.faction.name: %4 \n KilledStations_amount: %5 '.[$KSt, $KSt_Name, $KSt_Zone.name, $KSt_Faction, md.Conquer_Mod.Start.$TheListStations.count]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>-->
+ 		<write_to_logbook category="general" text="'=== Retaliation_Patrol_cue === \n KilledStation: %1 \n KilledStation.name: %2 \n KilledStations.zone: %3 \n KilledStation.faction.name: %4 \n KilledStations_amount: %5 '.[$KSt, $KSt_Name, $KSt_Zone.name, $KSt_Faction, md.Conquer_Mod.Start.$TheListStations.count]"/>
+</do_if>
+
+<!-- Map / Probe intervention start -->
+			<do_if value="$KSt_Faction == faction.canteran or $KSt_Zone.owner == faction.canteran">
+			 <find_object name="$Object" class="[class.ship, class.station]" functional="true" space="$KSt_Zone" owner="faction.player" multiple="true"/>
+			 <do_if value="@$Object.count le 0" >
+				<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="$KSt_Zone">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot>
+						<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+					</pilot>
+					<safepos radius="5km"/>
+				</create_ship>
+				<start_script object="$Probe.pilot" name="'move.idle'">
+					<param name="MaxDistance" value="20km" />
+                </start_script>
+			 </do_if>
+			</do_if>
+<!-- Map / Probe intervention end -->
+
+
+				<!-- <=========== CAPITAL SHIPS ===========> -->
+            	<do_all exact="$Num_Enemy_Capships">
+					<do_if value="$KSt_Faction == faction.sovereignsyndicate or $KSt_Faction == faction.reivers or $KSt_Faction == faction.hereticvanguards">
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone" macro="units_size_xl_cargo_hauler_2_macro">
+                		<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="1" min="10" max="15"/>
+		  					<unit category="unitcategory.marine" mk="2" min="10" max="15"/>
+                 			<unit category="unitcategory.defence" min="15" max="25" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="10" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_if>
+
+					<do_elseif value="$KSt_Faction == faction.argongovernment or $KSt_Faction == faction.familyryak">
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone">
+ 						<select faction="$KSt_Faction" size="class.ship_xl" tags="[tag.military]"/>
+						<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="2" min="15" max="30"/>
+		  					<unit category="unitcategory.marine" mk="3" min="15" max="20"/>
+                 			<unit category="unitcategory.defence" min="20" max="30" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="5" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_elseif>
+
+					<do_else>
+						<do_any>
+							<set_value name="$size" exact="class.ship_xl" weight="65"/>
+							<set_value name="$size" exact="class.ship_l" weight="35"/>
+						</do_any>
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone">
+ 						<select faction="$KSt_Faction" size="$size" tags="[tag.military]" />
+						<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="2" min="15" max="30"/>
+		  					<unit category="unitcategory.marine" mk="3" min="15" max="20"/>
+                 			<unit category="unitcategory.defence" min="20" max="30" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="5" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_else>
+					<add_effect object="$Enemy_Ship" effect="'jump_jumpin_xl'"/>
+					<set_value name="md.Conquer_Mod.Start.$Owner" exact="$KSt_Faction" />
+					<signal_cue_instantly cue="ShipyardResourceConsume_cue"/>
+			 		<start_script object="$Enemy_Ship.pilot" name="'move.patrol'" />
+
+
+					<do_all min="2" max="$Num_Enemy_Squads_For_Capship">
+              		<!--<do_all exact="$Num_Enemy_Squads_For_Capship">-->
+                		<create_ship name="$Enemy_Leader" groupname="$Enemy_Ships" ref="$FighterGroup" zone="$KSt_Zone">                  			
+							<pilot>
+                				<select faction="$KSt_Faction" tags="[tag.fighterpilot]"/>
+              				</pilot>
+                  			<position object="$Enemy_Ship" max="5km"/>
+                		</create_ship>
+						<add_effect object="$Enemy_Leader" effect="'jump_jumpin_l'"/>
+                		<set_object_commander object="$Enemy_Leader" commander="$Enemy_Ship" />
+                		<start_script object="$Enemy_Leader.pilot" name="'move.escort'">
+                  			<param name="target" value="$Enemy_Ship"/>
+                		</start_script>
+                		<do_all min="4" max="$Num_Enemy_Squad_Wingmen">
+                  			<create_ship name="$Enemy_Follower" groupname="$Enemy_Ships" ref="$FighterGroup" zone="$KSt_Zone">                   			
+							<pilot>
+                				<select faction="$KSt_Faction" tags="[tag.fighterpilot]"/>
+              				</pilot>
+                    			<position object="$Enemy_Leader" min="2km" max="4km"/>
+                  			</create_ship>
+							<add_effect object="$Enemy_Follower" effect="'jump_jumpin_l'"/>
+                  			<set_object_commander object="$Enemy_Follower" commander="$Enemy_Leader" />
+                  			<start_script object="$Enemy_Follower.pilot" name="'move.escort'">
+                    			<param name="target" value="$Enemy_Leader" />
+                  			</start_script>
+                		</do_all>
+              		</do_all>
+            	</do_all>
+			</do_if>
+			</do_if>
+			<do_else>
+
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Retaliation_Patrol_cue ==='" details="' \n\n Retaliation Patrol SPAWN aborted by chance! '.[]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Retaliation_Patrol_cue === \n\n Retaliation Patrol SPAWN aborted by chance! '.[]"/>
+</do_if>
+			</do_else>
+          </actions>
+        </cue>
+      </cues>
+    </cue>
+
+
+	<!--<========================================================================>-->
+
+
+   <cue name="Check_ZoneOwner_cue" checktime="7s" checkinterval="120s" version="1">
+	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1" />
+  	</conditions>
+	<delay exact="15s"/>
+  	<actions>
+   <!-- mandatory condition to change zone ownership: a faction must have at least one station on the zone -->
+   <!-- the Stronghold is enough, but to build it (or any station) the factions, in practice, needs to  -->
+   <!-- have no enemy on zone - this will then feed back all conflict between factions and so on -->
+  		<find_zone name="$zones" space="player.galaxy" tempzone="false" multiple="true" >
+			<match class="class.highway" negate="true"/>
+ 		</find_zone>
+       	<do_all exact="$zones.count" counter="$i">		
+			<!--<do_if value="$zones.{$i}.name != 'Empty Space' and $zones.{$i}.name != 'Unknown Zone'" >-->
+			<do_if value="not $zones.{$i}.istemporaryzone and $zones.{$i}.name != {20005,200} and $zones.{$i}.name != {20006,301}" >
+				<set_value name="$Flag" exact="1" />
+				<find_station name="$Stations" space="$zones.{$i}" functional="true" multiple="true"/>
+ 				<do_if value="@$Stations.count gt 0" >
+					<do_all exact="$Stations.count" counter="$j">
+						<do_if value="$Stations.{$j}.owner == @$zones.{$i}.owner" >
+							<set_value name="$Flag" exact="0" />
+						</do_if>
+		    			<do_elseif value="$Flag" >
+							<do_if value="$zones.{$i}.owner == null or $zones.{$i}.owner.hasrelation.enemy.{$Stations.{$j}.owner}" >
+								<set_value name="$Flag" exact="$Stations.{$j}.owner" />
+							</do_if>
+						</do_elseif>
+					</do_all>
+					<do_if value="$Flag and ($Flag != 1)" >
+
+<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" > 
+			<!--<show_notification caption="'=== Conquer Mod ZoneOwner Changed ==='" details="' \n Zone: %1 \n Old Owner: %2 \n New Owner: %3 '.[$zones.{$i}.name, @$zones.{$i}.owner.knownname, @$Flag.knownname]" timeout="5s" queued="true" priority="8" sound="notification_generic"/>-->
+ 			<write_to_logbook category="general" text="'=== Conquer Mod ZoneOwner Changed === \n Zone: %1 \n Old Owner: %2 \n New Owner: %3 '.[$zones.{$i}.name, @$zones.{$i}.owner.knownname, @$Flag.knownname]"/>
+</do_if>
+
+<!-- short version player -->
+						<do_if value="$Flag == faction.player" >
+							<set_value name="$Flag" exact="faction.canteran" />
+						</do_if>
+<!-- short version player -->
+
+
+						<set_owner object="$zones.{$i}" faction="$Flag" />
+					</do_if>
+				</do_if>
+			</do_if>
+		</do_all>
+		<reset_cue cue="Check_ZoneOwner_cue"/>
+	</actions>
+   </cue>
+
+
+	<!--<========================================================================>-->
+
+
+   <cue name="Build_StrongHold_cue" checktime="15s" checkinterval="30s" version="1">
+  	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1" />
+   	</conditions>
+	<delay min="90s" max="150s"/>
+   	<actions>
+   <!-- conditions for military presence: unique owner of military l or xl in a zone, no enemy stations or stronghold present, zone ownership must be enemy, own or null -->
+		<create_list name="$Owners"/>
+		<find_zone name="$zones" space="player.galaxy" priorityzone="true" tempzone="false" multiple="true" >
+			<match class="class.highway" negate="true"/>
+ 		</find_zone>
+		<do_all exact="$zones.count" counter="$i">
+		  <!--<do_if value="$zones.{$i}.name != 'Empty Space' and $zones.{$i}.name != 'Unknown Zone'and player.primaryship.zone != $zones.{$i}" >-->
+		  <do_if value="not $zones.{$i}.istemporaryzone and $zones.{$i}.name != {20005,200} and $zones.{$i}.name != {20006,301} and player.primaryship.zone != $zones.{$i}" >	  
+			<find_ship name="$zoneShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$zones.{$i}" multiple="true">
+				<match_any>
+ 					<match primarypurpose="objectpurpose.fight"/>
+                    <match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+				</match_any>
+			</find_ship>
+			 <do_if value="@$zoneShips.count" >
+				<do_all exact="$zoneShips.count" counter="$j">				
+					<set_value name="$zs_owner" exact="$zoneShips.{$j}.owner" />
+<!-- short version player -->				
+					<do_if value="$zs_owner == faction.player" >
+						<set_value name="$zs_owner" exact="faction.canteran" />
+					</do_if>
+					<!--<do_if value="not $Owners.indexof.{$zs_owner} and $zs_owner != faction.player">-->
+					<do_if value="not $Owners.indexof.{$zs_owner}">
+<!-- short version player -->	
+					    <append_to_list name="$Owners" exact="$zs_owner" />
+          			</do_if>
+				</do_all>
+			 	<do_if value="$Owners.count == 1 and md.Conquer_Mod.Start.$Main_Factions.indexof.{$Owners.{1}} and $Owners.{1} != faction.xenon" chance="md.CM_Config.Settings.$StgRFChance" >
+				<find_station name="$Stations" space="$zones.{$i}" functional="true" multiple="true"/>
+				<set_value name="$Flag1" exact="1" />
+				
+				<do_if value="@$Stations.count gt 0" >
+					<do_all exact="$Stations.count" counter="$k">				
+						<do_if value="$Stations.{$k}.owner.hasrelation.enemy.{$Owners.{1}} or $Stations.{$k}.macro == macro.struct_bt_alb_warehouse_macro or $Stations.{$k}.owner == $Owners.{1}">
+							<set_value name="$Flag1" exact="0" />
+						</do_if>
+					</do_all>
+				</do_if>
+				
+				<do_if value="$Flag1 and player.primaryship.zone != $zones.{$i} and (@$zones.{$i}.owner.hasrelation.enemy.{$Owners.{1}} or $zones.{$i}.owner == $Owners.{1} or $zones.{$i}.owner == null)" >
+
+   <!-- CREATE STRONGHOLD -->
+				<create_station name="$StrongHold" macro="macro.struct_bt_alb_warehouse_macro" zone="$zones.{$i}" owner="$Owners.{1}">
+                  	<safepos y="-5km"/>
+              		<buildsequence sequence="'a'" stage="1"/>
+              		<buildsequence sequence="'f'" stage="3"/>			
+                </create_station>
+				<create_cue_actor name="$defencemanager" cue="this">
+              		<select faction="faction.xenon" tags="tag.defencecontrol"/>
+              		<owner exact="$Owners.{1}" />
+            	</create_cue_actor>
+				<set_entity_type entity="$defencemanager" type="entitytype.defencecontrol" />
+            	<assign_defence_manager object="$StrongHold" actor="$defencemanager"/>
+				<start_script object="$defencemanager" name="'fight.attack.object.station'" />				
+				<create_cue_actor name="$engineer" cue="this">
+              		<select faction="faction.xenon" tags="tag.engineer"/>
+              		<owner exact="$Owners.{1}" />
+            	</create_cue_actor>
+				<set_entity_type entity="$engineer" type="entitytype.engineer" />          
+				<assign_engineer object="$StrongHold" actor="$engineer" />            
+				<start_script object="$engineer" name="'engineer.ai'" />
+   <!-- create minefield in a Safe position around the Stronghold -->
+				<do_all min="md.CM_Config.Settings.$MineMin" max="md.CM_Config.Settings.$MineMax">
+					<set_value name="$Yw" min="1deg" max="360deg"/>
+					<set_value name="$Pt" min="1deg" max="360deg"/>
+					<set_value name="$Rl" min="1deg" max="360deg"/>		
+          			<create_object groupname="$Mines" zone="$zones.{$i}" macro="macro.props_wps_mine_02_macro" owner="$Owners.{1}">
+						<safepos object="$StrongHold" min="3000m" max="6500m" radius="600m"/>
+						<rotation yaw="$Yw" pitch="$Pt" roll="$Rl"/>
+          			</create_object>
+        		</do_all>
+				<do_if value="$Owners.{1} == faction.canteran" > 
+					<set_known object="$StrongHold" known="true" />
+				</do_if>
+
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Conquer Mod Build_StrongHold ==='" details="' \n Stronghold built by military presence: \n Zone: %1 \n Zone owner: %2 \n Ships l xl: %3 \n Owners.count: %4 \n first Owner.list.name: %5 '.[$zones.{$i}.name, $zones.{$i}.owner, @$zoneShips.count, $Owners.count, $Owners.{1}]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Conquer Mod Build_StrongHold === \n Stronghold built by military presence: \n Zone: %1 \n Zone owner: %2 \n Ships l xl: %3 \n Owners.count: %4 \n first Owner.list.name: %5 '.[$zones.{$i}.name, $zones.{$i}.owner, @$zoneShips.count, $Owners.count, $Owners.{1}]"/>
+</do_if>
+
+				</do_if>
+				</do_if>
+				<remove_value name="$zoneShips"/>
+				<clear_list list="$Owners"/>
+			</do_if>
+		  </do_if>
+		</do_all>
+
+		<reset_cue cue="Build_StrongHold_cue"/>
+	</actions>
+   </cue>
+
+
+   <!--<========================================================================>-->
+
+
+   <cue name="Invasion_Force_cue" checktime="30s" checkinterval="600s" version="1">
+ 	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1" />
+  	</conditions>
+	<delay min="md.CM_Config.Settings.$IFDelay_Min" max="md.CM_Config.Settings.$IFDelay_Max"/>
+   	<actions>
+
+   <!-- calc player strengh to start invasions or not. See the config file -->
+		<find_ship name="$PlayerCapShips" class="[class.ship_l, class.ship_xl]" space="player.galaxy"  multiple="true">
+			<match owner="faction.player"/>
+			<match primarypurpose="objectpurpose.fight"/>
+ 		</find_ship>
+		<find_ship name="$PlayerCapShipsT" class="[class.ship_xl]" space="player.galaxy"  multiple="true">
+			<match owner="faction.player"/>
+			<match primarypurpose="objectpurpose.trade"/>
+ 		</find_ship>
+		
+		<set_value name="$ShipNumber" exact="($PlayerCapShips.count + $PlayerCapShipsT.count / 2.0f)i" />
+		<set_value name="$PlayerCapFactor" min="1" max="md.CM_Config.Settings.$PlayerFactor * 3" />
+		<do_if value="($ShipNumber ge md.CM_Config.Settings.$PlayerFactor and $ShipNumber ge $PlayerCapFactor) or md.CM_Config.Settings.$PlayerFactor == 0" >
+		
+   <!-- create lists used on calc -->
+		<create_list name="$TargetZone_InCluster"/>
+		<create_list name="$EstimatedForce"/>
+		<create_list name="$ZoneValue"/>
+		<create_list name="$PossibleZone"/>
+		<do_if value="$ShipNumber gt 15" >
+			<set_value name="$ShipNumber" exact="15"/>
+		</do_if>
+		<set_value name="$InvInnerChance" exact="md.CM_Config.Settings.$IFChance_In + ($ShipNumber * 2)" />
+
+   <!-- for each Main Faction search for the more interesting zones to invade in all galaxy (or in clusters for minor factions) -->
+	  	<do_if value="true" chance="md.CM_Config.Settings.$IFChance_Out">
+        	<do_all exact="md.Conquer_Mod.Start.$Main_FactionsShort.count" counter="$i">
+				<set_value name="$ThisFaction" exact="md.Conquer_Mod.Start.$Main_FactionsShort.{$i}" />
+				
+	<!-- add a bit more inner chance for PMC  -->	
+				<set_value name="$PMCchance" exact="0" />
+				<do_if value="$ThisFaction == faction.plutarch">
+					<set_value name="$PMCchance" exact="25" chance="$InvInnerChance" />
+				</do_if>
+		 		<do_if value="true" chance="$InvInnerChance + $PMCchance">
+				
+   <!-- check this faction stations amount -->
+					<find_station name="$ThisFactionStations" space="player.galaxy" functional="true" multiple="true">
+						<match owner="$ThisFaction"/>
+ 						<match macro="macro.struct_bt_alb_warehouse_macro" negate="true"/>
+					</find_station>
+<!-- check zero-->
+   <!-- if zero, the faction have not more conditions to build Invasions Forces, will "die" sometime ahead -->
+   <!-- note that the vanilla jobs.xml will continue eventually to spawn ships from this faction, but will be not a threat anymore -->
+					<do_if value="@$ThisFactionStations.count gt 0" >
+
+   <!-- find all zones on player galaxy that can be invaded by this faction  -->
+					<find_zone name="$AllZones" space="player.galaxy" tempzone="false" multiple="true" >
+						<match class="class.highway" negate="true"/>
+						<match_any>
+							<match owner="null"/>
+							<match_relation faction="$ThisFaction" relation="enemy"/>
+						</match_any>
+					</find_zone>
+					<set_value name="$Flag" exact="1" />
+					<do_if value="@$AllZones.count gt 0" >
+
+   <!-- force zone invasion restrictions to specific factions  -->
+					<do_if value="$ThisFaction == faction.sovereignsyndicate or $ThisFaction == faction.reivers or $ThisFaction == faction.hereticvanguards">
+						<do_all exact="$AllZones.count" counter="$j">
+							<find_zone name="$TargetZonesNearest" space="$AllZones.{$j}.cluster" tempzone="false" multiple="true" >
+								<match owner="$ThisFaction"/>
+							</find_zone>
+							<do_if value="@$TargetZonesNearest.count gt 0" >
+								<do_if value="$AllZones.{$j}.owner == null or $AllZones.{$j}.owner == faction.canteran or $AllZones.{$j}.owner == faction.player" >
+									<append_to_list name="$TargetZone_InCluster" exact="$AllZones.{$j}" />
+								</do_if>
+								<do_if value="$AllZones.{$j}.owner == faction.xenon" >
+									<append_to_list name="$TargetZone_InCluster" exact="$AllZones.{$j}" chance="20" />
+								</do_if>
+							</do_if>
+						</do_all>
+						<set_value name="$Flag" exact="0" />
+						<set_value name="$AllZones" exact="$TargetZone_InCluster" />
+					</do_if>
+
+					<do_if value="$ThisFaction == faction.plutarch or $ThisFaction == faction.canteran">
+						<do_all exact="$AllZones.count" counter="$j">
+							<do_if value="($AllZones.{$j}.owner == null and ($AllZones.{$j}.cluster.macro.ismacro.cluster_d_macro or $AllZones.{$j}.cluster.macro.ismacro.cluster_b_macro)) or $AllZones.{$j}.owner == faction.canteran or $AllZones.{$j}.owner == faction.player or $AllZones.{$j}.owner == faction.plutarch" >
+								<append_to_list name="$TargetZone_InCluster" exact="$AllZones.{$j}" />
+							</do_if>
+							<do_if value="$AllZones.{$j}.owner == faction.xenon" >
+								<append_to_list name="$TargetZone_InCluster" exact="$AllZones.{$j}" chance="20" />
+							</do_if>
+						</do_all>
+						<set_value name="$AllZones" exact="$TargetZone_InCluster" />
+					</do_if>
+
+   <!-- then init the calc for remaing zones -->
+					<do_if value="@$AllZones.count gt 0" >
+							<do_all exact="$AllZones.count" counter="$j">
+		  						<!--<do_if value="$AllZones.{$j}.name != 'Empty Space' and $AllZones.{$j}.name != 'Unknown Zone'" >-->
+								<do_if value="not $AllZones.{$j}.istemporaryzone and $AllZones.{$j}.name != {20005,200} and $AllZones.{$j}.name != {20006,301}" >
+
+   <!-- calc this zone values-->
+									<do_if value="$AllZones.{$j}.owner == null" >
+										<set_value name="$OwnerValue" exact="2" />
+									</do_if>
+		    						<do_elseif value="$AllZones.{$j}.owner.hasrelation.enemy.{$ThisFaction}" >
+										<set_value name="$OwnerValue" exact="1" />
+									</do_elseif>
+									<do_else>
+										<set_value name="$OwnerValue" exact="-20" />
+									</do_else>
+
+									<set_value name="$POIValue" exact="0" />
+									<find_object name="$HighWayGate" space="$AllZones.{$j}" multiple="true" >
+										<match_any>
+                							<match class="class.highwayentrygate"/>
+                							<match class="class.highwayexitgate"/>
+              							</match_any>
+									</find_object>
+									<do_if value="@$HighWayGate.count gt 0" >
+										<do_all exact="$HighWayGate.count" counter="$k">
+											<do_if value="$HighWayGate.{$k}.highway.issuperhighway">
+												<set_value name="$POIValue" exact="1" />
+											</do_if>
+										</do_all>
+									</do_if>
+
+									<find_closest_resource ware="[ware.plasma]" refobject="$AllZones.{$j}" zone="$NearestResourceZone" />
+  									<do_if value="$NearestResourceZone" exact="$AllZones.{$j}">
+										<set_value name="$POIValue" exact="2" />
+  									</do_if>
+									<find_closest_resource ware="[ware.ions]" refobject="$AllZones.{$j}" zone="$NearestResourceZone" />
+  									<do_if value="$NearestResourceZone" exact="$AllZones.{$j}">
+										<set_value name="$POIValue" exact="2" />
+  									</do_if>
+									<find_closest_resource ware="[ware.hydrogen]" refobject="$AllZones.{$j}" zone="$NearestResourceZone" />
+  									<do_if value="$NearestResourceZone" exact="$AllZones.{$j}">
+										<set_value name="$POIValue" exact="2" />
+  									</do_if>
+
+									<find_object name="$Beacon" class="class.jumpbeacon" space="$AllZones.{$j}"/>
+									<do_if value="@$Beacon.count gt 0" >
+										<set_value name="$POIValue" exact="3" />
+									</do_if>
+
+            						<find_object name="$Gates" class="class.gate" space="$AllZones.{$j}"/>
+									<do_if value="@$Gates.count gt 0" >
+										<set_value name="$POIValue" exact="4" />
+									</do_if>
+		
+   <!-- calc this zone enemy strengh-->
+									<find_ship name="$ZoneEnemyShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$AllZones.{$j}" multiple="true">
+										<match_relation faction="$ThisFaction" relation="enemy"/>
+										<match_any>
+ 											<match primarypurpose="objectpurpose.fight"/>
+                    						<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+										</match_any>
+									</find_ship>	
+									<find_station name="$ZoneEnemyStations" space="$AllZones.{$j}" functional="true" multiple="true">
+										<match_relation faction="$ThisFaction" relation="enemy"/>
+									</find_station>
+
+   <!-- append values to lists -->
+									<append_to_list name="$PossibleZone" exact="$AllZones.{$j}" />
+      								<append_to_list name="$ZoneValue" exact="$OwnerValue + $POIValue - (@$ZoneEnemyShips.count + @$ZoneEnemyStations.count)"/>
+					      			<append_to_list name="$EstimatedForce" exact="@$ZoneEnemyShips.count + @$ZoneEnemyStations.count"/>
+
+								</do_if>
+							</do_all>
+
+<!-- check zero again -->
+							<do_if value="@$PossibleZone.count" >
+
+   <!-- lets shuffle the possible result a bit-->
+							<set_value name="$Shuffle" exact="$ZoneValue.max" />
+							<do_all exact="7" counter="$p">
+								<do_if value="@$PossibleZone.{$ZoneValue.indexof.{$Shuffle - $p}}" >
+									<set_value name="$Shuffle" exact="$ZoneValue.max - $p" />
+									<break />
+								</do_if>
+							</do_all>
+
+   <!-- now choose the zone to be invaded-->
+							<do_any>
+								<set_value name="$ChoosedZone" exact="$PossibleZone.{$ZoneValue.indexof.{$ZoneValue.max}}" weight="75" />
+								<set_value name="$ChoosedZone" exact="$PossibleZone.{$ZoneValue.indexof.{$Shuffle}}" weight="10" />
+								<set_value name="$ChoosedZone" exact="$PossibleZone.{$EstimatedForce.indexof.{$EstimatedForce.min}}" weight="15" />
+							</do_any>
+
+	<!-- now calc this faction strengh-->
+							<set_value name="$FactionStrength" exact="((@$ThisFactionStations.count / 2.0f) + 0.6f)i" />
+							<do_if value="$FactionStrength gt 5" >
+								<set_value name="$FactionStrength" exact="5"/>
+								<set_value name="$FactionStrength" exact="4" chance="85"/>
+							</do_if>
+
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+	<write_to_logbook category="general" text="'=== INvForce Shuflle === \n Zonevalue max: %1 \n Shuffle: %2 \n EStrg min: %3 \n ChoosedZone: %4 \n Possible zonevaluemax: %5\n %6  %7  %8'.[$ZoneValue.max, $Shuffle, $EstimatedForce.min, $ChoosedZone.name, $PossibleZone.{$ZoneValue.indexof.{$ZoneValue.max}}.name, $PossibleZone.count, $ZoneValue.count, $EstimatedForce.count]"/>
+</do_if>
+
+							<set_value name="$InvForce" exact="$EstimatedForce.{$PossibleZone.indexof.{$ChoosedZone}}" />
+							<do_if value="$InvForce gt $FactionStrength" >
+								<set_value name="$InvForce" exact="$FactionStrength" />
+							</do_if>
+							<do_if value="$InvForce gt 3" >
+								<set_value name="$InvForce" exact="3" chance="35"/>
+							</do_if>						
+							<do_if value="$InvForce lt 1" >
+								<set_value name="$InvForce" exact="1" />
+							</do_if>
+
+	<!-- now calc max and min for inv force-->
+						<do_if value="$Flag" >
+							<set_value name="$Max" exact="$InvForce" />
+							<set_value name="$Min" exact="1" />
+						</do_if>
+						<do_else>
+							<set_value name="$Max" exact="2" />
+							<set_value name="$Min" exact="1" />
+						</do_else>
+
+   <!-- finally avoid invasion force overload and allows reinforcement  -->
+						<find_ship name="$StillCapShips" class="[class.ship_xl]" space="$ChoosedZone"  multiple="true">
+							<match_relation faction="$ThisFaction" relation="neutral" comparison="ge" />
+							<match_any>
+ 								<match primarypurpose="objectpurpose.fight"/>
+                    			<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+							</match_any>
+ 						</find_ship>
+
+   <!-- and force a restriction to xenon inv forces  -->
+						<do_if value="$ThisFaction == faction.xenon">
+							<set_value name="$Max" exact="1"/>
+							<do_if value="$ShipNumber gt 15" >
+								<set_value name="$ShipNumber" exact="15"/>
+							</do_if>							
+							<do_if value="$ChoosedZone.cluster.macro.ismacro.cluster_d_macro or $ChoosedZone.cluster.macro.ismacro.cluster_b_macro" >
+								<set_value name="$Flag" exact="3" chance="75 - ($ShipNumber * 4)"/>
+							</do_if>
+							<do_else>
+								<set_value name="$Flag" exact="3" chance="45 - ($ShipNumber * 3)"/>
+							</do_else>						
+						</do_if>
+						<do_if value="$StillCapShips.count lt $Max and $Flag lt 2" >
+
+   <!-- Invasion Force Spawn routine -->
+						<set_value name="$KSt_Zone" exact="$ChoosedZone" />
+						<set_value name="$KSt_Faction" exact="$ThisFaction" />
+						<set_value name="$Num_Enemy_Squad_Wingmen" exact="md.CM_Config.Settings.$Wing" />
+            			<set_value name="$Num_Enemy_Squads_For_Capship" exact="md.CM_Config.Settings.$Squad" />
+            			<set_value name="$Num_Enemy_Capships" min="$Min" max="$Max"/>
+						<do_if value="$KSt_Faction == faction.xenon">
+            				<set_value name="$Num_Enemy_Capships" min="1" max="md.CM_Config.Settings.$XenonMax"/>
+						</do_if>
+
+				<do_if value="@$KSt_Zone.owner">
+        				<set_faction_relation faction="$KSt_Faction" otherfaction="$KSt_Zone.owner" value="$KSt_Faction.relation.kill.max"/>
+						<set_faction_relation faction="$KSt_Zone.owner" otherfaction="$KSt_Faction" value="$KSt_Zone.owner.relation.kill.max"/>
+				</do_if>
+
+						<set_value name="$Main_Factions_Fighters" exact="['hoa_heavy_fighter', 'pmc_heavy_fighter', 'can_heavy_fighter', 'arg_heavy_fighter', 'xen_heavy_fighter', 'rya_heavy_fighter', 'sos_heavy_fighter', 'rei_heavy_fighter', 'hev_heavy_fighter']"/>	
+						<set_value name="$FighterGroup" exact="$Main_Factions_Fighters.{md.Conquer_Mod.Start.$Main_Factions.indexof.{$KSt_Faction}}" />
+						<set_value name="$Loc" exact="$KSt_Zone.knownname + ', ' + $KSt_Zone.sector.knownname + ', ' + $KSt_Zone.cluster.knownname"/>
+
+
+<do_if value="md.CM_Config.Settings.$DebugMessages or md.Conquer_Mod.Start.$Debug" > 
+		<!--<show_notification caption="'=== Invasion_Force_cue ==='" details="' \n Faction: %1 \n Zone: %2 \n  Zone Owner: %3 \n Capital Ships: %4 \n InCluster: %5  Flag: %6 '.[$KSt_Faction, @$KSt_Zone.name, @$KSt_Zone.owner, $Num_Enemy_Capships, $TargetZone_InCluster.count, $Flag]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>-->
+ 		<write_to_logbook category="general" text="'=== Invasion_Force_cue === \n Faction: %1 \n Zone: %2 \n  Zone Owner: %3 \n Capital Ships: %4 '.[$KSt_Faction, @$KSt_Zone.name, @$KSt_Zone.owner, $Num_Enemy_Capships]"/>
+</do_if>
+
+
+				<do_if value="player.primaryship.zone == $KSt_Zone and $KSt_Faction == faction.canteran" >
+					<show_notification caption="'=== ALERT ==='" details="' \n\n Allied Force class %1 jumping in.\n\n They ask us to join the force'.[$Num_Enemy_Capships]" timeout="15s" queued="false" priority="8" sound="notification_generic"/>
+ 					<write_to_logbook category="general" text="'=== ALERT === \n Allied Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>
+					<play_sound object="player.primaryship" sound="'allied_jump'" />
+				</do_if>
+				
+				<do_elseif value="player.primaryship.zone == $KSt_Zone and @$KSt_Faction.hasrelation.enemy.{faction.player}" >
+					<show_notification caption="'=== ALERT ==='" details="' \n\n Enemy Force class %1 jumping in.\n\n Prepar to Battle!'.[$Num_Enemy_Capships]" timeout="15s" queued="false" priority="8" sound="notification_generic"/>
+ 					<write_to_logbook category="general" text="'=== ALERT === \n Enemy Force class %1 jumping in.'.[$Num_Enemy_Capships]"/>
+					<play_sound object="player.primaryship" sound="'enemy_jump'" />
+				</do_elseif>
+				
+				<do_elseif value="player.primaryship.zone == $KSt_Zone" >
+					<show_notification caption="'=== ALERT ==='" details="' \n\n Unknown Force class %1 jumping in.\n\n Starting recon routine. \n Trying contact in all communications channels'.[$Num_Enemy_Capships]" timeout="15s" queued="false" priority="8" sound="notification_generic"/>
+ 					<write_to_logbook category="general" text="'=== ALERT === \n Unknown Force class %1 jumping in.\n Starting recon routine.'.[$Num_Enemy_Capships]"/>
+					<play_sound object="player.primaryship" sound="'unknown_jump'" />
+				</do_elseif>
+				
+				<do_elseif value="player.primaryship.zone != $KSt_Zone and $KSt_Faction == faction.canteran" >
+					<show_notification caption="'=== ATTENTION ==='" details="' \n\n War Command Center inform that a Canteran fleet class %1 is invading %2. \n\n They ask us to join the force.'.[$Num_Enemy_Capships, $Loc]" timeout="12s" queued="true" priority="8" sound="canteran_invasion">
+						<interaction text="''" param="$KSt_Zone" param2="'GiveMeTheMap'" />
+					</show_notification>	
+ 					<write_to_logbook category="general" text="'=== ATTENTION === \n Canteran fleet class %1 is invading %2.'.[$Num_Enemy_Capships, $Loc]"/>
+				</do_elseif>	
+				
+				<do_elseif value="player.primaryship.zone != $KSt_Zone and (@$KSt_Zone.owner == faction.player or @$KSt_Zone.owner == faction.canteran)" >
+					<show_notification caption="'=== EWS ALERT ==='" details="' \n\n Unknown Force class %1 jumping at \n %2.\n\n Recon says that they are in attack formation. \n Please assist if you can.'.[$Num_Enemy_Capships, $Loc]" timeout="12s" queued="true" priority="8" sound="unknown_inv">
+						<interaction text="''" param="$KSt_Zone" param2="'GiveMeTheMap'" />
+					</show_notification>	
+ 					<write_to_logbook category="general" text="'=== EWS ALERT === \n Unknown Force class %1 jumping at \n %2.'.[$Num_Enemy_Capships, $Loc]"/>
+				</do_elseif>
+				
+				<get_safe_pos result="$Safepos" zone="$KSt_Zone"  radius="1km" min="10km" max="15km" allowyaxis="false"/>
+				<create_orientation name="$Orientation" orientation="look_at" refposition="position.[0, 0, 0]">
+                	<position value="$Safepos" />
+             	</create_orientation>
+		
+<!-- Map / Probe intervention start -->
+			<do_if value="$KSt_Faction == faction.canteran or $KSt_Zone.owner == faction.canteran">
+			 <find_object name="$Object" class="[class.ship, class.station]" functional="true" space="$KSt_Zone" owner="faction.player" multiple="true"/>
+			 <do_if value="@$Object.count le 0" >
+				<create_ship name="$Probe"  macro="unit_size_xs_probe_macro" zone="$KSt_Zone">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot>
+						<select faction="faction.xenon" tags="[tag.fighterpilot]"/>
+					</pilot>
+					<safepos radius="5km"/>
+				</create_ship>
+				<start_script object="$Probe.pilot" name="'move.idle'">
+					<param name="MaxDistance" value="20km" />
+                </start_script>
+			 </do_if>
+			</do_if>
+<!-- Map / Probe intervention end -->
+		
+
+				<!-- <=========== CAPITAL SHIPS ===========> -->				
+            	<do_all exact="$Num_Enemy_Capships">
+					<do_if value="$KSt_Faction == faction.sovereignsyndicate or $KSt_Faction == faction.reivers or $KSt_Faction == faction.hereticvanguards">
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone" macro="units_size_xl_cargo_hauler_2_macro">
+                		<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="1" min="10" max="15"/>
+		  					<unit category="unitcategory.marine" mk="2" min="10" max="15"/>
+                 			<unit category="unitcategory.defence" min="15" max="25" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="10" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_if>
+
+					<do_elseif value="$KSt_Faction == faction.argongovernment or $KSt_Faction == faction.familyryak">
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone">
+ 						<select faction="$KSt_Faction" size="class.ship_xl" tags="[tag.military]"/>
+						<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="2" min="15" max="30"/>
+		  					<unit category="unitcategory.marine" mk="3" min="15" max="20"/>
+                 			<unit category="unitcategory.defence" min="20" max="30" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="5" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_elseif>
+
+					<do_elseif value="$KSt_Faction == faction.xenon">
+						<do_any>
+							<set_value name="$size" exact="class.ship_xl" weight="5"/>
+							<set_value name="$size" exact="class.ship_l" weight="95"/>
+						</do_any>
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone">
+ 						<select faction="$KSt_Faction" size="$size" tags="[tag.military]" />
+						<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="2" min="15" max="30"/>
+		  					<unit category="unitcategory.marine" mk="3" min="15" max="20"/>
+                 			<unit category="unitcategory.defence" min="20" max="30" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="5" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_elseif>
+
+					<do_else>
+						<do_any>
+							<set_value name="$size" exact="class.ship_xl" weight="65"/>
+							<set_value name="$size" exact="class.ship_l" weight="35"/>
+						</do_any>
+              			<create_ship name="$Enemy_Ship" groupname="$Enemy_Ships" zone="$KSt_Zone">
+ 						<select faction="$KSt_Faction" size="$size" tags="[tag.military]" />
+						<owner exact="$KSt_Faction" overridenpc="true"/>
+
+			  			<pilot>
+                			<select faction="$KSt_Faction" tags="[tag.commander]"/>
+              			</pilot>
+
+              			<defence>
+                			<select faction="$KSt_Faction" tags="[tag.defencecontrol]"/>
+              			</defence>
+
+              			<engineer>
+                			<select faction="$KSt_Faction" tags="[tag.engineer]"/>
+			  			</engineer>
+
+						<units>
+							<unit category="unitcategory.marine" mk="2" min="15" max="30"/>
+		  					<unit category="unitcategory.marine" mk="3" min="15" max="20"/>
+                 			<unit category="unitcategory.defence" min="20" max="30" mk="1" />
+                 			<unit category="unitcategory.welder" mk="1" exact="5" />
+				 			<unit category="unitcategory.transport" mk="1" exact="5" />
+              			</units>
+          				<cargo>
+            				<wares list="[ware.fuelcells]">
+              					<fillpercent min="70" max="80"/>
+            				</wares>
+          				</cargo>
+
+						<position value="$Safepos" max="5km"/>
+                		<rotation value="$Orientation" />
+              			</create_ship>
+					</do_else>
+					<add_effect object="$Enemy_Ship" effect="'jump_jumpin_xl'"/>
+					<set_value name="md.Conquer_Mod.Start.$Owner" exact="$KSt_Faction" />
+					<signal_cue_instantly cue="ShipyardResourceConsume_cue"/>
+			 		<start_script object="$Enemy_Ship.pilot" name="'move.patrol'" />
+
+              		<do_all min="2" max="$Num_Enemy_Squads_For_Capship">
+                		<create_ship name="$Enemy_Leader" groupname="$Enemy_Ships" ref="$FighterGroup" zone="$KSt_Zone">
+							<pilot>
+                				<select faction="$KSt_Faction" tags="[tag.fighterpilot]"/>
+              				</pilot>
+                  			<position object="$Enemy_Ship" max="5km"/>
+                		</create_ship>
+						<add_effect object="$Enemy_Leader" effect="'jump_jumpin_l'"/>
+                		<set_object_commander object="$Enemy_Leader" commander="$Enemy_Ship" />
+                		<start_script object="$Enemy_Leader.pilot" name="'move.escort'">
+                  			<param name="target" value="$Enemy_Ship"/>
+                		</start_script>
+
+                		<do_all min="4" max="$Num_Enemy_Squad_Wingmen">
+                  			<create_ship name="$Enemy_Follower" groupname="$Enemy_Ships" ref="$FighterGroup" zone="$KSt_Zone">
+							<pilot>
+                				<select faction="$KSt_Faction" tags="[tag.fighterpilot]"/>
+              				</pilot>
+                    			<position object="$Enemy_Leader" min="2km" max="4km"/>
+                  			</create_ship>
+							<add_effect object="$Enemy_Follower" effect="'jump_jumpin_l'"/>
+                  			<set_object_commander object="$Enemy_Follower" commander="$Enemy_Leader" />
+                  			<start_script object="$Enemy_Follower.pilot" name="'move.escort'">
+                    			<param name="target" value="$Enemy_Leader" />
+                  			</start_script>
+                		</do_all>						
+              		</do_all>
+            	</do_all>				
+			</do_if>
+			<do_else>
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Invasion_Force_cue ==='" details="' \n\n Invasion Force SPAWN aborted by Invasion Force overload! '.[]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Invasion_Force_cue === \n\n Invasion Force SPAWN aborted by Invasion Force overload! '.[]"/>
+</do_if>
+		</do_else>
+ 	</do_if>
+	</do_if>
+	</do_if>
+	</do_if>
+	<do_else>
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Invasion_Force_cue ==='" details="' \n\n Invasion Force SPAWN aborted.\n Faction stations count is zero! \n %1 '.[$ThisFaction]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Invasion_Force_cue === \n\n Invasion Force SPAWN aborted.\n Faction stations count is zero! \n %1 '.[$ThisFaction]"/>
+</do_if>
+	</do_else>
+
+	</do_if>
+	<do_else>
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Invasion_Force_cue ==='" details="' \n\n Invasion Force SPAWN aborted by inner chance! '.[]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Invasion_Force_cue === \n\n Invasion Force SPAWN aborted by innerchance! '.[]"/>
+</do_if>
+	</do_else>
+
+<clear_list list="$TargetZone_InCluster"/>
+<clear_list list="$EstimatedForce"/>
+<clear_list list="$ZoneValue"/>
+<clear_list list="$PossibleZone"/>	
+	
+	</do_all>
+	</do_if>
+	<do_else>
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Invasion_Force_cue ==='" details="' \n\n Invasion Force SPAWN aborted by out chance! '.[]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Invasion_Force_cue === \n\n Invasion Force SPAWN aborted by out chance! '.[]"/>
+</do_if>
+	</do_else>
+	</do_if>
+	<do_else>
+<do_if value="md.CM_Config.Settings.$DebugMessages" > 
+		<show_notification caption="'=== Invasion_Force_cue ==='" details="' \n\n Invasion Force SPAWN aborted by player force strengh! '.[]" timeout="10s" queued="false" priority="8" sound="notification_generic"/>
+ 		<write_to_logbook category="general" text="'=== Invasion_Force_cue === \n\n Invasion Force SPAWN aborted by player force strengh!'.[]"/>
+</do_if>
+	</do_else>
+	<reset_cue cue="Invasion_Force_cue"/>
+	</actions>
+   </cue>
+
+ </cues>
+
+<!-- ==================== END ========================= -->
+
+</mdscript>

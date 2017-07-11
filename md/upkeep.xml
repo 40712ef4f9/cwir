@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Conquer_mod v020 -->
+<!-- original code from Marvin Martian-->
+<diff>
+	<!--add sel="//library[@name='Acquire_Control_Entity_Description']/actions/substitute_text" pos="before">
+		<do_if value="$DescriptionID == 0 and $EntityType == entitytype.pilot"> 
+			<set_value name="$DescriptionID" exact="301"/>
+		</do_if> 
+	</add-->
+	<add sel="//library[@name='Acquire_Control_Entity_Description']/actions/substitute_text" type="@chance" >if $DescriptionID then 100 else 0</add>
+	<add sel="//library[@name='Acquire_Control_Entity_Description']/actions/update_mission" type="@chance" >if $Description? then 100 else 0</add>
+</diff>

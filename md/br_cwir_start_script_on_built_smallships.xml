@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<mdscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="BR_CWIR_start_script_on_built_smallships" xsi:noNamespaceSchemaLocation="http://utnas/~unitrader/XRebirthxsds/md.xsd">
+	<cues>
+		<cue name="Main">
+			<actions>
+				<find_station groupname="$SmallShipyards" space="player.galaxy" multiple="true" productsize="ship">
+					<match owner="faction.player" negate="true"/>
+				</find_station>
+				<!--<debug_text filter="general" text="'Found Shipyards: %1'.[$SmallShipyards]"/>-->
+			</actions>
+			<cues>
+				<cue name="UpdateShipyards" comment="Update Shipyards on Loading Save">
+					<conditions>
+						<check_any>
+							<event_game_loaded/>
+						</check_any>
+					</conditions>
+					<actions>
+						<find_station groupname="$SmallShipyards" space="player.galaxy" multiple="true" productsize="ship">
+							<match owner="faction.player" negate="true"/>
+						</find_station>
+						<!-- <debug_text filter="general" text="'Found Shipyards: %1'.[$SmallShipyards]"/>-->
+						<reset_cue cue="this"/>
+					</actions>
+				</cue>
+				<cue name="CheckUndockingShips" instantiate="true">
+					<conditions>
+						<event_object_undocked_from group="$SmallShipyards"/>
+						<check_value value="event.param.owner != faction.player"/>
+						<check_any comment="not sure which of both it is - when its determined better change to a single one">
+							<check_value value="event.param.job == ''"/>
+							<check_value value="event.param.job == null"/>
+						</check_any>
+					</conditions>
+					<delay min="25s" max="30s" comment="to let move.undock undock properly first"/>
+					<actions>		
+						<do_if value="event.param.exists and event.param.pilot" comment="seems delay can be too long to stay alive">
+
+							<do_if value="event.param.primarypurpose == objectpurpose.mine and event.param.availableunits.{unitcategory.orecollector}.count gt 0 and event.param.isclass.[class.ship_m, class.ship_s]">
+								<start_script object="event.param.pilot" name="'mining.ship.free'">
+									<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+								</start_script>
+							</do_if>
+
+							<do_elseif value="event.param.primarypurpose == objectpurpose.mine and event.param.availableunits.{unitcategory.gascollector}.count gt 0 and event.param.isclass.[class.ship_m, class.ship_s]">
+								<start_script object="event.param.pilot" name="'mining.ship.free'">
+									<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/> 
+								</start_script>					
+							</do_elseif>
+
+							<do_elseif value="event.param.primarypurpose == objectpurpose.trade and event.param.isclass.[class.ship_m, class.ship_s]">
+								<create_list name="$warebasket" />
+								<set_value name="$temp_warelist" exact="[ware.fuelcells, ware.scanningarray, ware.bioopticwiring, ware.reinforcedmetalplating, ware.holtzmanfieldgenerator, ware.ioncells, ware.antimattercells, ware.bioelectricneurongel, ware.bofu, ware.chemicalcompounds, ware.crystals, ware.cutcrystals, ware.drp_assault, ware.drp_cargolifter, ware.drp_construction, ware.drp_interceptor_mk1, ware.drp_interceptor_mk2, ware.drp_intrepid_mk1, ware.drp_intrepid_mk2, ware.drp_overrun_mk1, ware.drp_overrun_mk2, ware.drp_scoopcollector_mk1, ware.drp_scoopcollector_mk2, ware.drp_surfaceminer_mk1, ware.drp_surfaceminer_mk2, ware.dumbfiremissile, ware.dumbfireturret, ware.emspectrometer, ware.energycells, ware.foodrations, ware.fusionreactor, ware.hydrogen, ware.ice, ware.ions, ware.laserturret, ware.machinegunturret, ware.meat, ware.medicalsupplies, ware.microchips, ware.narcotics, ware.nividium, ware.nividiumgems, ware.ore, ware.plankton, ware.plasma, ware.plasmacells, ware.plasmaflowregulator, ware.plasmapumps, ware.plasmaturret, ware.quantumtubes, ware.refinedmetals, ware.shieldgenerator, ware.shotgunturret, ware.silicon, ware.siliconwafers, ware.soybeans, ware.spacefuel, ware.spaceweed, ware.spices, ware.swarmmissile, ware.swarmturret, ware.teladianium, ware.warheads, ware.water, ware.wheat]" />
+								<do_all exact="$temp_warelist.count" counter="$xj">
+									<do_if value="event.param.cargo.{$temp_warelist.{$xj}}.max gt 0">
+										<do_if value="$warebasket.indexof.{$temp_warelist.{$xj}}" exact="0">
+											<append_to_list name="$warebasket" exact="$temp_warelist.{$xj}" />
+										</do_if>
+									</do_if>
+								</do_all>
+								<remove_value name="$temp_warelist"/>
+
+								<start_script object="event.param.pilot" name="'trade.ship'">
+									<param name="warelist" value="$warebasket"/>
+									<param name="range" value="'cluster'"/>
+									<param name="simple" value="true"/>
+								</start_script>
+								<remove_value name="$warebasket"/>
+							</do_elseif>
+
+							<do_else>
+								<set_value name="$newcommander" exact="null"/>
+								<find_ship name="$factionships" space="event.param.sector" owner="event.param.owner" primarypurpose="event.param.primarypurpose" multiple="true">
+									<match_any> 
+										<match class="class.ship_xl"/>
+										<match class="class.ship_l"/>
+										<match class="class.ship_m"/>
+										<match class="class.ship_s"/>
+									</match_any>
+								</find_ship>
+								<do_all exact="$factionships.count" counter="$i">
+									<do_if value="$factionships.{$i}.isoperational
+										and event.param != $factionships.{$i}
+										and event.param != $factionships.{$i}.commander
+										and $factionships.{$i}.subordinates.count lt 6
+										and (not $newcommander
+											or (event.param.distanceto.{$factionships.{$i}} lt event.param.distanceto.{@$newcommander}))">
+										<do_if value="event.param != $factionships.{$i}
+											and event.param != $factionships.{$i}.commander
+											and (not $newcommander
+												or (event.param.distanceto.{$factionships.{$i}} lt event.param.distanceto.{@$newcommander}))">
+											<set_value name="$newcommander" exact="$factionships.{$i}"/>
+										</do_if>
+									</do_if>
+								</do_all>
+								<remove_value name="$factionships"/>
+								<do_if value="$newcommander">
+									<set_object_commander object="event.param" commander="$newcommander" />						
+									<start_script object="event.param.pilot" name="'BR.move.escort'">
+										<param name="target" value="$newcommander"/>
+									</start_script>	
+								</do_if>
+								<remove_value name="$newcommander"/>
+							</do_else>
+						</do_if>	
+
+						<!-- <debug_text filter="general" text="'Starting Script on undocked Ship %1 (pilot: %2 ) in %3 // %4 // %5 - was probably going to move.die anyway'.[event.param.knownname,event.param.pilot.knownname,event.param.cluster.knownname,event.param.sector.knownname,event.param.zone.knownname]"/>-->
+
+					</actions>
+				</cue>
+			</cues>
+		</cue>
+
+
+
+	</cues>
+</mdscript>

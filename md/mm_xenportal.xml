@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<mdscript name="MM_XenPortal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../libraries/md.xsd">
+	<cues>
+		<cue name="MMM_XenPortal_patch" instantiate="true">
+			<conditions>
+				<check_any>
+					<event_cue_signalled cue="md.Setup.GameStart"/>
+					<event_game_loaded />
+				</check_any>
+			</conditions>
+			<delay min="99ms" />
+			<actions>
+				<do_if value="md.$todo_stations_moddlc?">
+						<set_value name="$todo" exact="
+							[
+								macro.xenon_asteroid_shipyard_macro,
+								macro.struct_at_xen_xenon_portal_macro
+							]
+						"/>
+					<do_all exact="$todo.count" counter="$j" >
+						<append_to_list name="md.$todo_stations_moddlc" exact="$todo.{$j}"/>
+					</do_all> 
+					<remove_value name="$todo"/>
+				</do_if>
+				<do_if value="$patch?" negate="true">
+					<patch_macros macro="macro.struct_at_xen_xenon_portal_macro" />
+					<set_value name="$patch" exact="true"/>
+				</do_if>
+				<do_if value="@$done" negate="true">
+					<find_station name="$xen_sy" space="player.galaxy" functional="true" multiple="false">
+						<match macro="macro.xenon_asteroid_shipyard_macro"/>
+					</find_station>
+					<do_if value="$xen_sy and not $xen_sy.tradenpc">
+						<signal_objects object="player.galaxy" param="'init station'" param2="$xen_sy"/>
+					</do_if>
+
+					<do_if value="$xen_sy.canbuildships and $xen_sy.tradenpc">
+						<start_script object="$xen_sy.tradenpc" name="'trade.shipyard'"/>
+					</do_if>
+					<do_elseif value="$xen_sy.canproduceships and $xen_sy.tradenpc">
+						<start_script object="$xen_sy.tradenpc" name="'trade.shipyard.small'"/>
+					</do_elseif>
+					<remove_value name="$xen_sy"/>
+					<set_value name="$done" exact="true"/>
+				</do_if>
+		  </actions>
+		</cue>
+	</cues>
+</mdscript>
+	

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mdscript name="BRCreateShipTraders" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+    <cue name="BRCreateShipTraders" instantiate="true">
+      <conditions>
+        <check_any>
+          <event_player_created />
+          <event_object_docked object="player.primaryship" />
+        </check_any>
+      </conditions>
+      <actions>
+        <find_station groupname="$PlayerStations" multiple="true" space="player.galaxy" owner="faction.player">
+		<match_content class="class.buildmodule" />		
+		</find_station>
+        <do_all exact="$PlayerStations.count" counter="$i" >
+          <find_dock_location container="$PlayerStations.{$i}" name="$Docks" dockpopulationtype="dockpopulationtype.ships" multiple="true" />
+          <do_all exact="$Docks.count" counter="$j" >
+            <set_value name="$DockHasShipTrader" exact="false" />
+            <do_all exact="$Docks.{$j}.actors.count" counter="$k" >
+              <do_if value="$Docks.{$j}.actors.{$k}.type == entitytype.shiptrader">
+                <set_remote_commable actor="$Docks.{$j}.actors.{$k}" remote="true" />
+                <set_value name="$DockHasShipTrader" exact="true" />
+              </do_if>
+            </do_all>
+            <do_if value="not $DockHasShipTrader">
+              <create_platform_actor name="$NewActor" dockingbay="$Docks.{$j}.component" type="entitytype.shiptrader">
+                <select race="race.argon" tags="tag.shiptrader"/>
+                <owner exact="faction.player"/>
+				
+              </create_platform_actor>	              
+			  			  		  
+            </do_if>			
+			
+          </do_all>
+		  
+        </do_all>		
+      </actions>
+    </cue>	
+	
+	<cue name="BRCreateSmallShipTraders" instantiate="true">
+      <conditions>
+        <check_any>
+          <event_player_created />
+          <event_object_docked object="player.primaryship" />
+        </check_any>
+      </conditions>
+	  <actions>
+	<find_station groupname="$PlayerStations" multiple="true" space="player.galaxy" owner="faction.player" productsize="ship" />		
+		<do_all exact="$PlayerStations.count" counter="$i" >
+          <!--<find_dock_location container="$PlayerStations.{$i}" name="$Docks" dockpopulationtype="dockpopulationtype.ships" multiple="true" />-->
+          <find_object_component name="$dockingbays" object="$PlayerStations.{$i}" multiple="true" class="class.dockingbay" dockpopulationtype="dockpopulationtype.ships">
+            <match_dock size="tag.dock_p" />
+          </find_object_component>		  
+          <do_if value="@$dockingbays.count gt 0">
+                <do_all exact="$dockingbays.count" counter="$j">
+                  <do_if value="not $dockingbays.{$j}.buildmodule">
+                    <find_object_component name="$shiptrader" object="$dockingbays.{$j}" entitytype="entitytype.smallshiptrader" />
+				<do_if value="not @$shiptrader">
+					  <create_platform_actor name="$shipdealer" dockingbay="$dockingbays.{$j}" type="entitytype.smallshiptrader">
+                        <select race="race.argon" tags="tag.smallshiptrader"/>
+                        <owner exact="faction.player"/>
+                      </create_platform_actor>		  
+              <set_remote_commable actor="$shipdealer" remote="true" />
+			  <set_remote_commable actor="$shiptrader" remote="true" />
+			  <set_comm_handler actor="$shipdealer" customhandler="true" />
+			  <set_comm_handler actor="$shiptrader" customhandler="true" />
+            </do_if>
+          </do_if>
+        </do_all>
+		</do_if>
+		</do_all>
+		</actions>
+		</cue>
+		
+		
+	
+  </cues>
+</mdscript>

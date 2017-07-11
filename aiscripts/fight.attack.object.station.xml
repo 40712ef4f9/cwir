@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- Conquer_mod v020 -->
+
+	<add sel="/aiscript/attention[@min='visible']/actions/do_if[@value='$enemies.count']/do_all/do_if[@value='$result']">
+		<!--Checks if target is being boarded-->
+		<do_if value="$enemies.{$i}.boarder and @this.ship.relationto.{$enemies.{$i}.boarder} ge 0 and $enemies.{$i}.hullpercentage le 70">
+			<remove_from_group group="$enemies" object="$enemies.{$i}" />
+		</do_if>
+	</add>
+		
+	<replace sel="/aiscript/interrupts/handler[1]/actions">
+	 <actions>
+		<do_if value="event.param.ispolice and event.param2.ispolice"> 
+           <do_all exact="@this.$watchdogs.count" counter="$i"> 
+             <set_owner object="this.$watchdogs.{$i}" faction="event.param" /> 
+           </do_all> 
+         </do_if> 
+         <do_elseif value="event.param == faction.reivers or event.param == faction.xenon or event.param == faction.hereticvanguards or event.param == faction.sovereignsyndicate"/> 
+           <do_all exact="@this.$watchdogs.count" counter="$i"> 
+             <start_script name="move.die" object="this.$watchdogs.{$i}.pilot" /> 
+           </do_all> 
+	 </actions>   
+	</replace>
+
+</diff>

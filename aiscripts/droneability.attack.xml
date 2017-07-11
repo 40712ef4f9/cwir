@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!-- Conquer_mod v020 -->
+<diff>
+	<replace sel="/aiscript/attention[@min='visible']/actions/set_value[@name='$usetarget'][1]/@exact">if $target.isoperational and @$target.boarder and @this.ship.relationto.{$target.boarder} ge 0 and $target.hullpercentage le 70 then 0 else (if $target.isoperational then 1 else 0)</replace>
+
+	<add sel="/aiscript/attention[@min='visible']/actions/do_if[@value='(not $usetarget) and ($targetgroup.count)']" pos="before" > 
+		<do_all exact="$targetgroup.count" counter="$i">
+			<remove_from_group group="$targetgroup" object="$targetgroup.{$i}" chance="if @$targetgroup.{$i}.isoperational and @$targetgroup.{$i}.boarder and @this.ship.relationto.{$targetgroup.{$i}.boarder} ge 0 and $targetgroup.{$i}.hullpercentage le 70 then 100 else 0" />
+		</do_all>
+	</add>
+</diff>
+  

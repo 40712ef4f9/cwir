@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<diff>
+<!-- Conquer_mod v020 -->
+<!-- 
+Credit given where credit's due:
+This file is from Better Turrets 2.1 by cicero111, included here with his permission.
+-->
+	<add sel="/aiscript[@name='fight.attack.object.drone.leader']/attention[@min='visible']/actions/label[@name='gohome']" pos="before" > 
+		<!--Adding check DO leaders blackboard for new target before returning home, blackboard entry added via fight.attack.object.capital-->
+		<do_if value="this.ship.commander.defencenpc.$newdronetarget? and this.ship.commander.defencenpc.$newdronetarget.isoperational" chance="if $run? and $run + 10s gt player.age then 0 else 100 ">
+			<set_value name="$target" exact="this.ship.commander.defencenpc.$newdronetarget" />
+			<set_value name="$run" exact="player.age" />
+			<!--goto start attack-->
+			<resume label="fireandmaneuver" />
+		</do_if>
+		<do_else>
+			<debug_text text="'%1 droneleaderscript. No targets left, checking DO blackboard for a new one, entry: %2, isoperational?: %3 :: %4'.[this.ship.name, @this.ship.commander.defencenpc.$newdronetarget, @this.ship.commander.defencenpc.$newdronetarget.isoperational, @$run]" chance="100" filter="general" />
+		</do_else>
+		<!-- Below here, label go home -->
+	</add>
+</diff>
+  

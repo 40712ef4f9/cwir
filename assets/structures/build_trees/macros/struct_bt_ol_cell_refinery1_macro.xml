@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Exported by: lino (192.168.3.143) at 28.11.2014_10-09-23-->
+<macros>
+  <macro name="struct_bt_ol_cell_refinery1_macro" class="station">
+    <component ref="struct_bt_ol_cell_refinery" />
+    <properties>
+      <identification name="{20102,201}" description="{20102,202}" />
+    </properties>
+    <connections>
+      <connection ref="ConnectionFor_props_adsigns_bt_antimattercells_xl_macro">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_bt_antimattercells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_antimattercells_xl_macro1">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_bt_antimattercells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_antimattercells_xl_macro2">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_bt_antimattercells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_antimattercells_xl_macro3">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="props_adsigns_bt_antimattercells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_antimattercells_xl_macro4">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="props_adsigns_bt_antimattercells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_antimattercells_xl_macro5">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="props_adsigns_bt_antimattercells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro1">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro2">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro3">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro4">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro5">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro6">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_ioncells_xl_macro7">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_bt_ioncells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro">
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro1">
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro2">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro3">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro4">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro5">
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro6">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro7">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_bt_plasmacells_xl_macro8">
+        <macro ref="props_adsigns_bt_plasmacells_xl_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro1">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro10">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro11">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro12">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro13">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro14">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro15">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro16">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro17">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro18">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro19">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro2">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro20">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro21">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro22">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro23">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro24">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro25">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro26">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro27">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro28">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro29">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro3">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro30">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro31">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro32">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro33">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro34">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro35">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro36">
+        <build mode="optional" group="storage" sequence="D" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro4">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro5">
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro6">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro7">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro8">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_random_macro9">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="props_adsigns_traffic_l_random_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_stop_macro">
+        <macro ref="props_adsigns_traffic_l_stop_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_stop_macro1">
+        <macro ref="props_adsigns_traffic_l_stop_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_stop_macro2">
+        <macro ref="props_adsigns_traffic_l_stop_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_stop_macro3">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="props_adsigns_traffic_l_stop_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_stop_macro4">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="props_adsigns_traffic_l_stop_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_adsigns_traffic_l_stop_macro5">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_adsigns_traffic_l_stop_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_admin_ol_macro">
+        <macro ref="props_surf_playerdock_admin_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_bar_ol_macro">
+        <macro ref="props_surf_playerdock_bar_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_bar_ol_macro1">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="props_surf_playerdock_bar_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_repair_ol_macro">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="props_surf_playerdock_repair_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_repair_ol_macro1">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="props_surf_playerdock_repair_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_trade_ol_macro">
+        <macro ref="props_surf_playerdock_trade_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_surf_playerdock_trade_ol_macro1">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="props_surf_playerdock_trade_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_props_tradeoffer_buy_energy">
+        <macro>
+          <component ref="props_tradeoffer_buy_energy" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_props_tradeoffer_buy_food">
+        <macro>
+          <component ref="props_tradeoffer_buy_food" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_props_tradeoffer_buy_gases">
+        <macro>
+          <component ref="props_tradeoffer_buy_gases" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_props_tradeoffer_sell_energy">
+        <macro>
+          <component ref="props_tradeoffer_sell_energy" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector1">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector2">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector3">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector4">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector5">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector6">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_j_connector7">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_j_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector1">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector2">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector3">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector4">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector5">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector6">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector7">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_cw_ar_water_k_connector8">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro>
+          <component ref="struct_econ_cw_ar_water_k_connector" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_energy_macro">
+        <build mode="optional" group="storage" sequence="D" stage="1" />
+        <macro ref="struct_econ_prod_al_stor_energy_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_energy_macro1">
+        <build mode="optional" group="storage" sequence="D" stage="2" />
+        <macro ref="struct_econ_prod_al_stor_energy_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_energy_macro2">
+        <build mode="optional" group="storage" sequence="D" stage="3" tags="primary" />
+        <macro ref="struct_econ_prod_al_stor_energy_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_energy_macro3">
+        <macro ref="struct_econ_prod_al_stor_energy_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_liquid_macro">
+        <build mode="optional" group="storage" sequence="D" stage="3" />
+        <macro ref="struct_econ_prod_al_stor_liquid_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_liquid_macro1">
+        <build mode="optional" group="storage" sequence="D" stage="2" tags="primary" />
+        <macro ref="struct_econ_prod_al_stor_liquid_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_liquid_macro2">
+        <build mode="optional" group="storage" sequence="D" stage="1" tags="primary" />
+        <macro ref="struct_econ_prod_al_stor_liquid_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_liquid_macro3">
+        <macro ref="struct_econ_prod_al_stor_liquid_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_al_stor_liquid_macro4">
+        <macro ref="struct_econ_prod_al_stor_liquid_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_antimattercells_ol_macro">
+        <build mode="optional" group="production" sequence="C" stage="3" tags="primary" />
+        <macro ref="struct_econ_prod_antimattercells_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_antimattercells_ol_macro1">
+        <build mode="optional" group="production" sequence="C" stage="1" tags="primary" />
+        <macro ref="struct_econ_prod_antimattercells_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_antimattercells_ol_macro2">
+        <build mode="optional" group="production" sequence="C" stage="2" tags="primary" />
+        <macro ref="struct_econ_prod_antimattercells_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_ioncells_ol_macro">
+        <build mode="optional" group="production" sequence="B" stage="1" tags="primary" />
+        <macro ref="struct_econ_prod_ioncells_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_ioncells_ol_macro1">
+        <build mode="optional" group="production" sequence="B" stage="2" tags="primary" />
+        <macro ref="struct_econ_prod_ioncells_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_ioncells_ol_macro2">
+        <build mode="optional" group="production" sequence="B" stage="3" tags="primary" />
+        <macro ref="struct_econ_prod_ioncells_ol_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_plasmacells_ol_macro">
+        <macro ref="struct_econ_prod_plasmacells_ol_macro" connection="space">
+          <connections>
+            <connection ref="connection_dock_m01">
+              <macro ref="props_surf_ar_docks_size_m_macro" connection="Connection01" />
+            </connection>
+          </connections>
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_plasmacells_ol_macro1">
+        <build mode="optional" group="production" sequence="A" stage="2" tags="primary" />
+        <macro ref="struct_econ_prod_plasmacells_ol_macro" connection="space">
+          <connections>
+            <connection ref="connection_dock_m01">
+              <macro ref="props_surf_ar_docks_size_m_macro" connection="Connection01" />
+            </connection>
+          </connections>
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_plasmacells_ol_macro2">
+        <build mode="optional" group="production" sequence="A" stage="1" tags="primary" />
+        <macro ref="struct_econ_prod_plasmacells_ol_macro" connection="space">
+          <connections>
+            <connection ref="connection_dock_m01">
+              <macro ref="props_surf_ar_docks_size_m_macro" connection="Connection01" />
+            </connection>
+          </connections>
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_prod_stor_container_macro">
+        <macro ref="struct_econ_prod_stor_container_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_a_macro">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="struct_econ_ref_ar_pmc_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_a_macro1">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_a_macro2">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="struct_econ_ref_ar_pmc_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_c_macro">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_c_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_c_macro1">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="struct_econ_ref_ar_pmc_c_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_c_macro2">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="struct_econ_ref_ar_pmc_c_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_dronedock_macro">
+        <macro ref="struct_econ_ref_ar_pmc_dronedock_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_dronedock_macro1">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="struct_econ_ref_ar_pmc_dronedock_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_dronedock_macro2">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_dronedock_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_dronedock_macro3">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="struct_econ_ref_ar_pmc_dronedock_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_l_macro">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="struct_econ_ref_ar_pmc_l_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_l_macro1">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="struct_econ_ref_ar_pmc_l_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_m_macro">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="struct_econ_ref_ar_pmc_m_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_m_macro1">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_m_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_m_macro2">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="struct_econ_ref_ar_pmc_m_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_macro">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_p_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_macro1">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="struct_econ_ref_ar_pmc_p_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_macro2">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="struct_econ_ref_ar_pmc_p_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_macro3">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_p_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_small">
+        <macro>
+          <component ref="struct_econ_ref_ar_pmc_p_small" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_small1">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_ref_ar_pmc_p_small" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_small2">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_ref_ar_pmc_p_small" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_small3">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_ref_ar_pmc_p_small" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_p_small4">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_ref_ar_pmc_p_small" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_u_macro">
+        <build mode="optional" group="defense" sequence="E" stage="1" tags="primary" />
+        <macro ref="struct_econ_ref_ar_pmc_u_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_ref_ar_pmc_u_macro1">
+        <build mode="optional" group="defense" sequence="E" stage="1" />
+        <macro ref="struct_econ_ref_ar_pmc_u_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_a">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_bridge_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_a1">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_bridge_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_a2">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_science_bridge_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_a3">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_bridge_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_a4">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_bridge_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b">
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b1">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b2">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b3">
+        <build mode="optional" group="defense" sequence="E" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b4">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b5">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b6">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_bridge_b7">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_bridge_b" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro">
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro1">
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro10">
+        <build mode="optional" group="production" sequence="B" stage="3" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro11">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro2">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro3">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro4">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro5">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro6">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro7">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro8">
+        <build mode="optional" group="production" sequence="B" stage="1" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_livingsection_thin_a_macro9">
+        <build mode="optional" group="production" sequence="B" stage="2" />
+        <macro ref="struct_econ_science_livingsection_thin_a_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_a">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_science_platform_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_a1">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_platform_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_a2">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_platform_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c">
+        <build mode="optional" group="defense" sequence="E" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c1">
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c2">
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c3">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c4">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c5">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_platform_c6">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_platform_c" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a1">
+        <build mode="optional" group="production" sequence="C" stage="3" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a10">
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a2">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a3">
+        <build mode="optional" group="production" sequence="C" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a4">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a5">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a6">
+        <build mode="optional" group="production" sequence="C" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a7">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a8">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_top_a9">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro>
+          <component ref="struct_econ_science_top_a" connection="space" />
+        </macro>
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_tower_b_macro">
+        <build mode="optional" group="production" sequence="A" stage="2" />
+        <macro ref="struct_econ_science_tower_b_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_tower_b_macro1">
+        <build mode="optional" group="production" sequence="A" stage="1" />
+        <macro ref="struct_econ_science_tower_b_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_tower_b_macro2">
+        <macro ref="struct_econ_science_tower_b_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_weaponplatform_macro">
+        <build mode="optional" group="defense" sequence="C" stage="4" tags="primary" />
+        <macro ref="struct_econ_science_weaponplatform_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_weaponplatform_macro1">
+        <build mode="optional" group="defense" sequence="F" stage="1" tags="primary" />
+        <macro ref="struct_econ_science_weaponplatform_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_weaponplatform_macro2">
+        <build mode="optional" group="production" sequence="F" stage="2" tags="primary" />
+        <macro ref="struct_econ_science_weaponplatform_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_weaponplatform_macro3">
+        <build mode="optional" group="defense" sequence="D" stage="4" tags="primary" />
+        <macro ref="struct_econ_science_weaponplatform_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_weaponplatform_macro4">
+        <build mode="optional" group="defense" sequence="A" stage="3" tags="primary" />
+        <macro ref="struct_econ_science_weaponplatform_macro" connection="space" />
+      </connection>
+      <connection ref="ConnectionFor_struct_econ_science_weaponplatform_macro5">
+        <build mode="optional" group="defense" sequence="B" stage="4" tags="primary" />
+        <macro ref="struct_econ_science_weaponplatform_macro" connection="space" />
+      </connection>
+      <connection ref="connection_controlroom01">
+        <macro ref="control_room_macro" connection="Connection01" />
+      </connection>
+    </connections>
+  </macro>
+</macros>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<mdscript name="cwirpatch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+   <cues>
+      <cue name="Base" version="1">
+         <conditions>
+               <event_game_loaded/>
+         </conditions>
+         <actions>
+			<!-- Macros for Structure folder -->
+			<patch_macros macro="macro.buildmodule_ships_albion_l_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_albion_xl_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_albion_xl_2_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_albion_xl_3_macro"/>
+			<patch_macros macro="macro.struct_bt_alb_big_ships_yard_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_omicron_xl_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_omicron_l_macro"/>
+			<patch_macros macro="macro.units_size_l_player_fury_macro"/>
+            <!--<patch_macros macro="macro.struct_econ_prod_ships2_macro"/>
+            <patch_macros macro="macro.struct_econ_prod_ships_pir_macro"/>
+			<patch_macros macro="macro.struct_bt_alb_shipyard_2_macro"/>
+            <patch_macros macro="macro.struct_bt_alb_shipyard_3_macro"/>
+			<patch_macros macro="macro.struct_bt_alb_small_ships_complex2_macro"/>
+            <patch_macros macro="macro.struct_bt_alb_small_ships_yard2_macro"/>
+			<patch_macros macro="macro.struct_bt_dv_shipyard_2_macro"/>
+            <patch_macros macro="macro.struct_bt_dv_shipyard_3_macro"/>
+			<patch_macros macro="macro.struct_bt_dv_small_ships_complex_macro"/>
+            <patch_macros macro="macro.struct_bt_dv_small_ships_yard_macro"/>
+			<patch_macros macro="macro.struct_bt_ol_shipyard_2_macro"/>
+            <patch_macros macro="macro.struct_bt_ol_shipyard_3_macro"/>
+			<patch_macros macro="macro.struct_bt_pir_shipyard_2_macro"/>
+            <patch_macros macro="macro.struct_bt_pir_shipyard_3_macro"/>
+			<patch_macros macro="macro.struct_bt_pir_small_ships_complex_macro"/>
+            <patch_macros macro="macro.struct_bt_pir_small_ships_yard_macro"/>
+			<patch_macros macro="macro.struct_bt_player_shipyard_2_macro"/>
+            <patch_macros macro="macro.struct_bt_player_shipyard_3_macro"/>-->
+			
+			<!-- Macros for Surface Elements folder-->
+			<!--<patch_macros macro="macro.buildmodule_ships_albion_l_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_albion_xl_2_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_albion_xl_3_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_albion_xl_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_devries_l_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_devries_xl_2_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_devries_xl_3_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_devries_xl_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_devries_xl_pir2_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_devries_xl_pir3_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_omicron_xl_2_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_omicron_xl_3_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_pirates_l_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_player_l_macro"/>
+			<patch_macros macro="macro.buildmodule_ships_xl_player2_macro"/>
+            <patch_macros macro="macro.buildmodule_ships_xl_player3_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_albion_2_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_albion_3_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_albion_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_devries_2_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_devries_3_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_devries_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_omicron_2_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_omicron_3_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_omicron_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_pirate_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_pirate2_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_pirate3_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_player_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_player2_macro"/>
+            <patch_macros macro="macro.buildmodule_stations_player3_macro"/>
+			<patch_macros macro="macro.buildmodule_stations_pmxe_macro"/>-->    
+
+			<!-- Macros for Ships -->
+			<!--<patch_macros macro="macro.units_size_l_antifighter_01_macro"/>
+            <patch_macros macro="macro.units_size_l_canteran_frigate_macro"/>
+			<patch_macros macro="macro.units_size_l_dv_arb_new_defence_macro"/>
+            <patch_macros macro="macro.units_size_l_dv_fury_new_defence_macro"/>
+			<patch_macros macro="macro.units_size_l_laserjet_01_macro"/>
+            <patch_macros macro="macro.units_size_l_missileb_01_macro"/>
+			<patch_macros macro="macro.units_size_l_pir_besieger_frig_macro"/>
+            <patch_macros macro="macro.units_size_l_pir_container_03_macro"/>
+			<patch_macros macro="macro.units_size_l_pir_vanguard_frig_macro"/>
+            <patch_macros macro="macro.units_size_l_player_fury_macro"/>
+			<patch_macros macro="macro.units_size_l_player_harpy_macro"/>
+            <patch_macros macro="macro.units_size_l_single_attack_ship_macro"/>
+			<patch_macros macro="macro.units_size_l_weaponplatform_macro"/>
+            <patch_macros macro="macro.units_size_l_xenon_01_macro"/>
+			<patch_macros macro="macro.units_size_xl_fort_macro"/>
+            <patch_macros macro="macro.units_size_xl_player_behemoth_macro"/>
+			<patch_macros macro="macro.units_size_xl_player_chimera_macro"/>
+            <patch_macros macro="macro.units_size_xl_player_hades_macro"/>
+			<patch_macros macro="macro.units_size_xl_red_destroyer_macro"/>
+			<patch_macros macro="macro.units_size_xl_split_m1_macro"/>
+            <patch_macros macro="macro.units_size_xl_van_destroyer_macro"/>
+			<patch_macros macro="macro.units_size_xl_xenon_01_macro"/>-->
+			
+			
+			<debug_text text="'All existing Macros updated.'"/>
+
+         </actions>
+      </cue>
+   </cues>
+</mdscript>

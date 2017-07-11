@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+  <add sel="/groups">
+  
+  
+  <!-- Albion Energy Subsidiary -->
+  <!--<group name="aes_light_fighter">
+    <select macro="units_size_s_ship_02_macro" weight="70"/>
+    <select macro="units_size_s_ship_05_macro" weight="30"/>
+  </group>
+  <group name="aes_heavy_fighter">
+    <select macro="units_size_s_ship_02_macro" weight="30"/>
+    <select macro="units_size_s_ship_05_macro" weight="70"/>
+  </group>-->
+  
+  <!-- Beryll -->
+  <!--<group name="ber_light_fighter">
+    <select macro="units_size_s_ship_04_macro" weight="70"/>
+    <select macro="units_size_s_ship_07_macro" weight="30"/>
+  </group>
+  <group name="ber_heavy_fighter">
+    <select macro="units_size_s_ship_04_macro" weight="30"/>
+    <select macro="units_size_s_ship_07_macro" weight="70"/>
+  </group>  -->
+  
+  <!-- Ledda Industrial -->
+  <!--<group name="led_light_fighter">
+    <select macro="units_size_s_ship_01_macro" weight="50"/>
+    <select macro="units_size_s_ship_03_macro" weight="50"/>
+  </group>-->
+  
+  <!-- No Limit -->
+  
+  <!--<group name="nl_patrol_fighter">
+    <select macro="units_size_s_ship_19_macro" weight="100"/>    
+  </group>-->
+  
+  <!-- Wholesome Foods -->  
+  <!--<group name="wsf_light_fighter">
+    <select macro="units_size_s_ship_23_macro" weight="100"/>    
+  </group> -->
+  
+  <group name="albion_trader_container_large11">
+    <select macro="units_size_l_kit_container_01_macro" weight="50" />
+    <select macro="units_size_l_kit_container_02_macro" weight="50" />   
+  </group>
+  
+  <group name="hoa_balor_frigate">
+    <select macro="units_size_l_single_attack_ship_macro" weight="100" />
+    
+  </group>
+  
+  <group name="sos_new_frigates">
+    <select macro="units_size_l_pir_besieger_frig_macro" weight="10" />
+    <select macro="units_size_l_pir_vanguard_frig_macro" weight="40" /> 
+	<select macro="units_size_l_pir_container_03_macro" weight="50" />  
+  </group>
+  
+  <group name="pirate_frigates">
+    <select macro="units_size_l_pir_besieger_frig_macro" weight="10" />
+    <select macro="units_size_l_pir_vanguard_frig_macro" weight="40" /> 
+	<select macro="units_size_l_pir_container_03_macro" weight="50" />  
+  </group>
+
+  <!-- DEVRIES -->   
+
+  <!-- OMICRON LYRAE -->  
+  
+  <!-- Jonferson Space Systems -->  
+  <group name="jss_light_fighter">
+    <select macro="units_size_s_ship_ar_military_01_macro" weight="80"/>
+	<select macro="units_size_s_ship_ar_military_03_macro" weight="20"/>
+   </group>
+  <group name="jss_heavy_fighter">
+    <select macro="units_size_s_ship_ar_military_03_macro" weight="50"/>
+    <select macro="units_size_s_ship_ar_military_02_macro" weight="50"/>    
+  </group>
+  <group name="jss_destroyer">
+    <select macro="units_size_xl_cs_omicron_ship_02_macro" weight="30"/>
+    <select macro="units_size_xl_cs_omicron_ship_03_macro" weight="70"/>
+  </group>  
+  
+  <!-- NEW PMC SHIPS FOR FLEETS -->
+  <group name="pmc_new_frigates">
+    <select macro="units_size_l_antifighter_01_macro" weight="33"/>
+    <select macro="units_size_l_laserjet_01_macro" weight="33"/>
+	<select macro="units_size_l_missileb_01_macro" weight="33"/>
+    </group> 
+	
+	<!-- NEW ROC SHIPS FOR FLEETS -->
+	<group name="roc_new_frigates">
+    <select macro="units_size_l_canteran_frigate_macro" weight="100"/>    
+    </group> 
+	
+	<group name="roc_new_cruisers">
+    <select macro="units_size_l_dv_fury_new_defence_macro" weight="65"/>
+    <select macro="units_size_l_dv_arb_new_defence_macro" weight="35"/>	
+    </group> 
+	
+	<group name="roc_new_destroyers">
+    <select macro="units_size_xl_van_destroyer_macro" weight="50"/>
+    <select macro="units_size_xl_red_destroyer_macro" weight="50"/>	
+    </group> 
+
+  <!-- MAELSTROM -->   
+	<!-- Heretic Vanguards -->
+	<group name="hv_light_fighter">
+    <select macro="units_size_s_ship_ar_military_01_macro" weight="80"/>
+	<select macro="units_size_s_ship_ar_military_03_macro" weight="20"/>
+   </group>
+  <group name="hv_heavy_fighter">
+    <select macro="units_size_s_ship_ar_military_03_macro" weight="50"/>
+    <select macro="units_size_s_ship_ar_military_02_macro" weight="50"/>    
+  </group>
+  
+  <group name="heretic_trader_universal_large">
+    <select macro="units_size_xl_cs_omicron_ship_01_macro" weight="100"/>
+	
+	
+    <group name="hv_new_cruisers1">
+    <select macro="units_size_l_player_harpy_macro" weight="50"/>
+	<select macro="units_size_l_player_fury_macro" weight="50"/>
+   </group>
+	
+	<group name="hv_new_destroyers">
+    <select macro="units_size_xl_player_behemoth_macro" weight="100"/>
+	
+   </group>
+	
+	<group name="rya_heavy_destroyer">
+    <select macro="units_size_xl_split_m1_macro" weight="100"/>
+	
+   </group>
+   
+	<!-- Xenon -->
+    <group name="xen_light_destroyer">
+    <select macro="units_size_l_xenon_01_macro" weight="100"/>
+	
+   </group>
+  </group>
+
+</add>
+</diff>

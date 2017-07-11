@@ -1,0 +1,1323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="job_suppressiontest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+ <cues>
+     
+	<!-- This script will calc a faction strength - an index based on its total number of stations and zone owned -->
+	<!-- and will apply this index as a probability to enable jobs in jobs.xml-->
+
+	<cue name="Faction_strength" instantiate="true" namespace="this" checkinterval="900s">
+		
+		<actions>
+			<set_value name="$Main_Factions" exact="[faction.albionenergy, faction.beryll, faction.heartofalbion, faction.leddaindustrial, faction.nolimits, faction.plutarch, faction.sovereignsyndicate, faction.wholesomefoods, faction.canteran, faction.argongovernment, faction.xenon, faction.familyryak, faction.sovereignsyndicate, faction.reivers, faction.hereticvanguards]"/>
+        	<do_all exact="$Main_Factions.count" counter="$i">
+				<set_value name="$ThisFaction" exact="$Main_Factions.{$i}" />
+				
+	<!-- always deactivate all jobs at first for each faction -->
+				<!-- Albion -->
+				<!--<do_if value="$ThisFaction == faction.albionenergy">-->
+				<!-- Civilian Ships -->
+            		<!--<set_job_active job="'aes_collector_hydrogen_large'" activate="false"/>
+					<set_job_active job="'aes_collector_hydrogen_medium'" activate="false"/>
+					<set_job_active job="'aes_collector_ions_large'" activate="false"/>
+					<set_job_active job="'aes_collector_ions_medium'" activate="false"/>
+					<set_job_active job="'aes_collector_plasma_large'" activate="false"/>
+					<set_job_active job="'aes_collector_plasma_medium'" activate="false"/>
+					<set_job_active job="'aes_trader_energy_large'" activate="false"/>
+					<set_job_active job="'aes_trader_energy_medium'" activate="false"/>
+					<set_job_active job="'aes_universe_energy_large'" activate="false"/>
+					<set_job_active job="'aes_universe_energycells_large'" activate="false"/>-->
+					<!-- Paramilitary Ships -->
+					<!--<set_job_active job="'aes_squadron_woodland'" activate="false"/>
+					<set_job_active job="'aes_squadron_concealed'" activate="false"/>
+					<set_job_active job="'aes_squadron_steady'" activate="false"/>
+					<set_job_active job="'aes_squadron_farout'" activate="false"/>
+					<set_job_active job="'aes_squadron_crossroads'" activate="false"/>
+					<set_job_active job="'aes_squadron_distress'" activate="false"/>
+					<set_job_active job="'aes_squadron_cuspid'" activate="false"/>
+					<set_job_active job="'aes_squadron_water'" activate="false"/>
+					<set_job_active job="'aes_squadron_auspicious'" activate="false"/>
+					<set_job_active job="'aes_squadron_distant'" activate="false"/>
+					<set_job_active job="'aes_squadron_azure'" activate="false"/>
+					<set_job_active job="'aes_squadron_shady'" activate="false"/>					
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.beryll">-->
+				<!-- Paramilitary Ships -->
+            		<!--<set_job_active job="'ber_squadron_buried'" activate="false"/>
+					<set_job_active job="'ber_squadron_third'" activate="false"/>
+					<set_job_active job="'ber_squadron_forlorn'" activate="false"/>-->
+					<!-- Civilian Ships -->
+					<!--<set_job_active job="'beryll_collector_hydrogen_large'" activate="false"/>
+					<set_job_active job="'beryll_collector_hydrogen_medium'" activate="false"/>
+					<set_job_active job="'beryll_collector_ions_large'" activate="false"/>
+					<set_job_active job="'beryll_collector_ions_medium'" activate="false"/>
+					<set_job_active job="'beryll_collector_plasma_large'" activate="false"/>
+					<set_job_active job="'beryll_collector_plasma_medium'" activate="false"/>
+					<set_job_active job="'beryll_trader_energy_large'" activate="false"/>
+					<set_job_active job="'beryll_trader_energy_medium'" activate="false"/>
+					<set_job_active job="'beryll_trader_hightech_large'" activate="false"/>
+					<set_job_active job="'beryll_trader_hightech_medium'" activate="false"/>
+					<set_job_active job="'beryll_trader_refined_large'" activate="false"/>
+					<set_job_active job="'beryll_trader_refined_medium'" activate="false"/>				
+				</do_if>
+				
+   				<do_if value="$ThisFaction == faction.heartofalbion">-->
+					<!-- Civilian Ships -->
+				    <!--<set_job_active job="'hoa_trader_gas_medium'" activate="false"/>
+            		<set_job_active job="'hoa_trader_drones_medium'" activate="false"/>
+					<set_job_active job="'hoa_trader_energy_large'" activate="false"/>
+					<set_job_active job="'hoa_trader_energy_medium'" activate="false"/>
+            		<set_job_active job="'hoa_trader_hightech_large'" activate="false"/>
+					<set_job_active job="'hoa_trader_hightech_medium'" activate="false"/>
+					<set_job_active job="'hoa_trader_shiptech_large'" activate="false"/>
+            		<set_job_active job="'hoa_trader_shiptech_medium'" activate="false"/>
+					<set_job_active job="'hoa_trader_shiptech_extended_medium'" activate="false"/>
+					<set_job_active job="'hoa_trader_weapontech_large'" activate="false"/>
+            		<set_job_active job="'hoa_trader_weapontech_medium'" activate="false"/>
+					<set_job_active job="'hoa_universe_gases'" activate="false"/>
+					<set_job_active job="'hoa_universe_hightech_large'" activate="false"/>
+            		<set_job_active job="'hoa_universe_shiptech_large'" activate="false"/>
+					<set_job_active job="'hoa_universe_weapontech_large'" activate="false"/>	-->				
+					<!-- Military Ships in Albion-->
+            		<!--<set_job_active job="'hoa_squadron_defend04'" activate="false"/>
+					<set_job_active job="'hoa_squadron_attalbion'" activate="false"/>
+					<set_job_active job="'hoa_lightfleet_defalbion'" activate="false"/>
+            		<set_job_active job="'hoa_lightfleet_attalbion'" activate="false"/>
+					<set_job_active job="'hoa_battlestar_defalbion'" activate="false"/>
+					<set_job_active job="'hoa_carrierfleet_attalbion'" activate="false"/>-->
+					<!-- Military Ships in Devries -->
+            		<!--<set_job_active job="'hoa_squadron_attack17'" activate="false"/>
+					<set_job_active job="'hoa_squadron_defend18'" activate="false"/>
+					<set_job_active job="'hoa_squadron_attack19'" activate="false"/>
+            		<set_job_active job="'hoa_lightfleet_defend18'" activate="false"/>
+					<set_job_active job="'hoa_lightfleet_attack19'" activate="false"/>
+					<set_job_active job="'hoa_carrierfleet_attack17'" activate="false"/>
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.leddaindustrial">-->
+				<!-- Civilian Ships -->
+            		<!--<set_job_active job="'ledda_collector_hydrogen_large'" activate="false"/>
+					<set_job_active job="'ledda_collector_hydrogen_medium'" activate="false"/>
+					<set_job_active job="'ledda_collector_ions_large'" activate="false"/>
+					<set_job_active job="'ledda_collector_ions_medium'" activate="false"/>
+					<set_job_active job="'ledda_collector_plasma_large'" activate="false"/>
+					<set_job_active job="'ledda_collector_plasma_medium'" activate="false"/>
+					<set_job_active job="'ledda_miner_ice_large'" activate="false"/>
+					<set_job_active job="'ledda_miner_ice_medium'" activate="false"/>
+					<set_job_active job="'ledda_miner_mineral_large_01'" activate="false"/>
+					<set_job_active job="'ledda_miner_mineral_large_02'" activate="false"/>
+					<set_job_active job="'ledda_miner_mineral_large_03'" activate="false"/>
+					<set_job_active job="'ledda_trader_energy_large'" activate="false"/>
+					<set_job_active job="'ledda_trader_energy_medium'" activate="false"/>
+					<set_job_active job="'ledda_trader_hightech_large'" activate="false"/>
+					<set_job_active job="'ledda_trader_hightech_medium'" activate="false"/>
+					<set_job_active job="'ledda_trader_missile_medium'" activate="false"/>
+					<set_job_active job="'ledda_trader_refined_large'" activate="false"/>
+					<set_job_active job="'ledda_trader_refined_medium'" activate="false"/>
+					<set_job_active job="'ledda_trader_shiptech_large'" activate="false"/>
+					<set_job_active job="'ledda_trader_shiptech_medium'" activate="false"/>
+					<set_job_active job="'ledda_trader_shiptech_extended_medium'" activate="false"/>
+					<set_job_active job="'ledda_trader_weapontech_large'" activate="false"/>
+					<set_job_active job="'ledda_trader_weapontech_medium'" activate="false"/>
+					<set_job_active job="'led_universe_construction_trader'" activate="false"/>
+					<set_job_active job="'led_universe_hightech_large'" activate="false"/>
+					<set_job_active job="'led_universe_refined_large'" activate="false"/>
+					<set_job_active job="'led_universe_minerals_large'" activate="false"/>
+					<set_job_active job="'led_universe_shiptech_large'" activate="false"/>
+					<set_job_active job="'led_universe_weapontech_large'" activate="false"/>-->
+					<!-- Paramilitary Ships -->
+					<!--<set_job_active job="'led_squadron_buried'" activate="false"/>
+					<set_job_active job="'led_squadron_forge'" activate="false"/>
+					<set_job_active job="'led_squadron_serpentine'" activate="false"/>
+					<set_job_active job="'led_squadron_sinister'" activate="false"/>
+					<set_job_active job="'led_squadron_cuspid'" activate="false"/>
+					<set_job_active job="'led_squadron_frozen'" activate="false"/>
+					<set_job_active job="'led_squadron_distress'" activate="false"/>
+					<set_job_active job="'led_squadron_straining'" activate="false"/>
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.nolimits">-->
+				<!-- Civilian Ships -->
+            		<!--<set_job_active job="'nolimits_trader_agricultural_large'" activate="false"/>
+					<set_job_active job="'nolimits_trader_agricultural_medium'" activate="false"/>
+					<set_job_active job="'nolimits_trader_water_large'" activate="false"/>
+					<set_job_active job="'nolimits_trader_water_medium'" activate="false"/>
+					<set_job_active job="'nolimits_trader_pharmaceutical_large'" activate="false"/>
+					<set_job_active job="'nolimits_trader_pharmaceutical_medium'" activate="false"/>-->
+					<!-- Paramilitary Ships -->
+					<!--<set_job_active job="'nol_squadron_smoke'" activate="false"/>
+					<set_job_active job="'nol_squadron_periodic'" activate="false"/>
+					<set_job_active job="'nol_squadron_sinister'" activate="false"/>
+					<set_job_active job="'nol_squadron_serpentine'" activate="false"/>					
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.plutarch">-->
+					<!-- Civilian Ships -->
+            		<!--<set_job_active job="'pmc_collector_hydrogen_large'" activate="false"/>
+					<set_job_active job="'pmc_collector_hydrogen_medium'" activate="false"/>
+					<set_job_active job="'pmc_collector_ions_large'" activate="false"/>
+					<set_job_active job="'pmc_collector_ions_medium'" activate="false"/>
+					<set_job_active job="'pmc_collector_plasma_large'" activate="false"/>
+					<set_job_active job="'pmc_collector_plasma_medium'" activate="false"/>
+					<set_job_active job="'pmc_miner_mineral_large_01'" activate="false"/>
+					<set_job_active job="'pmc_miner_mineral_large_02'" activate="false"/>
+					<set_job_active job="'pmc_miner_mineral_large_03'" activate="false"/>
+					<set_job_active job="'pmc_miner_mineral_medium1'" activate="false"/>
+					<set_job_active job="'pmc_miner_mineral_medium2'" activate="false"/>
+					<set_job_active job="'pmc_miner_mineral_medium3'" activate="false"/>
+					<set_job_active job="'pmc_trader_mineral_medium1'" activate="false"/>
+					<set_job_active job="'pmc_trader_mineral_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_drones_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_drones_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_energy_large'" activate="false"/>
+					<set_job_active job="'pmc_trader_energy_medium1'" activate="false"/>
+					<set_job_active job="'pmc_trader_energy_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_energy_medium3'" activate="false"/>
+					<set_job_active job="'pmc_trader_hightech_large'" activate="false"/>
+					<set_job_active job="'pmc_trader_hightech_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_missile_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_missile_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_refined_large'" activate="false"/>
+					<set_job_active job="'pmc_trader_refined_large2'" activate="false"/>
+					<set_job_active job="'pmc_trader_refined_large3'" activate="false"/>
+					<set_job_active job="'pmc_trader_refined_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_refined_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_refined_medium3'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_large'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_large2'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_large3'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_extended_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_extended_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_shiptech_medium3'" activate="false"/>
+					<set_job_active job="'pmc_trader_weapontech_large'" activate="false"/>
+					<set_job_active job="'pmc_trader_weapontech_large2'" activate="false"/>
+					<set_job_active job="'pmc_trader_weapontech_large3'" activate="false"/>
+					<set_job_active job="'pmc_trader_weapontech_medium'" activate="false"/>
+					<set_job_active job="'pmc_trader_weapontech_medium2'" activate="false"/>
+					<set_job_active job="'pmc_trader_weapontech_medium3'" activate="false"/>
+					<set_job_active job="'pmc_universe_shiptech_large'" activate="false"/>
+					<set_job_active job="'pmc_universe_guest_omicron_large'" activate="false"/>
+					<set_job_active job="'pmc_universe_hightech_large'" activate="false"/>
+					<set_job_active job="'pmc_universe_minerals_large'" activate="false"/>-->
+					<!-- Experimental builders -->
+					<!--<set_job_active job="'pmc_builder_albion'" activate="false"/>
+					<set_job_active job="'pmc_builder_albion2'" activate="false"/>
+					<set_job_active job="'pmc_builder_albion3'" activate="false"/>-->
+					<!-- Military ships in Albion-->					
+					<!--<set_job_active job="'pmc_squadron_defense05'" activate="false"/>
+					<set_job_active job="'pmc_squadron_defense06'" activate="false"/>
+					<set_job_active job="'pmc_squadron_defense07'" activate="false"/>
+					<set_job_active job="'pmc_squadron_attack04'" activate="false"/>
+					<set_job_active job="'pmc_lightfleet_defend06'" activate="false"/>
+					<set_job_active job="'pmc_lightfleet_defend05'" activate="false"/>
+					<set_job_active job="'pmc_lightfleet_defend07'" activate="false"/>
+					<set_job_active job="'pmc_lightfleet_attack04'" activate="false"/>
+					<set_job_active job="'pmc_heavyfleet_defend06'" activate="false"/>
+					<set_job_active job="'pmc_heavyfleet_defend05'" activate="false"/>
+					<set_job_active job="'pmc_heavyfleet_defend07'" activate="false"/>
+					<set_job_active job="'pmc_heavyfleet_attack04'" activate="false"/>
+					<set_job_active job="'pmc_wreckingcrew_attack04'" activate="false"/>-->
+					<!-- Military ships in Devries -->
+					<!--<set_job_active job="'pmc_squadron_attack17'" activate="false"/>
+					<set_job_active job="'pmc_squadron_attackdevries'" activate="false"/>
+					<set_job_active job="'pmc_squadron_attack18'" activate="false"/>
+					<set_job_active job="'pmc_heavyfleet_attack17'" activate="false"/>
+					<set_job_active job="'pmc_heavyfleet_attack18'" activate="false"/>-->
+					<!--<set_job_active job="'pmc_heavyfleet_specattdev'" activate="false"/>-->					
+				<!--</do_if>
+				
+				<do_if value="$ThisFaction == faction.sovereignsyndicate">
+            		<set_job_active job="'sos_destroyer_fleet'" activate="false"/>
+					<set_job_active job="'sos_attackfighter_albion'" activate="false"/>
+					<set_job_active job="'sos_bomber_patrol_sov'" activate="false"/>					
+				</do_if>				
+				
+				<do_if value="$ThisFaction == faction.wholesomefoods">-->
+				<!-- Civilian Ships -->
+            		<!--<set_job_active job="'wholesome_trader_agricultural_large'" activate="false"/>
+					<set_job_active job="'wholesome_trader_agricultural_medium'" activate="false"/>
+					<set_job_active job="'wholesome_trader_food_large'" activate="false"/>
+					<set_job_active job="'wholesome_trader_food_medium'" activate="false"/>
+					<set_job_active job="'wholesome_trader_water_large'" activate="false"/>
+					<set_job_active job="'wholesome_trader_water_medium'" activate="false"/>
+					<set_job_active job="'wsf_universe_food_large'" activate="false"/>
+					<set_job_active job="'wsf_universe_agricultural_large'" activate="false"/>-->
+					<!-- Paramilitary Ships -->
+					<!--<set_job_active job="'wsf_squadron_even'" activate="false"/>
+					<set_job_active job="'wsf_squadron_exhaustless'" activate="false"/>
+					<set_job_active job="'wsf_squadron_gemstone'" activate="false"/>
+					<set_job_active job="'wsf_squadron_rising'" activate="false"/>					
+				</do_if>-->
+				
+				
+				<!-- Devries -->
+   				<!--<do_if value="$ThisFaction == faction.canteran">-->
+				<!-- Civilian Ships -->
+            		<!--<set_job_active job="'roc_miner_ice_medium'" activate="false"/>
+					<set_job_active job="'roc_miner_ice_large'" activate="false"/>
+					<set_job_active job="'roc_trader_energy_medium'" activate="false"/>
+					<set_job_active job="'roc_trader_energy_medium2'" activate="false"/>
+					<set_job_active job="'roc_trader_energy_large'" activate="false"/>
+					<set_job_active job="'roc_trader_water_medium'" activate="false"/>
+					<set_job_active job="'roc_trader_water_medium2'" activate="false"/>
+					<set_job_active job="'roc_trader_water_large'" activate="false"/>
+					<set_job_active job="'roc_trader_agricultural_medium'" activate="false"/>
+					<set_job_active job="'roc_trader_agricultural_large'" activate="false"/>
+					<set_job_active job="'roc_trader_food_large'" activate="false"/>
+					<set_job_active job="'roc_universe_hightech_large'" activate="false"/>
+					<set_job_active job="'roc_universe_shiptech_large'" activate="false"/>
+					<set_job_active job="'roc_universe_weapontech_large'" activate="false"/>
+					<set_job_active job="'roc_universe_guest_omicron_liquid'" activate="false"/>
+					<set_job_active job="'roc_universe_guest_omicron_energy'" activate="false"/>
+					<set_job_active job="'roc_universe_guest_albion_energy'" activate="false"/>
+					<set_job_active job="'roc_universe_guest_albion_liquid'" activate="false"/>-->
+					<!-- Military Ships -->
+					<!--<set_job_active job="'roc_squadron_attack17'" activate="false"/>
+					<set_job_active job="'roc_squadron_defend18'" activate="false"/>
+					<set_job_active job="'roc_lightfleet_defend18'" activate="false"/>
+					<set_job_active job="'roc_lightfleet_attack19'" activate="false"/>
+					<set_job_active job="'roc_destroyerfleet_attack17'" activate="false"/>
+					<set_job_active job="'roc_destroyerfleet_defend18'" activate="false"/>
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.reivers">
+            		<set_job_active job="'rei_raiders_defend19'" activate="false"/>
+					<set_job_active job="'rei_raiders_attack17'" activate="false"/>
+					<set_job_active job="'rei_raiders_attack18'" activate="false"/>
+					<set_job_active job="'rei_builder'" activate="false"/>
+					<set_job_active job="'rei_baseship_attackdevries'" activate="false"/>
+					<set_job_active job="'rei_frigate_attackdevries'" activate="false"/>
+					<set_job_active job="'rei_frigate_attack17'" activate="false"/>					
+				</do_if>-->
+				
+				<!-- Omicron Lyrae THIS IS STILL ALL A WORK IN PROGRESS -->
+				<do_if value="$ThisFaction == faction.aquarius">
+            		<set_job_active job="'aqu_universe_water_large'" activate="false"/>
+					
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.argongovernment">
+					<!-- Civilian Ships -->
+            		<set_job_active job="'omicron_collector_hydrogen_large1'" activate="false"/>
+					<set_job_active job="'omicron_collector_hydrogen_medium1'" activate="false"/>
+					<set_job_active job="'omicron_collector_ions_large1'" activate="false"/>
+					<set_job_active job="'omicron_collector_ions_medium1'" activate="false"/>
+					<set_job_active job="'omicron_collector_plasma_large1'" activate="false"/>
+					<set_job_active job="'omicron_collector_plasma_medium1'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_large_011'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_large_021'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_medium_011'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_medium_021'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_large1'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_large2'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_large3'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_minerals_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_agricultural_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_agricultural_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_drones_medium_011'" activate="false"/>
+					<set_job_active job="'omicron_trader_drones_medium_021'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_large_011'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_medium_011'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_large_021'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_medium_021'" activate="false"/>
+					<set_job_active job="'omicron_trader_food_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_food_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_hightech_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_hightech_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_water_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_water_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_missile_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_missile_medium2'" activate="false"/>
+					<set_job_active job="'omicron_trader_pharmaceutical_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_pharmaceutical_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_refined_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_refined_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_shiptech_large1'" activate="false"/>
+					<set_job_active job="'omicron_trader_shiptech_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_shiptech_extended_medium1'" activate="false"/>
+					<set_job_active job="'omicron_trader_weapontech_large1'" activate="false"/>					
+					<set_job_active job="'omicron_trader_weapontech_medium1'" activate="false"/>
+					<set_job_active job="'BlackRain_arg_trader_refined_large'" activate="false"/>
+					<!-- Military Ships -->
+					<set_job_active job="'arg_defensefleet_radiant'" activate="false"/>
+					<set_job_active job="'arg_defensefleet_commerce'" activate="false"/>
+					<set_job_active job="'arg_defensefleet_eclipse'" activate="false"/>
+					<set_job_active job="'arg_defensefleet_devoid'" activate="false"/>
+					<set_job_active job="'arg_attackfleet_sable'" activate="false"/>
+					<set_job_active job="'arg_lightfleet_sigma'" activate="false"/>
+					<set_job_active job="'arg_lightfleet_devoid'" activate="false"/>
+					<set_job_active job="'arg_lightfleet_eclipse'" activate="false"/>
+					<set_job_active job="'arg_lightfleet_commerce'" activate="false"/>
+					<set_job_active job="'arg_lightfleet_radiant'" activate="false"/>
+					<set_job_active job="'arg_Omicron_radiant'" activate="false"/>
+					<set_job_active job="'arg_Omicron_eclipse'" activate="false"/>
+					<set_job_active job="'arg_Omicron_commerce'" activate="false"/>
+					<set_job_active job="'arg_Omicron_devoid'" activate="false"/>
+					<set_job_active job="'arg_attack_sigma'" activate="false"/>					
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.chow">
+            		<set_job_active job="'BlackRain_cho_trader_food_large'" activate="false"/>
+					<set_job_active job="'BlackRain_cho_agricultural_large'" activate="false"/>
+					<set_job_active job="'BlackRain_cho_water_large'" activate="false"/>
+				</do_if>
+				
+				<!--<do_if value="$ThisFaction == faction.fijiargnu">
+            		<set_job_active job="'can_fighter_wing17'" activate="false"/>
+					<set_job_active job="'can_fighter_wing18'" activate="false"/>
+					<set_job_active job="'can_lightfleet_glaring'" activate="false"/>
+				</do_if>-->
+				
+				<!-- NONE YET FOR THIS FACTION -->
+				<!--<do_if value="$ThisFaction == faction.frantonpharma">
+            		<set_job_active job="'can_fighter_wing17'" activate="false"/>
+					<set_job_active job="'can_fighter_wing18'" activate="false"/>
+					<set_job_active job="'can_lightfleet_glaring'" activate="false"/>
+				</do_if>-->
+				
+				<do_if value="$ThisFaction == faction.jonferson">
+				<!-- Civilian Ships -->
+            		<set_job_active job="'jss_special_construction_trader1'" activate="false"/>
+					<set_job_active job="'jonferson_trader_guest_arg_large'" activate="false"/>
+					<set_job_active job="'BlackRain_jss_trader_hightech_large'" activate="false"/>					
+					<set_job_active job="'BlackRain_jss_trader_shiptech_large'" activate="false"/>
+					<set_job_active job="'BlackRain_jss_trader_weapontech_large'" activate="false"/>
+					<!-- Paramilitary Ships -->
+					<set_job_active job="'jss_mercfleet_defense'" activate="false"/>
+					<set_job_active job="'JSS_fighter_patrol'" activate="false"/>					
+				</do_if>				
+				
+				<do_if value="$ThisFaction == faction.sonraenergy">
+            		<set_job_active job="'BlackRain_se_trader_energy_large'" activate="false"/>					
+				</do_if>
+				
+				<!-- Maelstrom -->				
+				<do_if value="$ThisFaction == faction.familyryak">
+            		<set_job_active job="'rya_dfighter_blurred'" activate="false"/>
+					<set_job_active job="'rya_defdestroyer_blur'" activate="false"/>
+					<set_job_active job="'rya_attackdestroyer_xen'" activate="false"/>
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.hereticvanguards">
+            		<set_job_active job="'hev_attack_wing'" activate="false"/>
+					<set_job_active job="'hev_attack2_wing'" activate="false"/>
+					<set_job_active job="'hev_heavy_raid_leader2'" activate="false"/>
+					<set_job_active job="'hev_bomber_patrol_hev'" activate="false"/>					
+				</do_if>
+				
+				<do_if value="$ThisFaction == faction.xenon">
+            		<set_job_active job="'xen_fattack_albion'" activate="false"/>
+					<set_job_active job="'xen_fattack_devries'" activate="false"/>
+					<set_job_active job="'xen_fattack_omicron'" activate="false"/>
+					<set_job_active job="'xen_fleetleader_albion'" activate="false"/>
+					<set_job_active job="'xen_fleetleader_devries'" activate="false"/>
+					<set_job_active job="'xen_fleetleader2_omicron'" activate="false"/>
+					<set_job_active job="'xen_fleetleader_maelstrom'" activate="false"/>
+					<set_job_active job="'xen_lightfleet_maelstrom'" activate="false"/>
+					<set_job_active job="'xen_lightfleet_albion'" activate="false"/>
+					<set_job_active job="'xen_lightfleet_devries'" activate="false"/>
+					<set_job_active job="'xen_lightfleet_devries2'" activate="false"/>
+					<set_job_active job="'xen_lightfleet_omicron'" activate="false"/>
+					<set_job_active job="'xen_lightfleet2_omicron'" activate="false"/>
+				</do_if>  
+  
+				<!-- Vanilla Removal Test ALBION -->
+					<!--<set_job_active job="'albion_collector_hydrogen_large'" activate="false"/>
+					<set_job_active job="'albion_collector_hydrogen_medium'" activate="false"/>
+					<set_job_active job="'albion_collector_ions_large'" activate="false"/>
+					<set_job_active job="'albion_collector_ions_medium'" activate="false"/>
+					<set_job_active job="'albion_collector_plasma_large'" activate="false"/>
+					<set_job_active job="'albion_collector_plasma_medium'" activate="false"/>
+					<set_job_active job="'albion_miner_ice_large'" activate="false"/>
+					<set_job_active job="'albion_miner_ice_medium'" activate="false"/>
+					<set_job_active job="'albion_miner_mineral_large_01'" activate="false"/>
+					<set_job_active job="'albion_miner_mineral_large_02'" activate="false"/>
+					<set_job_active job="'albion_miner_mineral_large_03'" activate="false"/>
+					<set_job_active job="'albion_miner_mineral_large_04'" activate="false"/>
+					<set_job_active job="'albion_miner_mineral_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_agricultural_large'" activate="false"/>
+					<set_job_active job="'albion_trader_agricultural_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_drones_medium_01'" activate="false"/>
+					<set_job_active job="'albion_trader_drones_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_missile_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_energy_large_01'" activate="false"/>
+					<set_job_active job="'albion_trader_energy_medium_01'" activate="false"/>
+					<set_job_active job="'albion_trader_energy_large_02'" activate="false"/>
+					<set_job_active job="'albion_trader_energy_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_food_large'" activate="false"/>
+					<set_job_active job="'albion_trader_food_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_hightech_large_01'" activate="false"/>
+					<set_job_active job="'albion_trader_hightech_medium_01'" activate="false"/>
+					<set_job_active job="'albion_trader_hightech_large_02'" activate="false"/>
+					<set_job_active job="'albion_trader_hightech_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_water_large'" activate="false"/>
+					<set_job_active job="'albion_trader_water_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_missile_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_pharmaceutical_large'" activate="false"/>
+					<set_job_active job="'albion_trader_refined_large_01'" activate="false"/>
+					<set_job_active job="'albion_trader_refined_large_02'" activate="false"/>
+					<set_job_active job="'albion_trader_refined_medium_01'" activate="false"/>
+					<set_job_active job="'albion_trader_refined_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_shiptech_large_01'" activate="false"/>
+					<set_job_active job="'albion_trader_shiptech_large_02'" activate="false"/>
+					<set_job_active job="'albion_trader_shiptech_medium_01'" activate="false"/>
+					<set_job_active job="'albion_trader_shiptech_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_pharmaceutical_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_shiptech_extended_medium_01'" activate="false"/>
+					<set_job_active job="'albion_trader_shiptech_extended_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_weapontech_large_01'" activate="false"/>
+					<set_job_active job="'albion_trader_weapontech_large_02'" activate="false"/>
+					<set_job_active job="'albion_trader_weapontech_medium_01'" activate="false"/>					
+					<set_job_active job="'albion_trader_weapontech_medium_02'" activate="false"/>
+					<set_job_active job="'albion_trader_guest_arg_large'" activate="false"/>					
+					<set_job_active job="'albion_trader_guest_canteran_large_01'" activate="false"/>
+					<set_job_active job="'albion_trader_guest_canteran_large_02'" activate="false"/>-->
+					  
+					<!-- VANILLA REMOVAL TEST OMICRON -->
+					<!--<set_job_active job="'omicron_collector_hydrogen_large'" activate="false"/>
+					<set_job_active job="'omicron_collector_hydrogen_medium'" activate="false"/>
+					<set_job_active job="'omicron_collector_ions_large'" activate="false"/>
+					<set_job_active job="'omicron_collector_ions_medium'" activate="false"/>
+					<set_job_active job="'omicron_collector_plasma_large'" activate="false"/>
+					<set_job_active job="'omicron_collector_plasma_medium'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_large_01'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_large_02'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_medium_01'" activate="false"/>
+					<set_job_active job="'omicron_miner_ice_medium_02'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_agricultural_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_agricultural_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_drones_medium_01'" activate="false"/>
+					<set_job_active job="'omicron_trader_drones_medium_02'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_large_01'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_large_01'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_large_02'" activate="false"/>
+					<set_job_active job="'omicron_miner_mineral_large_03'" activate="false"/>
+					<set_job_active job="'omicron_trader_missile_medium_02'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_medium_01'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_large_02'" activate="false"/>
+					<set_job_active job="'omicron_trader_energy_medium_02'" activate="false"/>
+					<set_job_active job="'omicron_trader_food_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_food_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_hightech_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_hightech_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_water_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_water_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_missile_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_pharmaceutical_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_pharmaceutical_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_refined_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_refined_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_shiptech_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_shiptech_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_shiptech_extended_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_weapontech_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_weapontech_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_guest_pmc_large'" activate="false"/>
+					<set_job_active job="'omicron_trader_guest_canteran_large_01'" activate="false"/>
+					<set_job_active job="'omicron_trader_guest_canteran_large_02'" activate="false"/>-->
+					
+					<!-- Vanilla Removal Test Devries -->
+					<!--<set_job_active job="'can_chapter2_medium_trader_water_large_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_medium_trader_food_large_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_medium_trader_energy_large_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_medium_trader_agricultural_large_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_medium_trader_water_medium_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_medium_trader_energy_medium_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_medium_trader_agricultural_medium_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_light_trader_water_medium_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_light_trader_energy_medium_sector18'" activate="false"/>
+					<set_job_active job="'devries_miner_ice_medium'" activate="false"/>
+					<set_job_active job="'devries_miner_ice_large'" activate="false"/>-->
+					
+					<!-- Vanilla Removal Test Patrols -->
+					<!--<set_job_active job="'hoa_fighter_recon_cluster'" activate="false"/>
+					<set_job_active job="'hoa_fighter_patrol_sector04'" activate="false"/>
+					<set_job_active job="'hoa_frigate_sector04'" activate="false"/>
+					<set_job_active job="'hoa_carrier_sector04'" activate="false"/>
+					<set_job_active job="'pmc_fighter_patrol_cluster'" activate="false"/>
+					<set_job_active job="'pmc_carrier_cluster'" activate="false"/>
+					<set_job_active job="'pmc_destroyer_cluster'" activate="false"/>
+					<set_job_active job="'sos_fighter_patrol_cluster'" activate="false"/>
+					<set_job_active job="'sos_fighter_heavy_raid_leader'" activate="false"/>					
+					<set_job_active job="'can_chapter2_light_patrol_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_light_frigate_sector18'" activate="false"/>
+					<set_job_active job="'can_chapter2_light_destroyer_sector18'" activate="false"/>
+					<set_job_active job="'hoa_chapter2_light_patrol_sector18'" activate="false"/>
+					<set_job_active job="'hoa_chapter2_light_frigate_sector18'" activate="false"/>
+					<set_job_active job="'hoa_chapter2_light_carrier_sector18'" activate="false"/>
+					<set_job_active job="'hoa_chapter2_medium_patrol_sector18'" activate="false"/>
+					<set_job_active job="'hoa_chapter2_medium_frigate_sector18'" activate="false"/>
+					<set_job_active job="'hoa_chapter2_medium_carrier_sector18'" activate="false"/>
+					<set_job_active job="'pmc_chapter2_medium_patrol_sector17'" activate="false"/>
+					<set_job_active job="'pmc_chapter2_medium_carrier_sector17'" activate="false"/>					
+					<set_job_active job="'pmc_chapter2_medium_destroyer_sector17'" activate="false"/>
+					<set_job_active job="'pmc_chapter2_heavy_patrol_sector17'" activate="false"/>
+					<set_job_active job="'pmc_chapter2_heavy_carrier_sector17'" activate="false"/>
+					<set_job_active job="'pmc_chapter2_heavy_destroyer_sector17'" activate="false"/>
+					<set_job_active job="'rei_chapter2_light_patrol_sector17'" activate="false"/>
+					<set_job_active job="'rei_chapter2_light_patrol_sector18'" activate="false"/>
+					<set_job_active job="'rei_chapter2_light_patrol_sector19'" activate="false"/>
+					<set_job_active job="'rei_chapter2_light_patrol_sector20'" activate="false"/>
+					<set_job_active job="'rei_chapter2_medium_patrol_sector19'" activate="false"/>
+					<set_job_active job="'rei_patrol_sector19_baseship'" activate="false"/>
+					<set_job_active job="'arg_fighter_patrol_cluster'" activate="false"/>					
+					<set_job_active job="'arg_destroyer_cluster'" activate="false"/>
+					<set_job_active job="'hev_fighter_patrol_cluster'" activate="false"/>
+					<set_job_active job="'hev_fighter_heavy_raid_leader'" activate="false"/>
+					<set_job_active job="'rya_fighter_patrol_cluster'" activate="false"/>
+					<set_job_active job="'rya_fighter_patrol_sector02'" activate="false"/>
+					<set_job_active job="'rya_destroyer_sector02'" activate="false"/>
+					<set_job_active job="'xen_fighter_patrol_cluster'" activate="false"/>
+					<set_job_active job="'xen_fighter_patrol_sector03'" activate="false"/>
+					<set_job_active job="'xen_destroyer_cluster'" activate="false"/>
+					<set_job_active job="'xen_destroyer_sector03'" activate="false"/>
+					<set_job_active job="'xen_destroyer_xl_sector03'" activate="false"/>  
+					<set_job_active job="'xen_destroyer_albion'" activate="false"/>
+					<set_job_active job="'xen_fighter_patrol_albion'" activate="false"/>
+					<set_job_active job="'sov_plunder'" activate="false"/>
+					<set_job_active job="'hev_plunder'" activate="false"/>
+					<set_job_active job="'hev_bomber_patrol_cluster'" activate="false"/>
+					<set_job_active job="'sos_bomber_patrol_cluster'" activate="false"/>-->
+					<!-- Vanilla traders -->
+					<!--<set_job_active job="'led_special_construction_trader'" activate="false"/>					
+					<set_job_active job="'jss_special_construction_trader'" activate="false"/>
+					<set_job_active job="'albion_trader_gas_medium'" activate="false"/>
+					<set_job_active job="'albion_trader_mineral_medium'" activate="false"/>
+					<set_job_active job="'omicron_trader_minerals_medium'" activate="false"/>-->		
+ 
+  
+	<!-- check this faction stations amount -->
+			<find_station name="$ThisFactionStations" space="player.galaxy" functional="true" multiple="true">
+				<match owner="$ThisFaction"/>
+ 				<match macro="macro.struct_bt_alb_warehouse_macro" negate="true" comment="this is to avoid outposts used on CM"/>
+			</find_station>
+
+	<!-- check this faction zones owned amount  -->
+			<find_zone name="$ThisFactionZones" space="player.galaxy" tempzone="false" multiple="true" >
+				<match class="class.highway" negate="true"/>
+				<match owner="$ThisFaction"/>
+			</find_zone>
+					
+	<!-- calc this faction strength, max 20, an arbitrary number to try to equalize all factions -->				
+			<set_value name="$ThisFactionStrength" exact="@$ThisFactionStations.count + @$ThisFactionZones.count" />
+			<do_if value="$ThisFactionStrength gt 20" >
+				<set_value name="$ThisFactionStrength" exact="20" comment=" this is an arbitrary max number to equalize all factions"/>
+			</do_if>
+			
+	<!-- setting some layers -->
+			<set_value name="$P05" exact="1"/>
+			<set_value name="$P10" exact="1"/>
+			<set_value name="$P20" exact="1"/>
+			<set_value name="$P40" exact="1"/>
+			<set_value name="$P60" exact="1"/>
+			<set_value name="$P80" exact="1"/>
+			<do_if value="$ThisFactionStrength le 1" >
+				<set_value name="$P05" exact="0"/>
+			</do_if>
+			<do_if value="$ThisFactionStrength le 2" >
+				<set_value name="$P10" exact="0"/>
+			</do_if>
+			<do_if value="$ThisFactionStrength le 4" >
+				<set_value name="$P20" exact="0"/>
+			</do_if>
+			<do_if value="$ThisFactionStrength le 8" >
+				<set_value name="$P40" exact="0"/>
+			</do_if>
+			<do_if value="$ThisFactionStrength le 12" >
+				<set_value name="$P60" exact="0"/>
+			</do_if>
+			<do_if value="$ThisFactionStrength le 16" >
+				<set_value name="$P80" exact="0"/>
+			</do_if>
+			
+					<!-- set the probability to activate this faction jobs on jobs.xml -->
+					<!-- Albion Factions -->
+			<do_if value="$ThisFaction == faction.albionenergy">
+					<!-- Civilian Ships -->
+					<set_job_active job="'aes_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_universe_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'aes_universe_energycells_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<!-- Paramilitary Ships -->
+					<set_job_active job="'aes_squadron_woodland'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_concealed'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_steady'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<!--<set_job_active job="'aes_squadron_farout'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<set_job_active job="'aes_squadron_crossroads'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_distress'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_cuspid'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_water'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_auspicious'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_distant'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_azure'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'aes_squadron_shady'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+			</do_if>
+			
+			<do_if value="$ThisFaction == faction.beryll">
+					<!-- Paramilitary Ships -->
+            		<set_job_active job="'ber_squadron_buried'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'ber_squadron_third'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'ber_squadron_forlorn'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<!-- Civilian Ships -->
+					<set_job_active job="'beryll_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'beryll_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+			</do_if>
+			
+			<do_if value="$ThisFaction == faction.heartofalbion">				
+				
+					<!-- Civilian Ships -->
+				    <set_job_active job="'hoa_trader_gas_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+            		<set_job_active job="'hoa_trader_drones_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+            		<set_job_active job="'hoa_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+            		<set_job_active job="'hoa_trader_shiptech_medium'" activate="false"/>
+					<set_job_active job="'hoa_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+            		<set_job_active job="'hoa_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_universe_gases'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+            		<set_job_active job="'hoa_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'hoa_universe_weapontech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>		
+					<!-- Military Ships in Albion-->
+            		<!--<set_job_active job="'hoa_squadron_defend04'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'hoa_squadron_attalbion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'hoa_lightfleet_defalbion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+            		<!--<set_job_active job="'hoa_lightfleet_attalbion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<set_job_active job="'hoa_battlestar_defalbion'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<!--<set_job_active job="'hoa_carrierfleet_attalbion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'hoa_carrierfleet_defalbion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!-- Military Ships in Devries -->
+            		<set_job_active job="'hoa_squadron_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'hoa_squadron_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'hoa_squadron_attack19'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+            		<set_job_active job="'hoa_lightfleet_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'hoa_lightfleet_attack19'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'hoa_carrierfleet_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					
+					<set_value name="$GM" exact="0" />
+					<set_value name="$GM1" exact="100" />
+					<set_value name="$TBE" exact="0" comment="set variable to zero"/>
+					<set_value name="$TBE1" exact="100" comment="set variable to 100"/>
+					<set_value name="$BT" exact="0" comment="set variable to zero"/>
+					<set_value name="$BT1" exact="100" comment="set variable to 100"/>					
+
+				<do_all exact="@$ThisFactionZones.count" counter="$j">
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone21_macro">
+						<set_value name="$BT" exact="100" />
+						<set_value name="$BT1" exact="0" />
+					</do_if>					
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone27_macro">
+						<set_value name="$TBE" exact="100" />
+						<set_value name="$TBE1" exact="0" />							
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone32_macro">
+						<set_value name="$GM" exact="100" />
+						<set_value name="$GM1" exact="0" />							
+					</do_if>
+				</do_all>
+					
+					<set_job_active job="'hoa_squadron_attalbion'" activate="false" chance="$TBE" />
+					<!--<set_job_active job="'hoa_carrierfleet_attalbion'" activate="false" chance="$TBE" />-->
+					<set_job_active job="'hoa_lightfleet_attalbion'" activate="false" chance="$TBE" />
+					<set_job_active job="'hoa_carrierfleet_defalbion'" activate="false" chance="$GM" />
+					
+					<do_if value="$GM and $TBE1">
+						<set_job_active job="'hoa_carrierfleet_attTBE'" activate="false" />						
+					</do_if>
+					
+					<do_if value="$P40 and $TBE and $BT1">
+						<set_job_active job="'hoa_carrierfleet_attascendJB'" activate="false" />						
+					</do_if>
+					
+					<do_if value="$P40 and $TBE and $BT">
+						<set_job_active job="'hoa_carrierfleet_attascend'" activate="false" />						
+					</do_if>
+					
+					<do_if value="$P20 and $GM1">
+						<set_job_active job="'hoa_squadron_defend04'" activate="false" />						
+					</do_if>
+					
+					<do_if value="$P20 and $GM1">
+						<set_job_active job="'hoa_lightfleet_defalbion'" activate="false" />						
+					</do_if>					
+					
+			</do_if>				
+					<!-- EXAMPLES OF CODE FOR DIFFERENT CIRCUMSTANCES -->
+				    <!--<set_job_active job="'hoa_fighter_wing17'" activate="false" chance="$ThisFactionStrength * 5 * $P60" comment="this means that this job will not spawn for strength lesser or equal to 60 percent"/>
+            		<set_job_active job="'hoa_fighter_wing18'" activate="false" chance="$ThisFactionStrength * 5"/>
+					<set_job_active job="'hoa_fighters_devries'" activate="false" chance="$ThisFactionStrength * 5"/>-->			
+			<do_if value="$ThisFaction == faction.leddaindustrial">
+					<!-- Civilian Ships -->
+            		<set_job_active job="'ledda_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_miner_ice_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_miner_ice_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_miner_mineral_large_01'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_miner_mineral_large_02'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_miner_mineral_large_03'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_missile_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_shiptech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'ledda_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'led_universe_construction_trader'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'led_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'led_universe_refined_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'led_universe_minerals_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'led_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'led_universe_weapontech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<!-- Paramilitary Ships -->
+					<set_job_active job="'led_squadron_buried'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_forge'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_serpentine'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_sinister'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_cuspid'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_frozen'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_distress'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'led_squadron_straining'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+			</do_if>
+			
+			<do_if value="$ThisFaction == faction.nolimits">
+			<!-- Civilian Ships -->
+            		<set_job_active job="'nolimits_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'nolimits_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'nolimits_trader_water_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'nolimits_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'nolimits_trader_pharmaceutical_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'nolimits_trader_pharmaceutical_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<!-- Paramilitary Ships -->
+					<set_job_active job="'nol_squadron_smoke'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'nol_squadron_periodic'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'nol_squadron_sinister'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'nol_squadron_serpentine'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>	
+			</do_if>			
+			
+			<do_if value="$ThisFaction == faction.plutarch">
+            		<!--<set_job_active job="'pmc_fighterwing_sector17'" activate="false" chance="$ThisFactionStrength * 5 * $P80" comment="this means that this job will not spawn for strength lesser or equal to 80 percent"/>
+					<set_job_active job="'pmc_fighterwing_devries'" activate="false" chance="$ThisFactionStrength * 5"/>
+					<set_job_active job="'pmc_fighterwing_devries2'" activate="false" chance="$ThisFactionStrength * 5"/>-->
+					<!-- Civilian Ships -->
+            		<set_job_active job="'pmc_collector_hydrogen_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_collector_hydrogen_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_collector_ions_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_collector_ions_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_collector_plasma_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_collector_plasma_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_miner_mineral_large_01'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_miner_mineral_large_02'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_miner_mineral_large_03'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_miner_mineral_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_miner_mineral_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_miner_mineral_medium3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_mineral_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_mineral_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_drones_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_drones_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_energy_medium1'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_energy_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_energy_medium3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_hightech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_missile_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_missile_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_refined_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_refined_large2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_refined_large3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_refined_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_refined_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_refined_medium3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_large2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_large3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_extended_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_extended_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_shiptech_medium3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_weapontech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_weapontech_large2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_weapontech_large3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_weapontech_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_weapontech_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_trader_weapontech_medium3'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_universe_guest_omicron_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_universe_minerals_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<!-- Experimental builders -->
+					<set_job_active job="'pmc_builder_albion'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'pmc_builder_albion2'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'pmc_builder_albion3'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<!-- Military ships in Albion-->					
+					<set_job_active job="'pmc_squadron_defense05'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'pmc_squadron_defense06'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'pmc_squadron_defense07'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<!--<set_job_active job="'pmc_squadron_attack04'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<set_job_active job="'pmc_lightfleet_defend06'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<set_job_active job="'pmc_lightfleet_defend05'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<set_job_active job="'pmc_lightfleet_defend07'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<!--<set_job_active job="'pmc_lightfleet_attack04'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>-->
+					<set_job_active job="'pmc_heavyfleet_defend06'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<set_job_active job="'pmc_heavyfleet_defend05'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<set_job_active job="'pmc_heavyfleet_defend07'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<!--<set_job_active job="'pmc_heavyfleet_attack04'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>-->
+					<!--<set_job_active job="'pmc_wreckingcrew_attack04'" activate="false" chance="$ThisFactionStrength * 5 * $P60"/>-->
+					<!-- Military ships in Devries -->
+					<!--<set_job_active job="'pmc_squadron_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_squadron_attackdevries'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_squadron_attack18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_heavyfleet_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'pmc_heavyfleet_attack18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					
+					
+				<!-- do the below for each zone owned that will trigger a special spawn value -->
+				<!-- in the examples below I set it for 2 zones for pmc-->
+				<!-- each of these zones will activate or deactivate a specific job -->
+				<!-- for example you can use this to activate a job if pmc has Twilight Sentinel and deactivate another one -->
+				<!-- or you can deactivate a job if pmc do not have Twilight Sentinel and activate another one -->
+					
+					<!-- Far Out -->
+					<set_value name="$TBE" exact="0" comment="set variable to zero"/>
+					<set_value name="$TBE1" exact="100" comment="set variable to 100"/>
+					<!-- Ascendancy -->
+					<set_value name="$SV" exact="0" comment="set variable to zero"/>
+					<set_value name="$SV1" exact="100" comment="set variable to 100"/>
+					<!-- Lookout Alpha -->
+					<set_value name="$AE" exact="0" comment="set variable to zero"/>
+					<set_value name="$AE1" exact="100" comment="set variable to 100"/>
+					<!-- Bleak Pebble -->
+					<set_value name="$TS" exact="0" comment="set variable to zero"/>
+					<set_value name="$TS1" exact="100" comment="set variable to 100"/>
+					<!-- Glaring Truth -->
+					<set_value name="$FC" exact="0" comment="set variable to zero"/>
+					<set_value name="$FC1" exact="100" comment="set variable to 100"/>
+					<!-- Molten Archon -->
+					<set_value name="$LF" exact="0" comment="set variable to zero"/>
+					<set_value name="$LF1" exact="100" comment="set variable to 100"/>
+					<set_value name="$VS" exact="0" comment="set variable to zero"/>
+					<set_value name="$VS1" exact="100" comment="set variable to 100"/>
+					
+					
+				<do_all exact="@$ThisFactionZones.count" counter="$j">
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone34_macro">
+						<set_value name="$TS" exact="100" comment="if PMC have Twilight Sentinel set variable to 100"/>
+						<set_value name="$TS1" exact="0" comment="if PMC have Twilight Sentinel set variable to 0"/>
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone54_macro">
+						<set_value name="$VS" exact="100" comment="if PMC have Vapour Stream set variable to 100"/>
+						<set_value name="$VS1" exact="0" comment="if PMC have Vapour Stream set variable to 0"/>
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone27_macro">
+						<set_value name="$TBE" exact="100" comment="if PMC have The Big Empty set variable to 100"/>
+						<set_value name="$TBE1" exact="0" comment="if PMC have The Big Empty set variable to 0"/>
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone19_macro">
+						<set_value name="$SV" exact="100" />
+						<set_value name="$SV1" exact="0" />
+							<!--<show_notification caption="'=== CWIR ==='" details="'TBE set to fire \n TBE: %1 \n\n NODE 1'.[$TBE]" queued="false" priority="9"/>
+							<write_to_logbook category="tips" text="'TBE set to fire \n TBE: %1 \n\n NODE 1'.[$TBE]"/>-->
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone05_macro">
+						<set_value name="$AE" exact="100" />
+						<set_value name="$AE1" exact="0" />							
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone45_macro">
+						<set_value name="$FC" exact="100" />
+						<set_value name="$FC1" exact="0" />
+					</do_if>	
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone55_macro">
+						<set_value name="$LF" exact="100" />
+						<set_value name="$LF1" exact="0" />
+					</do_if>
+				</do_all>
+
+							<!-- ZONE CONTROL RESPONSE FLEETS -->						
+					<!-- Albion Response Fleets -->
+					<do_if value="$P40 and $TBE and $SV">
+						<set_job_active job="'pmc_squadron_attack04'" activate="false" />				    
+					    <set_job_active job="'pmc_lightfleet_attack04'" activate="false" />
+					    <set_job_active job="'pmc_heavyfleet_attack04'" activate="false"  />
+					</do_if>					
+					<do_if value="$P60 and $SV">
+						<set_job_active job="'pmc_wreckingcrew_attack04'" activate="false" />					    
+					</do_if>					
+					<do_if value="$P60 and $TBE1">
+						<set_job_active job="'pmc_heavyfleet_attTBE'" activate="false" comment="if PMC strength is greater than 60 percent and pmc do not have The Big Empty"/>						
+					</do_if>
+					<do_if value="$P40 and $AE1">
+						<set_job_active job="'pmc_heavyfleet_attAE'" activate="false" comment="if PMC strength is greater than 40 percent and pmc do not have Auspicious Excavation"/>						
+					</do_if>
+					
+					<!-- Devries Response Fleets -->
+					<do_if value="$P60 and $AE and $TS1">
+						<set_job_active job="'pmc_heavyfleet_attaTS'" activate="true" comment="if PMC strength is greater than 60 percent and pmc have Auspicious Excavation but do not have Twilight Sentinel"/>						
+					</do_if>
+					<!-- Forward operation command established, send out raiders into Devrie space and defense for bleak pebble-->
+					<do_if value="$P60 and $SV and $AE and $TS">
+						<set_job_active job="'pmc_squadron_attack17'" activate="false" />
+						<set_job_active job="'pmc_heavyfleet_attack17'" activate="false" />											
+					</do_if>
+					<!-- Forward operation command established in Devries, conquer other jump beacons and set up forward operation bases -->
+					<do_if value="$P60 and $SV and $AE and $TS and $FC1 and $LF1">						
+						<set_job_active job="'pmc_heavyfleet_attJB'" activate="false" />						
+					</do_if>
+					<!-- PMC has set up forward operation base in bleak pebble and glaring truth, acquire lava flow -->
+					<do_if value="$P60 and $SV and $AE and $TS and $FC and $LF1">						
+						<set_job_active job="'pmc_heavyfleet_attLFbea'" activate="false" />						
+					</do_if>
+					<!-- PMC has set up forward operation base in bleak pebble and molten archon, acquire fervid corona -->
+					<do_if value="$P60 and $SV and $AE and $TS and $FC1 and $LF">						
+						<set_job_active job="'pmc_heavyfleet_attFCbea'" activate="false" />						
+					</do_if>
+					<!-- Operation command established in molten archon, INVADE -->
+					<do_if value="$P60 and $SV and $AE and $TS and $LF">						
+						<set_job_active job="'pmc_heavyfleet_attmolten'" activate="false" />						
+					</do_if>
+					<!-- Operation command established in glaring truth, INVADE -->
+					<do_if value="$P60 and $SV and $AE and $TS and $FC">						
+						<set_job_active job="'pmc_heavyfleet_attglaring'" activate="false" />						
+					</do_if>
+					<!-- you can also attached it to the factionstrength layer as in the examples below, note that it uses another syntax too, no chance on it -->
+					<!--<do_if value="$P80 and $VS">-->
+						<!--<set_job_active job="'pmc_fleet_devries4'" activate="false" comment="if PMC strength is major than 80 percent and pmc have Vapour Stream spawn this job "/>
+						<set_job_active job="'pmc_fleet_devries41'" activate="false"  comment="if PMC strength is major than 80 percent and pmc have Vapour Stream do not spawn this job "/>-->
+					<!--</do_if>	-->			
+			</do_if>
+			<do_if value="$ThisFaction == faction.sovereignsyndicate">
+					<!--<set_job_active job="'sos_destroyer_fleet'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'sos_attackfighter_albion'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'sos_bomber_patrol_sov'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					
+					<set_value name="$TBE" exact="0" comment="set variable to zero"/>
+					<set_value name="$TBE1" exact="100" comment="set variable to 100"/>					
+					<set_value name="$SV" exact="0" comment="set variable to zero"/>
+					<set_value name="$SV1" exact="100" comment="set variable to 100"/>
+					<set_value name="$EL" exact="0" comment="set variable to zero"/>
+					<set_value name="$EL1" exact="100" comment="set variable to 100"/>
+
+				<do_all exact="@$ThisFactionZones.count" counter="$j">
+					
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector04_zone27_macro">
+						<set_value name="$TBE" exact="100" />
+						<set_value name="$TBE1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector07_zone10_macro">
+						<set_value name="$EL" exact="100" />
+						<set_value name="$EL1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_b_sector05_zone19_macro">
+						<set_value name="$SV" exact="100" />
+						<set_value name="$SV1" exact="0" />							
+					</do_if>
+				</do_all>
+				
+				<set_job_active job="'sos_destroyer_fleet'" activate="false" chance="$EL" />
+				<set_job_active job="'sos_attackfighter_albion'" activate="false" chance="$EL" />
+				<set_job_active job="'sos_bomber_patrol_sov'" activate="false" chance="$EL" />
+				
+			</do_if>
+			<do_if value="$ThisFaction == faction.wholesomefoods">
+					<!-- Civilian Ships -->
+            		<set_job_active job="'wholesome_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wholesome_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wholesome_trader_food_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wholesome_trader_food_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wholesome_trader_water_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wholesome_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wsf_universe_food_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'wsf_universe_agricultural_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<!-- Paramilitary Ships -->
+					<set_job_active job="'wsf_squadron_even'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'wsf_squadron_exhaustless'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'wsf_squadron_gemstone'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+					<set_job_active job="'wsf_squadron_rising'" activate="false" chance="$ThisFactionStrength * 5 * $P20"/>
+			</do_if>
+			
+			<!-- Devries Factions -->
+   			<do_if value="$ThisFaction == faction.canteran">
+            		<!--<set_job_active job="'can_fighter_wing17'" activate="false" chance="$ThisFactionStrength * 5 * $P40" comment="this means that this job will not spawn for strength lesser or equal to 40 percent"/>
+					<set_job_active job="'can_fighter_wing18'" activate="false" chance="$ThisFactionStrength * 5"/>
+					<set_job_active job="'can_lightfleet_glaring'" activate="false" chance="$ThisFactionStrength * 5"/>-->					
+					<!-- Civilian Ships -->
+            		<set_job_active job="'roc_miner_ice_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_miner_ice_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_energy_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_energy_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_energy_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_water_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_water_medium2'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_water_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_agricultural_medium'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_agricultural_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_trader_food_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_hightech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_shiptech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_weapontech_large'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_guest_omicron_liquid'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_guest_omicron_energy'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_guest_albion_energy'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_universe_guest_albion_liquid'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<!-- Military Ships -->
+					<!--<set_job_active job="'roc_squadron_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_squadron_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_lightfleet_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_lightfleet_attack19'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_destroyerfleet_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>
+					<set_job_active job="'roc_destroyerfleet_defend18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!-- Molten Archon -->
+					<set_value name="$VS" exact="0" comment="set variable to zero"/>
+					<set_value name="$VS1" exact="100" comment="set variable to 100"/>
+					<!-- Bleak Pebble -->
+					<set_value name="$TS" exact="0" comment="set variable to zero"/>
+					<set_value name="$TS1" exact="100" comment="set variable to 100"/>					
+					<!-- Glaring Truth -->
+					<set_value name="$FC" exact="0" comment="set variable to zero"/>
+					<set_value name="$FC1" exact="100" comment="set variable to 100"/>
+					<set_value name="$DHA" exact="0" comment="set variable to zero"/>
+					<set_value name="$DHA1" exact="100" comment="set variable to 100"/>
+					<set_value name="$RB" exact="0" comment="set variable to zero"/>
+					<set_value name="$RB1" exact="100" comment="set variable to 100"/>
+					<set_value name="$FR" exact="0" comment="set variable to zero"/>
+					<set_value name="$FR1" exact="100" comment="set variable to 100"/>
+					<set_value name="$SCA" exact="0" comment="set variable to zero"/>
+					<set_value name="$SCA1" exact="100" comment="set variable to 100"/>
+					<set_value name="$GS" exact="0" comment="set variable to zero"/>
+					<set_value name="$GS1" exact="100" comment="set variable to 100"/>
+					<set_value name="$FT" exact="0" comment="set variable to zero"/>
+					<set_value name="$FT1" exact="100" comment="set variable to 100"/>
+					<set_value name="$MP" exact="0" comment="set variable to zero"/>
+					<set_value name="$MP1" exact="100" comment="set variable to 100"/>
+					<set_value name="$FUC" exact="0" comment="set variable to zero"/>
+					<set_value name="$FUC1" exact="100" comment="set variable to 100"/>
+					
+					<do_all exact="@$ThisFactionZones.count" counter="$j">
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone34_macro">
+						<set_value name="$TS" exact="100" />
+						<set_value name="$TS1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone54_macro">
+						<set_value name="$VS" exact="100" />
+						<set_value name="$VS1" exact="0" />
+					</do_if>
+					
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone45_macro">
+						<set_value name="$FC" exact="100" />
+						<set_value name="$FC1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone46_macro">
+						<set_value name="$GS" exact="100" />
+						<set_value name="$GS1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone47_macro">
+						<set_value name="$FUC" exact="100" />
+						<set_value name="$FUC1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone48_macro">
+						<set_value name="$FT" exact="100" />
+						<set_value name="$FT1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone49_macro">
+						<set_value name="$MP" exact="100" />
+						<set_value name="$MP1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone50_macro">
+						<set_value name="$DHA" exact="100" />
+						<set_value name="$DHA1" exact="0" />
+					</do_if>	
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone51_macro">
+						<set_value name="$RB" exact="100" />
+						<set_value name="$RB1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone52_macro">
+						<set_value name="$FR" exact="100" />
+						<set_value name="$FR1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone53_macro">
+						<set_value name="$SCA" exact="100" />
+						<set_value name="$SCA1" exact="0" />
+					</do_if>
+					</do_all>
+					
+					<!-- ZONE CONTROL RESPONSE FLEETS -->						
+					<set_job_active job="'roc_squadron_defend18'" activate="false" chance="$DHA" />
+					<set_job_active job="'roc_lightfleet_defend18'" activate="false" chance="$DHA" />
+					<set_job_active job="'roc_destroyerfleet_defend18'" activate="false" chance="$DHA" />
+					<set_job_active job="'roc_destroyerfleet_defFC'" activate="false" chance="$DHA" />					
+					
+					<do_if value="$DHA and $FC and $GS and $FUC and $FT and $MP and $RB and $FR and $SCA">
+						<set_job_active job="'roc_squadron_attack17'" activate="false" />				    
+					    <set_job_active job="'roc_lightfleet_attack19'" activate="false" />
+					    <set_job_active job="'roc_destroyerfleet_attack17'" activate="false"  />
+						<set_job_active job="'roc_squadron_attack19'" activate="false"  />
+						<set_job_active job="'roc_destroyerfleet_attaTS'" activate="true"  />						
+					</do_if>
+									
+					
+			</do_if>
+			<do_if value="$ThisFaction == faction.reivers">
+					<!--<set_job_active job="'rei_raiders_defend19'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'rei_raiders_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'rei_raiders_attack18'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'rei_builder'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>
+					<set_job_active job="'rei_baseship_attackdevries'" activate="false" chance="$ThisFactionStrength * 5 * $P10"/>-->
+					<!--<set_job_active job="'rei_frigate_attackdevries'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!--<set_job_active job="'rei_frigate_attack17'" activate="false" chance="$ThisFactionStrength * 5 * $P05"/>-->
+					<!-- All of BARREN HEART -->
+					<set_value name="$SA" exact="0" comment="set variable to zero"/>
+					<set_value name="$SA1" exact="100" comment="set variable to 100"/>			
+					<set_value name="$FA" exact="0" comment="set variable to zero"/>
+					<set_value name="$FA1" exact="100" comment="set variable to 100"/>
+					<set_value name="$TV" exact="0" comment="set variable to zero"/>
+					<set_value name="$TV1" exact="100" comment="set variable to 100"/>			
+					<set_value name="$HM" exact="0" comment="set variable to zero"/>
+					<set_value name="$HM1" exact="100" comment="set variable to 100"/>
+					<set_value name="$UM" exact="0" comment="set variable to zero"/>
+					<set_value name="$UM1" exact="100" comment="set variable to 100"/>					
+					<!-- Bleak Pebble -->
+					<set_value name="$PD" exact="0" comment="set variable to zero"/>
+					<set_value name="$PD1" exact="100" comment="set variable to 100"/>
+					<!-- Glaring Truth -->
+					<set_value name="$FC" exact="0" comment="set variable to zero"/>
+					<set_value name="$FC1" exact="100" comment="set variable to 100"/>
+					<!-- Molten Archon -->
+					<set_value name="$LF" exact="0" comment="set variable to zero"/>
+					<set_value name="$LF1" exact="100" comment="set variable to 100"/>
+					
+					
+					<do_all exact="@$ThisFactionZones.count" counter="$j">
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone42_macro">
+						<set_value name="$SA" exact="100" />
+						<set_value name="$SA1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone40_macro">
+						<set_value name="$FA" exact="100" />
+						<set_value name="$FA1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone43_macro">
+						<set_value name="$TV" exact="100" />
+						<set_value name="$TV1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone41_macro">
+						<set_value name="$HM" exact="100" />
+						<set_value name="$HM1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector19_zone44_macro">
+						<set_value name="$UM" exact="100" />
+						<set_value name="$UM1" exact="0" />
+					</do_if>	
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector17_zone37_macro">
+						<set_value name="$PD" exact="100" />
+						<set_value name="$PD1" exact="0" />
+					</do_if>
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector18_zone45_macro">
+						<set_value name="$FC" exact="100" />
+						<set_value name="$FC1" exact="0" />
+					</do_if>	
+					<do_if value="$ThisFactionZones.{$j}.macro == macro.tzonecluster_d_sector20_zone55_macro">
+						<set_value name="$LF" exact="100" />
+						<set_value name="$LF1" exact="0" />
+					</do_if>					
+					</do_all>
+					
+					<!--<do_if value="$P10 and $SA">-->
+					<do_if value="$SA">
+						<set_job_active job="'rei_raiders_defend19'" activate="false" />				    
+					    <set_job_active job="'rei_raiders_attack18'" activate="false" />
+					    <set_job_active job="'rei_raiders_attack20'" activate="false"  />
+						<set_job_active job="'rei_builder'" activate="false"  />	
+						<set_job_active job="'rei_baseship_defenseSA'" activate="false"  />
+						<set_job_active job="'rei_frigate_defend19'" activate="false"  />
+						
+					</do_if>
+					
+					<do_if value="$P10 and $SA1 and $FA">
+						<set_job_active job="'rei_raiders_defend219'" activate="false" />
+						<set_job_active job="'rei_raiders_attack218'" activate="false" />
+						<set_job_active job="'rei_raiders_attack220'" activate="false" />
+						<set_job_active job="'rei_baseship_defenseBH'" activate="false"  />
+						<set_job_active job="'rei_frigate_defend219'" activate="false"  />
+					</do_if>					
+					
+					<do_if value="$P10 and $PD">
+						<set_job_active job="'rei_raiders_attack17'" activate="false" />
+						<set_job_active job="'rei_frigate_attack17'" activate="false" />
+					</do_if>
+					
+					<do_if value="$P10 and $PD and $SA1 and $FA1">
+						<set_job_active job="'rei_baseship_attBH'" activate="false" />					    
+					</do_if>
+
+					<do_if value="$SA and $FA and $TV and $HM and $UM">
+						<set_job_active job="'rei_frigate_attack18'" activate="false" comment="If Reivers control all of Barren Heart RAID"/>
+						<set_job_active job="'rei_frigate_attack20'" activate="false" comment="If Reivers control all of Barren Heart RAID"/>
+						<set_job_active job="'rei_baseship_attackbleak'" activate="false" comment="If Reivers control all of Barren Heart INVADE"/>
+					</do_if>
+
+					<do_if value="$SA and $FA and $TV and $HM and $UM and $FC1 and $LF1">
+						<set_job_active job="'rei_baseship_attackallbea'" activate="false" comment="If Reivers control all of Barren Heart attack the beacons"/>						
+					</do_if>
+					
+					<do_if value="$SA and $FA and $TV and $HM and $UM and $FC and $LF1">
+						<set_job_active job="'rei_baseship_attackLFbea'" activate="false" comment="If Reivers control all of Barren Heart and Fervid Corona but not Lava Flow"/>						
+					</do_if>
+					
+					<do_if value="$SA and $FA and $TV and $HM and $UM and $FC1 and $LF">
+						<set_job_active job="'rei_baseship_attackFCbea'" activate="false" comment="If Reivers control all of Barren Heart and Lava Flow but not Fervid Corona"/>						
+					</do_if>
+					
+					<do_if value="$SA and $FA and $TV and $HM and $UM and $FC">
+						<set_job_active job="'rei_baseship_attackglaring'" activate="false" comment="If Reivers control Barren Heart and Fervid Corona INVADE"/>						
+					</do_if>
+					
+					<do_if value="$SA and $FA and $TV and $HM and $UM and $LF">
+						<set_job_active job="'rei_baseship_attackmolten'" activate="false" comment="If Reivers control Barren Heart and Lava Flow INVADE"/>						
+					</do_if>
+			</do_if>
+			
+			<do_if value="$ThisFaction == faction.argongovernment">
+			
+			</do_if>
+		</do_all>	
+
+		</actions>				
+	</cue>
+ </cues>
+
+</mdscript>						
+							
+  

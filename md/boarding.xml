@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diff>
+<!-- Conquer_mod v020 -->
+<!-- this file is now used only when Player start a solo ship boarding--> 	
+	<add sel="/mdscript/cues/cue/conditions/check_value[@value='typeof event.param3 == datatype.faction']" pos="after">
+		<check_value value="event.param3 == faction.player" />
+		<check_value value="event.param.ship == player.primaryship" />
+		<check_value value="not md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel? or not md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel" />
+	</add>
+	
+	<!-- debug only-->
+	<add sel="/mdscript/cues/cue[@name='Start']/actions" pos="prepend">
+	
+		<!--<show_notification caption="'=== Boarding PLAYER SOLO Param check ==='" details="'\n PFBLabel %1 \n EPname  %2 \n EPship %3 \n EPship name %4 \n EP2 %5 \n EP3 %6 \n EP owner %7 \n true %8\n true %9.'.[@md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel, event.param.name, event.param.ship, event.param.ship.name,  event.param2.name, event.param3, event.param.owner, event.param.ship == player.primaryship, event.param3 == faction.player]" timeout="12s" queued="true" priority="8" />
+								
+		<write_to_logbook category="general" text="'=== Boarding PLAYER SOLO Param check === \n PFBLabel %1 \n EPname  %2 \n EPship %3 \n EPship name %4 \n EP2 %5 \n EP3 %6 \n EP owner %7 \n true %8 \n true %9.'.[@md.MM_Specialboarding.MMBoarding_work.$PlayerFleetBoardLabel, event.param.name, event.param.ship, event.param.ship.name,  event.param2.name, event.param3, event.param.owner, event.param.ship == player.primaryship, event.param3 == faction.player]"/>
+			-->			
+	</add>
+
+	
+
+</diff>

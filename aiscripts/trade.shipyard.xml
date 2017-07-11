@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+	<replace sel="/aiscript[@name='trade.shipyard']/interrupts/handler/actions/do_all/do_if/do_if[@value='this.$BuildShips.indexof.{$ship}']">
+			<do_if value="this.$BuildShips.indexof.{$ship}">
+
+              <debug_text text="player.age + ' finished building %1(%2) at %3(%4) in %5(%6)'.[$ship.knownname, $ship, this.station.knownname, this.station, this.zone.knownname, this.zone]" chance="$debugchance" />
+
+              <!-- give the ship some fuel so it can jump -->
+              <add_cargo ware="ware.fuelcells" object="$ship" exact="500" result="$fuel" />
+              <do_if value="$fuel gt 0">
+                <remove_cargo ware="ware.fuelcells" object="this.station" exact="$fuel" />
+              </do_if>
+              <remove_value name="$fuel"/>
+
+              <!-- create pilot, assign to ship, set script to 'SOMETHING NOT MOVE.DIE' -->
+              <create_ai_unit object="$ship" />
+              <create_pilot name="$pilot" ship="$ship">
+                <select faction="$ship.owner" tags="tag.pilot"/>
+                <owner exact="$ship.owner"/>
+              </create_pilot>
+              <do_if value="$pilot.exists">
+					<do_if value="$ship.primarypurpose == objectpurpose.build">
+						<start_script object="$ship.pilot" name="'move.die'">
+							<param name="byjump" value="true" />
+						</start_script>
+					</do_if>                  
+						<do_elseif value="$ship.primarypurpose == objectpurpose.mine and $ship.availableunits.{unitcategory.orecollector}.count gt 0">
+							<start_script object="$ship.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.ice, ware.ore, ware.silicon, ware.nividium]"/> 
+							</start_script>
+						</do_elseif>						
+						<do_elseif value="$ship.primarypurpose == objectpurpose.mine and $ship.availableunits.{unitcategory.gascollector}.count gt 0">
+							<start_script object="$ship.pilot" name="'mining.ship.free'">
+								<param name="basketoverride" value="[ware.plasma, ware.ions, ware.hydrogen]"/> 
+							</start_script>					
+						</do_elseif>						
+						<do_elseif value="$ship.primarypurpose == objectpurpose.trade">
+							<start_script object="$ship.pilot" name="'trade.ship.ranged'">
+								<param name="minbuy" value="0"/>
+								<param name="maxbuy" value="20"/>
+								<param name="minsell" value="0"/>
+								<param name="maxsell" value="20"/>
+							</start_script>
+						</do_elseif>								
+						<do_elseif value="$ship.primarypurpose == objectpurpose.fight">
+							<find_ship name="$factionships" space="$ship.cluster" owner="$ship.owner" primarypurpose="$ship.primarypurpose" multiple="true">
+								<match_any> 
+									<match class="class.ship_xl"/>
+									<match class="class.ship_l"/>					
+								</match_any>
+							</find_ship>
+							<do_all exact="$factionships.count" counter="$i">
+								<do_if value="$factionships.{$i}.isoperational
+								and $ship != $factionships.{$i}
+								and $ship != $factionships.{$i}.commander
+								and $factionships.{$i}.subordinates.count lt 3
+								and (not $newcommander?
+									or ($ship.distanceto.{$factionships.{$i}} lt $ship.distanceto.{@$newcommander}))">
+									<do_if value="$ship != $factionships.{$i}
+									and $ship != $factionships.{$i}.commander
+									and (not $newcommander?
+										or ($ship.distanceto.{$factionships.{$i}} lt $ship.distanceto.{@$newcommander}))">
+									<set_value name="$newcommander" exact="$factionships.{$i}"/>
+									</do_if>
+								</do_if>
+							</do_all>
+							<remove_value name="$factionships"/>
+							<do_if value="@$newcommander">
+								<set_object_commander object="$ship" commander="$newcommander" />
+								<start_script object="$ship.pilot" name="'BR.move.escort'">
+									<param name="target" value="$newcommander"/>
+								</start_script>	
+								<remove_value name="$newcommander"/>
+							</do_if>
+							<do_else>
+								<start_script object="$ship.pilot" name="'BR.move.patrol'">
+									<param name="range" value="'cluster'"/>
+								</start_script>	
+							</do_else>
+					</do_elseif>
+					<do_else>
+						<start_script object="$ship.pilot" name="'move.die'">
+							<param name="byjump" value="true" />
+						</start_script>
+					</do_else>
+				</do_if>
+              <do_else>
+                <debug_text text="'creating pilot for newly built ship %1(%2) at %3(%4) failed!'.[$ship.macro.id, $ship, this.station.knownname, this.zone.knownname]" />
+              </do_else>
+              <do_if value="$ship.isclass.ship_l or $ship.isclass.ship_xl">
+                <create_engineer name="$engineer" ship="$ship">
+                  <select faction="$ship.owner" tags="tag.engineer"/>
+                  <owner exact="$ship.owner"/>
+                </create_engineer>
+                <do_if value="$engineer.exists">
+                  <start_script object="$engineer" name="'engineer.ai'"/>
+                </do_if>
+                <create_defence_officer name="$defencenpc" ship="$ship">
+                  <select faction="$ship.owner" tags="tag.defencecontrol"/>
+                  <owner exact="$ship.owner"/>
+                </create_defence_officer>
+                <do_if value="$defencenpc.exists">
+                  <start_script object="$defencenpc" name="'fight.defend.capital'"/>
+                </do_if>
+              </do_if>
+
+              <!-- drain some drone units from shipyard -->
+              <set_value name="$maxunits" exact="$ship.units.maxcount" />
+              <do_if value="$maxunits gt 0">
+                <set_value name="$stationcargo" exact="this.station.cargo.list" />
+                <create_list name="$dronewares" />
+                <do_all exact="$stationcargo.count" counter="$c">
+                  <set_value name="$ware" exact="$stationcargo.{$c}" />
+                  <set_value name="$waremacro" exact="$ware.objectmacro" />
+                  <do_if value="$waremacro">
+                    <do_if value="$waremacro.isclass.ship_xs">
+                      <do_if value="this.station.cargo.{$ware}.target gt 0">
+                        <do_if value="true" chance="(100 * this.station.cargo.{$ware}.count) / this.station.cargo.{$ware}.target">
+                          <append_to_list name="$dronewares" exact="$ware" />
+                        </do_if>
+                      </do_if>
+                    </do_if>
+                  </do_if>
+                </do_all>
+
+                <do_if value="$dronewares.count gt 0">
+                  <!-- we have decided which drone wares we want to drain, now go do it -->
+                  <set_value name="$limit" exact="(($dronewares.count)f / 2.0f + 0.5f)i" />
+                  <do_all exact="$limit">
+                    <set_value name="$amount_limit" exact="$maxunits / $limit" />
+                    <set_value name="$ware_index" min="1" max="$dronewares.count" />
+                    <do_if value="$ware_index gt 0">
+                      <set_value name="$ware" exact="$dronewares.{$ware_index}" />
+                      <remove_value name="$dronewares.{$ware_index}"/>
+                      <set_value name="$amount" min="this.station.cargo.{$ware}.count / 3"  max="this.station.cargo.{$ware}.count / 2" />
+                      <do_if value="$amount gt $amount_limit">
+                        <set_value name="$amount" exact="$amount_limit" />
+                      </do_if>
+                      <do_if value="$amount gt 0 and $ship.units.maxcount gt 40">
+                        <debug_text text="'drain %1 %2 from %3 [%4] in %5 [%6]'.[$amount, $ware, this.station.knownname, this.station, this.zone.knownname, this.zone]" chance="$debugchance" />
+                        <remove_cargo object="this.station" ware="$ware" exact="$amount" />
+						<set_value name="$Unitcapacity" exact="$ship.units.maxcount" />
+						<do_if value="$ship.cargo.{ware.ore}.max and $ship.primarypurpose == objectpurpose.mine">
+							<add_units object="$ship" macro="macro.units_size_drone_rubble_collector_mk2_macro" min="3" max="$Unitcapacity/3"/>
+							<add_units object="$ship" macro="macro.units_size_drone_rubble_collector_mk1_macro" min="3" max="$Unitcapacity/3"/>
+							<add_units object="$ship" macro="macro.units_size_xs_transp_empty_macro" min="1" max="$Unitcapacity/3/2"/>
+							<add_units object="$ship" macro="macro.units_size_xs_welder_drone_macro" min="1" max="$Unitcapacity/3/2"/>
+						</do_if>
+						<do_elseif value="$ship.cargo.{ware.plasma}.max and $ship.isclass.ship_l">
+							<add_units object="$ship" macro="macro.units_size_drone_liquid_collector_mk2_macro" min="3" max="$Unitcapacity/3"/>
+							<add_units object="$ship" macro="macro.units_size_drone_liquid_collector_mk1_macro" min="3" max="$Unitcapacity/3"/>
+							<add_units object="$ship" macro="macro.units_size_xs_transp_empty_macro" min="1" max="$Unitcapacity/3/2"/>
+							<add_units object="$ship" macro="macro.units_size_xs_welder_drone_macro" min="1" max="$Unitcapacity/3/2"/>
+						</do_elseif>
+						<do_elseif value="$ship.cargo.{ware.fusionreactor}.max or $ship.cargo.{ware.water}.max or $ship.cargo.{ware.energycells}.max or $ship.cargo.{ware.ore}.max">													
+							<add_units object="$ship" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="5" max="$Unitcapacity/2/3"/>
+							<add_units object="$ship" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="5" max="$Unitcapacity/2/3"/>
+							<add_units object="$ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="5" max="$Unitcapacity/2/3"/>
+							<add_units object="$ship" macro="macro.units_size_xs_welder_drone_macro" min="3" max="$Unitcapacity/2/2"/>
+							<add_units object="$ship" macro="macro.units_size_xs_transp_empty_macro" min="5" max="$Unitcapacity/2/2"/>
+						</do_elseif>
+						<do_elseif value="$ship.primarypurpose == objectpurpose.fight or (not $ship.cargo.{ware.water}.max and not $ship.cargo.{ware.energycells}.max and not $ship.cargo.{ware.fusionreactor}.max and not $ship.cargo.{ware.ore}.max)">
+							<!--add_units object="$ship" macro="macro.units_size_xs_wardrone_macro" min="5" max="10"/-->
+							<add_units object="$ship" macro="macro.units_size_drone_attackdrone_plasma_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+							<add_units object="$ship" macro="macro.units_size_drone_attackdrone_plasma_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+							<add_units object="$ship" macro="macro.units_size_drone_attackdrone_impulse_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+							<add_units object="$ship" macro="macro.units_size_drone_attackdrone_impulse_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+							<add_units object="$ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk2_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+							<add_units object="$ship" macro="macro.units_size_drone_missiledrone_dumbfire_mk1_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>							
+							<add_units object="$ship" macro="macro.units_size_xs_welder_drone_macro" min="$Unitcapacity/7/2" max="$Unitcapacity/7"/>
+							<add_units object="$ship" macro="macro.units_size_xs_wardrone_macro" exact="$Unitcapacity-$ship.units.count"/>
+						</do_elseif>
+                        <!--<add_units object="$ship" macro="$ware.objectmacro" exact="$amount" />-->
+						<remove_value name="$Unitcapacity" />
+						
+						
+                      </do_if>
+                    </do_if>
+                  </do_all>
+                </do_if>
+              </do_if>
+
+              <!-- drain some missiles from shipyard -->
+              <set_value name="$maxammo" exact="$ship.ammostorage.missile.capacity" />
+              <do_if value="$maxammo gt 0">
+                <set_value name="$stationcargo" exact="this.station.cargo.list" />
+                <create_list name="$missilewares" />
+                <do_all exact="$stationcargo.count" counter="$c">
+                  <set_value name="$ware" exact="$stationcargo.{$c}" />
+                  <set_value name="$waremacro" exact="$ware.objectmacro" />
+                  <do_if value="$waremacro">
+                    <do_if value="$waremacro.isclass.missile">
+                      <do_if value="this.station.cargo.{$ware}.target gt 0">
+                        <do_if value="true" chance="(100 * this.station.cargo.{$ware}.count) / this.station.cargo.{$ware}.target">
+                          <append_to_list name="$missilewares" exact="$ware" />
+                        </do_if>
+                      </do_if>
+                    </do_if>
+                  </do_if>
+                </do_all>
+
+                <do_if value="$missilewares.count gt 0">
+                  <!-- we have decided which missile wares we want to drain, now go do it -->
+                  <set_value name="$limit" exact="(($missilewares.count)f / 2.0f + 0.5f)i" />
+                  <do_all exact="$limit">
+                    <set_value name="$amount_limit" exact="$maxammo / $limit" />
+                    <set_value name="$ware_index" min="1" max="$missilewares.count" />
+                    <do_if value="$ware_index gt 0">
+                      <set_value name="$ware" exact="$missilewares.{$ware_index}" />
+                      <remove_value name="$missilewares.{$ware_index}"/>
+                      <set_value name="$amount" min="this.station.cargo.{$ware}.count / 3"  max="this.station.cargo.{$ware}.count / 2" />
+                      <do_if value="$amount gt $amount_limit">
+                        <set_value name="$amount" exact="$amount_limit" />
+                      </do_if>
+                      <do_if value="$amount gt 0">
+                        <debug_text text="'drain %1 %2 from %3 [%4] in %5 [%6]'.[$amount, $ware, this.station.knownname, this.station, this.zone.knownname, this.zone]" chance="$debugchance" />
+                        <remove_cargo object="this.station" ware="$ware" exact="$amount" />
+                        <add_ammo object="$ship" macro="$ware.objectmacro" amount="$amount" />
+                      </do_if>
+                    </do_if>
+                  </do_all>
+                </do_if>
+              </do_if>
+
+              <!-- Block all dockslots to prevent the player from docking at this ship -->
+              <find_dock_location name="$ship_docks" container="$ship" size="tag.dock_p" multiple="true"/>
+              <do_all exact="$ship_docks.count" counter="$Count">
+                <set_room_locked room="$ship_docks.{$Count}.component" locked="true"/>
+              </do_all>
+              <remove_value name="$ship_docks" />
+
+              <!-- And free the buildmodule for the next thing to be built-->
+              <clear_buildmodule buildmodule="$current_buildmodule"/>
+              <remove_from_group group="this.$BuildShips" object="$ship" />
+
+              <!-- let trade.station know we may want to build another ship -->
+              <set_value name="this.$stop_trading" exact="player.age" />
+              <!-- ship building delay is cluster dependent for now -->
+              <do_if value="this.station.cluster.macro.ismacro.cluster_b_macro">
+                <set_value name="this.$stop_trading" min="25min" max="35min" operation="add" />
+              </do_if>
+              <do_elseif value="this.station.cluster.macro.ismacro.cluster_d_macro">
+                <set_value name="this.$stop_trading" min="170min" max="190min" operation="add" />
+              </do_elseif>
+              <do_else>
+                <set_value name="this.$stop_trading" min="10min" max="20min" operation="add" />
+              </do_else>
+              <debug_text text="player.age + ' request stop trading at ' + this.$stop_trading" chance="$debugchance" />
+
+            </do_if>
+	</replace>
+	
+	<add sel="/aiscript[@name='trade.shipyard']/interrupts/handler/actions/do_all/do_if/do_if[@value='this.$BuildShips.indexof.{$ship}']" pos="before"> 
+	    <do_if value="not $ship.isplayerowned and not this.$BuildShips.indexof.{$ship}"> 
+	       <add_to_group groupname="this.$BuildShips" object="$ship" /> 
+	    </do_if> 
+	    <do_if value="this.station.owner.hasrelation.enemy.{$ship} and this.$BuildShips.indexof.{$ship}"> 
+	       <set_owner object="$ship" faction="this.station.owner" /> 
+	    </do_if> 
+	</add> 
+	<add sel="//create_group" pos="after" >
+		<do_if value="this.$tmp_BuildShips? and this.$tmp_BuildShips.count">
+			<add_to_group groupname="this.$BuildShips" list="this.$tmp_BuildShips" />
+		</do_if>
+		<remove_value name="this.$tmp_BuildShips"/>
+	</add>
+</diff>

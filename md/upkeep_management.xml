@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff>
+
+<replace sel="/mdscript/cues/library/actions/do_if/do_if/do_if/do_all/do_elseif[@value='$Object.isclass.station']/@value">$Object.isclass.station and not $Object.macro.ismacro.{macro.struct_bt_alb_outpost_macro} and not $Object.macro.ismacro.{macro.struct_at_xen_xenon_outpost_macro}</replace>
+	
+</diff>

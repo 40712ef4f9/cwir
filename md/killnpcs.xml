@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="killnpcs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+    <cue name="BR_killNPCs">
+      <conditions>
+        <check_any>
+          <event_game_loaded />
+          <event_cue_signalled cue="md.Setup.GameStart"/>
+        </check_any>
+      </conditions>
+      <actions>        
+               
+        <find_station name="$PlayerStations" owner="faction.player" space="player.galaxy" freemissionactorslot="true" multiple="true"/>
+        <do_all exact="$PlayerStations.count" counter="$i">
+          <find_object_component name="$npcs" object="$PlayerStations.{$i}" class="class.npc" owner="faction.enemy" multiple="true"/>
+		  <set_value name="$count" exact="0" /> 
+		  <do_all exact="$npcs.count" counter="$Counter">             
+              <destroy_object object="$npcs.{$Counter}"/>
+			  <set_value name="$count" operation="add" /> 
+           </do_all>
+          <remove_value name="$npcs"/>    
+		  <write_to_logbook category="general" text="'Destroyed NPCs: ' + $count" chance="if $count then 100 else 0" />
+		  <remove_value name="$count"/>
+         </do_all>       
+      </actions>
+    </cue>
+  </cues>
+</mdscript>

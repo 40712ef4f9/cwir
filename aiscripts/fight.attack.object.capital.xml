@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+	<add sel="/aiscript/attention/actions/do_if/do_all/do_if/do_if[@value='$enemies.{$i}.isclass.station']" pos="after">
+            <do_elseif value="$enemies.{$i}.isclass.[class.ship_l, class.ship_xl]" chance="if this.ship.hullpercentage lt 50 then (100-(this.ship.shieldpercentage/10)i*10) else 0">
+                <add_to_group groupname="$dronetargets" object="$enemies.{$i}" />
+            </do_elseif>
+	</add>
+
+	<add sel="//shoot_at[@slot='tag.primary_slot']" type="@largetarget" >$target.isclass.[class.station, class.ship_xl]</add>
+	<add sel="//shoot_at[@slot='tag.secondary_slot']" type="@largetarget" >$target.isclass.[class.station, class.ship_xl]</add>
+	<add sel="//shoot_at[@slot='tag.secondary_slot']" type="@chance" >if $LoSresult? then $LoSresult*100 else 100</add>
+
+	<add sel="//shoot_at[@slot='tag.primary_slot']" pos="after">
+			<do_if value="global.$MICT_LR_Ships? and this.ship.macro.ismacro.{global.$MICT_LR_Ships}">
+				<set_value name="this.ship.pilot.$priotarget" exact="$target"/>
+				<check_line_of_sight name="$LoSresult" object="this.ship" target="$target" />
+			</do_if>
+	</add>
+	<add sel="//shoot_at[@slot='tag.secondary_slot']" pos="after">
+			<do_if value="$LoSresult? and not $LoSresult">
+				<stop_shooting object="this.ship" slot="tag.secondary_slot" />
+			</do_if>
+	</add>
+	<add sel="//do_else/set_turret_targets" pos="after">
+			<do_if value="this.ship.pilot.$priotarget?">
+				<remove_value name="this.ship.pilot.$priotarget" />
+			</do_if>
+	</add>
+	<replace sel="/aiscript/attention/actions/do_if/do_if[@value='$dronetargets.count']"><do_if value="$dronetargets.count">
+			<do_if value="player.age" min="$lastdronelaunch + 90s" chance="if this.ship.isboostactive then 0 else 100">
+				<set_value name="$lastdronelaunch" exact="player.age"/>
+				<find_object_component groupname="$dronepads" object="this.ship" class="class.dronelaunchpad" multiple="true" checkoperational="true" />
+				<do_all exact="[(this.combinedskill/10)i,$dronepads.count].min" counter="$i">
+					<launch_drone name="$drone" object="$dronepads.{$i}" exact="5" group="unitcategory.defence"/>
+					<do_if value="$drone">
+					  <start_script object="$drone.pilot" name="'fight.attack.object.drone.leader'">
+						<param name="target" value="$dronetargets.random" />
+						<param name="additionaltargets" value="$dronetargets" />
+						<param name="checkrelation" value="$checkrelation" />
+					  </start_script>
+					</do_if>
+					<remove_value name="$drone"/>
+				</do_all>
+				<remove_value name="$dronepads"/>
+			</do_if>
+        </do_if>
+	</replace>
+	<replace sel="//get_attackstrength/@usedrones">if (this.combinedskill ge 80 and this.ship.pilot.combinedskill ge 80 and this.ship.engineer.combinedskill ge 80) then true else $target.isclass.[class.ship_xs, class.ship_s, class.ship_m]</replace>
+
+	<add sel="/aiscript/interrupts">
+		<handler>
+			<conditions>
+				<event_object_jump_completed  object="this.ship" />
+				<check_value value="this.attention ge attention.visible" />
+				<check_value value="this.combinedskill ge 70" />
+			</conditions>
+			<actions>
+				<abort_called_scripts resume="FindEnemies" />
+			</actions>
+		</handler>
+		<handler>
+		  <conditions>
+			<event_object_changed_owner object="$target" check="false" />
+			<check_value value="event.param.hasrelation.enemy.{this.ship.trueowner}" negate="true"/>
+		  </conditions>
+		  <actions>
+			<!-- Remove the target to stop shooting at it, when owner changes -->
+			<set_value name="$target" exact="null" />
+			<abort_called_scripts resume="FindEnemies"/>
+		  </actions>
+		</handler>
+	</add>
+</diff>

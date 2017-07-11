@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<aiscript name="boarding.npc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\MODS_JSGME\libraries\aiscripts.xsd">
+<!-- Conquer_mod v020 -->
+<!-- original code from Marvin Martian, modified and adapted for Conquer_Mod by Rubini -->
+<!-- this file is used only for NPC TroopShips--> 
+  <params>
+    <param name="target" default="null" />
+    <param name="targetpos" default="null" />
+    <param name="targetzone" default="null" />
+    <param name="faction" default="this.ship.owner" />
+    <param name="initialwaittime" default="1s" />
+    <param name="returntocommander" default="false" />
+    <param name="canhacktarget" default="false" />
+    <param name="debugoutputchance" default="0"/>
+  </params>
+  
+   <interrupts>
+    <handler>
+      <conditions>
+		<check_any>
+			<event_object_destroyed object="$target" />  
+			<check_all>
+				<event_object_changed_owner object="$target" />
+				<!--<check_value value="not $target.mayattack.{this.ship}" />-->
+				<check_value value="not this.ship.owner.hasrelation.enemy.{$target.owner}" />
+				<check_value value="this.ship.owner != $target.owner" />
+			</check_all>
+			<check_all>
+				<event_object_changed_owner object="$target" />
+				<check_value value="this.ship.pilot.command.value == command.dockat" />
+				<!--<check_value value="this.ship.owner != $target.owner" />-->
+			</check_all>
+		</check_any>			
+      </conditions>
+      <actions>
+		<stop_moving object="this.ship" />
+		<debug_text text="'go home by handler true: %1'.[this.ship.name]"/>
+        <set_value name="$returntocommander" exact="true"/>
+		<!--<resume label="gohome"/>
+		<abort_called_scripts />-->
+		<abort_called_scripts resume="gohome" />
+      </actions>
+    </handler>
+   </interrupts>
+  
+  <attention min="unknown">
+    <actions>
+	
+		<stop_moving object="this.ship" immediate="true" />
+		<stop_boost object="this.ship"/>
+		
+		 <!-- start, if docked then lets undock, and give a generic scan comand -->
+		  <!--<wait exact="$initialwaittime" />-->
+		  <run_script name="'move.undock'" />
+
+		  <label name="start" />
+		  <set_command command="command.scan" />
+
+		<!-- if not a target yet, then handle the situation-->
+		  <do_if value="not $target.exists">
+			<resume label="gohome"/>
+		  </do_if>
+
+		  <!-- if a target, then lets go to it -->
+		  <set_command command="command.attackobject" param="$target" />
+		  <set_command_action commandaction="commandaction.flyingto" param="$target" />
+		  
+		  <wait exact="$initialwaittime" />
+		  
+		  <do_if value="not $targetzone.exists">
+			<set_value name="$targetzone" exact="$target.zone" />
+		  </do_if>
+
+		  <do_if value="this.zone != $targetzone">
+<!--<write_to_logbook category="general" text="'1 Move by move.generic  %1 \n distance to target %2'.[$target.name, this.ship.distanceto.{$target}]"  />-->			  
+			<run_script name="if @global.$mmboarding_mmcarrier_is_active then 'move.generic.carrier' else 'move.generic'" >
+			  <param name="destination" value="$targetzone" />
+			  <param name="endintargetzone" value="true" />
+			</run_script>
+		  </do_if>
+
+		  
+		 
+		<do_if value="$targetpos == null and $target.isclass.ship">
+			<get_safe_pos zone="$targetzone" radius="this.ship.size/2.0" result="$targetpos" ignored="this.ship" object="$target" min="1500m" max="3000m" />
+			<set_value name="$targetpos1" exact="$targetpos" />
+		</do_if>
+		
+		<!--<do_elseif value="$targetpos == null and $target.isclass.station">		 
+			<find_closest_station_part refobject="this.ship" station="$target" name="$stationpart" />
+			<create_position_outside_boundingbox name="$pos" component="$stationpart" distance="1m">
+				<position object="this.ship"/>		  
+			</create_position_outside_boundingbox>
+			<create_position name="$pos1" object="$stationpart" space="$targetzone" value="$pos" comment="transform to zone coordinates" />
+			<get_safe_pos result="$targetpos" zone="$targetzone" radius="this.ship.size/2.0" ignored="this.ship" value="$pos1" />
+			
+			<create_position_outside_boundingbox name="$pos" component="$stationpart" distance="5000m">
+				<position object="this.ship"/>		  
+			</create_position_outside_boundingbox>
+			<create_position name="$pos1" object="$stationpart" space="$targetzone" value="$pos" comment="transform to zone coordinates" />
+			<get_safe_pos result="$targetpos1" zone="$targetzone" radius="this.ship.size/2.0" ignored="this.ship" value="$pos1" />
+		</do_elseif>-->
+		
+		<do_elseif value="$targetpos == null and $target.isclass.station">
+		
+			<create_position_outside_boundingbox name="$pos" component="$target" distance="1m">
+				<position object="this.ship"/>		  
+			</create_position_outside_boundingbox>
+			<create_position name="$pos1" object="$target" space="$targetzone" value="$pos" comment="transform to zone coordinates" />
+			<get_safe_pos result="$targetpos" zone="$targetzone" radius="this.ship.size/2.0" ignored="this.ship" value="$pos1"/>
+
+
+			<create_position_outside_boundingbox name="$pos" component="$target" distance="5000m">
+				<position object="this.ship"/>		  
+			</create_position_outside_boundingbox>
+			<create_position name="$pos1" object="$target" space="$targetzone" value="$pos" comment="transform to zone coordinates" />
+			<get_safe_pos result="$targetpos1" zone="$targetzone" radius="this.ship.size/2.0" ignored="this.ship" value="$pos1"/>
+		
+		</do_elseif>
+	 
+	 
+		<wait exact="5s" />			
+		<!--<create_orientation name="$targetvector" refposition="$targetpos1" orientation="look_at">-->
+		<create_orientation name="$targetvector" refobject="$target" orientation="look_at">
+			<position object="this.ship" space="this.ship.zone" />
+		</create_orientation>
+		<move_to destination="this.zone" object="this.ship" forcerotation="true" forceposition="false" >
+			<position object="this.ship" z="5m" />
+			<rotation value="$targetvector" />
+			<interrupt_after_time time="75s" />
+		</move_to>
+	
+<!--<write_to_logbook category="general" text="'1 Move by boundingbox at %1 \n distance to target %2'.[$target.name, this.ship.distanceto.{$target}]"  />-->
+	<do_if value="this.ship.distanceto.{$targetpos1} ge 2km">
+		<move_to object="this.ship" destination="$targetzone" boost="true" forceposition="false" finishonapproach="true">
+			<!--<position object="$target" value="$pos" />-->
+			<!--<position value="$targetpos" />-->
+			<position value="$targetpos1" />
+		</move_to>								
+		<!--<stop_moving object="this.ship" />-->
+		<wait exact="500ms" />
+		
+		<!--repeat boost move order if yet far from desired position-->
+		<do_if value="this.ship.distanceto.{$targetpos1} ge 4km">
+			<move_to object="this.ship" destination="$targetzone" boost="true" forceposition="false" finishonapproach="true">
+				<!--<position object="$target" value="$pos" />-->
+				<!--<position value="$targetpos" />-->
+				<position value="$targetpos1" />
+			</move_to>
+		<!--	<stop_moving object="this.ship" />-->
+			<wait exact="500ms" />
+		</do_if>	
+	</do_if> 
+		
+		<!-- try hack station if more or less 10km away -->
+		<do_if value="$target.exists and this.ship.boardingnpc.exists and $canhacktarget">
+			<!--<wait exact="10s" />-->
+		  <find_object_component object="$target" multiple="true" functional="true" groupname="$hackingtargets" integrated="false">
+			<match class="[class.radar, class.dronelaunchpad, class.turret, class.launcher, class.shieldgenerator]"/>
+		  </find_object_component>
+		 
+		  <set_value name="$chance" exact="if this.ship.distanceto.{$targetpos} gt 12km then 0 else (if this.ship.distanceto.{$targetpos} gt 10km then 10 else [35, (this.ship.boardingnpc.combinedskill/1.25f)i].max)" />
+		  <!--<set_value name="$chance" exact="100" comment="just for test puposes"/>-->
+		  
+		  
+		  <do_all exact="$hackingtargets.count" counter="$j">
+			<set_object_hacked result="$hacked" object="$hackingtargets.{$j}" duration="300s" hacker="this.ship" chance="$chance" />
+		  </do_all>
+		  
+<!--<show_help position="12" log="false" force="true" duration="10s" custom="'NPC_Hacked %1 objects. \n Chance: %2 \n Station: %3 \n Distance: %4'.[$hackingtargets.count, $chance, $target.name, this.ship.distanceto.{$target}]"  />
+<write_to_logbook category="general" text="'NPC_Hacked %1 objects. \n Chance: %2 \n Station: %3 \n Distance: %4'.[$hackingtargets.count, $chance, $target.name, this.ship.distanceto.{$target}]"/>-->
+		  
+		  <remove_value name="$hackingtargets"/>
+		  <remove_value name="$chance"/>
+		</do_if>
+		
+		
+		<!--<wait exact="5s" />-->
+		
+		
+		<do_if value="this.ship.position != $targetpos">
+			<move_to object="this.ship" destination="$targetzone" finishonapproach="false" forceposition="true">
+				<position value="$targetpos" />
+				<!-- <position object="$target" value="$pos" />-->
+				<!--<position object="$target" />-->
+			</move_to>
+		</do_if>  
+
+
+	  <do_if value="$target.exists and this.ship.boardingnpc.exists">		
+		<!-- get the party started -->
+		<trigger_boarding boarder="this.ship.boardingnpc" target="$target" faction="$faction"/>
+	  </do_if>
+
+	  <!--<wait min="[10s, (50 * this.ship.units.{unitcategory.marine}.count)ms ].max" />-->
+	  <wait min="10s + 25ms * this.ship.units.{unitcategory.marine}.count" />
+	  <!--<wait min="[15s, (220 * this.ship.units.{unitcategory.marine}.count)ms ].max" />-->
+		
+      <label name="withdraw" />
+	  <!-- Command -->
+	  <set_command command="command.withdrawbattle" />
+	  <!-- Find enemies -->
+	  <find_gravidar_contact object="this.ship" mayattack="this.ship" groupname="$enemies" multiple="true" functional="true"  >
+		<!--<match_distance object="this.ship" max="this.ship.maxradarrange" />-->
+		<match_distance object="this.ship" max="20km" />
+	  </find_gravidar_contact>
+
+      <do_if value="$target.exists and not $enemies.indexof.{$target}">
+		<add_to_group groupname="$enemies" object="$target"/>
+      </do_if>
+
+	  <!--  Try to fly in the oposite direction of the average positions of the enemies -->
+	  <do_if value="$enemies.count">
+		<set_value name="$x" exact="0"  />
+		<set_value name="$y" exact="0"/>
+		<set_value name="$z" exact="0" />
+		<!-- Add all positions -->
+		<do_all exact="$enemies.count" counter="$i">
+		  <create_position name="$enemypos" space="this.ship" object="$enemies.{$i}" />
+		  <set_value name="$x" exact="$enemypos.x" operation="add" />
+		  <set_value name="$y" exact="$enemypos.y" operation="add" />
+		  <set_value name="$z" exact="$enemypos.z" operation="add" />
+		</do_all>
+		<!-- resultpos is the average position of all enemies -->
+		<debug_text text="'x:%1, y:%2, z:%3'.[$x, $y, $z]" chance="$debugoutputchance" />
+		<create_position name="$resultpos" x="$x / ($enemies.count * 1)" y="$y / ($enemies.count * 1)" z="$z / ($enemies.count * 1)" />
+		<debug_text text="'resultpos %1'.[$resultpos]" chance="$debugoutputchance" />
+
+		<!-- Go in oposite direction of resultpos [x,y,z] -->
+		<!--<set_value name="$maxdistance" exact="35km" />-->		
+		<set_value name="$maxdistance" exact="35km" />
+		
+		<set_value name="$distfactor" exact="[$maxdistance / this.ship.distanceto.{$resultpos}, 0.1].max" />
+		<debug_text text="'dist factor %1, dist %2'.[$distfactor, this.ship.distanceto.{$resultpos}]" chance="$debugoutputchance" />
+		<!-- Final position in the oposite direction -->
+		<create_position name="$finalpos" x="$resultpos.x * -$distfactor"
+										  y="$resultpos.y * -$distfactor"
+										  z="$resultpos.z * -$distfactor" />
+
+		<debug_text text="'finalpos %1, distfactor %2, dist %3'.[$finalpos, $distfactor, this.ship.distanceto.{$resultpos}]" chance="$debugoutputchance" />
+
+		<!-- Stop fire -->
+		<cease_fire object="this.ship" weapontype="all" />
+
+		<debug_text text="'start move. this pos %1, final pos %2'.[this.ship.position, $finalpos]" chance="$debugoutputchance" />
+
+		<move_to object="this.ship" destination="this.zone" boost="true" forceposition="false" finishonapproach="true">
+		  <position object="this.ship" value="$finalpos" />
+		</move_to>
+		<wait exact="5s" />
+			
+		<remove_value name="$enemies" />
+		<remove_value name="$enemypos" />
+		<remove_value name="$x" />
+		<remove_value name="$y" />
+		<remove_value name="$z" />
+		<remove_value name="$finalpos" />
+		<remove_value name="$maxdistance" />
+		<remove_value name="$distfactor" />
+
+	  </do_if>
+	  <do_else>
+		<debug_text text="'no enemies'" chance="$debugoutputchance" />
+	  </do_else>
+	  
+	  <label name="wait" />
+	  <set_command command="command.wait" />
+	  <do_if value="$target.exists">
+		<set_command_action commandaction="commandaction.scanningto" param="$target" />
+	  </do_if>
+	  <do_else>
+		<set_command_action commandaction="commandaction.calculating" />
+	  </do_else>
+
+      <!-- wait for success and survive -->
+	  <wait min="45s" max="90s">
+		<interrupt>
+		  <conditions>
+		  <check_any>
+			<!--<event_object_signalled object="$target" param="'boarded'" />-->
+			<event_object_signalled object="player.galaxy" param="'init station'" param2="$target" />			
+			<check_all>		  
+				<event_object_attacked object="this.ship" />
+				<check_value value="this.ship.mayattack.{event.param}" />
+				<check_any>
+					<check_value value="this.ship.shieldpercentage lt 35" />	
+					<check_all>
+						<check_value value="event.param.class == class.ship_l or event.param.class == class.ship_xl" />
+						<check_value value="this.ship.shieldpercentage lt 75" />
+					</check_all>
+				</check_any>
+			</check_all>
+			<check_all>	
+				<event_gravidar_has_scanned object="this.ship" />
+				<count_gravidar_contacts result="$targets" object="this.ship" class="[class.ship_l, class.ship_xl, class.ship_s, class.ship_m]" mayattack="this.ship" min="1">
+					<match_distance object="this.ship" max="this.ship.maxradarrange*0.3f"/>
+				</count_gravidar_contacts>
+			</check_all>
+		  </check_any>	
+		  </conditions>
+		  <actions>
+			<do_if value="event.name == 'event_object_signalled'">
+				<resume label="done"/>
+			</do_if>		
+			<do_elseif value="$target.exists and this.ship.units.{unitcategory.marine}.count and this.ship.units.{unitcategory.marine}.count != this.ship.availableunits.{unitcategory.marine}.count">
+				<resume label="withdraw"/>
+			</do_elseif>
+			<do_else>
+				<resume label="done"/>
+			</do_else>
+		  </actions>
+		</interrupt>
+	  </wait>
+
+<!--<show_help position="12" log="false" force="true" duration="10s" custom="'M_Units_count %1 \n M_avail_count: %2 \n ship.name: %3 \n target name %4'.[this.ship.units.{unitcategory.marine}.count, this.ship.availableunits.{unitcategory.marine}.count, this.ship.name,  $target.name]"  />
+<write_to_logbook category="general" text="'M_Units_count %1 \n M_avail_count: %2 \n ship.name: %3 \n target name %4'.[this.ship.units.{unitcategory.marine}.count, this.ship.availableunits.{unitcategory.marine}.count, this.ship.name,  $target.name]"  />-->
+
+      <!-- boarding still in progress -->
+	  <do_if value="$target.exists and this.ship.units.{unitcategory.marine}.count != this.ship.availableunits.{unitcategory.marine}.count and this.ship.units.{unitcategory.marine}.count">
+		<resume label="wait"/>
+      </do_if>
+
+	  
+      <label name="done" />
+		<do_if value="this.ship.units.{unitcategory.marine}.count and $target.exists and $target.isclass.station and $target.owner.relationto.{this.ship.owner} ge 0">
+        <!-- done! pick up troops -->
+			<do_if value="this.ship.isclass.[class.ship_l, class.ship_xl]">
+				<find_tradeoffer_parking_slot name="$dockingslot" object="$target" />
+				<do_if value="$dockingslot">
+				
+					<do_if value="this.ship.zone != $targetzone">
+<!--<write_to_logbook category="general" text="'Move by move.generic %1 \n distance to target %2'.[$target.name, this.ship.distanceto.{$target}]"  />	-->				
+					  <run_script name="if @global.$mmboarding_mmcarrier_is_active then 'move.generic.carrier' else 'move.generic'" >
+						<param name="destination" value="$targetzone" />
+						<param name="endintargetzone" value="true" />
+					  </run_script>
+					</do_if>
+
+					<do_if value="this.ship.distanceto.{$target} ge 8km">
+					
+						<create_position_outside_boundingbox name="$pos" component="$target" distance="6km">
+							<position object="this.ship"/>		  
+						</create_position_outside_boundingbox>
+						<create_position name="$pos1" object="$target" space="$targetzone" value="$pos" comment="transform to zone coordinates" />
+						<get_safe_pos result="$targetpos" zone="$targetzone" radius="this.ship.size/2.0" ignored="this.ship" value="$pos1" />
+
+						<stop_moving object="this.ship" immediate="true" />
+						<stop_boost object="this.ship"/>
+						<wait exact="5s" />
+						
+						<create_orientation name="$targetvector" refposition="$targetpos" orientation="look_at">
+						<!--<create_orientation name="$targetvector" refobject="$target" orientation="look_at">-->
+							<position object="this.ship" space="this.ship.zone" />
+						</create_orientation>
+						<move_to destination="this.zone" object="this.ship" forcerotation="true" forceposition="false" >
+							<position object="this.ship" z="5m" />
+							<rotation value="$targetvector" />
+							<interrupt_after_time time="75s" />
+						</move_to>
+						
+						<wait exact="5s" />
+<!--<write_to_logbook category="general" text="'Move by boundingbox at %1 \n distance to target %2'.[$target.name, this.ship.distanceto.{$target}]"  />	-->									
+						<move_to object="this.ship" destination="$targetzone" boost="true" forceposition="false" finishonapproach="true">
+							<position value="$targetpos" />
+							<!--<position object="$target" value="$pos" />-->
+						</move_to>			
+									
+						<stop_moving object="this.ship" />
+						<wait exact="5s" />
+						
+						<!--repeat boost move order if yet far from desired position-->
+						<do_if value="this.ship.distanceto.{$targetpos} ge 4km">
+<!--<write_to_logbook category="general" text="'Move by boundingbox 2 at %1 \n distance to target %2'.[$target.name, this.ship.distanceto.{$target}]"  />-->
+							<move_to object="this.ship" destination="$targetzone" boost="true" forceposition="false" finishonapproach="true">
+								<position value="$targetpos" />
+								<!--<position object="$target" value="$pos" />-->
+							</move_to>	
+							<!--<move_to object="this.ship" destination="$target" boost="true" forceposition="false" finishonapproach="true">
+								<!{1}** <position value="$targetpos" />**{1}>
+								<position object="$target" value="$pos" />
+							</move_to>-->
+						</do_if>	
+						
+					</do_if>
+					
+					<do_if value="$target.exists and @$target.owner.relationto.{this.ship.owner} ge 0">
+
+<!--<write_to_logbook category="general" text="'Going to park at %1 \n distance to target %2'.[$target.name, this.ship.distanceto.{$target}]"  />	-->
+				
+						<run_script name="'move.park'">
+						  <param name="destination" value="$target" />
+						</run_script>
+						<wait min="20s" max="1min" />
+					</do_if>
+					<do_else>
+						<set_value name="$returntocommander" exact="true"/>
+						<resume label="gohome"/>
+					</do_else>
+					<!-- replace lost marines with recruits and the ship is ready for new boards  -->			
+					<do_if value="$target.exists and @$target.owner.relationto.{this.ship.owner} ge 0">				
+						<find_dock_location name="$DockingBay" container="$target" multiple="true" />			
+						<add_units object="this.ship" category="unitcategory.marine" exact="(60*(($DockingBay.count / 3)i + 1) - this.ship.units.{unitcategory.marine}.count)" mk="1" comment="refill marines, the excess will be ignored"/>
+						<run_script name="'move.undock'" />
+						
+					</do_if>
+					<do_else>
+						<set_value name="$returntocommander" exact="true"/>
+						<resume label="gohome"/>
+					</do_else>
+				
+				</do_if>
+			</do_if>
+			<do_else>
+			  <find_dock_location container="$target" name="$dockingslot" size="this.ship.docksize"/>
+			  <do_if value="$dockingslot.isoperational">
+				<do_if value="this.zone != $targetzone">
+				  <run_script name="if @global.$mmboarding_mmcarrier_is_active then 'move.generic.carrier' else 'move.generic'" >
+					<param name="destination" value="$target" />
+					<param name="endintargetzone" value="true" />
+				  </run_script>
+				</do_if>
+				<run_script name="'move.dockat'">
+				  <param name="dockingslot" value="$dockingslot" />
+				</run_script>
+				<wait min="20s" max="1min" />
+				<run_script name="'move.undock'" />
+			  </do_if>
+			</do_else>
+			<remove_value name="$dockingslot" />
+	  </do_if>
+
+	    
+      <label name="gohome" />
+      <!-- done -->
+	  <set_value name="$gotodie" exact="false" />
+      <do_if value="$returntocommander">
+		<do_if value="this.ship.commander.isoperational and this.ship.commander.isclass.station">
+		  <do_if value="this.zone != this.ship.commander.zone">
+			<run_script name="if @global.$mmboarding_mmcarrier_is_active then 'move.generic.carrier' else 'move.generic'" >
+			  <param name="destination" value="this.ship.commander.zone" />
+			  <param name="endintargetzone" value="true" />
+			</run_script>
+		  </do_if>
+		  <run_script name="'move.patrol'">
+			<param name="patrolobject" value="this.ship.commander" />
+		  </run_script>
+		</do_if>
+		<do_elseif value="this.ship.commander.isoperational and this.ship.commander.isclass.ship">
+		  <run_script name="'move.escort'">
+			<param name="target" value="this.ship.commander" />
+		  </run_script>
+		</do_elseif>
+		<do_elseif value="@this.ship.jobmainzone">
+		  <!-- JobShip but nothing to do :( -->
+		  <run_script name="'move.patrol'">
+			<param name="patrolobject" value="this.ship.jobmainzone" />
+		  </run_script>
+		</do_elseif>
+		<do_else>
+		  <set_value name="$gotodie" exact="this.ship.trueowner != faction.player" />
+		</do_else>
+      </do_if>
+	  
+	 <!-- Minha intervenção start  -->	 
+	  <do_else>
+	    <set_value name="$gotodie" exact="this.ship.trueowner != faction.player" />
+	  </do_else>
+	  <!-- Minha intervenção end  -->	
+
+      <!-- check if this is a jobship at the end of its lifetime -->
+      <do_if value="$gotodie or this.ship.jobexpired or (this.ship.trueowner != faction.player and this.ship.units.{unitcategory.marine}.count)">
+        <debug_text text="'%1 doing job %2 has expired, die!'.[this.ship.knownname, this.ship.job]" chance="$debugoutputchance" />
+        <run_script name="'move.die'">
+          <param name="byjump" value="this.ship.isclass.[class.ship_l, class.ship_xl]" />
+          <param name="byhighway" value="not this.ship.isclass.[class.ship_l, class.ship_xl]" />
+          <param name="bydock" value="not this.ship.isclass.[class.ship_l, class.ship_xl]" />
+          <param name="byidle" value="true" />
+        </run_script>
+      </do_if>
+	  <do_elseif value="@this.ship.jobmainzone">
+		<set_value name="$target" exact="null"/>
+		<set_value name="$targetpos" exact="null"/>
+		<set_value name="$targetzone" exact="null"/>
+		<resume label="start"/>
+	  </do_elseif>
+	  
+    </actions>
+  </attention>
+</aiscript>

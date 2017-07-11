@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+
+	
+	<!--<remove sel="//macros/macro[@name='buildmodule_ships_albion_l_macro']/properties/builder">
+	<macro ref="units_size_l_kit_container_03_macro" />
+	</remove>-->
+	</diff>

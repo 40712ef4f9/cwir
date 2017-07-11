@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+	<!-- Conquer_mod v020 -->
+
+	<!--<add sel="/aiscript/params" pos="after">-->
+	<add sel="/aiscript/attention[@min='unknown']" pos="before">
+		<interrupts>
+			<handler>
+				<conditions>
+					<check_any>
+						<check_all>
+							<event_object_destroyed object="@$destination" />
+							<!--<check_value value="this.ship.owner.hasrelation.enemy.{$destination.owner}"/>-->
+						</check_all>
+						<check_all>
+							<event_object_changed_owner object="@$destination" />
+							<check_value value="this.ship.owner.relationto.{$destination.owner} le this.ship.owner.relation.enemy.min"/>
+						</check_all>
+						<check_all>
+							<event_boarding_triggered />
+							<check_value value="event.param2 == @$destination" />
+						</check_all>
+					</check_any>
+				</conditions>
+				<actions>
+
+					<!--<play_sound object="player.ship" sound="'ui_hacking_fail_complete'" />-->
+
+					<do_if value="event.name == 'event_object_destroyed'">
+						<!--<debug_text text="'Dock actions interrupted, destination destroyed.'" chance="100" />
+					<write_to_logbook category="general" text="'=== Dock actions interrupted === \n move.dockat was Interrupt, destination destroyed: \n this ship %1 faction %2.\n destination %3 faction %4 \n zone %5.'.[this.ship.name, this.ship.owner.name, @$destination.name, @$destination.owner.name, this.ship.zone.name]"/>-->
+					</do_if>
+
+					<do_if value="event.name == 'event_object_changed_owner'">
+						<!--<debug_text text="'Dock actions interrupted by destination owner change.'" chance="100" />
+					<write_to_logbook category="general" text="'=== Dock actions interrupted === \n move.dockat was Interrupt by owner change: \n this ship %1 faction %2.\n destination %3 faction %4 \n zone %5.'.[this.ship.name, this.ship.owner.name, $destination.name, $destination.owner.name, $destination.zone.name]"/>-->
+					</do_if>
+					<do_if value="event.name == 'event_boarding_triggered'">
+						<!--<debug_text text="'Dock actions interrupted by destination being boarded.'" chance="100" />
+					<write_to_logbook category="general" text="'=== Dock actions interrupted === \n move.dockat was Interrupt by board: \n this ship %1 faction %2.\n destination %3 faction %4 \n zone %5.'.[this.ship.name, this.ship.owner.name, $destination.name, $destination.owner.name, $destination.zone.name]"/>-->
+					</do_if>
+
+					<abort_called_scripts resume="finish" />
+
+				</actions>
+			</handler>
+		</interrupts>	
+	</add>
+
+
+	<add sel="/aiscript/attention/actions/label[@name='start']" pos="after">
+		<do_if value="@$destination.exist and (@this.ship.owner.relationto.{$destination.owner} le this.ship.owner.relation.enemy.min or @$destination.boarder)">
+			<resume label="finish" />
+		</do_if>
+	</add>
+
+
+	<add sel="/aiscript/attention/actions">
+		<label name="finish" />
+
+		<do_if value="@$destination.exist and (@this.ship.owner.relationto.{$destination.owner} le this.ship.owner.relation.enemy.min or @$destination.boarder)">
+			<do_if value="this.ship.docklink">
+				<!--Ship may have been interrupted from docking and so has a docking connection but is not docked-->
+				<!--<debug_text text="'docking at %1(%2) was aborted by faction relation or by being boarded, disconnecting docking connection!'.[this.ship.docklink.container.knownname, this.ship.docklink.container]" chance="$debugoutputchance" />-->
+				<undock ship="this.ship" />
+			</do_if>
+			<clear_collision_filter object="this.ship" />
+			<run_script name="'move.undock'" />
+
+			<do_if value="this.ship.isjobship">
+				<set_value name="$bigship" exact="if this.ship.isclass.ship_l or this.ship.isclass.ship_xl then 1 else 0" />
+				<run_script  name="'move.die'">
+					<param name="byjump" value="$bigship" />
+					<param name="byhighway" value="not $bigship" />
+					<param name="bydock" value="not $bigship" />
+					<param name="byidle" value="true" />
+				</run_script>
+			</do_if>
+
+			<do_elseif value="this.ship.isplayerowned">
+				<!-- Flee -->
+				<set_value name="$flee" exact="'random'"/>
+				<do_if value="this.ship.isclass.[class.ship_m, class.ship_s]">
+					<do_any>
+						<set_value name="$flee" exact="'boost'"     weight="35" />
+						<set_value name="$flee" exact="'highway'"   weight="35" />
+						<set_value name="$flee" exact="'dock'"      weight="30" />
+					</do_any>
+				</do_if>
+				<do_elseif value="this.ship.isclass.[class.ship_l, class.ship_xl]">
+					<do_any>
+						<set_value name="$flee" exact="'jump'"      weight="20" />
+						<set_value name="$flee" exact="'boost'"     weight="80" />
+					</do_any>
+				</do_elseif>
+
+				<run_script name="'move.flee'" sinceversion="1" result="$success" >
+					<param name="method" value="$flee" />
+				</run_script>
+			</do_elseif>	
+			<do_else>
+				<!-- Flee -->
+				<set_value name="$flee" exact="'random'"/>
+				<do_if value="this.ship.isclass.[class.ship_m, class.ship_s]">
+					<do_any>
+						<set_value name="$flee" exact="'boost'"     weight="35" />
+						<set_value name="$flee" exact="'highway'"   weight="35" />
+						<set_value name="$flee" exact="'dock'"      weight="30" />
+					</do_any>
+				</do_if>
+				<do_elseif value="this.ship.isclass.[class.ship_l, class.ship_xl]">
+					<do_any>
+						<set_value name="$flee" exact="'jump'"      weight="20" />
+						<set_value name="$flee" exact="'boost'"     weight="80" />
+					</do_any>
+				</do_elseif>
+
+				<!--<debug_text text="'%4: flee with %1. Hull %2/Shield %3'.[$flee, this.ship.hullpercentage, this.ship.shieldpercentage, player.age]" chance="$debugoutputchance"/>-->
+
+				<run_script name="'move.flee'" sinceversion="1" result="$success" >
+					<param name="method" value="$flee" />
+				</run_script>
+
+				<!--<debug_text text="'%1: flee %2 succesful %3. Hull %4/Shield %5'.[player.age, $flee, $success, this.ship.hullpercentage, this.ship.shieldpercentage]" chance="$debugoutputchance"/>	-->		
+			</do_else>	
+		</do_if>	
+		<return value="false" />
+	</add>
+
+</diff>

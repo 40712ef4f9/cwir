@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- Conquer_mod v020 -->	
+
+	<remove sel="/mdscript/cues/cue[@name='SectionHandler']/actions/do_elseif[@value=&quot;event.param == 'gOrders_attack'&quot;]/add_player_choice_return"/>
+	
+	<replace sel="//cue[@name='SectionHandler']//add_player_choice_sub[@section='gOrders_mining_start']">
+		<do_if value="event.object.ship.units.collect.{$wares.{$i}}.count and event.object.ship.cargo.{$wares.{$i}}.max">
+			  <add_player_choice_sub text="$wares.{$i}.name" section="gOrders_mining_start" choiceparam="[$wares.{$i}, event.param2.{3}]"/>
+              </do_if>
+</replace>
+	
+</diff>

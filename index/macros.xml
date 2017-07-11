@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>  
+  <add sel="/index">
+    <!-- Shipyards -->
+    <entry name="struct_bt_alb_shipyard_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_alb_shipyard_2_macro" />
+    <entry name="struct_bt_alb_shipyard_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_alb_shipyard_3_macro" />
+    <entry name="struct_bt_dv_shipyard_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_dv_shipyard_2_macro" />
+    <entry name="struct_bt_dv_shipyard_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_dv_shipyard_3_macro" />
+    <entry name="struct_bt_ol_shipyard_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_shipyard_2_macro" />
+    <entry name="struct_bt_ol_shipyard_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_shipyard_3_macro" />
+	<entry name="struct_bt_pir_shipyard_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_pir_shipyard_2_macro" />
+    <entry name="struct_bt_pir_shipyard_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_pir_shipyard_3_macro" />
+	<entry name="struct_bt_player_shipyard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_player_shipyard_macro" />
+	<entry name="struct_bt_player_shipyard_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_player_shipyard_2_macro" />
+    <entry name="struct_bt_player_shipyard_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_player_shipyard_3_macro" />
+	<entry name="struct_bt_sy_heretic_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_sy_heretic_macro" />
+	<entry name="struct_bt_sy_heretic_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_sy_heretic_2_macro" />
+    <entry name="struct_bt_sy_heretic_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_sy_heretic_3_macro" />
+	<entry name="struct_bt_sy_xenon_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_sy_xenon_macro" />
+	<entry name="struct_bt_sy_xenon_2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_sy_xenon_2_macro" />
+    <entry name="struct_bt_sy_xenon_3_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_sy_xenon_3_macro" />
+	<entry name="struct_bt_hoa_shipyard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_hoa_shipyard_macro" />
+    <entry name="struct_bt_hoa_2_shipyard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_hoa_2_shipyard_macro" />
+	<entry name="struct_bt_hoa_3_shipyard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_hoa_3_shipyard_macro" />
+    
+	<!-- Stations -->
+	<entry name="struct_bt_ol_hightec_construction1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_hightec_construction1_macro" />
+	<entry name="struct_bt_ol_bofu_plant1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_bofu_plant1_macro" />
+	<entry name="struct_bt_ol_cell_refinery1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_cell_refinery1_macro" />
+	<entry name="struct_bt_ol_construction_material1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_construction_material1_macro" />
+	<entry name="struct_bt_ol_crystal_refinement1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_crystal_refinement1_macro" />
+	<entry name="struct_bt_ol_drone_complex1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_drone_complex1_macro" />
+	<entry name="struct_bt_ol_drone_factory1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_drone_factory1_macro" />
+	<entry name="struct_bt_ol_farm_complex1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_farm_complex1_macro" />
+	<entry name="struct_bt_ol_laboratory1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_laboratory1_macro" />
+	<entry name="struct_bt_ol_medical_supplies1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_medical_supplies1_macro" />
+	<entry name="struct_bt_ol_metalworks1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_metalworks1_macro" />
+	<entry name="struct_bt_ol_plankton_tank1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_plankton_tank1_macro" />
+	<entry name="struct_bt_ol_small_ships_complex1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_small_ships_complex1_macro" />
+	<entry name="struct_bt_ol_small_ships_yard1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_small_ships_yard1_macro" />
+	<entry name="struct_bt_ol_solar_power_plant1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_solar_power_plant1_macro" />
+	<entry name="struct_bt_ol_soy_farm1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_soy_farm1_macro" />
+	<entry name="struct_bt_ol_spice_farm1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_spice_farm1_macro" />
+	<entry name="struct_bt_ol_tech_complex1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_tech_complex1_macro" />
+	<entry name="struct_bt_ol_water_destillery1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_water_destillery1_macro" />
+	<entry name="struct_bt_ol_weaponrycomplex1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_weaponrycomplex1_macro" />
+	<entry name="struct_bt_ol_spacefuel_production1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_spacefuel_production1_macro" />
+	<entry name="struct_bt_ol_weaponryproduction1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_weaponryproduction1_macro" />
+	<entry name="struct_bt_ol_high_energy_construction1_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_ol_high_energy_construction1_macro" />
+	
+    <!-- SCODA -->
+    <!-- SCODA -->
+    <entry name="units_size_xl_builder_ship_2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_ship_2_macro"/>
+    <entry name="units_size_xl_builder_ship_3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_ship_3_macro"/>
+    <entry name="units_size_xl_builder_ship_dv_2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_ship_dv_2_macro"/>
+    <entry name="units_size_xl_builder_ship_dv_3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_ship_dv_3_macro"/>
+    <entry name="units_size_xl_builder_ship_ol_2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_ship_ol_2_macro"/>
+    <entry name="units_size_xl_builder_ship_ol_3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_ship_ol_3_macro"/>
+	<entry name="units_size_xl_builder_pmxe_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_pmxe_macro"/>
+    <entry name="units_size_xl_builder_pir2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_pir2_macro"/>
+	<entry name="units_size_xl_builder_pir3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_pir3_macro"/>
+    <entry name="units_size_xl_builder_pir_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_pir_macro"/>
+	<entry name="units_size_xl_builder_player2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_player2_macro"/>
+	<entry name="units_size_xl_builder_player3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_player3_macro"/>
+    <entry name="units_size_xl_builder_player_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_player_macro"/>
+	<entry name="units_size_xl_builder_outpost_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_outpost_macro"/>
+	<entry name="units_size_xl_builder_hv_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_hv_macro"/>
+	<entry name="units_size_xl_builder_hv2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_hv2_macro"/>
+	<entry name="units_size_xl_builder_hv3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_hv3_macro"/>
+	<entry name="units_size_xl_builder_xenon_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_xenon_macro"/>
+	<entry name="units_size_xl_builder_xenon2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_xenon2_macro"/>
+	<entry name="units_size_xl_builder_xenon3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_xenon3_macro"/>
+	
+	<entry name="units_size_xl_builder_hoa_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_hoa_macro"/>
+	<entry name="units_size_xl_builder_hoa2_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_hoa2_macro"/>
+	<entry name="units_size_xl_builder_hoa3_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_hoa3_macro"/>
+	
+	<entry name="units_size_xl_builder_cwirsov_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwirsov_macro"/>
+	<entry name="units_size_xl_builder_cwirrya_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwirrya_macro"/>
+	<entry name="units_size_xl_builder_cwiralb_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwiralb_macro"/>
+	<entry name="units_size_xl_builder_cwircan_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwircan_macro"/>
+	<entry name="units_size_xl_builder_cwirol_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwirol_macro"/>
+	<entry name="units_size_xl_builder_cwirrei_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwirrei_macro"/>
+	<entry name="units_size_xl_builder_cwirxen_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_builder_cwirxen_macro"/>
+	<!-- Build Module -->
+    <entry name="buildmodule_ships_albion_xl_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_albion_xl_2_macro" />
+    <entry name="buildmodule_ships_albion_xl_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_albion_xl_3_macro" />
+    <entry name="buildmodule_stations_albion_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_albion_2_macro" />
+    <entry name="buildmodule_stations_albion_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_albion_3_macro" />
+    <entry name="buildmodule_ships_devries_xl_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_devries_xl_2_macro" />
+    <entry name="buildmodule_ships_devries_xl_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_devries_xl_3_macro" />
+    <entry name="buildmodule_stations_devries_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_devries_2_macro" />
+    <entry name="buildmodule_stations_devries_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_devries_3_macro" />
+    <entry name="buildmodule_ships_omicron_xl_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_omicron_xl_2_macro" />
+    <entry name="buildmodule_ships_omicron_xl_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_omicron_xl_3_macro" />
+    <entry name="buildmodule_stations_omicron_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_omicron_2_macro" />
+    <entry name="buildmodule_stations_omicron_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_omicron_3_macro" />
+	<entry name="buildmodule_ships_devries_xl_pir2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_devries_xl_pir2_macro" />
+    <entry name="buildmodule_ships_devries_xl_pir3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_devries_xl_pir3_macro" />
+	<entry name="buildmodule_ships_pirates_l_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_pirates_l_macro" />
+	<entry name="buildmodule_stations_pirate_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_pirate_macro" />
+	<entry name="buildmodule_stations_pirate2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_pirate2_macro" />
+    <entry name="buildmodule_stations_pirate3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_pirate3_macro" />
+	<entry name="buildmodule_stations_pmxe_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_pmxe_macro" />
+	<entry name="buildmodule_ships_xl_player_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xl_player_macro" />
+	<entry name="buildmodule_ships_xl_player2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xl_player2_macro" />
+	<entry name="buildmodule_ships_xl_player3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xl_player3_macro" />
+	<entry name="buildmodule_ships_player_l_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_player_l_macro" />
+	<entry name="buildmodule_stations_player_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_player_macro" />
+	<entry name="buildmodule_stations_player2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_player2_macro" />
+	<entry name="buildmodule_stations_player3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_player3_macro" />
+	<entry name="buildmodule_stations_outpost_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_outpost_macro" />
+	<entry name="buildmodule_stations_heretic_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_heretic_macro" />
+	<entry name="buildmodule_stations_heretic_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_heretic_2_macro" />
+	<entry name="buildmodule_stations_heretic_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_heretic_3_macro" />
+	<entry name="buildmodule_ships_heretic_xl_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_heretic_xl_macro" />
+	<entry name="buildmodule_ships_heretic_xl_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_heretic_xl_2_macro" />
+    <entry name="buildmodule_ships_heretic_xl_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_heretic_xl_3_macro" />
+	<entry name="buildmodule_ships_heretic_l_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_heretic_l_macro" />
+	<entry name="buildmodule_ships_xenon_l_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xenon_l_macro" />
+	<entry name="buildmodule_ships_xenon_xl_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xenon_xl_macro" />
+	<entry name="buildmodule_ships_xenon_xl_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xenon_xl_2_macro" />
+    <entry name="buildmodule_ships_xenon_xl_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_xenon_xl_3_macro" />
+	<entry name="buildmodule_stations_xenon_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_xenon_macro" />
+	<entry name="buildmodule_stations_xenon_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_xenon_2_macro" />
+	<entry name="buildmodule_stations_xenon_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_xenon_3_macro" />
+	<entry name="buildmodule_ships_hoa_l_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_hoa_l_macro" />
+	<entry name="buildmodule_ships_hoa_xl_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_hoa_xl_macro" />
+	<entry name="buildmodule_ships_hoa_xl_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_hoa_xl_2_macro" />
+    <entry name="buildmodule_ships_hoa_xl_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_hoa_xl_3_macro" />
+	<entry name="buildmodule_ships_pmc_l_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_pmc_l_macro" />
+	<entry name="buildmodule_ships_pmc_xl_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_ships_pmc_xl_macro" />
+	<entry name="buildmodule_stations_hoa_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_hoa_macro" />
+	<entry name="buildmodule_stations_hoa_2_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_hoa_2_macro" />
+	<entry name="buildmodule_stations_hoa_3_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_hoa_3_macro" />
+	<entry name="buildmodule_stations_cwirsov_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwirsov_macro" />
+	<entry name="buildmodule_stations_cwirrya_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwirrya_macro" />
+	<entry name="buildmodule_stations_cwiralb_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwiralb_macro" />
+    <entry name="buildmodule_stations_cwircan_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwircan_macro" />
+	<entry name="buildmodule_stations_cwirol_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwirol_macro" />
+	<entry name="buildmodule_stations_cwirrei_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwirrei_macro" />
+	<entry name="buildmodule_stations_cwirxen_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_cwirxen_macro" />
+	<!-- NEW SHIPS ADDED BY BR -->
+	<entry name="units_size_l_weaponplatform_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_weaponplatform_macro" />
+	<entry name="units_size_l_antifighter_01_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_antifighter_01_macro" />
+	<entry name="units_size_l_laserjet_01_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_laserjet_01_macro" />
+	<entry name="units_size_l_missileb_01_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_missileb_01_macro" />
+	<entry name="units_size_l_canteran_frigate_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_canteran_frigate_macro" />
+	<entry name="units_size_xl_van_destroyer_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_van_destroyer_macro" />
+	<entry name="units_size_l_dv_fury_new_defence_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_dv_fury_new_defence_macro" />
+	<entry name="units_size_l_dv_arb_new_defence_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_dv_arb_new_defence_macro" />
+	<entry name="units_size_xl_fort_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_fort_macro" />
+	<entry name="units_size_l_pir_container_03_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_pir_container_03_macro" />
+	<entry name="units_size_l_pir_vanguard_frig_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_pir_vanguard_frig_macro" />
+	<entry name="units_size_l_pir_besieger_frig_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_pir_besieger_frig_macro" />
+	<entry name="units_size_l_b_sanahar_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_b_sanahar_macro" />
+	<entry name="units_size_l_li_sanahar_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_li_sanahar_macro" />
+	<entry name="units_size_l_e_sanahar_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_e_sanahar_macro" />
+	<entry name="units_size_l_hyb1_sanahar_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_hyb1_sanahar_macro" />
+	<entry name="units_size_l_hyb2_sanahar_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_hyb2_sanahar_macro" />
+	<!--<entry name="units_size_m_hydrogen_collector_macro1" value="extensions\cwir\assets\units\size_l\macros\units_size_m_hydrogen_collector_macro1" />-->
+	
+	<!-- Xenon Ships -->
+	<entry name="units_size_xl_xenon_newi_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_xenon_newi_macro" />
+	<entry name="units_size_l_xenon_newk_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_xenon_newk_macro" />
+	<entry name="units_size_l_xenon_outk_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_xenon_outk_macro" />
+	
+	<!-- Titans Armory ships -->
+	<entry name="units_size_xl_player_chimera_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_player_chimera_macro" />
+	<entry name="units_size_xl_player_behemoth_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_player_behemoth_macro" />
+	<entry name="units_size_l_player_fury_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_player_fury_macro" />
+	<entry name="units_size_l_player_harpy_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_player_harpy_macro" />
+	<entry name="units_size_xl_player_hades_macro" value="extensions\cwir\assets\units\size_xl\macros\units_size_xl_player_hades_macro" />
+	<!-- SHIELDS -->
+	<entry name="shieldgenerator_size_l_mk22_macro" value="extensions\cwir\assets\props\surfaceelements\macros\shieldgenerator_size_l_mk22_macro" />	
+	<!-- Storage Modules -->
+	<entry name="cargobay_ship_l_universal_macro" value="extensions\cwir\assets\props\storagemodules\macros\cargobay_ship_l_universal_macro" />
+	<entry name="storage_ship_l_universal_macro" value="extensions\cwir\assets\props\storagemodules\macros\storage_ship_l_universal_macro" />
+	<!-- New Engines added by BR -->
+	<entry name="engine_size_l_weaponplatform_01_macro" value="extensions\cwir\assets\props\enginesystems\macros\engine_size_l_weaponplatform_01_macro" />
+	<entry name="engine_size_l_pir_frigate_macro" value="extensions\cwir\assets\props\enginesystems\macros\engine_size_l_pir_frigate_macro" />
+	<!-- New Missile turret -->
+	<entry name="turret_missile_gui_macro" value="extensions\cwir\assets\props\weaponsystems\macros\turret_missile_gui_macro" />
+	
+	<!-- New Small ships production ADDED BY BR XENON/PMC TECH -->
+	<entry name="struct_econ_prod_ships2_macro" value="extensions\cwir\assets\structures\economy\production\macros\struct_econ_prod_ships2_macro" />	
+	<entry name="struct_econ_prod_ships_pir_macro" value="extensions\cwir\assets\structures\economy\production\macros\struct_econ_prod_ships_pir_macro" />	
+    <!-- Build Small Ships -->
+    <entry name="struct_bt_dv_small_ships_yard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_dv_small_ships_yard_macro" />      
+	<entry name="struct_bt_dv_small_ships_complex_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_dv_small_ships_complex_macro" />      
+	
+	<!--<entry name="struct_bt_hv_small_ships_yard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_hv_small_ships_yard_macro" />      
+	<entry name="struct_bt_hv_small_ships_complex_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_hv_small_ships_complex_macro" />-->
+	
+    <entry name="struct_bt_alb_small_ships_complex2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_alb_small_ships_complex2_macro" />
+    <entry name="struct_bt_alb_small_ships_yard2_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_alb_small_ships_yard2_macro" />  
+	
+	<entry name="struct_bt_pir_small_ships_complex_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_pir_small_ships_complex_macro" />
+	<entry name="struct_bt_pir_small_ships_yard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_pir_small_ships_yard_macro" />
+	
+	<entry name="struct_bt_xenon_small_ships_yard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_xenon_small_ships_yard_macro" />
+	
+	
+	<!-- Probe -->
+	<entry name="unit_size_xs_probe_macro" value="extensions\cwir\assets\units\size_xs\Macros\unit_size_xs_probe_macro"/>
+	<!-- Outpost -->
+	<entry name="struct_bt_alb_outpost_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_alb_outpost_macro"/>
+	<entry name="struct_econ_ref_ar_pmc_basis1_macro" value="extensions\cwir\assets\structures\Economy\refinery\pmc\macros\struct_econ_ref_ar_pmc_basis1_macro"/>
+	<entry name="struct_econ_ref_ar_pmc_u1_macro" value="extensions\cwir\assets\structures\Economy\refinery\pmc\macros\struct_econ_ref_ar_pmc_u1_macro"/>
+	<entry name="struct_econ_science_weaponplatform1_macro" value="extensions\cwir\assets\structures\Economy\science\macros\struct_econ_science_weaponplatform1_macro"/>
+	<!--<entry name="struct_bt_player_small_ships_complex_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_player_small_ships_complex_macro" />
+	<entry name="struct_bt_player_small_ships_yard_macro" value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_player_small_ships_yard_macro" />-->
+	
+	<!-- New Troop Ships -->
+	<entry name="units_size_l_troop_transporter1_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_troop_transporter1_macro"/>		
+	<entry name="units_size_l_troop_transporter5_macro" value="extensions\cwir\assets\units\size_l\macros\units_size_l_troop_transporter5_macro"/>
+	<entry name="dronelaunchpad_invisible_troopship_l_01_macro" value="extensions\cwir\assets\props\surfaceelements\macros\dronelaunchpad_invisible_troopship_l_01_macro"/>
+	
+	<!-- Xenon -->
+	<entry name="buildmodule_stations_xenoutpost_macro" value="extensions\cwir\assets\props\surfaceelements\macros\buildmodule_stations_xenoutpost_macro" />
+	<entry name="struct_econ_cw_ar_water_a1_macro" value="extensions\cwir\assets\structures\economy\collectors_water\unique\macros\struct_econ_cw_ar_water_a1_macro" />
+	<entry name="struct_econ_cw_ar_water_f1_macro" value="extensions\cwir\assets\structures\economy\collectors_water\unique\macros\struct_econ_cw_ar_water_f1_macro" />
+	<entry name="struct_econ_cw_ar_water_g1_macro" value="extensions\cwir\assets\structures\economy\collectors_water\unique\macros\struct_econ_cw_ar_water_g1_macro" />
+	<entry name="struct_econ_cw_ar_water_h1_macro" value="extensions\cwir\assets\structures\economy\collectors_water\unique\macros\struct_econ_cw_ar_water_h1_macro" />
+	
+	<entry name="units_size_m_xenon_collector_01_macro" value="extensions\cwir\assets\units\size_m\macros\units_size_m_xenon_collector_01_macro" />
+	
+	<!-- From DaveDee, Thanks! -->
+	<entry value="extensions\cwir\assets\structures\economy\weapon\generic\macros\struct_econ_weapon_ar_defence_pl_macro" name="struct_econ_weapon_ar_defence_pl_macro"/>
+	<entry value="extensions\cwir\assets\structures\alien_technology\xenon\macros\struct_at_xen_xenon_outpost_macro" name="struct_at_xen_xenon_outpost_macro"/>
+	<entry value="extensions\cwir\assets\structures\alien_technology\xenon\macros\struct_at_xen_xenon_outpost_main_macro" name="struct_at_xen_xenon_outpost_main_macro"/>
+	<!-- From MarvinMartian, Thanks! -->
+	<entry name="landmarks_cw_superdock_sidepart_macro" value="extensions\cwir\assets\structures\economy\mining\generic\macros\landmarks_cw_superdock_sidepart_macro"/> 
+	<entry name="struct_at_xen_xenon_portal_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\struct_at_xen_xenon_portal_macro"/> 
+	<entry name="props_surf_cw_docks_size_l_xl_int_inv_macro" value="extensions\cwir\assets\props\surfaceelements\macros\props_surf_cw_docks_size_l_xl_int_inv_macro"/> 
+	<entry name="props_surf_cw_docks_size_s_m_int_inv_macro" value="extensions\cwir\assets\props\surfaceelements\macros\props_surf_cw_docks_size_s_m_int_inv_macro"/> 
+	<entry name="struct_at_xen_oshell_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\struct_at_xen_oshell_macro"/> 
+	<entry name="props_wps_cw_weaponplatform_01_macro" value="extensions\cwir\assets\props\weaponsystems\macros\props_wps_cw_weaponplatform_01_macro"/> 
+
+	<entry name="xenon_asteroid_shipyard_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\xenon_asteroid_shipyard_macro"/> 
+	<entry name="struct_econ_prod_shipsm_xen_macro" value="extensions\cwir\assets\structures\Economy\production\macros\struct_econ_prod_shipsm_xen_macro"/> 
+	<entry name="xenon_asteroid_02_part_01s_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\xenon_asteroid_02_part_01s_macro"/> 
+	<entry name="xenon_asteroid_02_part_02s_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\xenon_asteroid_02_part_02s_macro"/> 
+	<entry name="xenon_asteroid_02_part_03s_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\xenon_asteroid_02_part_03s_macro"/> 
+	<entry name="struct_at_xen_eshell_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\struct_at_xen_eshell_macro"/> 
+	<entry name="struct_at_xen_fshell_macro" value="extensions\cwir\assets\structures\alien_technology\xenon\macros\struct_at_xen_fshell_macro"/> 
+	
+	<entry value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_dv_reivers_outpost1_02_macro" name="struct_bt_dv_reivers_outpost1_02_macro"/>
+	<entry value="extensions\cwir\assets\structures\build_trees\macros\struct_bt_dv_reivers_outpost1_03_macro" name="struct_bt_dv_reivers_outpost1_03_macro"/>	
+  </add>
+</diff>

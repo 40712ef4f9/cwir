@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+  <add sel="/characters">
+  
+  
+  <character id="hoa_lawenforcement" group="albion.lawenforcement">
+    <category tags="[albion, lawenforcement]" faction="heartofalbion" race="argon"/>
+    <owner exact="heartofalbion"/>
+  </character>
+  
+  <character id="pmc_lawenforcement" group="albion.lawenforcement">
+    <category tags="[albion, devries, lawenforcement]" faction="plutarch" race="argon"/>
+    <owner exact="plutarch"/>
+  </character>
+  
+  <character id="roc_lawenforcement" group="devries.lawenforcement">
+    <category tags="[albion, devries, lawenforcement]" faction="canteran" race="argon"/>
+    <owner exact="canteran"/>
+  </character>
+  
+  <character id="argon_lawenforcement" group="argon.lawenforcement">
+    <category tags="[omicronlyrae, maelstrom, lawenforcement]" faction="argongovernment" race="argon"/>
+    <owner exact="argongovernment"/>
+  </character>
+  
+  <character id="hereticvanguards_lawenforcement" group="argon.lawenforcement">
+    <category tags="[omicronlyrae, maelstrom, lawenforcement]" faction="hereticvanguards" race="argon"/>
+    <owner exact="hereticvanguards"/>
+  </character>
+	
+  <character id="platform_trader_maelstrom_hv" group="argon.trader">
+    <category tags="[maelstrom, upgradetrader, shiptrader, smallshiptrader, miningsupplier, junkdealer, spacefarmer, shiptech, humanresources, equipment, foodmerchant, shadyguy, dronetrader, recruitment, armsdealer, licencetrader]" faction="hereticvanguards" race="argon"/>
+    <owner exact="hereticvanguards"/>
+  </character>
+  
+  <character id="platform_trader_neutral" group="argon.trader">
+    <category tags="[upgradetrader, shiptrader, smallshiptrader, miningsupplier, junkdealer, spacefarmer, shiptech, humanresources, equipment, foodmerchant, shadyguy, dronetrader, recruitment, armsdealer, licencetrader]" faction="neutral" race="argon"/>
+    <owner exact="neutral"/>
+  </character>
+
+  <character id="platform_trader_maelstrom_xenon" group="argon.trader">
+    <category tags="[maelstrom, upgradetrader, shiptrader, smallshiptrader, miningsupplier, junkdealer, spacefarmer, shiptech, humanresources, equipment, foodmerchant, shadyguy, dronetrader, recruitment, armsdealer, licencetrader]" faction="xenon" race="argon"/>
+    <owner exact="xenon"/>
+  </character>  
+  
+  <character id="manager_xenon_random" group="argon.manager">
+    <category tags="[maelstrom, omicronlyrae, manager]" faction="xenon" race="argon"/>
+    <owner exact="xenon"/>
+  </character>
+	
+	<character id="equipment_trader_HV" group="argon.trader">
+    <category tags="[maelstrom, pilot, traderpilot, masstraffic, watchdog]" faction="hereticvanguards" race="argon"/>
+    <owner exact="hereticvanguards"/>
+  </character>
+  <character id="trader_HV" group="argon.trader">
+    <category tags="[maelstrom, pilot, traderpilot, masstraffic, watchdog]" faction="hereticvanguards" race="argon"/>
+    <owner exact="hereticvanguards"/>
+  </character>
+  <character id="fighter_HV" group="argon.pilot">
+    <category tags="[maelstrom, pilot, fighterpilot, commander, defencecontrol, masstraffic, watchdog]" faction="hereticvanguards" race="argon"/>
+    <owner exact="hereticvanguards"/>
+  </character>  
+  
+  <character id="equipment_trader_xen" group="argon.trader">
+    <category tags="[maelstrom, pilot, traderpilot, masstraffic, watchdog]" faction="xenon" race="argon"/>
+    <owner exact="xenon"/>
+  </character>
+  <character id="trader_xen" group="argon.trader">
+    <category tags="[maelstrom, pilot, traderpilot, masstraffic, watchdog]" faction="xenon" race="argon"/>
+    <owner exact="xenon"/>
+  </character>
+  <character id="fighter_xen" group="argon.pilot">
+    <category tags="[maelstrom, pilot, fighterpilot, commander, defencecontrol, masstraffic, watchdog]" faction="xenon" race="argon"/>
+    <owner exact="xenon"/>
+  </character> 
+    	
+	<character id="esi_albion_random" group="albion.pilot">
+    <category tags="[albion, pilot, fighterpilot, commander, defencecontrol, masstraffic, watchdog]" faction="EnergySubsidiaryInc" race="argon"/>
+    <owner exact="EnergySubsidiaryInc"/>
+  </character>
+  
+  <character id="esi_engineer_random" group="albion.engineer">
+    <category tags="[albion, engineer, specialengineer]" faction="EnergySubsidiaryInc" race="argon"/>
+    <owner exact="EnergySubsidiaryInc"/>
+    <skills>
+      <skill type="boarding" min="0" max="3" />
+      <skill type="combat" min="0" max="3" />
+      <skill type="engineering" min="2" max="5" />
+      <skill type="leadership" min="1" max="4" />
+      <skill type="management" min="1" max="4" />
+      <skill type="morale" min="1" max="4" />
+      <skill type="navigation" min="1" max="4" />
+      <skill type="science" min="1" max="4" />
+    </skills>
+  </character>
+  </add>
+  
+  <replace sel="//character[@id='hev_generic']">
+	<character id="hev_generic" group="argon.pilot">
+    <category faction="hereticvanguards" race="argon" tags="[omicronlyrae, maelstrom, architect, commander, defencecontrol, engineer, fighterpilot, manager, marine, masstraffic, watchdog, pilot, specialengineer, traderpilot, specialistagriculture, specialistpowerstorage, specialistfood, specialistchemical, specialistprecision, specialistweapons, specialistpharmaceuticals, specialistmetals, specialistgeophysics, specialistsurfacesystems, specialistpowersupply, specialistaquatics]" comment="fullyqualified"/>
+    <owner exact="hereticvanguards"/>
+	</character>
+  </replace>
+  
+  <replace sel="//character[@id='xenon_generic']">
+	<character id="xenon_generic" group="argon.pilot">
+    <category tags="[omicronlyrae, maelstrom, architect, commander, defencecontrol, engineer, fighterpilot, manager, marine, masstraffic, watchdog, pilot, specialengineer, traderpilot, specialistagriculture, specialistpowerstorage, specialistfood, specialistchemical, specialistprecision, specialistweapons, specialistpharmaceuticals, specialistmetals, specialistgeophysics, specialistsurfacesystems, specialistpowersupply, specialistaquatics]" faction="xenon" race="argon" comment="fullyqualified"/>
+    <owner exact="xenon"/>
+  </character>
+  </replace>
+    
+   </diff>

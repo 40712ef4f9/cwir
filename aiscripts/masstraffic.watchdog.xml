@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diff>
+	<add sel="/aiscript/params/param[@name='target']" type="@default" >null</add>
+</diff>

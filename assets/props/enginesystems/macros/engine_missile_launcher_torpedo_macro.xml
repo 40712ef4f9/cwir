@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff>
+	<replace sel="//acceleration/@forward">60</replace>
+	<replace sel="//acceleration/@strafe">120</replace>
+	<replace sel="//speed/@forward">960</replace>
+	<!--<replace sel="//speed/@strafe">0</replace>-->
+</diff>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mdscript name="BRBuildShipyards" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+  <cues>
+    <cue name="AddDronesToArchitectList">
+      <conditions>
+        <check_any>
+          <event_cue_signalled cue="md.Setup.GameStart" />
+          <event_player_created />
+        </check_any>
+      </conditions>
+      <actions>        
+        <do_if value="not md.$ArchitectDroneList.indexof.{[ware.drp_construction]}">
+          <append_to_list name="md.$ArchitectDroneList" exact="[ware.drp_construction]" />
+        </do_if>
+      </actions>
+    </cue>
+  </cues>
+</mdscript>

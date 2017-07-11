@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?> 
+ <mdscript name="brlongrange"> 
+    <cues> 
+       <cue name="CWIR_MICT_LR"> 
+          <conditions> 
+             <check_any> 
+                <event_cue_signalled cue="md.Setup.GameStart"/> 
+                <event_game_loaded /> 
+             </check_any> 
+          </conditions> 
+          <delay min="500ms" max="1s"/> 
+          <actions> 
+             <do_if value="global.$MICT_LR_Ships?"> 
+                <append_to_list name="global.$MICT_LR_Ships" exact="macro.units_size_xl_van_destroyer_macro"/> 
+             </do_if> 
+             <do_else> 
+                <reset_cue cue="this" /> 
+             </do_else> 
+          </actions> 
+       </cue> 
+    </cues> 
+ </mdscript> 
+

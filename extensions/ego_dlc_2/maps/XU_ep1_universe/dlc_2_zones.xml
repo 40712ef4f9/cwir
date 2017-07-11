@@ -1,0 +1,1441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector01_Zone001_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector01_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector01_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector01_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector02_Zone001_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector02_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector02_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector02_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector02_Zone005_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector02_Zone006_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector03_Zone001_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector03_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector03_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector03_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_L_Sector03_Zone005_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone001_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone005_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone006_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone007_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone008_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone009_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone010_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone011_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone012_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone013_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone014_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone015_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone016_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone017_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_N_Sector01_Zone018_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone001_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone005_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone006_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone008_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone009_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone010_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone011_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector01_Zone012_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone001_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone003_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone005_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone006_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector02_Zone007_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone001_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone005_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone006_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector03_Zone007_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone001_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone002_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone003_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone004_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone005_macro']/connections">
+      <connection ref="buildcon1">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon2">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone006_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+	<add sel="/macros/macro[@name='tzoneCluster_M_Sector04_Zone007_macro']/connections">
+      <connection ref="buildcon3">
+        <offset>
+          <position x="6700" y="10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildcon4">
+        <offset>
+          <position x="6700" y="10000" z="-18750" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc1">
+        <offset>
+          <position x="-6700" y="-10000" z="15500" />
+        </offset>
+      </connection>
+      <connection ref="buildconnpc2">
+        <offset>
+          <position x="-6700" y="-10000" z="-17500" />
+        </offset>
+      </connection>		
+	</add>
+</diff>

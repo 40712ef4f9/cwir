@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<diff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- Conquer_mod v020 -->
+
+	<add sel="/aiscript/attention[@min='visible']/actions/label[@name='fighttarget']" pos="before">
+	  <!--Checks if target is being boarded-->
+	  <set_value name="$board_flag" exact="if $bigtarget.isoperational and @$bigtarget.boarder and @this.ship.relationto.{$bigtarget.boarder} ge 0 and $bigtarget.hullpercentage le 70 then 0 else 1" />	 
+	</add>
+	
+	<add sel="/aiscript/attention[@min='visible']/actions/do_while/do_while[@value='$component.isoperational']">	
+		<set_value name="$board_flag" exact="if $bigtarget.isoperational and @$bigtarget.boarder and @this.ship.relationto.{$bigtarget.boarder} ge 0 and $bigtarget.hullpercentage le 70 then 0 else 1" />
+	</add>	
+
+	<replace sel="/aiscript/attention[@min='visible']/actions/do_while[@value='$bigtarget.isoperational and $continuefight']/@value">$bigtarget.isoperational and $continuefight and $board_flag</replace>
+		
+	<replace sel="/aiscript/attention[@min='visible']/actions/do_while/do_while[@value='$component.isoperational']/@value">$component.isoperational and $board_flag</replace>	
+	
+</diff>

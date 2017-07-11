@@ -1,0 +1,1813 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="Setup_Gamestarts_CWIR" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+
+<!-- CONQUEST AND WAR IN REBIRTH, CANTERAN GAMESTART BY 'AIRSTRIKE' IVANOV; VERSION 0.2 -->
+<!-- Thanks to Euclid and Blackrain for helping out bigtime! Couldn't have done this without you guys. -->
+<!-- Other Starts by BlackRain -->
+
+
+	<cues>
+		<cue name="setup_cwir_canteran">
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+				<check_value value="player.module" exact="'cwir_canteran'"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				<!-- Delayed cues -->
+				
+				
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.familyryak" known="true"/>
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<find_cluster name="$DeVries" macro="macro.cluster_d_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzonecluster_d_sector18_zone48_macro" />
+				<!-- CREATING SHIP: STROMVOK FURY SIZE L -->
+				<create_ship name="$cwirfury" macro="units_size_l_dv_fury_new_defence_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>
+						<unit category="unitcategory.transport" mk="1" exact="12"/>
+						<unit category="unitcategory.welder" mk="1" exact="4"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos object="player.primaryship" max="6km" radius="2km"/>
+				</create_ship>
+			
+				<!-- CREATING SHIP: 4X KATANA SIZE S -->
+				<do_if value="player.difficulty == level.medium or player.difficulty == level.easy">
+					<create_ship name="$cwirkatana1" macro="units_size_m_canteran_01_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfury" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirkatana2" macro="units_size_m_canteran_01_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfury" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirkatana3" macro="units_size_m_canteran_01_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfury" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirkatana4" macro="units_size_m_canteran_01_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfury" max="6km" radius="2km"/>
+					</create_ship>
+					
+					
+					<!-- Crew for Stromvok! Medium and Easy only! -->
+					<find_dock_location name="$Dock" container="$cwirfury" size="tag.dock_p"/>
+					<create_platform_actor name="$FuryCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$FuryDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$FuryEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$FuryCommander" object="$cwirfury"/>
+					<assign_defence_manager actor="$FuryDefenceNPC" object="$cwirfury"/>
+					<assign_engineer actor="$FuryEngineer" object="$cwirfury"/>
+					<set_object_commander object="$cwirfury" commander="player.primaryship"/>
+					<start_script object="$FuryCommander" name="'player.default'"/>
+					<start_script object="$FuryDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$FuryEngineer" name="'engineer.ai'"/>
+					
+					<set_object_commander object="$cwirkatana1" commander="player.primaryship"/>
+					<set_object_commander object="$cwirkatana2" commander="player.primaryship"/>
+					<set_object_commander object="$cwirkatana3" commander="player.primaryship"/>
+					<set_object_commander object="$cwirkatana4" commander="player.primaryship"/>
+					<start_script object="$cwirkatana1.pilot" name="'player.default'" />
+					<start_script object="$cwirkatana2.pilot" name="'player.default'" />
+					<start_script object="$cwirkatana3.pilot" name="'player.default'" />
+					<start_script object="$cwirkatana4.pilot" name="'player.default'" />
+					
+				</do_if>
+				<!-- MORE DOIF FOR THE EASY! --> 
+				<do_if value="player.difficulty" exact="level.easy">
+					<!-- Katanas 5/6 -->
+					<create_ship name="$cwirkatana5" macro="units_size_m_canteran_01_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfury" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirkatana6" macro="units_size_m_canteran_01_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfury" max="6km" radius="2km"/>
+					</create_ship>
+					<set_object_commander object="$cwirkatana5" commander="player.primaryship"/>
+					<set_object_commander object="$cwirkatana6" commander="player.primaryship"/>
+					<start_script object="$cwirkatana5.pilot" name="'player.default'"/>
+					<start_script object="$cwirkatana6.pilot" name="'player.default'"/>
+					<!-- Stryvok, thanks Egosoft for the gamestart  code -->
+					<create_ship name="$canteraneasy" macro="units_size_l_dv_kit_new_energy_container_01_macro" zone="player.zone">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot actor="null"/>
+						<defence actor="null"/>
+						<engineer actor="null"/>
+						<cargo>
+							<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+						</cargo>
+						<units>
+							<unit category="unitcategory.transport" mk="1" exact="10"/>
+							<unit category="unitcategory.welder" mk="1" exact="2"/>
+						</units>
+						<drop ref="ship_large_civilian"/>
+						<safepos object="player.primaryship" x="4km" y="1km" z="6km"/>
+					</create_ship>
+					<find_dock_location name="$Dock" container="$canteraneasy" size="tag.dock_p"/>
+					<create_platform_actor name="$CECommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$CEDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$CEEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$CECommander" object="$canteraneasy"/>
+					<assign_defence_manager actor="$CEDefenceNPC" object="$canteraneasy"/>
+					<assign_engineer actor="$CEEngineer" object="$canteraneasy"/>
+					<add_cargo object="$canteraneasy" ware="ware.energycells" exact="8000"/>
+					<set_object_commander object="$canteraneasy" commander="player.primaryship"/>
+					<start_script object="$CECommander" name="'BR.move.escort'"/>
+					<start_script object="$CEDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$CEEngineer" name="'engineer.ai'"/>
+					<!-- a few last ship upgrades and a bit of extra cash! -->
+					<upgrade_object_by_macro object="player.primaryship" macro="macro.software_trading_computer_macro" exact="100"/>
+					<upgrade_object_by_macro object="player.primaryship" macro="macro.software_target_computer_mk2_macro" exact="100"/>
+					<reward_player money="110000000"/>
+				</do_if>
+			</actions>
+		</cue>
+		<cue name="CWIR_CanteranHelptext" module="cwir_canteran">
+			<delay exact="60s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<!--<show_help custom="'Congratulations on your promotion! You have been given a small fleet to begin expanding the Canteran presence.'" position="1" duration="20s"/>-->
+				<show_help custom="{40002,44}" position="1" duration="20s"/>
+				<do_if value="player.difficulty == level.medium or player.difficulty == level.easy">
+					<!--<show_help custom="'Manpower is thin here, but there are plenty of Heart of Albion volunteers that we\'ve staffed on your ships.'" position="1" duration="5s"/>-->
+					<show_help custom="{40002,45}" position="1" duration="5s"/>
+				</do_if>
+				<do_if value="player.difficulty" exact="level.easy">
+					<!--<show_help custom="'You\'ve also been given a new Stryvok and a few ship upgrades to begin trading right away.'" position="1" duration="10s"/>-->
+					<show_help custom="{40002,46}" position="1" duration="10s"/>
+				</do_if>
+				<do_if value="player.difficulty" exact="level.hard">
+					<!--<show_help log="true" custom="'You will have to find a crew for the Stromvok for yourself!'" position="1" duration="15s"/>-->
+					<show_help log="true" custom="{40002,47}" position="1" duration="15s"/>
+				</do_if>
+			</actions>
+		</cue>
+		<cue name="CWIR_Helptext">
+			<delay exact="10s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<!--<show_help custom="'Welcome to Version 0.9 of Conquest and War in Rebirth!'" position="1" duration="5s"/>
+				<show_help custom="'You\'ll find you are in a much more active universe now.'" position="1" duration="7s"/>
+				<show_help custom="'This mod is still in alpha, so watch out for issues.'" position="1" duration="5s"/>
+				<show_help custom="'Report any bugs to Blackrain and/or Rubini on the forums.'" position="1" duration="10s"/>
+				<show_help custom="'Remember, this is not the universe you remember, take care and good luck!'" position="1" duration="10s"/>-->
+				<show_help custom="{40002,48}" position="1" duration="5s"/>
+				<show_help custom="{40002,49}" position="1" duration="7s"/>
+				<show_help custom="{40002,50}" position="1" duration="5s"/>
+				<show_help custom="{40002,51}" position="1" duration="10s"/>
+				<show_help custom="{40002,52}" position="1" duration="10s"/>
+			</actions>
+		</cue>	
+		
+		<cue name="setup_cwir_heretic">
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+				<check_value value="player.module" exact="'cwir_heretic'"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				<!-- Delayed cues -->
+				
+				
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.familyryak" known="true"/>
+				<set_faction_known faction="faction.hereticvanguards" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				<set_faction_known faction="faction.canteran" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.hereticvanguards" value="30"/>
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.player" value="30"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.plutarch" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.player" value="faction.plutarch.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.argongovernment" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.argongovernment" otherfaction="faction.player" value="faction.argongovernment.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.heartofalbion" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.player" value="faction.heartofalbion.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.canteran" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.canteran" otherfaction="faction.player" value="faction.canteran.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.familyryak" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.familyryak" otherfaction="faction.player" value="faction.familyryak.relation.kill.max"/>
+				
+				<do_if value="md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity" comment="dlc compatibility">
+					<set_faction_relation faction="faction.player" otherfaction="faction.{['teladi'].{1}}" value="faction.player.relation.kill.max"/> 
+					<set_faction_relation faction="faction.{['teladi'].{1}}" otherfaction="faction.player" value="faction.{['teladi'].{1}}.relation.kill.max"/>
+				</do_if>
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<find_cluster name="$Maelstrom" macro="macro.cluster_a_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzonecluster_a_sector01_zone95_macro" />
+				<!-- CREATING SHIP: Wraith Light Cruiser -->
+				<create_ship name="$cwirwraith" macro="units_size_l_player_fury_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="8"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+							
+					<create_ship name="$cwirharpy" macro="units_size_l_player_harpy_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="8"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>						
+					
+					<find_dock_location name="$Dock" container="$cwirwraith" size="tag.dock_p"/>
+					<create_platform_actor name="$wraithCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$wraithDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$wraithEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$wraithCommander" object="$cwirwraith"/>
+					<assign_defence_manager actor="$wraithDefenceNPC" object="$cwirwraith"/>
+					<assign_engineer actor="$wraithEngineer" object="$cwirwraith"/>
+					<set_object_commander object="$cwirwraith" commander="player.primaryship"/>
+					<start_script object="$wraithCommander" name="'player.default'"/>
+					<start_script object="$wraithDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$wraithEngineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirharpy" size="tag.dock_p"/>
+					<create_platform_actor name="$harpyCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$harpyDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$harpyEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$harpyCommander" object="$cwirharpy"/>
+					<assign_defence_manager actor="$harpyDefenceNPC" object="$cwirharpy"/>
+					<assign_engineer actor="$harpyEngineer" object="$cwirharpy"/>
+					<set_object_commander object="$cwirharpy" commander="player.primaryship"/>
+					<start_script object="$harpyCommander" name="'player.default'"/>
+					<start_script object="$harpyDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$harpyEngineer" name="'engineer.ai'"/>					
+					
+			</actions>
+		</cue>
+		<cue name="CWIR_HereticHelptext" module="cwir_heretic">
+			<delay exact="60s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<show_help custom="{40002,53}" position="1" duration="20s"/>
+				<show_help custom="{40002,54}" position="1" duration="20s"/>
+				<show_help custom="{40002,55}" position="1" duration="20s"/>
+				<show_help custom="{40002,56}" position="1" duration="20s"/>
+				<!--<show_help custom="'You are a member of the proud and true sect of goners known as The Heretic Vanguard'" position="1" duration="20s"/>
+				<show_help custom="'It is your mission to spread the message of your faction with fire and sword to all those who oppose you'" position="1" duration="20s"/>
+				<show_help custom="'No Xeno will be spared and soon the Argon Government will fall to the might of The Heretic Vanguard'" position="1" duration="20s"/>
+				<show_help custom="'Strive to help your faction come to dominance in this dangerous part of the universe'" position="1" duration="20s"/>-->
+			</actions>
+		</cue>
+		
+		
+		<cue name="setup_cwir_ambitiousentrepreneur">
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+				<check_value value="player.module" exact="'cwir_ambitiousentrepreneur'"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				<!-- Delayed cues -->
+				
+				
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.familyryak" known="true"/>
+				<set_faction_known faction="faction.hereticvanguards" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				
+				<set_faction_known faction="faction.heartofalbion" known="true"/>
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.plutarch" known="true"/>
+				<set_faction_known faction="faction.jonferson" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.hereticvanguards" value="0"/>
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.player" value="0"/>						
+								
+				<set_faction_relation faction="faction.player" otherfaction="faction.familyryak" value="0"/> 
+				<set_faction_relation faction="faction.familyryak" otherfaction="faction.player" value="0"/>	
+
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<find_sector name="$cwir_ALB_LookoutSec" macro="macro.cluster_b_sector07_macro" space="player.galaxy" required="true"/>
+				<find_sector name="$cwir_ALB_InnerworldSec" macro="macro.cluster_b_sector06_macro" space="player.galaxy" required="true"/>
+				<find_sector name="$cwir_DEV_MoltenArchonSec" macro="macro.cluster_d_sector20_macro" space="player.galaxy" required="true"/>
+				<find_sector name="$cwir_DEV_BleakPebbleSec" macro="macro.cluster_d_sector17_macro" space="player.galaxy" required="true"/>
+				
+				<find_sector name="$cwir_OMI_EclipseCloudsSec" macro="macro.cluster_c_sector10_macro" space="player.galaxy" required="true"/>
+				<find_sector name="$cwir_OMI_DevoidClimeSec" macro="macro.cluster_c_sector08_macro" space="player.galaxy" required="true"/>
+				<find_sector name="$cwir_MA_SigmaSectorSec" macro="macro.cluster_a_sector01_macro" space="player.galaxy" required="true"/>
+				<find_sector name="$cwir_MA_BlurredReflectionSec" macro="macro.cluster_a_sector02_macro" space="player.galaxy" required="true"/>
+				
+				<find_zone name="$cwir_Alb_LookoutAlpha_Zone03" macro="macro.tzonecluster_b_sector07_zone03_macro" space="$cwir_ALB_LookoutSec" tempzone="false" required="true" comment="Wreckfield intro"/>
+				<find_zone name="$cwir_Alb_LookoutAlpha_Zone07" macro="macro.tzonecluster_b_sector07_zone07_macro" space="$cwir_ALB_LookoutSec" tempzone="false" required="true" comment="Near Superhighway to Inner-world"/>
+				<find_zone name="$cwir_Alb_LookoutAlpha_Zone08" macro="macro.tzonecluster_b_sector07_zone08_macro" space="$cwir_ALB_LookoutSec" tempzone="false" required="true" comment="Near Badlands"/>
+				<find_zone name="$cwir_Alb_LookoutAlpha_Zone09" macro="macro.tzonecluster_b_sector07_zone09_macro" space="$cwir_ALB_LookoutSec" tempzone="false" required="true" comment=""/>
+				<find_zone name="$cwir_ALB_LookoutAlpha_Distant_Fume" macro="macro.tzonecluster_b_sector07_zone07_macro" space="$cwir_ALB_LookoutSec" tempzone="false" required="true"/>
+				<find_zone name="$cwir_Alb_LookoutAlpha_Auspicious_Excavation" macro="macro.tzonecluster_b_sector07_zone05_macro" space="$cwir_ALB_LookoutSec" tempzone="false" required="true" comment="Auspicious Excavation"/>
+				<find_zone name="$cwir_ALB_InnerworldSec_WaterGate" macro="macro.tzonecluster_b_sector06_zone11_macro" space="$cwir_ALB_InnerworldSec" tempzone="false" required="true" comment="Water Gate"/>
+				<find_zone name="$cwir_ALB_InnerworldSec_Zone12" macro="macro.tzonecluster_b_sector06_zone12_macro" space="$cwir_ALB_InnerworldSec" tempzone="false" required="true" comment="Frozen Circuit"/>
+				<find_zone name="$cwir_ALB_InnerworldSec_Zone13" macro="macro.tzonecluster_b_sector06_zone13_macro" space="$cwir_ALB_InnerworldSec" tempzone="false" required="true" comment="Cuspid Splint"/>
+				
+				<find_zone name="$cwir_DEV_BleakPebbleSec_Zone34" macro="macro.tzoneCluster_D_Sector17_Zone34_macro" space="$cwir_DEV_BleakPebbleSec" tempzone="false" required="true" comment="Twilight Sentinel"/>
+				<find_zone name="$cwir_DEV_MoltenArchonSec_Zone54" macro="macro.tzoneCluster_D_Sector20_Zone54_macro" space="$cwir_DEV_MoltenArchonSec" tempzone="false" required="true" comment="Vapour Stream"/>
+				<find_zone name="$cwir_DEV_MoltenArchonSec_Zone55" macro="macro.tzoneCluster_D_Sector20_Zone55_macro" space="$cwir_DEV_MoltenArchonSec" tempzone="false" required="true" comment="Lava Flow"/>
+				
+				<find_zone name="$cwir_OMI_EclipseCloudsSec_Zone66" macro="macro.tzoneCluster_C_Sector10_Zone66_macro" space="$cwir_OMI_EclipseCloudsSec" tempzone="false" required="true" comment="Wavy Haze"/>
+				<find_zone name="$cwir_OMI_DevoidClimeSec_Zone92" macro="macro.tzoneCluster_C_Sector08_Zone92_macro" space="$cwir_OMI_DevoidClimeSec" tempzone="false" required="true" comment="Eternal Dawn"/>
+				<find_zone name="$cwir_OMI_DevoidClimeSec_Zone88" macro="macro.tzoneCluster_C_Sector08_Zone88_macro" space="$cwir_OMI_DevoidClimeSec" tempzone="false" required="true" comment="Silent Void"/>
+				
+				<find_zone name="$cwir_MA_SigmaSectorSec_Zone94" macro="macro.tzoneCluster_A_Sector01_Zone94_macro" space="$cwir_MA_SigmaSectorSec" tempzone="false" required="true" comment="Alpha Quadrant"/>				
+				<find_zone name="$cwir_MA_BlurredReflectionSec_Zone104" macro="macro.tzoneCluster_A_Sector02_Zone104_macro" space="$cwir_MA_BlurredReflectionSec" tempzone="false" required="true" comment="Prevarication"/>
+				
+				<find_object name="$cwir_ALB_Lookout__Jumpgate" class="class.gate" destination="md.$DeVries" space="$cwir_ALB_LookoutSec" required="true"/>
+				<find_object name="$cwir_DEV_BLEAK__Jumpgate" class="class.gate" destination="md.$Albion" space="$cwir_DEV_BleakPebbleSec" required="true"/>
+				<find_object name="$cwir_DEV_Molten__Jumpgate" class="class.gate" destination="md.$Omicron_Lyrae" space="$cwir_DEV_MoltenArchonSec" required="true"/>
+				<find_object name="$cwir_OMI_Eclipse__Jumpgate" class="class.gate" destination="md.$DeVries" space="$cwir_OMI_EclipseCloudsSec" required="true"/>
+				<find_object name="$cwir_OMI_Devoid__Jumpgate" class="class.gate" destination="md.$Maelstrom" space="$cwir_OMI_DevoidClimeSec" required="true"/>
+				<find_object name="$cwir_MA_SigmaSector__Jumpgate" class="class.gate" destination="md.$Omicron_Lyrae" space="$cwir_MA_SigmaSectorSec" required="true"/>
+				
+				<find_zone name="$cwir_Alb_LookoutAlpha_Zones" space="$cwir_ALB_LookoutSec" multiple="true"/>
+				<set_known object="$cwir_ALB_LookoutSec" known="true"/>
+				<debug_text chance="0" filter="general" text="'Set %1 to known'.[$cwir_ALB_LookoutSec.knownname]"/>
+				<do_all exact="$cwir_Alb_LookoutAlpha_Zones.count" counter="$Counter">
+					<set_known object="$cwir_Alb_LookoutAlpha_Zones.{$Counter}" known="true"/>
+					<debug_text chance="0" filter="general" text="'Set %1 to known'.[$cwir_Alb_LookoutAlpha_Zones.{$Counter}.knownname]"/>
+				</do_all>
+
+				<find_zone name="$cwir_ALB_Innerworld_Zones" space="$cwir_ALB_InnerworldSec" multiple="true"/>
+				<set_known object="$cwir_ALB_InnerworldSec" known="true"/>
+				<debug_text chance="0" filter="general" text="'Set %1 to known'.[$cwir_ALB_InnerworldSec.knownname]"/>
+				<do_all exact="$cwir_ALB_Innerworld_Zones.count" counter="$Counter">
+					<set_known object="$cwir_ALB_Innerworld_Zones.{$Counter}" known="true"/>
+					<debug_text chance="0" filter="general" text="'Set %1 to known'.[$cwir_ALB_Innerworld_Zones.{$Counter}.knownname]"/>
+				</do_all>
+				
+				<find_zone name="$cwir_DEV_BleakPebble_Zones" space="$cwir_DEV_BleakPebbleSec" multiple="true"/>
+				<set_known object="$cwir_DEV_BleakPebbleSec" known="true"/>
+				<do_all exact="$cwir_DEV_BleakPebble_Zones.count" counter="$Counter">
+					<set_known object="$cwir_DEV_BleakPebble_Zones.{$Counter}" known="true"/>
+				</do_all>
+				
+				<find_zone name="$cwir_DEV_MoltenArchon_Zones" space="$cwir_DEV_MoltenArchonSec" multiple="true"/>
+				<set_known object="$cwir_DEV_MoltenArchonSec" known="true"/>
+				<do_all exact="$cwir_DEV_MoltenArchon_Zones.count" counter="$Counter">
+					<set_known object="$cwir_DEV_MoltenArchon_Zones.{$Counter}" known="true"/>
+				</do_all>
+				
+				<find_zone name="$cwir_OMI_EclipseClouds_Zones" space="$cwir_OMI_EclipseCloudsSec" multiple="true"/>
+				<set_known object="$cwir_OMI_EclipseCloudsSec" known="true"/>
+				<do_all exact="$cwir_OMI_EclipseClouds_Zones.count" counter="$Counter">
+					<set_known object="$cwir_OMI_EclipseClouds_Zones.{$Counter}" known="true"/>
+				</do_all>
+				
+				<find_zone name="$cwir_OMI_DevoidClime_Zones" space="$cwir_OMI_DevoidClimeSec" multiple="true"/>
+				<set_known object="$cwir_OMI_DevoidClimeSec" known="true"/>
+				<do_all exact="$cwir_OMI_DevoidClime_Zones.count" counter="$Counter">
+					<set_known object="$cwir_OMI_DevoidClime_Zones.{$Counter}" known="true"/>
+				</do_all>
+				
+				<find_zone name="$cwir_MA_SigmaSector_Zones" space="$cwir_MA_SigmaSectorSec" multiple="true"/>
+				<set_known object="$cwir_MA_SigmaSectorSec" known="true"/>
+				<do_all exact="$cwir_MA_SigmaSector_Zones.count" counter="$Counter">
+					<set_known object="$cwir_MA_SigmaSector_Zones.{$Counter}" known="true"/>
+				</do_all>
+				
+				<find_zone name="$cwir_MA_BlurredReflection_Zones" space="$cwir_MA_BlurredReflectionSec" multiple="true"/>
+				<set_known object="$cwir_MA_BlurredReflectionSec" known="true"/>
+				<do_all exact="$cwir_MA_BlurredReflection_Zones.count" counter="$Counter">
+					<set_known object="$cwir_MA_BlurredReflection_Zones.{$Counter}" known="true"/>
+				</do_all>
+				
+				<find_cluster name="$Maelstrom" macro="macro.cluster_a_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzonecluster_a_sector02_zone105_macro" />
+				
+				<!-- CREATING SHIP: Taranis -->
+				<create_ship name="$cwirtaranis" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis2" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis3" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirconves" macro="units_size_xl_builder_ship_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+						<wares list="[ware.fusionreactor]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.bioopticwiring]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.reinforcedmetalplating]">
+                              <fillpercent min="50" max="65"/>
+                            </wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="75"/>
+						<unit category="unitcategory.transport" mk="1" exact="10" />
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirconves2" macro="units_size_xl_builder_ship_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+						<wares list="[ware.fusionreactor]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.bioopticwiring]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.reinforcedmetalplating]">
+                              <fillpercent min="50" max="65"/>
+                            </wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="75"/>
+						<unit category="unitcategory.transport" mk="1" exact="10" />
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirconves3" macro="units_size_xl_builder_ship_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+						<wares list="[ware.fusionreactor]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.bioopticwiring]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.reinforcedmetalplating]">
+                              <fillpercent min="50" max="65"/>
+                            </wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="75"/>
+						<unit category="unitcategory.transport" mk="1" exact="10" />
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+										
+				<find_dock_location name="$Dock" container="$cwirconves" size="tag.dock_p"/>
+					<create_platform_actor name="$cvCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cvDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cvEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>					
+					<assign_pilot actor="$cvCommander" object="$cwirconves"/>
+					<assign_defence_manager actor="$cvDefenceNPC" object="$cwirconves"/>
+					<assign_engineer actor="$cvEngineer" object="$cwirconves"/>
+					
+					<set_object_commander object="$cwirconves" commander="player.primaryship"/>
+					<start_script object="$cvCommander" name="'player.default'"/>
+					<start_script object="$cvDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$cvEngineer" name="'engineer.ai'"/>
+				
+				<find_dock_location name="$Dock" container="$cwirconves2" size="tag.dock_p"/>
+					<create_platform_actor name="$cv2Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cv2DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cv2Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					
+					<assign_pilot actor="$cv2Commander" object="$cwirconves2"/>
+					<assign_defence_manager actor="$cv2DefenceNPC" object="$cwirconves2"/>
+					<assign_engineer actor="$cv2Engineer" object="$cwirconves2"/>
+					
+					<set_object_commander object="$cwirconves2" commander="player.primaryship"/>
+					<start_script object="$cv2Commander" name="'player.default'"/>
+					<start_script object="$cv2DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$cv2Engineer" name="'engineer.ai'"/>
+				
+				<find_dock_location name="$Dock" container="$cwirconves3" size="tag.dock_p"/>
+					<create_platform_actor name="$cv3Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cv3DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cv3Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					
+					<assign_pilot actor="$cv3Commander" object="$cwirconves3"/>
+					<assign_defence_manager actor="$cv3DefenceNPC" object="$cwirconves3"/>
+					<assign_engineer actor="$cv3Engineer" object="$cwirconves3"/>
+					
+					<set_object_commander object="$cwirconves3" commander="player.primaryship"/>
+					<start_script object="$cv3Commander" name="'player.default'"/>
+					<start_script object="$cv3DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$cv3Engineer" name="'engineer.ai'"/>
+								
+          <find_dock_location name="$Dock" container="$cwirtaranis" size="tag.dock_p"/>
+					<create_platform_actor name="$taranisCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranisDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranisEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranisCommander" object="$cwirtaranis"/>
+					<assign_defence_manager actor="$taranisDefenceNPC" object="$cwirtaranis"/>
+					<assign_engineer actor="$taranisEngineer" object="$cwirtaranis"/>
+					<set_object_commander object="$cwirtaranis" commander="player.primaryship"/>
+					<start_script object="$taranisCommander" name="'player.default'"/>
+					<start_script object="$taranisDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranisEngineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis2" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis2Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis2DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis2Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis2Commander" object="$cwirtaranis2"/>
+					<assign_defence_manager actor="$taranis2DefenceNPC" object="$cwirtaranis2"/>
+					<assign_engineer actor="$taranis2Engineer" object="$cwirtaranis2"/>
+					<set_object_commander object="$cwirtaranis2" commander="player.primaryship"/>
+					<start_script object="$taranis2Commander" name="'player.default'"/>
+					<start_script object="$taranis2DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis2Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis3" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis3Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis3DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis3Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis3Commander" object="$cwirtaranis3"/>
+					<assign_defence_manager actor="$taranis3DefenceNPC" object="$cwirtaranis3"/>
+					<assign_engineer actor="$taranis3Engineer" object="$cwirtaranis3"/>
+					<set_object_commander object="$cwirtaranis3" commander="player.primaryship"/>
+					<start_script object="$taranis3Commander" name="'player.default'"/>
+					<start_script object="$taranis3DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis3Engineer" name="'engineer.ai'"/>
+<!-- SETA&JD #pref# -->							
+          <add_inventory entity="player.entity" ware="ware.inv_timewarp" />
+          <upgrade_object_by_macro object="player.primaryship" macro="macro.unit_player_ship_jumpdrive_macro" exact="100" comment="exact in % of available slots!" />
+<!-- #pref# -->							
+					
+			</actions>
+		</cue>
+		<cue name="CWIR_entrepreneurtext" module="cwir_ambitiousentrepreneur">
+			<delay exact="60s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<show_help custom="{40002,73}" position="1" duration="20s"/>
+				<show_help custom="{40002,74}" position="1" duration="20s"/>
+				<show_help custom="{40002,75}" position="1" duration="20s"/>
+				<show_help custom="{40002,76}" position="1" duration="20s"/>
+				
+			</actions>
+		</cue>
+		
+				
+		<cue name="setup_cwir_pmcstart">		
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+				<check_value value="player.module" exact="'cwir_pmcstart'"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				<!-- Delayed cues -->
+				
+				
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				
+				<set_faction_known faction="faction.heartofalbion" known="true"/>
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.plutarch" known="true"/>
+				<set_faction_known faction="faction.jonferson" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.plutarch" value="20"/>
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.player" value="20"/>						
+								
+				<set_faction_relation faction="faction.player" otherfaction="faction.heartofalbion" value="-20"/> 
+				<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.player" value="-20"/>	
+				<set_faction_relation faction="faction.player" otherfaction="faction.canteran" value="-20"/> 
+				<set_faction_relation faction="faction.canteran" otherfaction="faction.player" value="-20"/>
+				
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<find_cluster name="$Albion" macro="macro.cluster_b_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzonecluster_b_sector05_zone19_macro" />
+				
+				 <create_ship name="$cwirpmctaranis" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+							
+				<create_ship name="$cwirheavysul1" macro="units_size_l_kit_carrier_02_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirlightsul1" macro="units_size_l_kit_carrier_01_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwircvpmc" macro="units_size_xl_builder_ship_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+						<wares list="[ware.fusionreactor]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.bioopticwiring]">
+                              <fillpercent min="30" max="35"/>
+                            </wares>
+							<wares list="[ware.reinforcedmetalplating]">
+                              <fillpercent min="50" max="65"/>
+                            </wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="75"/>
+						<unit category="unitcategory.transport" mk="1" exact="10" />
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>			
+										
+				<find_dock_location name="$Dock" container="$cwircvpmc" size="tag.dock_p"/>
+					<create_platform_actor name="$pmccvCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$pmccvDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$pmccvEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$pmccvCommander" object="$cwircvpmc"/>
+					<assign_defence_manager actor="$pmccvDefenceNPC" object="$cwircvpmc"/>
+					<assign_engineer actor="$pmccvEngineer" object="$cwircvpmc"/>
+					<set_object_commander object="$cwircvpmc" commander="player.primaryship"/>
+					<start_script object="$pmccvCommander" name="'player.default'"/>
+					<start_script object="$pmccvDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$pmccvEngineer" name="'engineer.ai'"/>
+				
+				    <find_dock_location name="$Dock" container="$cwirpmctaranis" size="tag.dock_p"/>
+					<create_platform_actor name="$pmctaranisCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$pmctaranisDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$pmctaranisEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$pmctaranisCommander" object="$cwirpmctaranis"/>
+					<assign_defence_manager actor="$pmctaranisDefenceNPC" object="$cwirpmctaranis"/>
+					<assign_engineer actor="$pmctaranisEngineer" object="$cwirpmctaranis"/>
+					<set_object_commander object="$cwirpmctaranis" commander="player.primaryship"/>
+					<start_script object="$pmctaranisCommander" name="'player.default'"/>
+					<start_script object="$pmctaranisDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$pmctaranisEngineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirlightsul1" size="tag.dock_p"/>
+					<create_platform_actor name="$lightsul1Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$lightsul1DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$lightsul1Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$lightsul1Commander" object="$cwirlightsul1"/>
+					<assign_defence_manager actor="$lightsul1DefenceNPC" object="$cwirlightsul1"/>
+					<assign_engineer actor="$lightsul1Engineer" object="$cwirlightsul1"/>
+					<set_object_commander object="$cwirlightsul1" commander="player.primaryship"/>
+					<start_script object="$lightsul1Commander" name="'player.default'"/>
+					<start_script object="$lightsul1DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$lightsul1Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirheavysul1" size="tag.dock_p"/>
+					<create_platform_actor name="$heavysul1Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$heavysul1DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$heavysul1Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$heavysul1Commander" object="$cwirheavysul1"/>
+					<assign_defence_manager actor="$heavysul1DefenceNPC" object="$cwirheavysul1"/>
+					<assign_engineer actor="$heavysul1Engineer" object="$cwirheavysul1"/>
+					<set_object_commander object="$cwirheavysul1" commander="player.primaryship"/>
+					<start_script object="$heavysul1Commander" name="'player.default'"/>
+					<start_script object="$heavysul1DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$heavysul1Engineer" name="'engineer.ai'"/>
+<!-- SETA -->							
+        <add_inventory entity="player.entity" ware="ware.inv_timewarp" />
+          
+						
+					
+			</actions>
+		</cue>
+		<cue name="CWIR_PMCtext" module="cwir_pmcstart">
+			<delay exact="60s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<show_help custom="{40002,99}" position="1" duration="20s"/>
+								
+			</actions>
+		
+		
+		</cue>
+		
+		<cue name="setup_cwir_hoastart">
+		
+		<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+				<check_value value="player.module" exact="'cwir_hoastart'"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/> 
+				
+				<!-- Delayed cues -->
+				
+				
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				
+				<set_faction_known faction="faction.heartofalbion" known="true"/>
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.plutarch" known="true"/>
+				<set_faction_known faction="faction.jonferson" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.plutarch" value="-20"/>
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.player" value="-20"/>						
+								
+				<set_faction_relation faction="faction.player" otherfaction="faction.heartofalbion" value="20"/> 
+				<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.player" value="20"/>	
+				<set_faction_relation faction="faction.player" otherfaction="faction.canteran" value="20"/> 
+				<set_faction_relation faction="faction.canteran" otherfaction="faction.player" value="20"/>
+				
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<find_cluster name="$Albion" macro="macro.cluster_b_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzoneCluster_B_Sector04_Zone32_macro" />
+				
+				 <create_ship name="$cwirbalor" macro="units_size_l_single_attack_ship_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>				
+										
+				<find_dock_location name="$Dock" container="$cwirbalor" size="tag.dock_p"/>
+					<create_platform_actor name="$balorCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$balorDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$balorEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$balorCommander" object="$cwirbalor"/>
+					<assign_defence_manager actor="$balorDefenceNPC" object="$cwirbalor"/>
+					<assign_engineer actor="$balorEngineer" object="$cwirbalor"/>
+					<set_object_commander object="$cwirbalor" commander="player.primaryship"/>
+					<start_script object="$balorCommander" name="'player.default'"/>
+					<start_script object="$balorDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$balorEngineer" name="'engineer.ai'"/>
+				
+				    
+<!-- SETA -->							
+         <add_inventory entity="player.entity" ware="ware.inv_timewarp" />
+          
+						
+					
+			</actions>
+		</cue>
+		<cue name="CWIR_HOAtext" module="cwir_hoastart">
+			<delay exact="60s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<show_help custom="{40002,100}" position="1" duration="20s"/>
+								
+			</actions>
+		
+		
+		</cue>
+		
+		
+	<cue name="setup_cwir_agstart">
+		
+		<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+				<check_value value="player.module" exact="'cwir_agstart'"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				<!-- Delayed cues -->
+				
+				
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				
+				<set_faction_known faction="faction.heartofalbion" known="true"/>
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.plutarch" known="true"/>
+				<set_faction_known faction="faction.jonferson" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.hereticvanguards" value="-20"/>
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.player" value="-20"/>						
+								
+				<set_faction_relation faction="faction.player" otherfaction="faction.argongovernment" value="20"/> 
+				<set_faction_relation faction="faction.argongovernment" otherfaction="faction.player" value="20"/>	
+				<set_faction_relation faction="faction.player" otherfaction="faction.plutarch" value="-10"/> 
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.player" value="-10"/>
+				
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<find_cluster name="$Albion" macro="macro.cluster_b_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzoneCluster_C_Sector08_Zone92_macro" />
+				
+				 <create_ship name="$cwirfulmekron" macro="units_size_xl_cs_omicron_ship_02_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+
+				<create_ship name="$cwirolmekron" macro="units_size_xl_cs_omicron_ship_03_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirolmekron2" macro="units_size_xl_cs_omicron_ship_03_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+										
+				<find_dock_location name="$Dock" container="$cwirfulmekron" size="tag.dock_p"/>
+					<create_platform_actor name="$fulmekronCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$fulmekronDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$fulmekronEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$fulmekronCommander" object="$cwirfulmekron"/>
+					<assign_defence_manager actor="$fulmekronDefenceNPC" object="$cwirfulmekron"/>
+					<assign_engineer actor="$fulmekronEngineer" object="$cwirfulmekron"/>
+					<set_object_commander object="$cwirfulmekron" commander="player.primaryship"/>
+					<start_script object="$fulmekronCommander" name="'player.default'"/>
+					<start_script object="$fulmekronDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$fulmekronEngineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirolmekron" size="tag.dock_p"/>
+					<create_platform_actor name="$olmekronCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$olmekronDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$olmekronEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$olmekronCommander" object="$cwirolmekron"/>
+					<assign_defence_manager actor="$olmekronDefenceNPC" object="$cwirolmekron"/>
+					<assign_engineer actor="$olmekronEngineer" object="$cwirolmekron"/>
+					<set_object_commander object="$cwirolmekron" commander="player.primaryship"/>
+					<start_script object="$olmekronCommander" name="'player.default'"/>
+					<start_script object="$olmekronDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$olmekronEngineer" name="'engineer.ai'"/>
+				
+					<find_dock_location name="$Dock" container="$cwirolmekron2" size="tag.dock_p"/>
+					<create_platform_actor name="$olmekron2Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$olmekron2DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$olmekron2Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$olmekron2Commander" object="$cwirolmekron2"/>
+					<assign_defence_manager actor="$olmekron2DefenceNPC" object="$cwirolmekron2"/>
+					<assign_engineer actor="$olmekron2Engineer" object="$cwirolmekron2"/>
+					<set_object_commander object="$cwirolmekron2" commander="player.primaryship"/>
+					<start_script object="$olmekron2Commander" name="'player.default'"/>
+					<start_script object="$olmekron2DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$olmekron2Engineer" name="'engineer.ai'"/>
+					
+					<create_ship name="$cwirfoltor1" macro="units_size_s_ship_ar_military_04_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfulmekron" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor2" macro="units_size_s_ship_ar_military_04_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfulmekron" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor3" macro="units_size_s_ship_ar_military_05_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfulmekron" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor4" macro="units_size_s_ship_ar_military_06_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirfulmekron" max="6km" radius="2km"/>
+					</create_ship>
+					
+					<create_ship name="$cwirfoltor5" macro="units_size_s_ship_ar_military_04_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor6" macro="units_size_s_ship_ar_military_04_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor7" macro="units_size_s_ship_ar_military_05_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor8" macro="units_size_s_ship_ar_military_06_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron" max="6km" radius="2km"/>
+					</create_ship>
+					
+					<create_ship name="$cwirfoltor9" macro="units_size_s_ship_ar_military_04_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron2" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor10" macro="units_size_s_ship_ar_military_04_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron2" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor11" macro="units_size_s_ship_ar_military_05_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron2" max="6km" radius="2km"/>
+					</create_ship>
+					<create_ship name="$cwirfoltor12" macro="units_size_s_ship_ar_military_06_macro" zone="$StartPlot">
+						<owner exact="faction.player" overridenpc="true"/>
+						<pilot ref="trader_albion_random"/>
+						<drop ref="ship_medium_civilian"/>
+						<safepos object="$cwirolmekron2" max="6km" radius="2km"/>
+					</create_ship>
+					
+					<set_object_commander object="$cwirfoltor1" commander="$cwirfulmekron"/>
+					<set_object_commander object="$cwirfoltor2" commander="$cwirfulmekron"/>
+					<set_object_commander object="$cwirfoltor3" commander="$cwirfulmekron"/>
+					<set_object_commander object="$cwirfoltor4" commander="$cwirfulmekron"/>
+					<set_object_commander object="$cwirfoltor5" commander="$cwirolmekron"/>
+					<set_object_commander object="$cwirfoltor6" commander="$cwirolmekron"/>
+					<set_object_commander object="$cwirfoltor7" commander="$cwirolmekron"/>
+					<set_object_commander object="$cwirfoltor8" commander="$cwirolmekron"/>
+					<set_object_commander object="$cwirfoltor9" commander="$cwirolmekron2"/>
+					<set_object_commander object="$cwirfoltor10" commander="$cwirolmekron2"/>
+					<set_object_commander object="$cwirfoltor11" commander="$cwirolmekron2"/>
+					<set_object_commander object="$cwirfoltor12" commander="$cwirolmekron2"/>
+					<start_script object="$cwirfoltor1.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor2.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor3.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor4.pilot" name="'BR.move.escort'"/>
+				    <start_script object="$cwirfoltor5.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor6.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor7.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor8.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor9.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor10.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor11.pilot" name="'BR.move.escort'"/>
+					<start_script object="$cwirfoltor12.pilot" name="'BR.move.escort'"/>
+<!-- SETA -->							
+         <add_inventory entity="player.entity" ware="ware.inv_timewarp" />
+          
+						
+					
+			</actions>
+		</cue>
+		<cue name="CWIR_AGtext" module="cwir_agstart">
+			<delay exact="60s"/>
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<show_help custom="{40002,101}" position="1" duration="20s"/>
+								
+			</actions>
+		
+		
+		</cue>
+		
+		
+		<cue name="setup_cwir_xenon" module="cwir_xenon">
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				<signal_cue cue="md.Setup.PostChapter3Jobs"/>
+				
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.reivers" known="true"/>
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.familyryak" known="true"/>
+				<set_faction_known faction="faction.hereticvanguards" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.xenon" value="30"/>
+				<set_faction_relation faction="faction.xenon" otherfaction="faction.player" value="30"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.hereticvanguards" value="faction.player.relation.kill.max"/>
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.player" value="faction.hereticvanguards.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.plutarch" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.plutarch" otherfaction="faction.player" value="faction.plutarch.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.argongovernment" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.argongovernment" otherfaction="faction.player" value="faction.argongovernment.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.heartofalbion" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.heartofalbion" otherfaction="faction.player" value="faction.heartofalbion.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.canteran" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.canteran" otherfaction="faction.player" value="faction.canteran.relation.kill.max"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.familyryak" value="faction.player.relation.kill.max"/> 
+				<set_faction_relation faction="faction.familyryak" otherfaction="faction.player" value="faction.familyryak.relation.kill.max"/>
+				
+				<do_if value="md.$FieldsOfOpportunity? and md.$FieldsOfOpportunity" comment="dlc compatibility">
+					<set_faction_relation faction="faction.player" otherfaction="faction.{['teladi'].{1}}" value="faction.player.relation.kill.max"/> 
+					<set_faction_relation faction="faction.{['teladi'].{1}}" otherfaction="faction.player" value="faction.{['teladi'].{1}}.relation.kill.max"/>
+				</do_if>
+				
+				<find_cluster name="$Maelstrom" macro="macro.cluster_a_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzonecluster_a_sector03_zone111_macro" />
+				
+				<create_ship name="$cwirk" macro="units_size_l_xenon_01_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="5" exact="8"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+							
+					<create_ship name="$cwiri" macro="units_size_xl_xenon_01_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="5" exact="8"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>		
+
+				<find_dock_location name="$Dock" container="$cwirk" size="tag.dock_p"/>
+					<create_platform_actor name="$cwirkCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cwirkDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cwirkEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$cwirkCommander" object="$cwirk"/>
+					<assign_defence_manager actor="$cwirkDefenceNPC" object="$cwirk"/>
+					<assign_engineer actor="$cwirkEngineer" object="$cwirk"/>					
+					<set_object_commander object="$cwirk" commander="player.primaryship"/>
+					<start_script object="$cwirkCommander" name="'player.default'"/>
+					<start_script object="$cwirkDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$cwirkEngineer" name="'engineer.ai'"/>
+				
+				<find_dock_location name="$Dock" container="$cwiri" size="tag.dock_p"/>
+					<create_platform_actor name="$cwiriCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cwiriDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$cwiriEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>					
+					<assign_pilot actor="$cwiriCommander" object="$cwiri"/>
+					<assign_defence_manager actor="$cwiriDefenceNPC" object="$cwiri"/>
+					<assign_engineer actor="$cwiriEngineer" object="$cwiri"/>					
+					<set_object_commander object="$cwiri" commander="player.primaryship"/>
+					<start_script object="$cwiriCommander" name="'player.default'"/>
+					<start_script object="$cwiriDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$cwiriEngineer" name="'engineer.ai'"/>
+					
+					<add_inventory entity="player.entity" ware="ware.inv_timewarp" />
+					<upgrade_object_by_macro object="player.primaryship" macro="macro.unit_player_ship_jumpdrive_macro" exact="100" comment="exact in % of available slots!" />
+			</actions>
+		</cue>
+		
+		<!--<cue name="setup_cwir_test" module="cwir_test">
+			<conditions>
+				<event_cue_signalled cue="md.Setup.GameStart"/>
+			</conditions>
+			<actions>
+				<signal_cue cue="md.Setup.Open_Jumpgates_Lib"/>
+				
+				
+				<signal_cue cue="md.Setup.WeaponTraderBasket3"/>
+				<signal_cue cue="md.Setup.EquipmentTraderBasket2"/>
+				
+				
+				<set_faction_known faction="faction.argongovernment" known="true"/>
+				<set_faction_known faction="faction.familyryak" known="true"/>
+				<set_faction_known faction="faction.hereticvanguards" known="true"/>
+				<set_faction_known faction="faction.xenon" known="true"/>
+				
+				<set_faction_known faction="faction.heartofalbion" known="true"/>
+				<set_faction_known faction="faction.canteran" known="true"/>
+				<set_faction_known faction="faction.plutarch" known="true"/>
+				<set_faction_known faction="faction.jonferson" known="true"/>
+				
+				<set_faction_relation faction="faction.player" otherfaction="faction.hereticvanguards" value="0"/>
+				<set_faction_relation faction="faction.hereticvanguards" otherfaction="faction.player" value="0"/>						
+								
+				<set_faction_relation faction="faction.player" otherfaction="faction.familyryak" value="0"/> 
+				<set_faction_relation faction="faction.familyryak" otherfaction="faction.player" value="0"/>			
+				
+				<find_cluster name="$Albion" macro="macro.cluster_d_macro"/>
+				<find_zone name="$StartPlot" macro="macro.tzonecluster_d_sector19_zone41_macro" />
+				
+				<create_ship name="$cwirtaranis" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis2" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis3" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+					
+					<create_ship name="$cwirtaranis4" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis5" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis6" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis7" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis8" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis9" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<create_ship name="$cwirtaranis10" macro="units_size_xl_capital_destroyer_2_macro" zone="$StartPlot">
+					<owner exact="faction.player" overridenpc="true"/>
+					<pilot actor="null"/>
+					<defence actor="null"/>
+					<engineer actor="null"/>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<units>						
+						<unit category="unitcategory.welder" mk="1" exact="15"/>
+					</units>
+					<drop ref="ship_large_civilian"/>
+					<safepos x="1500m" y="-100m"/>
+				</create_ship>
+				
+				<find_dock_location name="$Dock" container="$cwirtaranis" size="tag.dock_p"/>
+					<create_platform_actor name="$taranisCommander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranisDefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranisEngineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranisCommander" object="$cwirtaranis"/>
+					<assign_defence_manager actor="$taranisDefenceNPC" object="$cwirtaranis"/>
+					<assign_engineer actor="$taranisEngineer" object="$cwirtaranis"/>
+					<set_object_commander object="$cwirtaranis" commander="player.primaryship"/>
+					<start_script object="$taranisCommander" name="'player.default'"/>
+					<start_script object="$taranisDefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranisEngineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis2" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis2Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis2DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis2Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis2Commander" object="$cwirtaranis2"/>
+					<assign_defence_manager actor="$taranis2DefenceNPC" object="$cwirtaranis2"/>
+					<assign_engineer actor="$taranis2Engineer" object="$cwirtaranis2"/>
+					<set_object_commander object="$cwirtaranis2" commander="player.primaryship"/>
+					<start_script object="$taranis2Commander" name="'player.default'"/>
+					<start_script object="$taranis2DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis2Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis3" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis3Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis3DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis3Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis3Commander" object="$cwirtaranis3"/>
+					<assign_defence_manager actor="$taranis3DefenceNPC" object="$cwirtaranis3"/>
+					<assign_engineer actor="$taranis3Engineer" object="$cwirtaranis3"/>
+					<set_object_commander object="$cwirtaranis3" commander="player.primaryship"/>
+					<start_script object="$taranis3Commander" name="'player.default'"/>
+					<start_script object="$taranis3DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis3Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis4" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis4Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis4DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis4Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis4Commander" object="$cwirtaranis4"/>
+					<assign_defence_manager actor="$taranis4DefenceNPC" object="$cwirtaranis4"/>
+					<assign_engineer actor="$taranis4Engineer" object="$cwirtaranis4"/>
+					<set_object_commander object="$cwirtaranis4" commander="player.primaryship"/>
+					<start_script object="$taranis4Commander" name="'player.default'"/>
+					<start_script object="$taranis4DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis4Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis5" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis5Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis5DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis5Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis5Commander" object="$cwirtaranis5"/>
+					<assign_defence_manager actor="$taranis5DefenceNPC" object="$cwirtaranis5"/>
+					<assign_engineer actor="$taranis5Engineer" object="$cwirtaranis5"/>
+					<set_object_commander object="$cwirtaranis5" commander="player.primaryship"/>
+					<start_script object="$taranis5Commander" name="'player.default'"/>
+					<start_script object="$taranis5DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis5Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis6" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis6Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis6DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis6Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis6Commander" object="$cwirtaranis6"/>
+					<assign_defence_manager actor="$taranis6DefenceNPC" object="$cwirtaranis6"/>
+					<assign_engineer actor="$taranis6Engineer" object="$cwirtaranis6"/>
+					<set_object_commander object="$cwirtaranis6" commander="player.primaryship"/>
+					<start_script object="$taranis6Commander" name="'player.default'"/>
+					<start_script object="$taranis6DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis6Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis7" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis7Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis7DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis7Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis7Commander" object="$cwirtaranis7"/>
+					<assign_defence_manager actor="$taranis7DefenceNPC" object="$cwirtaranis7"/>
+					<assign_engineer actor="$taranis7Engineer" object="$cwirtaranis7"/>
+					<set_object_commander object="$cwirtaranis7" commander="player.primaryship"/>
+					<start_script object="$taranis7Commander" name="'player.default'"/>
+					<start_script object="$taranis7DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis7Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis8" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis8Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis8DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis8Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis8Commander" object="$cwirtaranis8"/>
+					<assign_defence_manager actor="$taranis8DefenceNPC" object="$cwirtaranis8"/>
+					<assign_engineer actor="$taranis8Engineer" object="$cwirtaranis8"/>
+					<set_object_commander object="$cwirtaranis8" commander="player.primaryship"/>
+					<start_script object="$taranis8Commander" name="'player.default'"/>
+					<start_script object="$taranis8DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis8Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis9" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis9Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis9DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis9Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis9Commander" object="$cwirtaranis9"/>
+					<assign_defence_manager actor="$taranis9DefenceNPC" object="$cwirtaranis9"/>
+					<assign_engineer actor="$taranis9Engineer" object="$cwirtaranis9"/>
+					<set_object_commander object="$cwirtaranis9" commander="player.primaryship"/>
+					<start_script object="$taranis9Commander" name="'player.default'"/>
+					<start_script object="$taranis9DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis9Engineer" name="'engineer.ai'"/>
+					
+					<find_dock_location name="$Dock" container="$cwirtaranis10" size="tag.dock_p"/>
+					<create_platform_actor name="$taranis10Commander" type="entitytype.commander" dockingbay="$Dock.component" ref="trader_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis10DefenceNPC" type="entitytype.defencecontrol" dockingbay="$Dock.component" ref="fighter_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<create_platform_actor name="$taranis10Engineer" type="entitytype.engineer" dockingbay="$Dock.component" ref="engineer_albion_random">
+						<owner exact="faction.player"/>
+					</create_platform_actor>
+					<assign_pilot actor="$taranis10Commander" object="$cwirtaranis10"/>
+					<assign_defence_manager actor="$taranis10DefenceNPC" object="$cwirtaranis10"/>
+					<assign_engineer actor="$taranis10Engineer" object="$cwirtaranis10"/>
+					<set_object_commander object="$cwirtaranis10" commander="player.primaryship"/>
+					<start_script object="$taranis10Commander" name="'player.default'"/>
+					<start_script object="$taranis10DefenceNPC" name="'fight.defend.capital'"/>
+					<start_script object="$taranis10Engineer" name="'engineer.ai'"/>
+			</actions>
+		</cue>-->
+		
+	</cues>
+	
+</mdscript>

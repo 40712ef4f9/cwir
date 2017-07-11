@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<soundlibrary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="sound_library.xsd">
+
+  <sound id="40000_normal" description="Board computer - Betty" repeat="1" is3d="1" preload="0">
+    <sample start="extensions\cwir\voice-l044\40000\normal" />
+    <effects>
+      <filter mode="bandpass" frequency="0.26" oneoverq="1.45" />
+      <reverb room="sewer pipe" roomsize="10" drymix="5" density="90" />
+    </effects>
+  </sound>
+  <sound id="40000_normal_muffled" description="Board computer - Betty" repeat="1" is3d="1" preload="0">
+    <sample start="extensions\cwir\voice-l044\40000\normal" />
+    <effects>
+      <filter mode="bandpass" frequency="0.1" oneoverq="1.45" />
+      <reverb room="sewer pipe" roomsize="10" drymix="80" density="90" />
+    </effects>
+  </sound>
+  <sound id="40000_comm" description="Board computer - Betty" repeat="1" is3d="1" preload="0">
+    <sample start="extensions\cwir\voice-l044\40000\normal" />
+    <effects>
+      <filter mode="bandpass" frequency="0.26" oneoverq="1.45" />
+      <reverb room="sewer pipe" roomsize="10" drymix="5" density="90" />
+    </effects>
+  </sound>
+  
+  <sound id="enemy_jump" description="Betty EJ" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\enemy_jump" />
+	</sound>
+  
+    <sound id="allied_jump" description="Betty AJ" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\allied_jump" />
+	</sound>
+
+    <sound id="unknown_jump" description="Betty UJ" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\unknown_jump" />
+	</sound>
+
+	<sound id="enemy_inv" description="Betty EI" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\enemy_inv" />
+	</sound>
+	
+	<sound id="unknown_inv" description="Betty UI" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\unknown_inv" />
+	</sound>
+
+	<sound id="canteran_invasion" description="Betty CI" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\canteran_invasion" />
+	</sound>
+
+	<sound id="canteran_counterattack" description="Betty CCA" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\canteran_counterattack" />
+	</sound>
+	
+	<sound id="allied_counterattack" description="Betty ACA" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\allied_counterattack" />
+	</sound>
+
+	<sound id="spy_net" description="Betty SN" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\spy_net" />
+	</sound>
+
+	<sound id="spy_net_near" description="Betty SN_near" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\spy_net_near" />
+	</sound>
+
+	<sound id="ews" description="Betty G_EWS" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\ews" />
+	</sound>
+	
+	<sound id="station_win" description="Betty stat_win" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\station_win" />
+	</sound>
+	
+	<sound id="station_lost" description="Betty stat_lost" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\station_lost" />
+	</sound>
+	
+	<sound id="station_board_start" description="Betty stat_board" repeat="1" is3d="1" isunique="true" preload="0">
+		<sample start="extensions\cwir\sfx\betty\station_board_start" />
+	</sound>
+  
+</soundlibrary>

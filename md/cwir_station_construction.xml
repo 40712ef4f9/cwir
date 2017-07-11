@@ -1,0 +1,1100 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<mdscript name="CWIR_StationConstruction" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="E:\Rebirth\current\libraries\md.xsd">
+	<cues>
+		<!--
+      Functions for NPC station construction. Parameters : Zone to build in, station macro to build, faction to build for
+
+      Select a CV type and spawn station from faction parameter.
+      CV flies to zone parameter and beings to build if zone has free npc or player build loc.
+      
+      Known issues :
+      Only the base stage currently checks for obstructions. If this proves to be terrible, will revisit.
+      Will not work for faction.player
+      
+      Message Yorrick if not performing as required :)
+    -->
+		<cue name="CWIR_ConstructNPCStation" instantiate="true" namespace="this">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<delay min="20ms" max="150ms"/>
+			<actions>
+				<set_value name="$BuildZone" exact="event.param.{1}" />
+				<set_value name="$StationMacro" exact="event.param.{2}"/>
+				<set_value name="$Faction" exact="event.param.{3}" />
+				<set_value name="$CheatResources" exact="if event.param.{4}? then event.param.{4} else 0" />
+				<set_value name="$CheatResourcesAllStagesChance" exact="if event.param.{5}? then event.param.{5} else 0" />
+				<set_value name="$Flag1" exact="if event.param.{6}? then event.param.{6} else 0" />
+				<set_value name="$Flag2" exact="if event.param.{7}? then event.param.{7} else 0" />
+				<set_value name="$Flag3" exact="if event.param.{8}? then event.param.{8} else 0" />
+
+				<!--<write_to_logbook category="general" text="'=== cheat resource paramters === \n CheatResources: %1 \n CheatResourcesAllStagesChance %2. '.[$CheatResources, $CheatResourcesAllStagesChance]" chance="100"/>-->
+
+				<!-- get the station objects for cv spawns -->
+				<find_zone name="$ShadyVault" macro="macro.tzonecluster_b_sector05_zone19_macro"/>
+				<find_zone name="$GemstoneManufacture" macro="macro.tzonecluster_b_sector04_zone32_macro"/>
+				<find_zone name="$DarnedHotAir" macro="macro.tzonecluster_d_sector18_zone50_macro"/>
+				<find_zone name="$EternalDawn" macro="macro.tzonecluster_c_sector08_zone92_macro"/>
+				<find_zone name="$SunkenFrigate" macro="macro.tzonecluster_a_sector01_zone101_macro"/>
+				<find_zone name="$VerdantProfit" macro="macro.cluster_t_sector01_zone001_macro"/>
+				<find_zone name="$District05" macro="macro.tzonecluster_m_sector01_zone005_macro"/>
+				<find_zone name="$District08" macro="macro.tzonecluster_m_sector02_zone003_macro"/>
+				<find_zone name="$CrypticHeart" macro="macro.tzonecluster_a_sector03_zone114_macro"/>
+				<find_zone name="$SanguineAgony" macro="macro.tzonecluster_d_sector19_zone42_macro"/>
+				<find_zone name="$SixthScripture" macro="macro.tzonecluster_a_sector02_zone108_macro"/>
+				<find_zone name="$EpsilonLowlands" macro="macro.tzonecluster_b_sector07_zone10_macro"/>
+
+				<find_station name="$PMCShipyard" space="$ShadyVault" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$HOAShipyard" space="$GemstoneManufacture" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$ROCShipyard" space="$DarnedHotAir" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$JFShipyard" space="$EternalDawn" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$TELShipyard" space="$VerdantProfit" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$TERShipyard1" space="$District05" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$TERShipyard2" space="$District08" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+				<find_station name="$XenShipyard" space="$CrypticHeart" functional="true"/> <!-- placeholder for adding xenon shipyards -->
+				<find_station name="$ReiversShipyard" space="$SanguineAgony" functional="true"/>
+				<find_station name="$SplitShipyard" space="$SixthScripture" functional="true"/> 
+				<find_station name="$SovShipyard" space="$EpsilonLowlands" functional="true"/>
+				<find_station name="$HVShipyard" space="$SunkenFrigate" functional="true" multiple="false">
+					<match_content class="class.buildmodule" />
+				</find_station>
+
+				<do_if value="$BuildZone and $StationMacro and $Faction">
+					<!-- select CV type + shipyard based on faction, default to albion + hoa yard -->
+					<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwiralb_macro"/>
+					<set_value name="$CVSpawnStation" exact="$HOAShipyard"/>
+					<set_value name="$SpawnZone" exact="$GemstoneManufacture"/>
+
+					<do_if value="($Faction == faction.leddaindustrial) or ($Faction == faction.nolimits) or ($Faction == faction.wholesomefoods)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwiralb_macro"/>
+						<do_any>
+							<do_all>
+								<set_value name="$CVSpawnStation" exact="$PMCShipyard"/>
+								<set_value name="$SpawnZone" exact="$ShadyVault"/>
+							</do_all>
+							<do_all>
+								<set_value name="$CVSpawnStation" exact="$HOAShipyard"/>
+								<set_value name="$SpawnZone" exact="$GemstoneManufacture"/>
+							</do_all>
+						</do_any>
+					</do_if>
+					<do_elseif value="($Faction == faction.heartofalbion)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwiralb_macro"/>
+						<set_value name="$CVSpawnStation" exact="$HOAShipyard"/>
+						<set_value name="$SpawnZone" exact="$GemstoneManufacture"/>
+					</do_elseif>
+					<do_elseif value="($Faction == faction.albionenergy) or ($Faction == faction.plutarch) or ($Faction == faction.beryll)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwiralb_macro"/>
+						<set_value name="$CVSpawnStation" exact="$PMCShipyard"/>
+						<set_value name="$SpawnZone" exact="$ShadyVault"/>
+					</do_elseif>
+					<do_elseif value="($Faction == faction.argongovernment) or ($Faction == faction.aquarius) or ($Faction == faction.chow) or ($Faction == faction.fijiargnu) or ($Faction == faction.frantonpharma) or ($Faction == faction.jonferson) or ($Faction == faction.sonraenergy)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwirol_macro"/>
+						<set_value name="$CVSpawnStation" exact="$JFShipyard"/>
+						<set_value name="$SpawnZone" exact="$EternalDawn"/>
+					</do_elseif>
+					<do_elseif value="($Faction == faction.canteran)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwircan_macro"/>
+						<set_value name="$CVSpawnStation" exact="$ROCShipyard"/>
+						<set_value name="$SpawnZone" exact="$DarnedHotAir"/>
+					</do_elseif>
+
+					<do_if value="($Faction == faction.xenon)">
+						<set_value name="$CVtype" exact="macro.units_size_l_xenon_outk_macro"/>
+						<set_value name="$CVSpawnStation" exact="$XenShipyard"/>
+						<set_value name="$SpawnZone" exact="$CrypticHeart"/>
+					</do_if>
+
+					<do_if value="($Faction == faction.reivers)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwirrei_macro"/>
+						<set_value name="$CVSpawnStation" exact="$ReiversShipyard"/>
+						<set_value name="$SpawnZone" exact="$SanguineAgony"/>
+					</do_if>
+
+					<do_if value="($Faction == faction.familyryak)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwirrya_macro"/>
+						<set_value name="$CVSpawnStation" exact="$SplitShipyard"/>
+						<set_value name="$SpawnZone" exact="$SixthScripture"/>
+					</do_if>
+
+					<do_if value="($Faction == faction.sovereignsyndicate)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_cwirsov_macro"/>
+						<set_value name="$CVSpawnStation" exact="$SovShipyard"/>
+						<set_value name="$SpawnZone" exact="$EpsilonLowlands"/>
+					</do_if>
+
+					<!-- CWIR only -->
+					<do_if value="($Faction == faction.hereticvanguards)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_hv_macro"/>
+						<set_value name="$CVSpawnStation" exact="$HVShipyard"/>
+						<set_value name="$SpawnZone" exact="$SunkenFrigate"/>
+					</do_if>
+
+					<!-- handle DLC factions separately so errors should not break other things -->
+
+					<!-- TO DLC -->
+					<do_if value="($Faction == faction.teladidrugrunner) or ($Faction == faction.teladigunrunner)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_ship_macro"/>
+						<set_value name="$CVSpawnStation" exact="$HOAShipyard"/>
+						<set_value name="$SpawnZone" exact="$DarnedHotAir"/>
+					</do_if>
+					<do_elseif value="($Faction == faction.teladi)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_ship_macro"/>
+						<set_value name="$CVSpawnStation" exact="$TELShipyard"/>
+						<set_value name="$SpawnZone" exact="$VerdantProfit"/>
+					</do_elseif>
+
+					<!-- HoL DLC -->
+					<do_if value="($Faction == faction.terracorp) or ($Faction == faction.terran)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_ship_hol_macro"/>
+						<do_any>
+							<do_all>
+								<set_value name="$CVSpawnStation" exact="$TERShipyard1"/>
+								<set_value name="$SpawnZone" exact="$District05"/>
+							</do_all>
+							<do_all>
+								<set_value name="$CVSpawnStation" exact="$TERShipyard2"/>
+								<set_value name="$SpawnZone" exact="$District08"/>
+							</do_all>
+						</do_any>
+					</do_if>
+					<do_elseif value="($Faction == faction.atlas)">
+						<set_value name="$CVtype" exact="macro.units_size_xl_builder_ship_hol_macro"/>
+						<set_value name="$CVSpawnStation" exact="$HOAShipyard"/>
+						<set_value name="$SpawnZone" exact="$GemstoneManufacture"/>
+					</do_elseif>
+
+					<set_value name="$GotLoc" exact="false"/>
+					<set_value name="$BuildLocation" exact="null"/>
+
+					<!-- pick npc build loc over player build loc if available. extra check for false positives in free location lists -->
+					<do_if value="$BuildZone.freenpcbuildlocations.count != 0">
+						<do_all exact="$BuildZone.freenpcbuildlocations.count" counter="$i">
+							<do_if value="typeof $BuildZone.freenpcbuildlocations.{$i} == datatype.componentmacroslot">
+								<do_if value="not $BuildZone.freenpcbuildlocations.{$i}.child">
+									<set_value name="$BuildLocation" exact="$BuildZone.freenpcbuildlocations.{$i}"/>
+									<set_value name="$GotLoc" exact="true"/>
+								</do_if>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<do_if value="($BuildZone.freebuildlocations.count != 0) and (not $GotLoc)">
+						<do_all exact="$BuildZone.freebuildlocations.count" counter="$i">
+							<do_if value="typeof $BuildZone.freebuildlocations.{$i} == datatype.componentmacroslot">
+								<do_if value="not $BuildZone.freebuildlocations.{$i}.child">
+									<set_value name="$BuildLocation" exact="$BuildZone.freebuildlocations.{$i}"/>
+									<set_value name="$GotLoc" exact="true"/>
+								</do_if>
+							</do_if>
+						</do_all>
+					</do_if>
+
+					<debug_text text="'got loc? %1 build loc : %2'.[$GotLoc, $BuildLocation]" chance="0"/>
+
+					<!--test chosen zone relation and if needed try to find a more near one-->
+					<set_value name="$CreateCVZone" exact="false"/>
+					<do_if value="$SpawnZone.hasrelation.enemy.{$Faction}" >
+						<find_zone name="$CVZone" space="$SpawnZone.cluster" tempzone="false" multiple="true"> <!-- space="md.Conquer_Mod.Start.$allzones" -->
+							<match class="class.highway" negate="true"/>
+							<match owner="$Faction"/>
+						</find_zone>		
+						<do_if value="$CVZone.count" negate="true">
+							<find_zone name="$CVZone" space="player.galaxy" tempzone="false" multiple="true">
+								<match class="class.highway" negate="true"/>
+								<match owner="$Faction"/>
+							</find_zone>		
+							<do_if value="$CVZone.count" negate="true">
+								<find_zone name="$CVZone" space="player.galaxy" tempzone="false" multiple="true">
+									<match class="class.highway" negate="true"/>
+									<match owner="null" negate="true"/>
+									<match_relation faction="$Faction"  relation="neutral" comparison="ge"/>
+								</find_zone>		
+							</do_if>
+						</do_if>
+						<do_all exact="$CVZone.count" counter="$k">			
+							<do_if value="$CVZone.{$k}.sector == $SpawnZone.sector">
+								<set_value name="$CreateCVZone" exact="$CVZone.{$k}" />
+								<break />
+							</do_if>
+							<do_elseif value="$CVZone.{$k}.cluster == $SpawnZone.cluster">
+								<set_value name="$CreateCVZone" exact="$CVZone.{$k}" />
+							</do_elseif>
+							<do_elseif value="not $CreateCVZone">
+								<set_value name="$CreateCVZone" exact="$CVZone.{$k}" />
+							</do_elseif>
+						</do_all>
+						<do_if value="$CreateCVZone">
+							<set_value name="$SpawnZone" exact="$CreateCVZone"/>
+						</do_if>
+						<do_else>
+							<set_value name="$GotLoc" exact="false"/>
+						</do_else>			
+					</do_if>
+
+					<do_if value="$GotLoc">
+						<!-- setup our build location or finish if none available using player locs in testing as not many vanilla npc locs post 4.0 -->
+						<do_if value="$CVSpawnStation.exists" negate="true">
+						   <find_station name="$CVSpawnStation" space="player.galaxy" functional="true" multiple="false"> 
+							  <match_content class="class.buildmodule" /> 
+							  <match owner="$Faction"/>
+						   </find_station> 
+							<do_if value="$CVSpawnStation.exists" negate="true">
+							   <find_station name="$CVSpawnStation" space="player.galaxy" functional="true" multiple="false"> 
+								  <match_content class="class.buildmodule" /> 
+								  <match_relation faction="$Faction"  relation="neutral" comparison="ge"/>
+							   </find_station> 
+							</do_if>
+						</do_if>
+
+						<set_value name="$DockSlot" exact="$CVSpawnStation"/>
+
+						<do_if value="[faction.xenon, faction.familyryak, faction.reivers, faction.sovereignsyndicate].indexof.{$Faction} == 0">
+							<find_object_component name="$buildmodules" object="$CVSpawnStation" class="class.buildmodule" multiple="true"/>
+							<do_all exact="$buildmodules.count" counter="$Count">
+								<do_if value="not $buildmodules.{$Count}.freedockslot">
+									<do_if value="not $buildmodules.{$Count}.buildanchor.exists">
+										<debug_text text="'slot in use'" chance="100"/>
+										<set_value name="$DockSlot" exact="null"/>
+									</do_if>
+								</do_if>
+							</do_all>
+						</do_if>		
+						<do_else>
+							<!-- currently no xenon shipyards so always spawn in space -->
+							<set_value name="$DockSlot" exact="null"/>
+						</do_else>
+
+						<do_if value="$CVSpawnStation == $JFShipyard">
+							<set_value name="$DockSlot" exact="null"/>	
+						</do_if>
+
+						<do_if value="$BuildLocation != null">
+							<do_if value="@$DockSlot != null" chance="0">
+								<create_ship name="$CVShip" macro="$CVtype" dock="$DockSlot" zone="$SpawnZone">
+									<owner exact="$Faction" overridenpc="true"/>
+									<pilot>
+										<select faction="$Faction" tags="tag.commander"/>
+									</pilot>
+									<defence>
+										<select faction="$Faction" tags="tag.defencecontrol"/>
+									</defence>
+									<engineer>
+										<select faction="$Faction" tags="tag.engineer"/>
+									</engineer>
+									<units>
+										<unit category="unitcategory.transport" mk="1" exact="10"/>
+										<unit category="unitcategory.welder" mk="1" exact="100"/>
+										<unit category="unitcategory.defence" mk="1" exact="30"/>
+									</units>
+									<cargo>
+										<wares list="[ware.fuelcells]">
+											<fillpercent exact="100"/>
+										</wares>
+									</cargo>
+									<drop ref="ship_large_civilian"/>
+								</create_ship>
+							</do_if>
+							<do_else>
+								<create_ship name="$CVShip" macro="$CVtype" zone="$SpawnZone">
+									<owner exact="$Faction" overridenpc="true"/>
+									<pilot>
+										<select faction="$Faction" tags="tag.commander"/>
+									</pilot>
+									<defence>
+										<select faction="$Faction" tags="tag.defencecontrol"/>
+									</defence>
+									<engineer>
+										<select faction="$Faction" tags="tag.engineer"/>
+									</engineer>
+									<units>
+										<unit category="unitcategory.transport" mk="1" exact="10"/>
+										<unit category="unitcategory.welder" mk="1" exact="100"/>
+										<unit category="unitcategory.defence" mk="1" exact="30"/>
+									</units>
+									<cargo>
+										<wares list="[ware.fuelcells]">
+											<fillpercent exact="100"/>
+										</wares>
+									</cargo>
+									<drop ref="ship_large_civilian"/>
+									<safepos object="$CVSpawnStation" />
+								</create_ship>
+							</do_else>
+
+							<do_if value="$CVShip.exists">
+
+								<!--<write_to_logbook category="tips" text="'=== Failed CV! === \n zone: %1 \n Zone Owner: %2 \n Station: %3 \n CV type: %4 \n CV Spawn Zone: %5 \n CV Spawn Station: %6'.[$BuildZone.name, $Faction, $StationMacro.name, $CVtype, $SpawnZone.name, $CVSpawnStation.name]"/>-->
+								<write_to_logbook category="missions" text="{40002,91}.[$BuildZone.name, $Faction, $StationMacro.name]"/>
+
+								<debug_text text="'Builder ship ref %1 name %2 spawned from cwir_station_construction'.[$CVShip, $CVShip.name]" chance="0"/>
+
+								<!-- Prepare Buildership for build - by adding architect and finding the BuildModule -->
+								<find_dock_location name="$CVDock" container="$CVShip" size="tag.dock_p"/>
+								<do_if value="$CVDock">
+									<create_cue_actor name="$Architect" cue="this">
+										<select faction="$Faction" tags="tag.architect"/>
+										<owner exact="$Faction"/>
+									</create_cue_actor>
+
+									<set_skill entity="$Architect" type="combat" min="3" max="5"/>
+									<set_skill entity="$Architect" type="engineering" exact="5"/>
+									<set_skill entity="$Architect" type="leadership" exact="5"/>
+									<set_skill entity="$Architect" type="management" exact="5"/>
+									<set_skill entity="$Architect" type="morale" min="3" max="5"/>
+									<set_skill entity="$Architect" type="navigation" min="3" max="5"/>
+									<set_skill entity="$Architect" type="science" min="3" max="5"/>
+									<set_entity_type entity="$Architect" type="entitytype.architect"/>
+									<add_actor_to_platform actor="$Architect" dockingbay="$CVDock.component"/>
+									<assign_architect actor="$Architect" object="$CVShip"/>
+								</do_if>
+
+								<find_object_component name="$BuildModule" object="$CVShip" class="class.buildmodule"/>
+								<set_buildmodule_macro object="$CVShip" macro="$StationMacro" />
+
+								<signal_cue_instantly cue="CWIR_ConstructNPCStation_MoveBuild" param="[$CVShip, $BuildModule, $Architect, $BuildLocation, $StationMacro, $BuildZone, $CheatResources, $CheatResourcesAllStagesChance]"/>
+								<!--<write_to_logbook category="missions" text="'=== A Faction is attempting to rebuild a station! === \n zone: %1 \n Zone Owner: %2'.[$BuildZone.name, $Faction]"/>-->
+								<remove_cue_actor actor="$Architect" cue="this" />
+
+							</do_if>			  
+
+						</do_if>
+					</do_if>
+					<do_else>
+						<debug_text text="'CWIR_ConstructNPCStation failed through lack of free build locations :\nBuildZone : %1\nStationMacro %2\nFaction %3'.[$BuildZone, $StationMacro, $Faction]"/>
+					</do_else>
+				</do_if>
+				<do_else>
+					<debug_text text="'CWIR_ConstructNPCStation called with invalid parameters :\nBuildZone : %1\nStationMacro %2\nFaction %3'.[$BuildZone, $StationMacro, $Faction]"/>
+				</do_else>
+			</actions>
+		</cue>
+		<cue name="CWIR_ConstructNPCStation_contract" instantiate="true" namespace="this">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<delay min="20ms" max="150ms"/>
+			<actions>
+				<set_value name="$BuildZone" exact="event.param.{1}" />
+				<set_value name="$StationMacro" exact="event.param.{2}"/>
+				<set_value name="$Faction" exact="event.param.{3}" />	
+				<set_value name="$CheatResources" exact="event.param.{4}" />
+				<set_value name="$CheatResourcesAllStagesChance" exact="event.param.{5}" />
+				<set_value name="$Crew" exact="if event.param.{6}? then event.param.{6} else false" />
+				<set_value name="$BuildLocation" exact="if event.param.{7}? then event.param.{7} else null" />
+
+				<do_if value="$BuildLocation and $BuildLocation.child != null">
+					<set_value name="$BuildLocation" exact="null" />
+				</do_if>
+
+				<do_if value="not $BuildLocation and $Faction != faction.player and $BuildZone.freenpcbuildlocations.count">
+					<set_value name="$BuildLocation" exact="$BuildZone.freenpcbuildlocations.random" />
+				</do_if>
+				<do_elseif value="not $BuildLocation and $BuildZone.freebuildlocations.count">
+					<set_value name="$BuildLocation" exact="$BuildZone.freebuildlocations.random" />
+				</do_elseif>
+				<do_elseif value="not $BuildLocation">
+					<show_help position="8" log="false" force="true" duration="2s" custom="'ERROR: no buildspot available'" />
+				</do_elseif>
+
+				<create_ship name="$CVShip" macro="macro.units_size_xl_builder_ship_plot_01_macro" capturable="false" zone="$BuildZone">
+					<owner exact="faction.neutral" overridenpc="true"/>
+					<pilot>
+						<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.commander"/>
+					</pilot>
+					<defence>
+						<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.defencecontrol"/>
+					</defence>
+					<engineer>
+						<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.engineer"/>
+					</engineer>
+					<units>
+						<unit category="unitcategory.transport" mk="1" exact="10"/>
+						<unit category="unitcategory.welder" mk="1" exact="100"/>
+						<unit category="unitcategory.defence" mk="1" exact="30"/>
+					</units>
+					<cargo>
+						<wares list="[ware.fuelcells]">
+							<fillpercent exact="100"/>
+						</wares>
+					</cargo>
+					<drop ref="ship_large_civilian"/>
+					<safepos y="-10km" />
+				</create_ship>
+
+				<write_to_logbook category="missions" text="{40002,91}.[$BuildZone.name, $Faction, $StationMacro.name]" chance="0"/>
+
+				<debug_text text="'Builder ship ref %1 name %2 spawned from cwir_station_construction'.[$CVShip, $CVShip.name]" chance="0"/>
+
+				<!-- Prepare Buildership for build - by adding architect and finding the BuildModule -->
+				<find_dock_location name="$CVDock" container="$CVShip" size="tag.dock_p"/>
+				<do_if value="$CVDock">
+					<set_room_locked room="$CVDock.component" locked="true"/>
+
+					<create_cue_actor name="$Architect" cue="this">
+						<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.architect"/>
+						<owner exact="faction.neutral"/>
+					</create_cue_actor>
+
+					<set_skill entity="$Architect" type="combat" min="3" max="5"/>
+					<set_skill entity="$Architect" type="engineering" exact="5"/>
+					<set_skill entity="$Architect" type="leadership" exact="5"/>
+					<set_skill entity="$Architect" type="management" exact="5"/>
+					<set_skill entity="$Architect" type="morale" min="3" max="5"/>
+					<set_skill entity="$Architect" type="navigation" min="3" max="5"/>
+					<set_skill entity="$Architect" type="science" min="3" max="5"/>
+					<set_entity_type entity="$Architect" type="entitytype.architect"/>
+					<add_actor_to_platform actor="$Architect" dockingbay="$CVDock.component"/>
+					<assign_architect actor="$Architect" object="$CVShip"/>
+				</do_if>
+
+				<find_object_component name="$BuildModule" object="$CVShip" class="class.buildmodule"/>
+				<set_buildmodule_macro object="$CVShip" macro="$StationMacro" />
+
+				<signal_cue_instantly cue="CWIR_ConstructNPCStation_MoveBuild" param="[$CVShip, $BuildModule, $Architect, $BuildLocation, $StationMacro, $BuildZone, $CheatResources, $CheatResourcesAllStagesChance, $Faction, $Crew]"/>
+
+				<remove_cue_actor actor="$Architect" cue="this" />
+			</actions>
+		</cue>
+		<!--  NPCArchitect finish fallback -->
+		<cue name="CWIR_ConstructNPCStation_npcbuildership" instantiate="true">
+			<conditions>
+				<check_any>
+					<event_conversation_started conversation="default" />
+					<event_conversation_returned_to_section section="default" />
+				</check_any>
+				<check_value value="event.object.type" exact="entitytype.architect" />
+				<check_value value="event.object.iscontrolentity" />
+				<!--check_value value="event.object.trueowner" exact="faction.neutral" /-->
+				<check_value value="event.object.owner" exact="faction.player" negate="true" />
+				<check_value value="event.object.container.buildanchor and event.object.container.buildanchor.availablebuildslots? and event.object.container.buildanchor.availablebuildslots.count == 0" />
+				<check_value value="event.object.container.buildmodule.isbuilding" negate="true"/>
+				<!--check_value value="event.object.$finalStationOwner? and event.object.$finalStationOwner and event.object.container.buildanchor and event.object.container.buildanchor.owner != event.object.$finalStationOwner" /-->
+			</conditions>
+			<actions>
+				<include_actions ref="md.CWIR_StationConstruction.CWIR_ConstructNPCStation_finalize" />
+
+				<start_script object="event.object.container.pilot" name="'move.die'" chance="if event.object.container.pilot.command.value == null then 100 else 0">
+					<param name="byjump" value="true"/>
+				</start_script>
+
+				<remove_value name="$CVShip"/>
+				<remove_value name="$finalStationOwner"/>
+			</actions>
+		</cue>
+
+		<cue name="CWIR_ConstructNPCStation_MoveBuild" instantiate="true" namespace="this">
+			<conditions>
+				<event_cue_signalled/>
+			</conditions>
+			<actions>
+				<set_value name="$CVShip" exact="event.param.{1}" />
+				<set_value name="$BuildModule" exact="event.param.{2}" />
+				<set_value name="$Architect" exact="event.param.{3}" />
+				<set_value name="$BuildLocation" exact="event.param.{4}" />
+				<set_value name="$StationMacro" exact="event.param.{5}" />
+				<set_value name="$BuildZone" exact="event.param.{6}"/>
+				<set_value name="$CheatResources" exact="if event.param.{7}? then event.param.{7} else 100" />
+				<set_value name="$CheatResourcesAllStagesChance" exact="if event.param.{8}? then event.param.{8} else 100" />
+				<set_value name="$finalStationOwner" exact="if event.param.{9}? and typeof event.param.{9} == datatype.faction then event.param.{9} else false" />
+				<set_value name="$addCrew" exact="if event.param.{10}? and event.param.{10} then true else false" />
+
+				<debug_text text="'calling move script'" chance="0"/>
+
+				<start_script object="$CVShip.pilot" name="'move.buildership'">
+					<param name="destination" value="$BuildLocation"/>
+					<param name="macro" value="$StationMacro"/>
+				</start_script>
+
+				<debug_text text="'claiming build loc'" chance="0"/>
+				<claim_build_location buildlocation="$BuildLocation" object="$CVShip"/>
+
+				<debug_text text="'fin'" chance="0"/>
+			</actions>
+			<cues>
+				<cue name="CV_Destroyed">
+					<conditions>
+						<check_any>
+							<check_all>
+								<event_game_loaded/> 
+								<check_value value="@$CVShip.exists" negate="true"/>
+							</check_all>
+							<event_object_destroyed object="$CVShip"/>
+						</check_any>
+					</conditions>
+					<actions>
+						<debug_text text="'CV destroyed! ref %1 name %2 zone %3'.[$CVShip, $CVShip.name, $CVShip.zone]" chance="100"/>
+
+						<do_if value="event.name" exact="'event_object_destroyed'">
+							<do_if value="$Architect.$build_base_stage?">
+								<do_if value="$Architect.$build_base_stage">
+									<destroy_object object="$CVShip.buildanchor" explosion="true"/>
+								</do_if>
+							</do_if>
+
+							<disconnect_from_build_location object="event.object"/>
+						</do_if>
+
+						<cancel_cue cue="CWIR_ConstructNPCStation_MoveBuild"/>
+					</actions>
+				</cue>
+
+                <cue name="CV_Destroyed_cleanup" onfail="cancel">
+                    <conditions>
+                        <check_value value="$CVShip? and $CVShip.exists" negate="true"/>
+                    </conditions>
+                    <actions>
+                        <debug_text text="'CV destroyed! ref %1 name %2 zone %3'.[$CVShip, $CVShip.name, $CVShip.zone]" chance="100"/>
+ 
+                        <cancel_cue cue="CWIR_ConstructNPCStation_MoveBuild"/>
+                    </actions>
+                </cue>
+
+				<cue name="CV_MoveAborted">
+					<conditions>
+						<event_object_signalled object="$CVShip" param="'move.buildership'" param2="false"/>
+					</conditions>
+					<delay exact="1s"/>
+					<actions>
+						<!-- if the move was aborted then odds are the build loc we wanted has been taken by another cv
+                 look for an alternate build loc in same zone or move.die -->
+
+						<set_value name="$GotLoc" exact="false"/>
+
+						<debug_text text="'arrived to find loc taken in %1'.[$BuildZone]" chance="0"/>
+
+						<!-- pick npc build loc over player build loc if available. extra check for false positives in free location lists -->
+						<do_if value="$BuildZone.freenpcbuildlocations.count != 0">
+							<do_all exact="$BuildZone.freenpcbuildlocations.count" counter="$i">
+								<do_if value="typeof $BuildZone.freenpcbuildlocations.{$i} == datatype.componentmacroslot">
+									<do_if value="not $BuildZone.freenpcbuildlocations.{$i}.child">
+										<set_value name="$BuildLocation" exact="$BuildZone.freenpcbuildlocations.{$i}"/>
+										<set_value name="$GotLoc" exact="true"/>
+									</do_if>
+								</do_if>
+							</do_all>
+						</do_if>
+
+						<do_if value="($BuildZone.freebuildlocations.count != 0) and (not $GotLoc)">
+							<do_all exact="$BuildZone.freebuildlocations.count" counter="$i">
+								<do_if value="typeof $BuildZone.freebuildlocations.{$i} == datatype.componentmacroslot">
+									<do_if value="not $BuildZone.freebuildlocations.{$i}.child">
+										<set_value name="$BuildLocation" exact="$BuildZone.freebuildlocations.{$i}"/>
+										<set_value name="$GotLoc" exact="true"/>
+									</do_if>
+								</do_if>
+							</do_all>
+						</do_if>
+
+						<do_if value="not $GotLoc">
+							<debug_text text="'move aborted - probably because loc taken, but failed to find alternate - move.die'" chance="0"/>
+
+							<start_script object="$CVShip.pilot" name="'move.die'">
+								<param name="byjump" value="true"/>
+							</start_script>
+						</do_if>
+						<do_else>
+							<debug_text text="'move aborted - probably because loc taken, found new loc, recalling movebuild'" chance="0"/>
+
+							<disconnect_from_build_location object="$CVShip"/>
+
+							<start_script object="$CVShip.pilot" name="'move.buildership'">
+								<param name="destination" value="$BuildLocation"/>
+								<param name="macro" value="$StationMacro"/>
+							</start_script>
+
+							<debug_text text="'claiming build loc'" chance="0"/>
+							<claim_build_location buildlocation="$BuildLocation" object="$CVShip"/>
+
+							<reset_cue cue="this"/>
+						</do_else>
+					</actions>
+				</cue>
+
+				<cue name="CV_Arrived">
+					<conditions>
+						<event_object_signalled object="$CVShip" param="'move.buildership'" param2="true"/>
+					</conditions>
+					<delay exact="1s"/>
+					<actions>
+						<debug_text text="'CV arrived and ready to start building'" chance="0"/>
+
+						<set_value name="$Obstructed" exact="true"/>
+
+						<add_blocked_area blocker="$Architect" zone="$Architect.zone">
+							<position value="$BuildLocation.offset" space="$Architect.zone"/>
+							<rotation value="$BuildLocation.rotation"/>
+							<boundingbox max="$StationMacro.boundingbox.max" center="$StationMacro.boundingbox.center"/>
+						</add_blocked_area>
+					</actions>
+					<cues>
+						<cue name="CheckBuildLocationObstructed_Build">
+							<delay exact="3s" />
+							<actions>
+								<do_if value="$BuildLocation.child != null">
+									<!-- on arrival our build loc is in use so head off to die unless there's another free loc available -->
+									<set_value name="$GotLoc" exact="false"/>
+
+									<debug_text text="'arrived to find loc taken in %1'.[$BuildLocation.zone]" chance="0"/>
+
+									<!-- pick npc build loc over player build loc if available. extra check for false positives in free location lists -->
+									<do_if value="$BuildZone.freenpcbuildlocations.count != 0">
+										<do_all exact="$BuildZone.freenpcbuildlocations.count" counter="$i">
+											<do_if value="typeof $BuildZone.freenpcbuildlocations.{$i} == datatype.componentmacroslot">
+												<do_if value="not $BuildZone.freenpcbuildlocations.{$i}.child">
+													<set_value name="$BuildLocation" exact="$BuildZone.zone.freenpcbuildlocations.{$i}"/>
+													<set_value name="$GotLoc" exact="true"/>
+												</do_if>
+											</do_if>
+										</do_all>
+									</do_if>
+
+									<do_if value="($BuildZone.freebuildlocations.count != 0) and (not $GotLoc)">
+										<do_all exact="$BuildZone.freebuildlocations.count" counter="$i">
+											<do_if value="typeof $BuildZone.freebuildlocations.{$i} == datatype.componentmacroslot">
+												<do_if value="not $BuildZone.freebuildlocations.{$i}.child">
+													<set_value name="$BuildLocation" exact="$BuildZone.freebuildlocations.{$i}"/>
+													<set_value name="$GotLoc" exact="true"/>
+												</do_if>
+											</do_if>
+										</do_all>
+									</do_if>
+
+									<do_if value="not $GotLoc">
+										<debug_text text="'arrived to find loc taken, but failed to find alternate - move.die'" chance="0"/>
+
+										<remove_blocked_area blocker="$Architect" zone="$Architect.zone" />
+										<start_script object="$CVShip.pilot" name="'move.die'">
+											<param name="byjump" value="true"/>
+										</start_script>
+									</do_if>
+									<do_else>
+										<debug_text text="'arrived to find loc taken, found new loc, recalling movebuild'" chance="0"/>
+
+										<remove_blocked_area blocker="$Architect" zone="$Architect.zone" />
+										<remove_build_location_claim buildlocation="$BuildLocation" />
+										<disconnect_from_build_location object="$CVShip"/>
+										<signal_cue_instantly cue="CWIR_ConstructNPCStation_MoveBuild" param="[$CVShip, $BuildModule, $Architect, $BuildLocation, $StationMacro, $BuildZone, $CheatResources, $CheatResourcesAllStagesChance]"/>
+										<!-- we just spawned another instance - kill the current one so there is only one instance per CV -->
+										<cancel_cue cue="CWIR_ConstructNPCStation_MoveBuild"/>
+									</do_else>
+								</do_if>
+								<do_else>
+									<check_is_area_obstructed name="$Obstructed" zone="$Architect.zone" excluded="$CVShip" macro="$StationMacro">
+										<position value="$BuildLocation.offset" space="$Architect.zone" />
+										<rotation value="$BuildLocation.rotation" />
+										<boundingbox max="$StationMacro.boundingbox.max" center="$StationMacro.boundingbox.center" />
+									</check_is_area_obstructed>
+
+									<do_if value="$Obstructed">
+										<debug_text text="'Build area obstructed, waiting 3 seconds'" chance="0"/>
+
+										<reset_cue cue="this" />
+									</do_if>
+									<do_else>
+										<debug_text text="'Build area free, building'" chance="0"/>
+										<debug_text text="'Connecting %1 (actor %2) to build location %3'.[$CVShip, $Architect, $BuildLocation]" chance="0"/>
+
+										<remove_blocked_area blocker="$Architect" zone="$Architect.zone" />
+										<connect_to_build_location object="$CVShip" buildlocation="$BuildLocation"/>
+
+										<!-- build all stages, with 100% armament + shielding -->
+										<create_list name="$BuildPlanList"/>
+										<append_to_list name="$BuildPlanList" exact="['a',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['b',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['c',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['d',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['e',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['f',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['g',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['h',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['i',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['j',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['k',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['l',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['m',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['n',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['o',99]"/>
+										<append_to_list name="$BuildPlanList" exact="['p',99]"/>
+
+										<create_list name="$UpgradePlanList"/>
+										<append_to_list name="$UpgradePlanList" exact="['turret_small_mg',1]" comment="HIT/MA"/>
+										<append_to_list name="$UpgradePlanList" exact="['turret_medium_pe',1]" comment="Plasma/MA"/>
+										<append_to_list name="$UpgradePlanList" exact="['shieldgenerator',1]" comment="Shields"/>
+										<append_to_list name="$UpgradePlanList" exact="['turret_missile_df',1]" comment="V Launcher"/>
+
+										<create_build_plan buildplan="$Buildplan" macro="$StationMacro" buildplanlist="$BuildPlanList" upgradeplanlist="$UpgradePlanList"/>
+										<construct_station object="$CVShip" macro="$StationMacro" buildlocation="$BuildLocation" buildplan="$Buildplan" updatebuild="true"/>
+
+										<signal_cue_instantly cue="md.Fill_CV_Required_Resources.Fill_CV_Resources" param="[$CVShip, $CheatResources]"/>
+
+										<remove_build_location_claim buildlocation="$BuildLocation" />
+
+										<set_value name="$Architect.$build_base_stage" exact="true"/>
+
+										<debug_text text="'CV deployed'" chance="0"/>
+									</do_else>
+								</do_else>
+							</actions>
+						</cue>
+					</cues>
+				</cue>
+
+				<cue name="CV_Finished_Building">
+					<conditions>
+						<event_build_finished object="$CVShip"/>
+					</conditions>
+					<delay exact="500s"/>
+					<actions>
+						<set_value name="$end" exact="false"/>
+						<do_if value="$Architect.$build_base_stage and not @$finalStationOwner">
+							<signal_objects object="player.galaxy" param="'init station'" param2="$CVShip.buildanchor"/>
+						</do_if>
+
+						<do_if value="@$finalStationOwner and not $Architect.$finalStationOwner">
+							<set_value name="$Architect.$finalStationOwner" exact="$finalStationOwner" />
+							<set_value name="$Architect.$addCrew" exact="$addCrew" />
+						</do_if>
+
+						<!-- no more stages to build, send the cv away to die -->
+						<do_if value="$Architect.$build_complete?">
+							<do_if value="$Architect.$build_complete">
+
+								<do_if value="@$finalStationOwner">
+									<include_actions ref="md.CWIR_StationConstruction.CWIR_ConstructNPCStation_finalize" />
+								</do_if>
+
+								<!-- finish job -->
+								<disconnect_from_build_location object="$CVShip"/>
+
+								<start_script object="$CVShip.pilot" name="'move.die'">
+									<param name="byjump" value="true"/>
+								</start_script>
+
+								<set_value name="$end" exact="true"/>
+
+							</do_if>
+						</do_if>
+						<do_else>
+							<do_if value="$CVShip.units.{unitcategory.welder}.count lt 10 or ($CheatResourcesAllStagesChance and $CVShip.units.{unitcategory.welder}.count lt 50)">
+								<add_units object="$CVShip" category="unitcategory.welder" mk="1" exact="$CVShip.units.maxcount - $CVShip.units.count" />
+							</do_if>
+							<signal_cue_instantly cue="md.Fill_CV_Required_Resources.Fill_CV_Resources" param="[$CVShip, $CheatResources]" chance="$CheatResourcesAllStagesChance"/>
+
+							<debug_text text="'remaining availablebuildslots %1'.[$CVShip.buildanchor.availablebuildslots.count]" chance="0"/>
+
+							<do_if value="$CVShip.buildanchor.availablebuildslots.count == 0">
+								<set_value name="$Architect.$build_complete" exact="true"/>
+							</do_if>
+
+							<set_value name="$Architect.$build_base_stage" exact="false"/>
+						</do_else>
+
+						<do_if value="$end" negate="true">
+							<remove_value name="$end"/>
+							<reset_cue cue="this"/>
+						</do_if>
+					</actions>
+				</cue>
+			</cues>
+		</cue>
+	
+		<library name="CWIR_ConstructNPCStation_finalize">
+			<actions>
+
+				<do_if value="not $finalStationOwner? and event.object? and event.object.$finalStationOwner? and event.object.$finalStationOwner">
+					<set_value name="$finalStationOwner" exact="event.object.$finalStationOwner"/>
+					<set_value name="$CVShip" exact="event.object.container"/>
+				</do_if>
+				<do_elseif value="not $finalStationOwner? and $actor? and $actor.$finalStationOwner? and $actor.$finalStationOwner">
+					<set_value name="$finalStationOwner" exact="$actor.$finalStationOwner"/>
+					<set_value name="$CVShip" exact="$actor.container"/>
+				</do_elseif>
+
+				<do_if value="@$finalStationOwner">
+					<!-- deliver station -->
+					<do_if value="$finalStationOwner == faction.player and $CVShip.buildanchor.value*3 gt player.entity.money">
+						<find_station name="$newOwner" space="$CVShip.buildanchor.sector" multiple="false">
+							<match owner="$finalStationOwner" negate="true"/>	
+							<match owner="faction.enemy" negate="true"/>	
+							<match owner="faction.criminal" negate="true"/>	
+							<match owner="faction.smuggler" negate="true"/>	
+							<match owner="faction.neutral" negate="true"/>	
+							<match owner="faction.ownerless" negate="true"/>	
+							<match owner="faction.player" negate="true"/>	
+							<match owner="faction.friend" negate="true"/>
+							<match_relation faction="$finalStationOwner"  relation="neutral" comparison="ge"/>
+						</find_station>
+						<do_if value="$newOwner">
+							<set_value name="$finalStationOwner" exact="$newOwner.owner" />
+						</do_if>
+						<do_else>
+							<find_station name="$newOwner" space="$CVShip.buildanchor.cluster" multiple="false">
+								<match owner="$finalStationOwner" negate="true"/>	
+								<match owner="faction.enemy" negate="true"/>	
+								<match owner="faction.criminal" negate="true"/>	
+								<match owner="faction.smuggler" negate="true"/>	
+								<match owner="faction.neutral" negate="true"/>	
+								<match owner="faction.ownerless" negate="true"/>	
+								<match owner="faction.player" negate="true"/>	
+								<match owner="faction.friend" negate="true"/>
+							</find_station>
+							<do_if value="$newOwner">
+								<set_value name="$finalStationOwner" exact="$newOwner.owner" />
+							</do_if>
+							<do_else>
+								<set_value name="$finalStationOwner" exact="[faction.heartofalbion, faction.plutarch, faction.canteran, faction.argongovernment, faction.hereticvanguards].random" />
+							</do_else>
+						</do_else>
+						<remove_value name="$newOwner"/>
+					</do_if>
+					<do_elseif value="$finalStationOwner == faction.player and $CVShip.buildanchor.value*3 le player.entity.money">
+						<!-- payment -->
+						<transfer_money from="player.entity" to="$CVShip.pilot" amount="$CVShip.buildanchor.value*3" result="$result" />
+						<show_help position="8" log="false" force="true" duration="2s" custom="{40002,158}.[$CVShip.buildanchor.name, $CVShip.buildanchor.zone.name, $result.formatted.default]" />
+						<write_to_logbook category="missions" text="{40002,158}.[$CVShip.buildanchor.knownname, $CVShip.buildanchor.zone.name, $result.formatted.default]"/>
+						<set_value name="$stationcosts" exact="$CVShip.buildanchor.value" />
+						<remove_value name="$result"/>
+					</do_elseif>
+				
+					<set_owner object="$CVShip.buildanchor" faction="$finalStationOwner" />
+				
+					<do_if value="$finalStationOwner == faction.player and @$addCrew">
+						<!-- do complete station for player -->
+						<set_value name="$createdStation" exact="$CVShip.buildanchor" />
+						<!-- add drones -->
+						<set_value name="$Unitcapacity" exact="$createdStation.units.maxcount" />
+						<find_object_component name="$buildmodule" class="class.buildmodule" object="$createdStation"/>
+						<find_dock_location container="$createdStation" name="$ShiptraderDocks" dockpopulationtype="dockpopulationtype.ships" multiple="true" />
+
+						<do_if value="$buildmodule and $finalStationOwner == faction.player">
+							<add_units object="$createdStation" category="unitcategory.welder" mk="1" exact="0.25*$Unitcapacity" />  
+							<add_units object="$createdStation" category="unitcategory.transport" mk="1" exact="0.25*$Unitcapacity" />  
+							<add_units object="$createdStation" category="unitcategory.defence" mk="4" exact="0.25*$Unitcapacity" />  
+							<add_units object="$createdStation" category="unitcategory.defence" mk="6" exact="0.25*$Unitcapacity" />  
+						</do_if>
+						<do_elseif value="$finalStationOwner" exact="faction.player">
+							<add_units object="$createdStation" category="unitcategory.transport" mk="1" exact="0.5*$Unitcapacity" />  
+							<add_units object="$createdStation" category="unitcategory.defence" mk="4" exact="0.25*$Unitcapacity" />  
+							<add_units object="$createdStation" category="unitcategory.defence" mk="6" exact="0.20*$Unitcapacity" />  
+							<add_units object="$createdStation" category="unitcategory.welder" mk="1" exact="0.05*$Unitcapacity" />  
+						</do_elseif>
+
+						<!-- add missiles for v launcher -->
+						<evaluate_ammo_storage object="$createdStation" type="missile" macros="$macrolist" amounts="$amountlist" />
+						<do_all exact="$macrolist.count" counter="$i">
+							<add_ammo object="$createdStation" macro="$macrolist.{$i}" amount="$amountlist.{$i}" /> 
+						</do_all> 
+
+						<!-- add NPCs -->		 
+						<find_dock_location name="$Stationdock" container="$createdStation" size="tag.dock_p"  multiple="false" dockpopulationtype="dockpopulationtype.administrative"/>
+						<do_if value="not $Stationdock">
+							<find_dock_location name="$Stationdock" container="$createdStation" size="tag.dock_p"/>
+						</do_if>
+
+						<!-- add engineer -->
+						<create_platform_actor name="$engineer" dockingbay="$Stationdock.component" type="entitytype.engineer">
+							<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.engineer"/>
+							<owner exact="$finalStationOwner"/>
+							<skills>
+								<skill type="combat" exact="5"/>
+								<skill type="engineering" exact="5"/>
+								<skill type="leadership" exact="5"/>
+								<skill type="management" exact="5"/>
+								<skill type="morale" exact="5"/>
+								<skill type="navigation" exact="5"/>
+								<skill type="science" exact="5"/>
+							</skills>
+						</create_platform_actor>
+						<assign_engineer actor="$engineer" object="$createdStation"/>
+						<!-- npc difference -->		
+						<start_script object="$engineer" name="'engineer.ai'"/>
+
+						<!-- add manager -->		
+						<create_platform_actor name="$manager" dockingbay="$Stationdock.component" type="entitytype.manager"> 
+							<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.manager"/>
+							<owner exact="$finalStationOwner"/>
+							<skills>
+								<skill type="combat" exact="5"/>
+								<skill type="engineering" exact="5"/>
+								<skill type="leadership" exact="5"/>
+								<skill type="management" exact="5"/>
+								<skill type="morale" exact="5"/>
+								<skill type="navigation" exact="5"/>
+								<skill type="science" exact="5"/>
+							</skills>
+						</create_platform_actor>
+						<assign_trade_manager actor="$manager" object="$createdStation"/>
+						<set_actor_account actor="$manager" />
+
+						<do_if value="$createdStation.canbuildships">
+							<start_script object="$manager" name="'trade.shipyard'"/>
+						</do_if>
+						<do_elseif value="$createdStation.canproduceships">
+							<start_script object="$manager" name="'trade.shipyard.small'"/>
+						</do_elseif>
+						<do_elseif value="$createdStation.isplayerowned">
+							<start_script object="$manager" name="'trade.station.player'"/>
+						</do_elseif>
+						<do_else>
+							<start_script object="$manager" name="'trade.station'"/>
+						</do_else>
+
+						<!-- add defense officer -->		
+						<create_platform_actor name="$defencenpc" dockingbay="$Stationdock.component" type="entitytype.defencecontrol"> 
+							<select race="[race.argon, race.split, race.terran, race.teladi].random" tags="tag.defencecontrol"/>
+							<owner exact="$finalStationOwner"/>
+							<skills>
+								<skill type="combat" exact="5"/>
+								<skill type="engineering" exact="5"/>
+								<skill type="leadership" exact="5"/>
+								<skill type="management" exact="5"/>
+								<skill type="morale" exact="5"/>
+								<skill type="navigation" exact="5"/>
+								<skill type="science" exact="5"/>
+							</skills>
+						</create_platform_actor>
+						<assign_defence_manager actor="$defencenpc" object="$createdStation"/>
+						<start_script object="$defencenpc" name="if $finalStationOwner == faction.player then 'fight.station.player' else 'fight.attack.object'" />
+						<set_value name="$defencenpc.$config_attackenemies" exact="true" />
+
+						<!-- add Shiptrader -->
+						<do_if value="$ShiptraderDocks.count">
+							<do_all exact="$ShiptraderDocks.count" counter="$j" >
+								<set_value name="$DockHasShipTrader" exact="false" />
+								<do_all exact="$ShiptraderDocks.{$j}.actors.count" counter="$k" >
+									<do_if value="$ShiptraderDocks.{$j}.actors.{$k}.type == entitytype.shiptrader or $ShiptraderDocks.{$j}.actors.{$k}.type == entitytype.smallshiptrader">
+										<set_remote_commable actor="$ShiptraderDocks.{$j}.actors.{$k}" remote="true" />
+										<set_value name="$DockHasShipTrader" exact="true" />
+									</do_if>
+								</do_all>
+								<do_if value="$DockHasShipTrader" negate="true">
+									<!-- shiptrader / smallshiptrader -->
+									<find_object_component name="$buildmodule" object="$createdStation" class="class.buildmodule" checkoperational="false">
+									  <match_buildsource sequence="$ShiptraderDocks.{$j}.component.sequence" stage="$ShiptraderDocks.{$j}.component.stage" />
+									</find_object_component>
+									<do_if value="$buildmodule">
+										<create_platform_actor name="$Shiptrader" dockingbay="$ShiptraderDocks.{$j}.component" type="entitytype.shiptrader">
+											<select race="race.argon" tags="tag.shiptrader"/>
+											<owner exact="$finalStationOwner"/>
+										</create_platform_actor>
+									</do_if>
+									<do_else>
+										<create_platform_actor name="$Shiptrader" dockingbay="$ShiptraderDocks.{$j}.component" type="entitytype.smallshiptrader">
+											<select race="race.argon" tags="tag.smallshiptrader"/>
+											<owner exact="$finalStationOwner"/>
+										</create_platform_actor>
+									</do_else>
+									<set_remote_commable actor="$Shiptrader" remote="true" />
+									<share_actor_account actor="$Shiptrader" otherobject="$manager" chance="if $finalStationOwner == faction.player then 100 else 0" /> <!-- Share account of Manager -->
+									<set_comm_handler actor="$Shiptrader" customhandler="true" />
+									<remove_value name="$Shiptrader"/>		  
+								</do_if>
+								<remove_value name="$buildmodule"/>		  
+								<remove_value name="$DockHasShipTrader"/>		  
+							</do_all>
+						</do_if>
+					
+						<add_default_production_wares object="$createdStation" lowerlimit="20" upperlimit="50"/>
+
+						<!-- 2nd payment -->
+						<do_if value="$createdStation.value - $stationcosts">
+							<do_if value="$createdStation.value - $stationcosts le player.entity.money">
+								<transfer_money from="player.entity" to="$CVShip.pilot" amount="$createdStation.value - $stationcosts" />
+								<write_to_logbook category="missions" text="{40002,160}.[$createdStation.name, $createdStation.zone.name, ($createdStation.value - $stationcosts).formatted.default]"/>
+								<remove_value name="$stationcosts"/>
+							</do_if>
+							<do_else>
+								<set_value name="$expensiveCargo" exact="[ware.drp_assault, ware.drp_cargolifter, ware.drp_construction, ware.drp_interceptor_mk1, ware.drp_interceptor_mk2, ware.drp_intrepid_mk1, ware.drp_intrepid_mk2, ware.drp_overrun_mk1, ware.drp_overrun_mk2, ware.drp_scoopcollector_mk1, ware.drp_scoopcollector_mk2, ware.drp_surfaceminer_mk1, ware.drp_surfaceminer_mk2, ware.dumbfiremissile, ware.dumbfireturret]" />
+								<do_all exact="$expensiveCargo.count" counter="$i">
+								   <do_if value="$createdStation.cargo.{$expensiveCargo.{$i}}.count">
+										<remove_cargo object="$createdStation" ware="$expensiveCargo.{$i}" exact="$createdStation.cargo.{$expensiveCargo.{$i}}.count" />
+								   </do_if>
+								</do_all>
+								<remove_value name="$expensiveCargo"/>
+								<!-- next try and lowering costs -->
+								<do_if value="$createdStation.value - $stationcosts le player.entity.money">
+									<transfer_money from="player.entity" to="$CVShip.pilot" amount="$createdStation.value - $stationcosts" result="$result" />
+									<write_to_logbook category="missions" text="{40002,160}.[$createdStation.name, $createdStation.zone.name, $result.formatted.default]"/>
+									<remove_value name="$stationcosts"/>
+								</do_if>
+								<do_else>
+									<do_all exact="unitcategory.defence.maxmk" counter="$j">
+									   <do_if value="$theShip.units.{unitcategory.defence}.mk.{$j}.count">
+											<remove_units object="$createdStation" macro="$createdStation.units.{unitcategory.defence}.mk.{$j}.list.{1}" exact="$createdStation.units.{unitcategory.defence}.mk.{$j}.count" /> 
+									   </do_if>
+									</do_all>
+									<!-- next try and lowering costs -->
+									<do_if value="$createdStation.value - $stationcosts le player.entity.money">
+										<transfer_money from="player.entity" to="$CVShip.pilot" amount="$createdStation.value - $stationcosts" result="$result" />
+										<write_to_logbook category="missions" text="{40002,160}.[$createdStation.name, $createdStation.zone.name, $result.formatted.default]"/>
+										<remove_value name="$stationcosts"/>
+									</do_if>
+									<do_else>
+										<do_all exact="$createdStation.cargo.list.count" counter="$i">
+											<remove_cargo object="$createdStation" ware="$createdStation.cargo.list.{$i}" exact="$createdStation.cargo.{$createdStation.cargo.list.{$i}}.count" />
+										</do_all>
+										<!-- last try and grab whats possible -->
+										<do_if value="$createdStation.value - $stationcosts le player.entity.money">
+											<transfer_money from="player.entity" to="$CVShip.pilot" amount="$createdStation.value - $stationcosts" result="$result" />
+											<write_to_logbook category="missions" text="{40002,160}.[$createdStation.name, $createdStation.zone.name, $result.formatted.default]"/>
+											<remove_value name="$stationcosts"/>
+										</do_if>
+										<do_else>
+											<find_object_component name="$buildmodule" class="class.buildmodule" object="$createdStation"/>
+											<do_all exact="unitcategory.welder.maxmk" counter="$j">
+											   <do_if value="$theShip.units.{unitcategory.welder}.mk.{$j}.count">
+													<do_if value="$buildmodule">
+														<remove_units object="$createdStation" macro="$createdStation.units.{unitcategory.welder}.mk.{$j}.list.{1}" exact="$createdStation.units.{unitcategory.welder}.mk.{$j}.count/2" /> 
+													</do_if>
+													<do_else>
+														<remove_units object="$createdStation" macro="$createdStation.units.{unitcategory.welder}.mk.{$j}.list.{1}" exact="$createdStation.units.{unitcategory.welder}.mk.{$j}.count" /> 
+													</do_else>
+											   </do_if>
+											</do_all>
+											<do_if value="$engineer">
+												<destroy_object object="$engineer" explosion="false" />
+											</do_if>
+											<transfer_money from="player.entity" to="$CVShip.pilot" amount="$createdStation.value - $stationcosts" result="$result" />
+											<write_to_logbook category="missions" text="{40002,160}.[$createdStation.name, $createdStation.zone.name, $result.formatted.default]"/>
+										</do_else>
+									</do_else>
+								</do_else>
+							</do_else>
+						</do_if>
+						<remove_value name="$result"/>
+				
+						<remove_value name="$defencenpc"/>
+						<remove_value name="$Stationdock"/>
+						<remove_value name="$manager"/>
+						<remove_value name="$engineer"/>
+						<remove_value name="$macrolist"/>
+						<remove_value name="$amountlist"/>
+						<remove_value name="$Unitcapacity"/>
+						<remove_value name="$buildmodule"/>
+						<remove_value name="$ShiptraderDocks"/>		  
+					</do_if>
+					<do_elseif value="$finalStationOwner != faction.player">
+						<signal_objects object="player.galaxy" param="'init station'" param2="$CVShip.buildanchor"/>
+					</do_elseif>
+					<remove_value name="$stationcosts"/>
+				</do_if>
+			</actions>
+		</library>
+
+	</cues>
+</mdscript>

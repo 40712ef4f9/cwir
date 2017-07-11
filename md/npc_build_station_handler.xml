@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="NPC_Build_Station_Handler" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D:\games\Steam\steamapps\common\X Rebirth\MODS_JSGME\libraries\md.xsd">
+<!-- CWIR -->
+<!-- Conquer_mod v020 -->
+<!-- this script check regularly by opportunities to build npc stations -->
+ <cues>
+   <cue name="NPC_Build_Station_CO" instantiate="true" namespace="this" checktime="player.age + 33min" checkinterval="55min">
+    <!--<cue name="NPC_Build_Station_CO" instantiate="true" namespace="this" checktime="player.age + 2min" checkinterval="2min">-->
+ 	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1"/>
+  	</conditions>
+	<actions>
+	
+		<!--setting common variables-->
+		<!--Argon, Plutarch, HOA, ROC, heretic vanguard-->	
+		<create_list name="$ZoneValue"/>
+		<create_list name="$PossibleZone"/>
+		<create_list name="$ThisCorpZones"/>
+		<set_value name="$ChoosedZone" exact="0"/>
+		<!--<set_value name="$CO_Factions" exact="[faction.heartofalbion, faction.plutarch, faction.canteran, faction.argongovernment]"/>-->
+		<set_value name="$CO_Factions" exact="[faction.heartofalbion, faction.plutarch, faction.canteran, faction.argongovernment, faction.hereticvanguards]"/>
+		
+		<!--Command Overwatch build-->
+		<!--look at all main factions list-->
+		<do_all exact="$CO_Factions.count" counter="$i">	
+			<set_value name="$ThisFaction" exact="$CO_Factions.{$i}" />
+			<!-- list this faction regular stations amount(negate outposts and overwatch)-->
+			<find_station name="$ThisFactionStations" space="player.galaxy" functional="true" multiple="true">
+				<match owner="$ThisFaction"/>
+				<match macro="macro.struct_bt_alb_outpost_macro" negate="true"/>
+				<match macro="macro.struct_at_xen_xenon_outpost_macro" negate="true"/>
+				<match macro="macro.struct_econ_weapon_ar_defence_pl_macro" negate="true"/>
+			</find_station>
+			<!--<!{1}** list this faction CO amount **{1}>
+			<find_station name="$ThisFaction_COs" space="player.galaxy" functional="true" multiple="true">
+				<match owner="$ThisFaction"/>
+				<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+			</find_station>-->
+		
+			<!-- check if this faction is elegible to build anything and also if it can build one more CO --> 
+			<!--<do_if value="@$ThisFactionStations.count gt 0 and $ThisFaction_COs.count lt 3" >-->
+			<do_if value="$ThisFactionStations.count" >
+	
+			<!-- find all this faction zones on player galaxy -->
+				<find_zone name="$ThisFactionZones" space="player.galaxy" tempzone="false" multiple="true" >
+					<match class="class.highway" negate="true"/>
+					<match owner="$ThisFaction"/>
+				</find_zone>
+		
+				<do_all exact="$ThisFactionZones.count" counter="$j">			
+					<!-- look for enemy capships or own builder ships on this zone -->
+					<find_ship name="$ZoneEnemyShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$ThisFactionZones.{$j}" multiple="true">
+						<match_any>
+							<match>
+								<match_relation faction="$ThisFaction" relation="enemy"/>
+								<match_any>
+									<match primarypurpose="objectpurpose.fight"/>
+									<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+									<match macro="macro.units_size_l_pir_container_03_macro"/>
+								</match_any>
+							</match>	
+							<match>
+								<match primarypurpose="objectpurpose.build"/>
+								<match owner="$ThisFaction"/>
+							</match>		
+						</match_any>
+					</find_ship>
+					
+					<find_station name="$ThisFaction_ZoneCOs" space="$ThisFactionZones.{$j}" functional="true" multiple="true">
+						<match owner="$ThisFaction"/>
+						<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+					</find_station>
+					<find_station name="$ThisFaction_SectorCOs" space="$ThisFactionZones.{$j}.sector" functional="true" multiple="true">
+						<match owner="$ThisFaction"/>
+						<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+					</find_station>
+					<find_station name="$ThisFaction_ClusterCOs" space="$ThisFactionZones.{$j}.cluster" functional="true" multiple="true">
+						<match owner="$ThisFaction"/>
+						<match macro="macro.struct_econ_weapon_ar_defence_pl_macro"/>
+					</find_station>
+					
+					
+					<do_if value="not $ZoneEnemyShips.count and not $ThisFaction_ZoneCOs.count and $ThisFaction_SectorCOs.count lt 1 and $ThisFaction_ClusterCOs.count lt 3" >
+					
+						<!-- calc this zone value-->
+						<set_value name="$POIValue" exact="0" />
+						<find_object name="$HighWayGate" space="$ThisFactionZones.{$j}" multiple="true" >
+							<match_any>
+								<match class="class.highwayentrygate"/>
+								<match class="class.highwayexitgate"/>
+							</match_any>
+						</find_object>
+						<do_if value="@$HighWayGate.count gt 0" >
+							<do_all exact="$HighWayGate.count" counter="$k">
+								<do_if value="$HighWayGate.{$k}.highway.issuperhighway">
+									<set_value name="$POIValue" exact="1" />
+								</do_if>
+							</do_all>
+						</do_if>
+						<!-- ware.ore, ware.ice, ware.nividium, ware.silicon-->
+						<find_closest_resource ware="[ware.plasma]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>
+						<find_closest_resource ware="[ware.ore]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>
+						<find_closest_resource ware="[ware.ice]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>
+						<find_closest_resource ware="[ware.nividium]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>
+						<find_closest_resource ware="[ware.silicon]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>						
+						<find_closest_resource ware="[ware.ions]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>
+						<find_closest_resource ware="[ware.hydrogen]" refobject="$ThisFactionZones.{$j}" zone="$NearestResourceZone" />
+						<do_if value="$NearestResourceZone" exact="$ThisFactionZones.{$j}">
+							<set_value name="$POIValue" exact="$POIValue + 2" />
+						</do_if>
+
+						<find_object name="$Beacon" class="class.jumpbeacon" space="$ThisFactionZones.{$j}"/>
+						<do_if value="$Beacon" >
+							<set_value name="$POIValue" exact="$POIValue + 9" />
+						</do_if>
+
+						<find_object name="$Gates" class="class.gate" space="$ThisFactionZones.{$j}"/>
+						<do_if value="$Gates" >
+							<set_value name="$POIValue" exact="$POIValue + 12" />
+						</do_if>
+						
+						<!--debug-->
+						<set_value name="$Loc" exact="$ThisFactionZones.{$j}.knownname + ', ' + $ThisFactionZones.{$j}.sector.knownname + ', ' + $ThisFactionZones.{$j}.cluster.knownname" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>
+						<!--<write_to_logbook category="general" text="'=== POI value to build CO === \n zone: %1 \n zone POI value %2 '.[$Loc, $POIValue]" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>-->
+						
+						<append_to_list name="$PossibleZone" exact="$ThisFactionZones.{$j}" />
+						<append_to_list name="$ZoneValue" exact="$POIValue"/>
+					</do_if>
+				</do_all>
+				<!-- now choose the zone to build a CO if any-->
+				<do_if value="@$PossibleZone.count and @$ZoneValue.max ge 5" chance="@$ZoneValue.max * md.CM_Config.Settings.$CO_CvChance" comment="4">	
+					<set_value name="$ChoosedZone" exact="$PossibleZone.{$ZoneValue.indexof.{$ZoneValue.max}}"/>
+					
+					<!--debug-->
+						<set_value name="$Loc" exact="$ChoosedZone.knownname + ', ' + $ChoosedZone.sector.knownname + ', ' + $ChoosedZone.cluster.knownname" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>
+						<!--<write_to_logbook category="general" text="'=== CO build debug === \n %1 send a CV to build a CO \n at zone: %2 \n zone POI value %3 '.[$ThisFaction.name, $Loc, $POIValue]" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>-->
+					
+					<!--parameters: $BuildZone, $StationMacro, $Faction -->
+					<signal_cue_instantly cue="md.CWIR_StationConstruction.CWIR_ConstructNPCStation" param="[$ChoosedZone, macro.struct_econ_weapon_ar_defence_pl_macro, $ThisFaction, 100, 100]"/>
+					
+				</do_if>
+				<do_else>
+				<!--debug-->					
+					<!--<write_to_logbook category="general" text="'=== CO build debug fail=== \n PossibleZone.count %1 \n ZoneValue.max: %2 .'.[@$PossibleZone.count, @$ZoneValue.max]" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>-->
+				</do_else>
+				
+				<clear_list list="$ZoneValue"/>
+				<clear_list list="$PossibleZone"/>
+				
+			</do_if>
+		</do_all>
+	</actions>
+   </cue>
+   
+
+	<cue name="NPC_Build_Station_Corp" instantiate="true" namespace="this" checktime="player.age + 45min" checkinterval="168min">
+	<!--<cue name="NPC_Build_Station_Corp" instantiate="true" namespace="this" checktime="player.age + 1min" checkinterval="40min">-->
+ 	<conditions>
+		<cue_is_complete cue="md.Setup.Start"/>
+ 		<check_value value="md.CM_Config.Settings.$Check == 1"/>
+  	</conditions>
+	<actions>
+
+		<!--Corporations Station build-->
+		<!--setting common variables-->
+		<create_list name="$ZoneValue"/>
+		<create_list name="$PossibleZone"/>
+		<create_list name="$ThisCorpZones"/>
+		<set_value name="$ChoosedZone" exact="0"/>
+		
+		<!--look for a random corp to built each  2 hours-->
+		<set_value name="$rnd_index" min="1" max="(md.Conquer_Mod.Start.$Corp_Factions_zone.count - 2)"/>
+		<set_value name="$i" exact="if typeof md.Conquer_Mod.Start.$Corp_Factions_zone.{$rnd_index} == datatype.faction then $rnd_index else ($rnd_index + 1)"/>
+			
+		<set_value name="$ThisCorp" exact="md.Conquer_Mod.Start.$Corp_Factions_zone.{$i}" />
+		<set_value name="$ThisCorpSpaceMacros" exact="md.Conquer_Mod.Start.$Corp_Factions_zone.{$i+1}" />
+		
+<!--<write_to_logbook category="general" text="'=== Corp build debug 1 - faction found === \n corp: %1 \n list index %2 \n $ThisCorpSpaceMacros.count: %3, first zone macro: %4. '.[$ThisCorp, $i, $ThisCorpSpaceMacros.count, $ThisCorpSpaceMacros.{1}]"/>-->
+
+		<do_all exact="$ThisCorpSpaceMacros.count" counter="$j">
+			<find_zone name="$Zone" macro="$ThisCorpSpaceMacros.{$j}"/>
+			<append_to_list name="$ThisCorpZones" exact="$Zone" />
+		</do_all>
+
+		<do_all exact="$ThisCorpZones.count" counter="$j">
+
+
+<!--<write_to_logbook category="general" text="'=== Corp build debug 2 - faction found, zones list ready === \n corp: %1 \n corp list index %2 \n zone list count: %3 \n this zone: %4 \n zone index %5. '.[$ThisCorp, $i, $ThisCorpZones.count, $ThisCorpZones.{$j}.name, $j]" chance="if $j lt 3 then 100 else 0"/> -->
+		
+			<!-- look for enemy capships this zone -->
+			<find_ship name="$ZoneEnemyShips" class="[class.ship_l, class.ship_xl]" functional="true" space="$ThisCorpZones.{$j}" multiple="true">
+				<match_relation faction="$ThisCorp" relation="enemy"/>
+				<match_any>
+					<match primarypurpose="objectpurpose.fight"/>
+					<match macro="macro.units_size_xl_cargo_hauler_2_macro"/>
+					<match macro="macro.units_size_l_pir_container_03_macro"/>
+				</match_any>
+			</find_ship>
+			
+			<find_station name="$ThisCorpZone_Stations" space="$ThisCorpZones.{$j}" functional="true" multiple="true"/>
+			
+			<!-- pick npc build loc over player build loc if available. extra check for false positives in free location lists -->
+			<set_value name="$BuildLocation" exact="false"/>
+			<set_value name="$GotLoc" exact="false"/>
+			<do_if value="$ThisCorpZones.{$j}.freenpcbuildlocations.count != 0">
+			<do_all exact="$ThisCorpZones.{$j}.freenpcbuildlocations.count" counter="$m">
+			  <do_if value="typeof $ThisCorpZones.{$j}.freenpcbuildlocations.{$m} == datatype.componentmacroslot">
+				<do_if value="not $ThisCorpZones.{$j}.freenpcbuildlocations.{$m}.child">
+				  <set_value name="$BuildLocation" exact="$ThisCorpZones.{$j}.freenpcbuildlocations.{$m}"/>
+				  <set_value name="$GotLoc" exact="true"/>
+				</do_if>
+			  </do_if>
+			</do_all>
+			</do_if>
+
+			<do_if value="($ThisCorpZones.{$j}.freebuildlocations.count != 0) and (not $GotLoc)">
+			<do_all exact="$ThisCorpZones.{$j}.freebuildlocations.count" counter="$m">
+			  <do_if value="typeof $ThisCorpZones.{$j}.freebuildlocations.{$m} == datatype.componentmacroslot">
+				<do_if value="not $ThisCorpZones.{$j}.freebuildlocations.{$m}.child">
+				  <set_value name="$BuildLocation" exact="$ThisCorpZones.{$j}.freebuildlocations.{$m}"/>
+				  <set_value name="$GotLoc" exact="true"/>
+				</do_if>
+			  </do_if>
+			</do_all>
+			</do_if>
+				
+			
+			<do_if value="not $ZoneEnemyShips.count and $ThisCorpZone_Stations.count lt 4 and @$BuildLocation" >
+			
+				<!-- calc this zone value-->
+				<set_value name="$POIValue" exact="0" />
+				<!--superhighway gates-->
+				<find_object name="$HighWayGate" space="$ThisCorpZones.{$j}" multiple="true" >
+					<match_any>
+						<match class="class.highwayentrygate"/>
+						<match class="class.highwayexitgate"/>
+					</match_any>
+				</find_object>
+				<do_if value="@$HighWayGate.count gt 0" >
+					<do_all exact="$HighWayGate.count" counter="$k">
+						<do_if value="$HighWayGate.{$k}.highway.issuperhighway">
+							<set_value name="$POIValue" exact="1" />
+						</do_if>
+					</do_all>
+				</do_if>
+				<!--counting in the number of this zone stations already built-->
+				<set_value name="$POIValue" exact="$POIValue + (3 - $ThisCorpZone_Stations.count)" />
+				<!-- resources-->
+				<find_closest_resource ware="[ware.plasma]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>
+				<find_closest_resource ware="[ware.ore]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>
+				<find_closest_resource ware="[ware.ice]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>
+				<find_closest_resource ware="[ware.nividium]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>
+				<find_closest_resource ware="[ware.silicon]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>						
+				<find_closest_resource ware="[ware.ions]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>
+				<find_closest_resource ware="[ware.hydrogen]" refobject="$ThisCorpZones.{$j}" zone="$NearestResourceZone" />
+				<do_if value="$NearestResourceZone" exact="$ThisCorpZones.{$j}">
+					<set_value name="$POIValue" exact="$POIValue + 2" />
+				</do_if>
+				<!--jump beacons-->
+				<find_object name="$Beacon" class="class.jumpbeacon" space="$ThisCorpZones.{$j}"/>
+				<do_if value="$Beacon" >
+					<set_value name="$POIValue" exact="$POIValue + 9" />
+				</do_if>
+				<!--main gates-->
+				<find_object name="$Gates" class="class.gate" space="$ThisCorpZones.{$j}"/>
+				<do_if value="$Gates" >
+					<set_value name="$POIValue" exact="$POIValue + 12" />
+				</do_if>
+				
+<!--debug-->
+<!--<set_value name="$Loc" exact="$ThisCorpZones.{$j}.knownname + ', ' + $ThisCorpZones.{$j}.sector.knownname + ', ' + $ThisCorpZones.{$j}.cluster.knownname" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>
+<write_to_logbook category="general" text="'=== POI value to build a Corp st === \n zone: %1 \n zone POI value %2 '.[$Loc, $POIValue]" chance="[md.CM_Config.Settings.$DebugMessages, md.Conquer_Mod.Start.$Debug].max"/>-->
+				
+				<append_to_list name="$PossibleZone" exact="$ThisCorpZones.{$j}" />
+				<append_to_list name="$ZoneValue" exact="$POIValue"/>
+			</do_if>
+		</do_all>
+	
+	
+		<!-- now choose the zone (if any and with a chance) and a station to build-->
+		<do_if value="@$PossibleZone.count" chance="@$ZoneValue.max * md.CM_Config.Settings.$CO_CvChance" comment="4">
+			<!--choose the best zone to build in-->
+			<set_value name="$ChoosedZone" exact="$PossibleZone.{$ZoneValue.indexof.{$ZoneValue.max}}"/>
+			<!--choose the station to be built-->
+			<do_all exact="md.Conquer_Mod.Start.$Corp_Factions_stations.count" counter="$j">
+			
+				<do_if value="typeof md.Conquer_Mod.Start.$Corp_Factions_stations.{$j} == datatype.faction and md.Conquer_Mod.Start.$Corp_Factions_stations.{$j} == $ThisCorp">
+				
+					<set_value name="$ThisCorpSpaceMacro" exact="(md.Conquer_Mod.Start.$Corp_Factions_stations.{$j+1}).random" />
+					
+<!--<write_to_logbook category="general" text="'=== Corp build debug 3 - station macro found === \n corp: %1 \n macro %2 \n macro name %3. '.[$ThisCorp, $ThisCorpSpaceMacro, $ThisCorpSpaceMacro.name]" chance="100"/>-->
+					
+					<break/>
+				</do_if>	
+			</do_all>
+			
+			<!--debug-->
+			<set_value name="$Loc" exact="$ChoosedZone.knownname + ', ' + $ChoosedZone.sector.knownname + ', ' + $ChoosedZone.cluster.knownname" chance="100"/>
+			<!--<write_to_logbook category="general" text="'=== Corporation build debug === \n %1 send a CV to build a %4  \n at zone: %2 \n zone POI value %3 '.[$ThisCorp.name, $Loc, $POIValue, $ThisCorpSpaceMacro.name]" chance="100"/>-->
+			
+			<!--parameters: $BuildZone, $StationMacro, $Faction, cheatpercent, cheatstageschance, notused, notused, notused -->
+			<signal_cue_instantly cue="md.CWIR_StationConstruction.CWIR_ConstructNPCStation" param="[$ChoosedZone, $ThisCorpSpaceMacro, $ThisCorp, 100, 0]"/>
+			
+		</do_if>
+
+		<clear_list list="$ZoneValue"/>
+		<clear_list list="$PossibleZone"/>
+		<clear_list list="$ThisCorpZones"/>
+		
+	</actions>
+   </cue>	
+ </cues>
+</mdscript>
