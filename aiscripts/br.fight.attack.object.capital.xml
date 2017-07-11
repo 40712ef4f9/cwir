@@ -45,7 +45,7 @@
           <set_value name="$notEnemy" exact="if event.param and event.param.hasrelation.enemy.{this.ship.trueowner} then false else true"/>
           <set_value name="$counterstrike" exact="100"/>
           <do_if value="this.ship.owner != this.ship.trueowner and ($notEnemy or this.ship.shieldpercentage lt 20)">
-            <set_value name="$counterstrike" exact="0" chance="if event.param and event.param.hasrelation.enemy.{this.ship.trueowner} then 0 else 100"/>
+            <set_value name="$counterstrike" exact="0" chance="if event.param and event.param.owner.hasrelation.enemy.{this.ship.trueowner} then 0 else 100"/>
             <get_control_entities groupname="$Entities" object="this.ship"/>
             <do_all exact="$Entities.count" counter="$j" > 
               <set_cover_owner object="$Entities.{$j}"/>
@@ -83,7 +83,7 @@
     <handler>
       <conditions>
         <event_object_changed_owner object="$target" check="false" />
-        <check_value value="event.param.hasrelation.enemy.{this.ship.trueowner}" negate="true"/>
+        <check_value value="event.object.exists and not event.param.hasrelation.enemy.{this.ship.owner}"/>
       </conditions>
       <actions>
         <!-- Remove the target to stop shooting at it, when owner changes -->
