@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<aiscript name="move.seekenemies.zone" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="aiscripts.xsd" version="3">
+<aiscript name="move.seekenemies.zone" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="aiscripts.xsd" version="4">
   <params>
     <param name="destination"/>
     <param name="pos"/>
@@ -20,6 +20,14 @@
     <do_if value="not $allowstations?">
       <set_value name="$allowstations" exact="true"/>
     </do_if>
+  </patch>
+  <patch sinceversion="4" early="true">
+    <do_if value="$escort.isoperational">
+      <set_value name="$referenceobject" exact="$escort"/>
+    </do_if>
+    <do_else>
+      <set_value name="$referenceobject" exact="this.ship"/>
+    </do_else>
   </patch>
   <attention min="unknown">
     <actions>
@@ -56,7 +64,13 @@
 
       <!-- move to a random (safe) position, looking for enemies along the way -->
       <label name="moveto" />
-	  <set_value name="$destinationZone" exact="if not $destination.exists then this.zone else if $destination.isclass.zone then $destination else $destination.zone" />
+      <set_value name="$destinationZone" exact="if not $destination.exists then this.zone else if $destination.isclass.zone then $destination else $destination.zone" />
+      <do_if value="$escort.isoperational">
+        <set_value name="$referenceobject" exact="$escort"/>
+      </do_if>
+      <do_else>
+        <set_value name="$referenceobject" exact="this.ship"/>
+      </do_else>
 
       <debug_text text="'Gametime: ' + player.age + ' Starting moveto to ' + $destination.knownname + ' Position: ' + $pos" chance="$debugoutputchance" />
 
@@ -70,6 +84,14 @@
         <interrupt>
           <conditions>
             <check_any>
+              <!-- Object being escorted is destroyed, abandoned, or changes owner. -->
+              <check_all>
+                <check_any>
+                  <event_object_destroyed object="$referenceobject"/>
+                  <event_object_abandoned object="$referenceobject"/>
+                  <event_object_changed_owner object="$referenceobject"/>
+                </check_any>
+              </check_all>
               <!-- Found enemy in gravidar (if $engageenemies true) -->
               <check_all>
                 <event_gravidar_has_scanned object="this.ship" />
@@ -82,26 +104,26 @@
                     <check_any>
                       <!-- First search for capitals -->
                       <count_gravidar_contacts result="$capitalenemies" object="this.ship" class="[class.ship_l,class.ship_xl]" functional="true" maybeattackedby="this.ship" min="1">
-                        <match_distance object="this.ship" max="@$pursuedistance"/>
+                        <match_distance object="$referenceobject" max="@$pursuedistance"/>
                         <match_parent>
-						  <match macro="$destinationZone.macro" />
+                          <match macro="$destinationZone.macro" />
                         </match_parent>
                       </count_gravidar_contacts>
                       <!-- Second search for Stations -->
                       <check_all>
                         <check_value value="$allowstations"/>
                         <count_gravidar_contacts result="$stationenemies" object="this.ship" class="class.station" functional="true" maybeattackedby="this.ship" min="1">
-						  <match_parent>
-							<match macro="$destinationZone.macro" />
-						  </match_parent>
-                          <match_distance object="this.ship" max="@$pursuedistance"/>
+                          <match_parent>
+                            <match macro="$destinationZone.macro" />
+                          </match_parent>
+                          <match_distance object="$referenceobject" max="@$pursuedistance"/>
                         </count_gravidar_contacts>
                       </check_all>
                       <!-- Third search for rest (small, ..) -->
                       <count_gravidar_contacts result="$smallenemies" object="this.ship" class="[class.ship_m, class.ship_s]" functional="true" maybeattackedby="this.ship" min="1">
                         <match_parent>
                           <match class="class.highway" negate="true"/>
-						  <match macro="$destinationZone.macro" />
+                          <match macro="$destinationZone.macro" />
                         </match_parent>
                         <match_distance object="this.ship" max="@$pursuedistance"/>
                       </count_gravidar_contacts>
@@ -115,7 +137,7 @@
                       <count_gravidar_contacts result="$smallenemies" object="this.ship" class="[class.ship_m, class.ship_s]" functional="true" maybeattackedby="this.ship" min="1">
                         <match_parent>
                           <match class="class.highway" negate="true"/>
-						  <match macro="$destinationZone.macro" />
+                          <match macro="$destinationZone.macro" />
                         </match_parent>
                         <match_distance object="this.ship" max="@$pursuedistance"/>
                       </count_gravidar_contacts>
@@ -123,7 +145,7 @@
                       <count_gravidar_contacts result="$capitalenemies" object="this.ship" class="[class.ship_l,class.ship_xl]"  functional="true" maybeattackedby="this.ship" min="1">
                         <match_distance object="this.ship" max="@$pursuedistance"/>
                         <match_parent>
-						  <match macro="$destinationZone.macro" />
+                          <match macro="$destinationZone.macro" />
                         </match_parent>
                       </count_gravidar_contacts>
                       <!-- Rest of enemies -->
@@ -131,7 +153,7 @@
                         <match class="if $allowstations then [class.station, class.ship] else class.ship"/>
                         <match_distance object="this.ship" max="@$pursuedistance"/>
                         <match_parent>
-						  <match macro="$destinationZone.macro" />
+                          <match macro="$destinationZone.macro" />
                         </match_parent>
                       </count_gravidar_contacts>
                     </check_any>

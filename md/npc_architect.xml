@@ -45,15 +45,16 @@
 	</do_elseif>
   </replace>
   <!-- automatic building -->
-  <replace sel="//cue[@name='DefaultComm']/actions/do_else/add_player_choice_return">	
-	<add_player_choice text="{40002,161}" section="cArch_worksomewhere" choiceparam="[0, 0, 'cluster', player.primaryship.cluster, null, null, 'selectzone', ['cArch_workat_contractor']]" position="bottom_right" chance="if $actor.isplayerowned and $actor.container.buildmodule? and not @$station and player.primaryship.subordinates.indexof.{$actor.container} then 100 else 0"/>
-  </replace>
-  <replace sel="//cue[@name='OnBoardComm']/actions/do_else/add_player_choice_return">
-	
-		<add_player_choice text="{40002,161}" section="cArch_worksomewhere" choiceparam="[0, 0, 'cluster', player.primaryship.cluster, null, null, 'selectzone', ['cArch_workat_contractor']]" position="bottom_right" chance="if $actor.isplayerowned and $actor.container.buildmodule? and not @$station and player.primaryship.subordinates.indexof.{$actor.container} then 100 else 0"/>
-  </replace>
+  <add sel="//cue[@name='DefaultComm']/actions/do_else/add_player_choice_return" type="@chance" >if $actor.isplayerowned and $actor.container.buildmodule? and not @$station and player.primaryship.subordinates.indexof.{$actor.container} then 0 else 100</add>
+  <add sel="//cue[@name='DefaultComm']/actions/do_else/add_player_choice_return" pos="after">  
+    <add_player_choice text="{40002,161}" section="cArch_worksomewhere" choiceparam="[0, 0, 'cluster', player.primaryship.cluster, null, null, 'selectzone', ['cArch_workat_contractor']]" position="bottom_right" chance="if $actor.isplayerowned and $actor.container.buildmodule? and not @$station and player.primaryship.subordinates.indexof.{$actor.container} then 100 else 0"/>
+  </add>
+  <add sel="//cue[@name='OnBoardComm']/actions//add_player_choice_return" type="@chance" >if $actor.isplayerowned and $actor.container.buildmodule? and not @$station and player.primaryship.subordinates.indexof.{$actor.container} then 0 else 100</add>
+  <add sel="//cue[@name='OnBoardComm']/actions//add_player_choice_return" pos="after">
+    <add_player_choice text="{40002,161}" section="cArch_worksomewhere" choiceparam="[0, 0, 'cluster', player.primaryship.cluster, null, null, 'selectzone', ['cArch_workat_contractor']]" position="bottom_right" chance="if $actor.isplayerowned and $actor.container.buildmodule? and not @$station and player.primaryship.subordinates.indexof.{$actor.container} then 100 else 0"/>
+  </add>
   <add sel="//do_elseif[@value=&quot;event.param == 'cArch_buildermacrosResult'&quot;]">
-		<add_player_choice text="{40002,150}" section="cArch_contractor_options" position="top_right"/>
+    <add_player_choice text="{40002,150}" section="cArch_contractor_options" position="top_right" selectable="not $actor.container.macro.ismacro.units_size_xl_builder_ship_plot_01_macro" />
   </add>
   <add sel="/mdscript[@name='NPC_Architect']/cues/cue/cues/cue[@name='SectionHandler']/actions/do_elseif[@value=&quot;event.param == 'cArch_finalconfirm'&quot;]" pos="after">
 	<do_elseif value="event.param == 'cArch_contractor_options'">

@@ -1111,6 +1111,11 @@
 			<actions>
 				<!-- remove subordinates / replace police with defence drones -->
 				<set_value name="$subordinates" exact="$target.subordinates" />
+				<do_if value="$target.buildingmodule.container? and $target.buildingmodule.container">
+					<do_if value="$subordinates.indexof.{$target.buildingmodule.container} == 0">
+						<append_to_list name="$subordinates" exact="$target.buildingmodule.container"/>
+					</do_if> 
+				</do_if>
 				<do_all exact="$subordinates.count" counter="$i" reverse="true">
 					<do_all exact="unitcategory.police.maxmk" counter="$xi" chance="if $faction == faction.player then 100 else 0">
 						<do_if value="unitcategory.police.mk.{$xi}.list.indexof.{$subordinates.{$i}.macro}">
@@ -1177,16 +1182,14 @@
 					</do_if> 
 				</do_all>
 				<!-- remove old crew -->
-				<create_list name="$specialists" />
-				<get_control_entities object="$target" groupname="$ControlEntities"/>
-				<do_all exact="$ControlEntities.count" counter="$Counter">
-					<remove_actor_account actor="$ControlEntities.{$Counter}" transfer="true" chance="if $target.owner == faction.player then 100 else 0"/>
-					<abort_scripts entity="$ControlEntities.{$Counter}"/>
-					<destroy_object object="$ControlEntities.{$Counter}"/>
-				</do_all>
-				<remove_value name="$ControlEntities" />
-				<cease_fire object="$target"/>
 				<do_if value="$target.canbuildships">
+					<find_object_component name="$buildmodules" object="$target" class="class.buildmodule" multiple="true"/>
+					<do_all exact="$buildmodules.count" counter="$Count">
+						<do_if value="$buildmodules.{$Count}.buildanchor.exists">
+							<clear_buildmodule buildmodule="$buildmodules.{$Count}"/>
+						</do_if>
+					</do_all>
+					<remove_value name="$buildmodules" />
 					<find_object_component name="$ControlEntities" entitytype="entitytype.shiptrader" object="$target" multiple="true" />
 					<do_all exact="$ControlEntities.count" counter="$Counter">
 						<destroy_object object="$ControlEntities.{$Counter}"/>
@@ -1200,6 +1203,15 @@
 					</do_all>
 				</do_if>
 				<remove_value name="$ControlEntities" />
+				<create_list name="$specialists" />
+				<get_control_entities object="$target" groupname="$ControlEntities"/>
+				<do_all exact="$ControlEntities.count" counter="$Counter">
+					<remove_actor_account actor="$ControlEntities.{$Counter}" transfer="true" chance="if $ControlEntities.{$Counter}.hasownaccount then 100 else 0"/>
+					<abort_scripts entity="$ControlEntities.{$Counter}"/>
+					<destroy_object object="$ControlEntities.{$Counter}"/>
+				</do_all>
+				<remove_value name="$ControlEntities" />
+				<cease_fire object="$target"/>
 				<get_production_specialist_types name="$specialisttypes" object="$target" />
 				<do_all exact="$specialisttypes.count" counter="$l">
 					<find_object_component name="$ControlEntities" entitytype="$specialisttypes.{$l}" owner="$target.owner" object="$target" multiple="true" />
