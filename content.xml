@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<content id="CWIR" name="Conquest and War" description="Conquest and War in Rebirth aims to be the penultimate conquest mod!" author="BlackRain and Rubini and with help from w.evans, Yorrick, Marvin Martian, Davedee, pref and Unitrader" version="165" date="2017-05-07" save="false" >
+<content id="CWIR" name="Conquest and War" description="Conquest and War in Rebirth aims to be the penultimate conquest mod!" author="BlackRain and Rubini and with help from w.evans, Yorrick, Marvin Martian, Davedee, pref and Unitrader" version="166" date="2017-05-22" save="false" >
   <dependency id="ego_dlc_2" version="100" />
 </content>
