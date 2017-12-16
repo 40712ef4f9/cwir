@@ -204,14 +204,14 @@
 					<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Zone" exact="0" />
 					<set_value name="md.Conquer_Mod.Start.$RetakeFlag_Faction" exact="0" />
 				</do_if>
-				<do_if value="not md.$JunkDealerLists.{1}.indexof.{[ware.inv_probe, 1, 2, 45]}">
-					<append_to_list name="md.$JunkDealerLists.{1}" exact="[ware.inv_probe, 1, 2, 45]" />
+				<do_if value="not param.itemtraderlists.junkdealerlists.{1}.indexof.{[ware.inv_probe, 1, 2, 45]}">
+					<append_to_list name="param.itemtraderlists.junkdealerlists.{1}" exact="[ware.inv_probe, 1, 2, 45]" />
 				</do_if>
-				<do_if value="not md.$EquipmentLists.{1}.indexof.{[ware.inv_probe, 2, 5, 85]}">
-					<append_to_list name="md.$EquipmentLists.{1}" exact="[ware.inv_probe, 2, 5, 85]" />
+				<do_if value="not param.itemtraderlists.equipmentlists.{1}.indexof.{[ware.inv_probe, 2, 5, 85]}">
+					<append_to_list name="param.itemtraderlists.equipmentlists.{1}" exact="[ware.inv_probe, 2, 5, 85]" />
 				</do_if>
-				<do_if value="not md.$EquipmentLists.{1}.indexof.{[ware.inv_hyperdrivecrystal, 8, 15, 85]}">
-					<append_to_list name="md.$EquipmentLists.{1}" exact="[ware.inv_hyperdrivecrystal, 8, 15, 85]" />
+				<do_if value="not param.itemtraderlists.equipmentlists.{1}.indexof.{[ware.inv_hyperdrivecrystal, 8, 15, 85]}">
+					<append_to_list name="param.itemtraderlists.equipmentlists.{1}" exact="[ware.inv_hyperdrivecrystal, 8, 15, 85]" />
 				</do_if>
 
 				<do_if value="not md.Conquer_Mod.Start.$TheListTimestamp?">
