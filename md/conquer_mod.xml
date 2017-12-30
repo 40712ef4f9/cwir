@@ -210,8 +210,8 @@
 				<do_if value="not param.itemtraderlists.equipmentlists.{1}.indexof.{[ware.inv_probe, 2, 5, 85]}">
 					<append_to_list name="param.itemtraderlists.equipmentlists.{1}" exact="[ware.inv_probe, 2, 5, 85]" />
 				</do_if>
-				<do_if value="not param.itemtraderlists.equipmentlists.{1}.indexof.{[ware.inv_hyperdrivecrystal, 8, 15, 85]}">
-					<append_to_list name="param.itemtraderlists.equipmentlists.{1}" exact="[ware.inv_hyperdrivecrystal, 8, 15, 85]" />
+				<do_if value="not param.itemtraderlists.equipmentlists2.{1}.indexof.{[ware.inv_hyperdrivecrystal, 8, 15, 85]}">
+					<append_to_list name="param.itemtraderlists.equipmentlists2.{1}" exact="[ware.inv_hyperdrivecrystal, 8, 15, 85]" />
 				</do_if>
 
 				<do_if value="not md.Conquer_Mod.Start.$TheListTimestamp?">
