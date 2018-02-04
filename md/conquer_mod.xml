@@ -492,16 +492,18 @@
 
 				<do_all exact="$Stations.count" counter="$i" reverse="true">
 
-					<do_if value="['mine_te_ore_s_macro', 'khaak_weaponplatform_macro', 'struct_bt_sy_heretic_macro', 'struct_bt_ol_shipyard_macro'].indexof.{event.param.macro.id}">
+					<set_value name="$tmpMacroId" exact="if $Stations.{$i}.exists and $Stations.{$i}.macro.id then $Stations.{$i}.macro.id else null" />
+					
+					<do_if value="['mine_te_ore_s_macro', 'khaak_weaponplatform_macro', 'struct_bt_sy_heretic_macro', 'struct_bt_ol_shipyard_macro'].indexof.{$tmpMacroId}">
 						<set_value name="$tmpHull" exact="48" />
 					</do_if>
-					<do_elseif value="['xenon_asteroid_02_base_02_macro', 'struct_bt_ol_soy_farm1_macro', 'struct_bt_ol_soy_farm_macro', 'landmarks_unique_ar_lonely_giant_macro', 'struct_bt_ol_drone_factory_macro', 'struct_bt_ol_spice_farm_macro', 'struct_bt_ol_construction_material1_macro', 'struct_bt_ol_plankton_tank_macro', 'struct_bt_ol_farm_complex_macro', 'struct_bt_ol_drone_complex_macro', 'struct_bt_ol_drone_complex1_macro', 'struct_bt_ol_solar_power_plant1_macro', 'struct_bt_ol_construction_material_macro', 'struct_bt_ol_solar_power_plant_macro', 'struct_bt_ol_farm_complex1_macro', 'struct_bt_ol_high_energy_construction_macro', 'struct_bt_ol_high_energy_construction1_macro', 'struct_bt_ol_small_ships_yard_macro'].indexof.{event.param.macro.id}">
+					<do_elseif value="['xenon_asteroid_02_base_02_macro', 'struct_bt_ol_soy_farm1_macro', 'struct_bt_ol_soy_farm_macro', 'landmarks_unique_ar_lonely_giant_macro', 'struct_bt_ol_drone_factory_macro', 'struct_bt_ol_spice_farm_macro', 'struct_bt_ol_construction_material1_macro', 'struct_bt_ol_plankton_tank_macro', 'struct_bt_ol_farm_complex_macro', 'struct_bt_ol_drone_complex_macro', 'struct_bt_ol_drone_complex1_macro', 'struct_bt_ol_solar_power_plant1_macro', 'struct_bt_ol_construction_material_macro', 'struct_bt_ol_solar_power_plant_macro', 'struct_bt_ol_farm_complex1_macro', 'struct_bt_ol_high_energy_construction_macro', 'struct_bt_ol_high_energy_construction1_macro', 'struct_bt_ol_small_ships_yard_macro'].indexof.{$tmpMacroId}">
 						<set_value name="$tmpHull" exact="39" />
 					</do_elseif>
-					<do_elseif value="['xenon_asteroid_shipyard_macro', 'struct_bt_ol_cell_refinery_macro', 'struct_bt_alb_solar_power_plant_macro', 'struct_bt_ol_metalworks1_macro', 'struct_econ_unique_ar_spp_xl_macro', 'struct_bt_dv_canteran_outpost_03_macro', 'struct_bt_ol_water_destillery_macro', 'struct_bt_ol_laboratory1_macro', 'struct_bt_ol_laboratory_macro', 'struct_bt_ol_water_destillery1_macro', 'struct_bt_ol_hightec_construction_macro', 'struct_bt_ol_cell_refinery1_macro', 'struct_bt_ol_metalworks_macro', 'struct_bt_ol_tech_complex_macro', 'struct_bt_ol_hightec_construction1_macro', 'struct_bt_ol_medical_supplies1_macro', 'struct_bt_ol_medical_supplies_macro', 'struct_bt_ol_tech_complex1_macro', 'struct_bt_ol_crystal_refinement_macro', 'struct_bt_alb_small_ships_yard_macro', 'struct_bt_ol_crystal_refinement1_macro'].indexof.{event.param.macro.id}">
+					<do_elseif value="['xenon_asteroid_shipyard_macro', 'struct_bt_ol_cell_refinery_macro', 'struct_bt_alb_solar_power_plant_macro', 'struct_bt_ol_metalworks1_macro', 'struct_econ_unique_ar_spp_xl_macro', 'struct_bt_dv_canteran_outpost_03_macro', 'struct_bt_ol_water_destillery_macro', 'struct_bt_ol_laboratory1_macro', 'struct_bt_ol_laboratory_macro', 'struct_bt_ol_water_destillery1_macro', 'struct_bt_ol_hightec_construction_macro', 'struct_bt_ol_cell_refinery1_macro', 'struct_bt_ol_metalworks_macro', 'struct_bt_ol_tech_complex_macro', 'struct_bt_ol_hightec_construction1_macro', 'struct_bt_ol_medical_supplies1_macro', 'struct_bt_ol_medical_supplies_macro', 'struct_bt_ol_tech_complex1_macro', 'struct_bt_ol_crystal_refinement_macro', 'struct_bt_alb_small_ships_yard_macro', 'struct_bt_ol_crystal_refinement1_macro'].indexof.{$tmpMacroId}">
 						<set_value name="$tmpHull" exact="31" />
 					</do_elseif>
-					<do_elseif value="['xenon_asteroid_01_base_01_macro', 'struct_bt_alb_high_energy_construction_macro', 'struct_econ_special_piratestation_macro', 'struct_bt_alb_small_ships_complex_macro', 'struct_bt_dv_shipyard_macro', 'masstraffic_station_01_macro', 'struct_bt_dv_solar_power_plant_macro', 'landmarks_unique_split_lostcolony_macro', 'struct_bt_dv_canteran_outpost_02_macro', 'struct_bt_ol_small_ships_complex_macro', 'struct_bt_ol_small_ships_complex1_macro', 'struct_bt_ol_weaponryproduction1_macro', 'struct_bt_ol_weaponrycomplex_macro'].indexof.{event.param.macro.id}">
+					<do_elseif value="['xenon_asteroid_01_base_01_macro', 'struct_bt_alb_high_energy_construction_macro', 'struct_econ_special_piratestation_macro', 'struct_bt_alb_small_ships_complex_macro', 'struct_bt_dv_shipyard_macro', 'masstraffic_station_01_macro', 'struct_bt_dv_solar_power_plant_macro', 'landmarks_unique_split_lostcolony_macro', 'struct_bt_dv_canteran_outpost_02_macro', 'struct_bt_ol_small_ships_complex_macro', 'struct_bt_ol_small_ships_complex1_macro', 'struct_bt_ol_weaponryproduction1_macro', 'struct_bt_ol_weaponrycomplex_macro'].indexof.{$tmpMacroId}">
 						<set_value name="$tmpHull" exact="21" />
 					</do_elseif>
 					<do_else>
@@ -563,6 +565,7 @@
 				</do_all>
 				<set_value name="md.Conquer_Mod.Start.$DSC_prevhull" exact="$checkhull.clone" />
 				<remove_value name="$tmpHull"/>
+				<remove_value name="$tmpMacroId"/>
 				<remove_value name="$checkhull"/>
 				<remove_value name="$Cmpnent"/>
 				<remove_value name="$Stations"/>
