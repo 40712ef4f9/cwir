@@ -452,7 +452,7 @@ X:R Conquer mod game rules:
 
 Installation?
 =======
-Just copy the entire "Conquer_Mod" folder to your X:R extensions folder.
+Just copy the entire "cwir" folder to your X:R extensions folder.
 
 
 Have fun and post feedback!
